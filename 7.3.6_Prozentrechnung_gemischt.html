@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prozentrechnung - Interaktive Übungen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00A859;
+            --primary-light: #4CD964;
+            --primary-dark: #008F4C;
+            --secondary: #2196F3;
+            --secondary-light: #64B5F6;
+            --warning: #FF9800;
+            --error: #F44336;
+            --error-light: #FFEBEE;
+            --success: #4CAF50;
+            --success-light: #E8F5E9;
+            --bg-main: #F5F7FA;
+            --bg-card: #FFFFFF;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            --border: #E2E8F0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '%';
+            position: absolute;
+            font-size: 15rem;
+            opacity: 0.1;
+            right: -2rem;
+            top: -3rem;
+            font-weight: 800;
+        }
+
+        .header h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 80px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .topic-nav {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .topic-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .topic-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .topic-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .exercise-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .exercise-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .exercise-header.grundwert {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .exercise-header.prozentwert {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .exercise-header.prozentsatz {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .exercise-header.gemischt {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+        }
+
+        .exercise-number {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .exercise-title {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .exercise-type {
+            margin-left: auto;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .exercise-body {
+            padding: 1.5rem;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .question-text strong {
+            color: var(--primary-dark);
+        }
+
+        .dreisatz-table {
+            width: 100%;
+            max-width: 400px;
+            margin: 1.5rem auto;
+            border-collapse: collapse;
+        }
+
+        .dreisatz-table th,
+        .dreisatz-table td {
+            border: 2px solid var(--border);
+            padding: 0.75rem 1rem;
+            text-align: center;
+        }
+
+        .dreisatz-table th {
+            background: var(--bg-main);
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .dreisatz-table .highlight-row {
+            background: #FFF9C4;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            min-width: 120px;
+        }
+
+        .answer-input {
+            width: 120px;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-family: 'Source Sans Pro', sans-serif;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+        }
+
+        .answer-input.correct {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+
+        .answer-input.incorrect {
+            border-color: var(--error);
+            background: var(--error-light);
+        }
+
+        .unit {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-check {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .btn-hint {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-hint:hover {
+            background: #F57C00;
+        }
+
+        .btn-solution {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        .btn-solution:hover {
+            background: #757575;
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: var(--primary-dark);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background: var(--success-light);
+            border-left: 4px solid var(--success);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: var(--error-light);
+            border-left: 4px solid var(--error);
+            display: block;
+        }
+
+        .feedback-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .hint-box {
+            background: #FFF8E1;
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+
+        .hint-box.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .solution-box {
+            background: #E3F2FD;
+            border-left: 4px solid var(--secondary);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+
+        .solution-box.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .solution-box h4 {
+            color: var(--secondary);
+            margin-bottom: 0.75rem;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Multiple Choice Styling */
+        .mc-options {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .mc-option {
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mc-option:hover {
+            border-color: var(--secondary);
+            background: #F5F5F5;
+        }
+
+        .mc-option.selected {
+            border-color: var(--secondary);
+            background: #E3F2FD;
+        }
+
+        .mc-option.correct-answer {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+
+        .mc-option.wrong-answer {
+            border-color: var(--error);
+            background: var(--error-light);
+        }
+
+        .mc-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .mc-option.selected .mc-letter {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Drag & Drop Styling */
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            min-height: 60px;
+            padding: 1rem;
+            background: var(--bg-main);
+            border-radius: 8px;
+            border: 2px dashed var(--border);
+        }
+
+        .drag-item {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            cursor: grab;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .drag-item:active {
+            cursor: grabbing;
+        }
+
+        .drop-zone {
+            min-width: 100px;
+            min-height: 40px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-main);
+            vertical-align: middle;
+        }
+
+        .drop-zone.filled {
+            border-style: solid;
+            border-color: var(--secondary);
+            background: #E3F2FD;
+        }
+
+        /* Fill in the Blank */
+        .blank-input {
+            width: 80px;
+            padding: 0.25rem 0.5rem;
+            border: none;
+            border-bottom: 2px solid var(--secondary);
+            background: transparent;
+            font-size: inherit;
+            font-family: inherit;
+            text-align: center;
+            margin: 0 0.25rem;
+        }
+
+        .blank-input:focus {
+            outline: none;
+            border-bottom-color: var(--primary);
+        }
+
+        /* Score Display */
+        .score-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .score-big {
+            font-family: 'Nunito', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Stars */
+        .stars {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+
+        .star {
+            color: rgba(255,255,255,0.3);
+            margin: 0 0.25rem;
+        }
+
+        .star.filled {
+            color: #FFD700;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #E8F5E9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-box h3 {
+            color: var(--primary-dark);
+            font-family: 'Nunito', sans-serif;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .info-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .formula-box {
+            background: #FFF3E0;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .topic-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .exercise-body {
+                padding: 1rem;
+            }
+            
+            .dreisatz-table {
+                font-size: 0.9rem;
+            }
+            
+            .answer-input {
+                width: 100px;
+            }
+        }
+
+        /* Hidden elements */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📊 Prozentrechnung</h1>
+        <p>Interaktive Übungen mit dem Dreisatz</p>
+    </header>
+
+    <div class="progress-bar">
+        <span style="font-weight: 600;">Fortschritt:</span>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="progress-text" id="progressText">0 / 12</span>
+    </div>
+
+    <div class="container">
+        <!-- Topic Navigation -->
+        <div class="topic-nav">
+            <button class="topic-btn active" data-topic="all">Alle Aufgaben</button>
+            <button class="topic-btn" data-topic="grundwert">Grundwert</button>
+            <button class="topic-btn" data-topic="prozentwert">Prozentwert</button>
+            <button class="topic-btn" data-topic="prozentsatz">Prozentsatz</button>
+            <button class="topic-btn" data-topic="gemischt">Gemischt</button>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <h3>💡 Merke dir:</h3>
+            <ul>
+                <li><strong>Grundwert (G)</strong> = 100% – das Ganze</li>
+                <li><strong>Prozentwert (W)</strong> = der Teil vom Ganzen</li>
+                <li><strong>Prozentsatz (p%)</strong> = der Anteil in Prozent</li>
+            </ul>
+            <div class="formula-box">
+                Der Dreisatz: Erst auf 1% rechnen, dann auf den gesuchten Wert!
+            </div>
+        </div>
+
+        <!-- Exercise 1: Grundwert berechnen (einfach) -->
+        <div class="exercise-card" data-topic="grundwert" data-exercise="1">
+            <div class="exercise-header grundwert">
+                <div class="exercise-number">1</div>
+                <div class="exercise-title">Grundwert berechnen</div>
+                <div class="exercise-type">Dreisatz</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    <strong>32 km</strong> sind <strong>4%</strong> einer Gesamtstrecke. 
+                    Wie lang ist die Gesamtstrecke?
+                </div>
+                
+                <table class="dreisatz-table">
+                    <tr>
+                        <th>Prozent</th>
+                        <th>Kilometer</th>
+                    </tr>
+                    <tr>
+                        <td>4%</td>
+                        <td>32 km</td>
+                    </tr>
+                    <tr>
+                        <td>1%</td>
+                        <td><input type="number" class="answer-input" id="ex1-step1" placeholder="?"> km</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>100%</td>
+                        <td><input type="number" class="answer-input" id="ex1-answer" placeholder="?"> km</td>
+                    </tr>
+                </table>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise1()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(1)">💡 Tipp</button>
+                    <button class="btn btn-solution" onclick="showSolution(1)">📖 Lösung</button>
+                </div>
+
+                <div class="hint-box" id="hint1">
+                    <strong>Tipp:</strong> Teile zuerst durch 4, um auf 1% zu kommen. Dann multipliziere mit 100, um auf 100% zu kommen.
+                </div>
+
+                <div class="solution-box" id="solution1">
+                    <h4>Lösung:</h4>
+                    <p><strong>Schritt 1:</strong> 32 km ÷ 4 = <strong>8 km</strong> (das ist 1%)</p>
+                    <p><strong>Schritt 2:</strong> 8 km × 100 = <strong>800 km</strong> (das ist 100%)</p>
+                    <p>Die Gesamtstrecke beträgt <strong>800 km</strong>.</p>
+                </div>
+
+                <div class="feedback" id="feedback1"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 2: Prozentwert berechnen (einfach) -->
+        <div class="exercise-card" data-topic="prozentwert" data-exercise="2">
+            <div class="exercise-header prozentwert">
+                <div class="exercise-number">2</div>
+                <div class="exercise-title">Prozentwert berechnen</div>
+                <div class="exercise-type">Dreisatz</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    Wie viel sind <strong>7%</strong> von <strong>600 m</strong>?
+                </div>
+                
+                <table class="dreisatz-table">
+                    <tr>
+                        <th>Prozent</th>
+                        <th>Meter</th>
+                    </tr>
+                    <tr>
+                        <td>100%</td>
+                        <td>600 m</td>
+                    </tr>
+                    <tr>
+                        <td>1%</td>
+                        <td><input type="number" class="answer-input" id="ex2-step1" placeholder="?"> m</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>7%</td>
+                        <td><input type="number" class="answer-input" id="ex2-answer" placeholder="?"> m</td>
+                    </tr>
+                </table>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise2()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(2)">💡 Tipp</button>
+                    <button class="btn btn-solution" onclick="showSolution(2)">📖 Lösung</button>
+                </div>
+
+                <div class="hint-box" id="hint2">
+                    <strong>Tipp:</strong> Teile zuerst durch 100, um auf 1% zu kommen. Dann multipliziere mit 7.
+                </div>
+
+                <div class="solution-box" id="solution2">
+                    <h4>Lösung:</h4>
+                    <p><strong>Schritt 1:</strong> 600 m ÷ 100 = <strong>6 m</strong> (das ist 1%)</p>
+                    <p><strong>Schritt 2:</strong> 6 m × 7 = <strong>42 m</strong> (das sind 7%)</p>
+                    <p>7% von 600 m sind <strong>42 m</strong>.</p>
+                </div>
+
+                <div class="feedback" id="feedback2"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 3: Prozentsatz berechnen -->
+        <div class="exercise-card" data-topic="prozentsatz" data-exercise="3">
+            <div class="exercise-header prozentsatz">
+                <div class="exercise-number">3</div>
+                <div class="exercise-title">Prozentsatz berechnen</div>
+                <div class="exercise-type">Dreisatz</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    Wie viel Prozent sind <strong>144 km</strong> von <strong>900 km</strong>?
+                </div>
+                
+                <table class="dreisatz-table">
+                    <tr>
+                        <th>Kilometer</th>
+                        <th>Prozent</th>
+                    </tr>
+                    <tr>
+                        <td>900 km</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" class="answer-input" id="ex3-step1" placeholder="?"> km</td>
+                        <td>1%</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>144 km</td>
+                        <td><input type="number" class="answer-input" id="ex3-answer" placeholder="?"> %</td>
+                    </tr>
+                </table>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise3()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(3)">💡 Tipp</button>
+                    <button class="btn btn-solution" onclick="showSolution(3)">📖 Lösung</button>
+                </div>
+
+                <div class="hint-box" id="hint3">
+                    <strong>Tipp:</strong> Teile 900 durch 100, um herauszufinden, wie viel km 1% sind. Dann teile 144 durch diesen Wert.
+                </div>
+
+                <div class="solution-box" id="solution3">
+                    <h4>Lösung:</h4>
+                    <p><strong>Schritt 1:</strong> 900 km ÷ 100 = <strong>9 km</strong> (das ist 1%)</p>
+                    <p><strong>Schritt 2:</strong> 144 km ÷ 9 km = <strong>16</strong></p>
+                    <p>144 km von 900 km sind <strong>16%</strong>.</p>
+                </div>
+
+                <div class="feedback" id="feedback3"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 4: Multiple Choice -->
+        <div class="exercise-card" data-topic="grundwert" data-exercise="4">
+            <div class="exercise-header grundwert">
+                <div class="exercise-number">4</div>
+                <div class="exercise-title">Grundwert bestimmen</div>
+                <div class="exercise-type">Multiple Choice</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    <strong>36 km</strong> sind <strong>9%</strong> einer Gesamtstrecke. 
+                    Wie lang ist die Gesamtstrecke?
+                </div>
+                
+                <div class="mc-options" id="mc4">
+                    <div class="mc-option" onclick="selectMC(4, 'A')">
+                        <div class="mc-letter">A</div>
+                        <span>324 km</span>
+                    </div>
+                    <div class="mc-option" onclick="selectMC(4, 'B')">
+                        <div class="mc-letter">B</div>
+                        <span>400 km</span>
+                    </div>
+                    <div class="mc-option" onclick="selectMC(4, 'C')">
+                        <div class="mc-letter">C</div>
+                        <span>360 km</span>
+                    </div>
+                    <div class="mc-option" onclick="selectMC(4, 'D')">
+                        <div class="mc-letter">D</div>
+                        <span>450 km</span>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkMC4()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(4)">💡 Tipp</button>
+                </div>
+
+                <div class="hint-box" id="hint4">
+                    <strong>Tipp:</strong> Rechne: 36 ÷ 9 = ? (das ist 1%), dann × 100
+                </div>
+
+                <div class="feedback" id="feedback4"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 5: Textaufgabe Prozentwert -->
+        <div class="exercise-card" data-topic="prozentwert" data-exercise="5">
+            <div class="exercise-header prozentwert">
+                <div class="exercise-number">5</div>
+                <div class="exercise-title">Textaufgabe: Prozentwert</div>
+                <div class="exercise-type">Anwendung</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    Von den <strong>450 Schülerinnen und Schülern</strong> einer Mittelschule sind <strong>54%</strong> Mitglied in einem Sportverein. 
+                    Wie viele Schülerinnen und Schüler treiben in einem Verein Sport?
+                </div>
+                
+                <div class="input-group">
+                    <label>Antwort:</label>
+                    <input type="number" class="answer-input" id="ex5-answer" placeholder="?">
+                    <span class="unit">Schüler</span>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise5()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(5)">💡 Tipp</button>
+                    <button class="btn btn-solution" onclick="showSolution(5)">📖 Lösung</button>
+                </div>
+
+                <div class="hint-box" id="hint5">
+                    <strong>Tipp:</strong> Berechne: 450 ÷ 100 × 54 = ?
+                </div>
+
+                <div class="solution-box" id="solution5">
+                    <h4>Lösung:</h4>
+                    <p>100% = 450 Schüler</p>
+                    <p>1% = 450 ÷ 100 = 4,5 Schüler</p>
+                    <p>54% = 4,5 × 54 = <strong>243 Schüler</strong></p>
+                </div>
+
+                <div class="feedback" id="feedback5"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 6: Textaufgabe Grundwert -->
+        <div class="exercise-card" data-topic="grundwert" data-exercise="6">
+            <div class="exercise-header grundwert">
+                <div class="exercise-number">6</div>
+                <div class="exercise-title">Textaufgabe: Grundwert</div>
+                <div class="exercise-type">Anwendung</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    In einem Neubaugebiet wird ein Fußweg angelegt. Es sind bereits <strong>156 m</strong> Fußweg fertiggestellt, das sind <strong>65%</strong> der Gesamtlänge. 
+                    Wie lange wird der Fußweg?
+                </div>
+                
+                <div class="input-group">
+                    <label>Antwort:</label>
+                    <input type="number" class="answer-input" id="ex6-answer" placeholder="?">
+                    <span class="unit">m</span>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise6()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(6)">💡 Tipp</button>
+                    <button class="btn btn-solution" onclick="showSolution(6)">📖 Lösung</button>
+                </div>
+
+                <div class="hint-box" id="hint6">
+                    <strong>Tipp:</strong> 156 m entsprechen 65%. Wie viel ist 1%? Wie viel ist 100%?
+                </div>
+
+                <div class="solution-box" id="solution6">
+                    <h4>Lösung:</h4>
+                    <p>65% = 156 m</p>
+                    <p>1% = 156 ÷ 65 = 2,4 m</p>
+                    <p>100% = 2,4 × 100 = <strong>240 m</strong></p>
+                </div>
+
+                <div class="feedback" id="feedback6"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 7: Prozentsatz Textaufgabe -->
+        <div class="exercise-card" data-topic="prozentsatz" data-exercise="7">
+            <div class="exercise-header prozentsatz">
+                <div class="exercise-number">7</div>
+                <div class="exercise-title">Textaufgabe: Prozentsatz</div>
+                <div class="exercise-type">Anwendung</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    In einem Kinosaal sind während einer Vorstellung <strong>150</strong> der <strong>200 Plätze</strong> belegt. 
+                    Wie viel Prozent der Plätze sind besetzt?
+                </div>
+                
+                <div class="input-group">
+                    <label>Antwort:</label>
+                    <input type="number" class="answer-input" id="ex7-answer" placeholder="?">
+                    <span class="unit">%</span>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise7()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(7)">💡 Tipp</button>
+                    <button class="btn btn-solution" onclick="showSolution(7)">📖 Lösung</button>
+                </div>
+
+                <div class="hint-box" id="hint7">
+                    <strong>Tipp:</strong> 200 Plätze = 100%. Wie viel Prozent ist 1 Platz? Wie viel sind 150 Plätze?
+                </div>
+
+                <div class="solution-box" id="solution7">
+                    <h4>Lösung:</h4>
+                    <p>200 Plätze = 100%</p>
+                    <p>1 Platz = 100% ÷ 200 = 0,5%</p>
+                    <p>150 Plätze = 0,5% × 150 = <strong>75%</strong></p>
+                </div>
+
+                <div class="feedback" id="feedback7"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 8: Schnellrechnen -->
+        <div class="exercise-card" data-topic="gemischt" data-exercise="8">
+            <div class="exercise-header gemischt">
+                <div class="exercise-number">8</div>
+                <div class="exercise-title">Schnellrechnen: Grundwert</div>
+                <div class="exercise-type">Übung</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    Berechne den Grundwert. Fülle die Lücken aus:
+                </div>
+                
+                <div style="margin: 1.5rem 0;">
+                    <p style="margin: 1rem 0;">a) 2% = 4 m → 100% = <input type="number" class="answer-input" id="ex8a" placeholder="?" style="width: 80px;"> m</p>
+                    <p style="margin: 1rem 0;">b) 5% = 20 m → 100% = <input type="number" class="answer-input" id="ex8b" placeholder="?" style="width: 80px;"> m</p>
+                    <p style="margin: 1rem 0;">c) 10% = 60 m → 100% = <input type="number" class="answer-input" id="ex8c" placeholder="?" style="width: 80px;"> m</p>
+                    <p style="margin: 1rem 0;">d) 25% = 100 m → 100% = <input type="number" class="answer-input" id="ex8d" placeholder="?" style="width: 80px;"> m</p>
+                    <p style="margin: 1rem 0;">e) 50% = 250 m → 100% = <input type="number" class="answer-input" id="ex8e" placeholder="?" style="width: 80px;"> m</p>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise8()">✓ Alle prüfen</button>
+                    <button class="btn btn-solution" onclick="showSolution(8)">📖 Lösungen</button>
+                </div>
+
+                <div class="solution-box" id="solution8">
+                    <h4>Lösungen:</h4>
+                    <p>a) 4 ÷ 2 × 100 = <strong>200 m</strong></p>
+                    <p>b) 20 ÷ 5 × 100 = <strong>400 m</strong></p>
+                    <p>c) 60 ÷ 10 × 100 = <strong>600 m</strong></p>
+                    <p>d) 100 ÷ 25 × 100 = <strong>400 m</strong></p>
+                    <p>e) 250 ÷ 50 × 100 = <strong>500 m</strong></p>
+                </div>
+
+                <div class="feedback" id="feedback8"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 9: Rabatt berechnen -->
+        <div class="exercise-card" data-topic="prozentwert" data-exercise="9">
+            <div class="exercise-header prozentwert">
+                <div class="exercise-number">9</div>
+                <div class="exercise-title">Rabatt berechnen</div>
+                <div class="exercise-type">Anwendung</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    Ein Pullover kostet vor dem Sommerschlussverkauf <strong>20€</strong>. 
+                    Nun wird der Pullover <strong>30% billiger</strong> angeboten.
+                </div>
+                
+                <div class="input-group">
+                    <label>Rabatt in €:</label>
+                    <input type="number" class="answer-input" id="ex9a" placeholder="?" step="0.01">
+                    <span class="unit">€</span>
+                </div>
+                
+                <div class="input-group">
+                    <label>Neuer Preis:</label>
+                    <input type="number" class="answer-input" id="ex9b" placeholder="?" step="0.01">
+                    <span class="unit">€</span>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise9()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(9)">💡 Tipp</button>
+                    <button class="btn btn-solution" onclick="showSolution(9)">📖 Lösung</button>
+                </div>
+
+                <div class="hint-box" id="hint9">
+                    <strong>Tipp:</strong> Berechne zuerst 30% von 20€. Das ist der Rabatt. Ziehe ihn dann vom Originalpreis ab.
+                </div>
+
+                <div class="solution-box" id="solution9">
+                    <h4>Lösung:</h4>
+                    <p>100% = 20€</p>
+                    <p>1% = 0,20€</p>
+                    <p>30% = 0,20€ × 30 = <strong>6€ Rabatt</strong></p>
+                    <p>Neuer Preis: 20€ - 6€ = <strong>14€</strong></p>
+                </div>
+
+                <div class="feedback" id="feedback9"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 10: Umwandlung Dezimalzahl zu Prozent -->
+        <div class="exercise-card" data-topic="gemischt" data-exercise="10">
+            <div class="exercise-header gemischt">
+                <div class="exercise-number">10</div>
+                <div class="exercise-title">Dezimalzahlen in Prozent</div>
+                <div class="exercise-type">Umwandlung</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    Wandle die Dezimalzahlen in Prozent um:
+                </div>
+                
+                <div style="margin: 1.5rem 0;">
+                    <p style="margin: 1rem 0;">a) 0,25 = <input type="number" class="answer-input" id="ex10a" placeholder="?" style="width: 80px;"> %</p>
+                    <p style="margin: 1rem 0;">b) 0,5 = <input type="number" class="answer-input" id="ex10b" placeholder="?" style="width: 80px;"> %</p>
+                    <p style="margin: 1rem 0;">c) 0,75 = <input type="number" class="answer-input" id="ex10c" placeholder="?" style="width: 80px;"> %</p>
+                    <p style="margin: 1rem 0;">d) 0,1 = <input type="number" class="answer-input" id="ex10d" placeholder="?" style="width: 80px;"> %</p>
+                    <p style="margin: 1rem 0;">e) 0,33 = <input type="number" class="answer-input" id="ex10e" placeholder="?" style="width: 80px;"> %</p>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise10()">✓ Alle prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(10)">💡 Tipp</button>
+                </div>
+
+                <div class="hint-box" id="hint10">
+                    <strong>Tipp:</strong> Um eine Dezimalzahl in Prozent umzuwandeln, multipliziere mit 100!
+                </div>
+
+                <div class="feedback" id="feedback10"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 11: Brüche in Prozent -->
+        <div class="exercise-card" data-topic="gemischt" data-exercise="11">
+            <div class="exercise-header gemischt">
+                <div class="exercise-number">11</div>
+                <div class="exercise-title">Brüche in Prozent</div>
+                <div class="exercise-type">Umwandlung</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    Wandle die Brüche in Prozent um (erweitere auf Nenner 100):
+                </div>
+                
+                <div style="margin: 1.5rem 0;">
+                    <p style="margin: 1rem 0;">a) <sup>1</sup>/<sub>4</sub> = <input type="number" class="answer-input" id="ex11a" placeholder="?" style="width: 80px;"> %</p>
+                    <p style="margin: 1rem 0;">b) <sup>3</sup>/<sub>4</sub> = <input type="number" class="answer-input" id="ex11b" placeholder="?" style="width: 80px;"> %</p>
+                    <p style="margin: 1rem 0;">c) <sup>1</sup>/<sub>2</sub> = <input type="number" class="answer-input" id="ex11c" placeholder="?" style="width: 80px;"> %</p>
+                    <p style="margin: 1rem 0;">d) <sup>1</sup>/<sub>5</sub> = <input type="number" class="answer-input" id="ex11d" placeholder="?" style="width: 80px;"> %</p>
+                    <p style="margin: 1rem 0;">e) <sup>9</sup>/<sub>10</sub> = <input type="number" class="answer-input" id="ex11e" placeholder="?" style="width: 80px;"> %</p>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise11()">✓ Alle prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(11)">💡 Tipp</button>
+                </div>
+
+                <div class="hint-box" id="hint11">
+                    <strong>Tipp:</strong> Erweitere den Bruch so, dass der Nenner 100 wird. Der Zähler ist dann der Prozentsatz!<br>
+                    Beispiel: <sup>1</sup>/<sub>4</sub> = <sup>25</sup>/<sub>100</sub> = 25%
+                </div>
+
+                <div class="feedback" id="feedback11"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 12: Gemischte Aufgabe -->
+        <div class="exercise-card" data-topic="gemischt" data-exercise="12">
+            <div class="exercise-header gemischt">
+                <div class="exercise-number">12</div>
+                <div class="exercise-title">Gemischte Aufgabe</div>
+                <div class="exercise-type">Textaufgabe</div>
+            </div>
+            <div class="exercise-body">
+                <div class="question-text">
+                    Ein Geschäftsmann konnte seine Einnahmen um <strong>6120€</strong> steigern. 
+                    Vorher betrugen die Einnahmen <strong>72000€</strong>. 
+                    Um wie viel Prozent sind die Einnahmen gestiegen?
+                </div>
+                
+                <div class="input-group">
+                    <label>Steigerung:</label>
+                    <input type="number" class="answer-input" id="ex12-answer" placeholder="?" step="0.1">
+                    <span class="unit">%</span>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-check" onclick="checkExercise12()">✓ Prüfen</button>
+                    <button class="btn btn-hint" onclick="showHint(12)">💡 Tipp</button>
+                    <button class="btn btn-solution" onclick="showSolution(12)">📖 Lösung</button>
+                </div>
+
+                <div class="hint-box" id="hint12">
+                    <strong>Tipp:</strong> Die alten Einnahmen (72000€) sind der Grundwert = 100%. Berechne, wie viel Prozent 6120€ davon sind.
+                </div>
+
+                <div class="solution-box" id="solution12">
+                    <h4>Lösung:</h4>
+                    <p>72000€ = 100%</p>
+                    <p>1% = 720€</p>
+                    <p>6120€ ÷ 720€ = <strong>8,5%</strong></p>
+                    <p>Die Einnahmen sind um <strong>8,5%</strong> gestiegen.</p>
+                </div>
+
+                <div class="feedback" id="feedback12"></div>
+            </div>
+        </div>
+
+        <!-- Score Card -->
+        <div class="score-card" id="scoreCard" style="display: none;">
+            <h2 style="margin-bottom: 1rem; font-family: 'Nunito', sans-serif;">🎉 Geschafft!</h2>
+            <div class="stars" id="stars">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+            <div class="score-big" id="scoreBig">0%</div>
+            <div class="score-label">richtig beantwortet</div>
+            <p style="margin-top: 1rem;" id="scoreMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let completed = {};
+        let correct = {};
+        let mcSelections = {};
+        const totalExercises = 12;
+
+        // Topic filtering
+        document.querySelectorAll('.topic-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const topic = btn.dataset.topic;
+                document.querySelectorAll('.exercise-card').forEach(card => {
+                    if (topic === 'all' || card.dataset.topic === topic) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Update progress
+        function updateProgress() {
+            const completedCount = Object.keys(completed).length;
+            const correctCount = Object.values(correct).filter(v => v).length;
+            
+            document.getElementById('progressFill').style.width = (completedCount / totalExercises * 100) + '%';
+            document.getElementById('progressText').textContent = `${correctCount} / ${totalExercises}`;
+
+            if (completedCount === totalExercises) {
+                showFinalScore();
+            }
+        }
+
+        function showFinalScore() {
+            const correctCount = Object.values(correct).filter(v => v).length;
+            const percentage = Math.round(correctCount / totalExercises * 100);
+            
+            const scoreCard = document.getElementById('scoreCard');
+            scoreCard.style.display = 'block';
+            
+            document.getElementById('scoreBig').textContent = percentage + '%';
+            
+            // Stars
+            const stars = document.querySelectorAll('#stars .star');
+            if (percentage >= 30) stars[0].classList.add('filled');
+            if (percentage >= 60) stars[1].classList.add('filled');
+            if (percentage >= 90) stars[2].classList.add('filled');
+            
+            // Message
+            let message = '';
+            if (percentage >= 90) message = 'Hervorragend! Du bist ein Prozent-Profi! 🏆';
+            else if (percentage >= 70) message = 'Gut gemacht! Weiter so! 👍';
+            else if (percentage >= 50) message = 'Nicht schlecht! Übe noch ein bisschen weiter. 💪';
+            else message = 'Noch etwas Übung nötig. Du schaffst das! 🌟';
+            
+            document.getElementById('scoreMessage').textContent = message;
+            
+            scoreCard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Show hint
+        function showHint(num) {
+            const hint = document.getElementById('hint' + num);
+            hint.classList.toggle('show');
+        }
+
+        // Show solution
+        function showSolution(num) {
+            const solution = document.getElementById('solution' + num);
+            solution.classList.toggle('show');
+        }
+
+        // Mark input
+        function markInput(inputId, isCorrect) {
+            const input = document.getElementById(inputId);
+            input.classList.remove('correct', 'incorrect');
+            input.classList.add(isCorrect ? 'correct' : 'incorrect');
+        }
+
+        // Show feedback
+        function showFeedback(num, isCorrect, message) {
+            const feedback = document.getElementById('feedback' + num);
+            feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `<span class="feedback-icon">${isCorrect ? '✓' : '✗'}</span> ${message}`;
+            
+            completed[num] = true;
+            correct[num] = isCorrect;
+            updateProgress();
+        }
+
+        // Exercise 1: Grundwert
+        function checkExercise1() {
+            const step1 = parseFloat(document.getElementById('ex1-step1').value);
+            const answer = parseFloat(document.getElementById('ex1-answer').value);
+            
+            const step1Correct = step1 === 8;
+            const answerCorrect = answer === 800;
+            
+            markInput('ex1-step1', step1Correct);
+            markInput('ex1-answer', answerCorrect);
+            
+            if (step1Correct && answerCorrect) {
+                showFeedback(1, true, 'Perfekt! Die Gesamtstrecke beträgt 800 km.');
+            } else {
+                showFeedback(1, false, 'Noch nicht ganz richtig. Schau dir den Tipp an!');
+            }
+        }
+
+        // Exercise 2: Prozentwert
+        function checkExercise2() {
+            const step1 = parseFloat(document.getElementById('ex2-step1').value);
+            const answer = parseFloat(document.getElementById('ex2-answer').value);
+            
+            const step1Correct = step1 === 6;
+            const answerCorrect = answer === 42;
+            
+            markInput('ex2-step1', step1Correct);
+            markInput('ex2-answer', answerCorrect);
+            
+            if (step1Correct && answerCorrect) {
+                showFeedback(2, true, 'Super! 7% von 600 m sind 42 m.');
+            } else {
+                showFeedback(2, false, 'Noch nicht ganz richtig. Versuche es nochmal!');
+            }
+        }
+
+        // Exercise 3: Prozentsatz
+        function checkExercise3() {
+            const step1 = parseFloat(document.getElementById('ex3-step1').value);
+            const answer = parseFloat(document.getElementById('ex3-answer').value);
+            
+            const step1Correct = step1 === 9;
+            const answerCorrect = answer === 16;
+            
+            markInput('ex3-step1', step1Correct);
+            markInput('ex3-answer', answerCorrect);
+            
+            if (step1Correct && answerCorrect) {
+                showFeedback(3, true, 'Richtig! 144 km von 900 km sind 16%.');
+            } else {
+                showFeedback(3, false, 'Noch nicht korrekt. Schau dir die Lösung an!');
+            }
+        }
+
+        // Multiple Choice
+        function selectMC(num, letter) {
+            const container = document.getElementById('mc' + num);
+            container.querySelectorAll('.mc-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            mcSelections[num] = letter;
+        }
+
+        function checkMC4() {
+            const selected = mcSelections[4];
+            const container = document.getElementById('mc4');
+            const options = container.querySelectorAll('.mc-option');
+            
+            options.forEach((opt, i) => {
+                const letter = ['A', 'B', 'C', 'D'][i];
+                opt.classList.remove('correct-answer', 'wrong-answer');
+                
+                if (letter === 'B') {
+                    opt.classList.add('correct-answer');
+                } else if (letter === selected && selected !== 'B') {
+                    opt.classList.add('wrong-answer');
+                }
+            });
+            
+            if (selected === 'B') {
+                showFeedback(4, true, 'Richtig! 36 ÷ 9 = 4 (1%), 4 × 100 = 400 km');
+            } else {
+                showFeedback(4, false, 'Leider falsch. Die richtige Antwort ist B: 400 km');
+            }
+        }
+
+        // Exercise 5: Textaufgabe Prozentwert
+        function checkExercise5() {
+            const answer = parseFloat(document.getElementById('ex5-answer').value);
+            const isCorrect = answer === 243;
+            
+            markInput('ex5-answer', isCorrect);
+            
+            if (isCorrect) {
+                showFeedback(5, true, 'Richtig! 243 Schüler sind im Sportverein.');
+            } else {
+                showFeedback(5, false, 'Leider falsch. Berechne: 450 ÷ 100 × 54 = 243');
+            }
+        }
+
+        // Exercise 6: Grundwert Textaufgabe
+        function checkExercise6() {
+            const answer = parseFloat(document.getElementById('ex6-answer').value);
+            const isCorrect = answer === 240;
+            
+            markInput('ex6-answer', isCorrect);
+            
+            if (isCorrect) {
+                showFeedback(6, true, 'Perfekt! Der Fußweg wird 240 m lang.');
+            } else {
+                showFeedback(6, false, 'Noch nicht richtig. 156 ÷ 65 × 100 = 240 m');
+            }
+        }
+
+        // Exercise 7: Prozentsatz Textaufgabe
+        function checkExercise7() {
+            const answer = parseFloat(document.getElementById('ex7-answer').value);
+            const isCorrect = answer === 75;
+            
+            markInput('ex7-answer', isCorrect);
+            
+            if (isCorrect) {
+                showFeedback(7, true, 'Super! 75% der Plätze sind besetzt.');
+            } else {
+                showFeedback(7, false, 'Leider falsch. 150 ÷ 200 × 100 = 75%');
+            }
+        }
+
+        // Exercise 8: Schnellrechnen
+        function checkExercise8() {
+            const answers = {
+                'ex8a': 200,
+                'ex8b': 400,
+                'ex8c': 600,
+                'ex8d': 400,
+                'ex8e': 500
+            };
+            
+            let allCorrect = true;
+            for (const [id, correctValue] of Object.entries(answers)) {
+                const userValue = parseFloat(document.getElementById(id).value);
+                const isCorrect = userValue === correctValue;
+                markInput(id, isCorrect);
+                if (!isCorrect) allCorrect = false;
+            }
+            
+            if (allCorrect) {
+                showFeedback(8, true, 'Alle richtig! Toll gemacht!');
+            } else {
+                showFeedback(8, false, 'Einige Antworten sind noch falsch. Schau dir die Lösungen an!');
+            }
+        }
+
+        // Exercise 9: Rabatt
+        function checkExercise9() {
+            const rabatt = parseFloat(document.getElementById('ex9a').value);
+            const neuerPreis = parseFloat(document.getElementById('ex9b').value);
+            
+            const rabattCorrect = rabatt === 6;
+            const preisCorrect = neuerPreis === 14;
+            
+            markInput('ex9a', rabattCorrect);
+            markInput('ex9b', preisCorrect);
+            
+            if (rabattCorrect && preisCorrect) {
+                showFeedback(9, true, 'Perfekt! 6€ Rabatt, neuer Preis 14€.');
+            } else {
+                showFeedback(9, false, 'Noch nicht ganz richtig. Der Rabatt ist 6€ und der neue Preis 14€.');
+            }
+        }
+
+        // Exercise 10: Dezimalzahlen
+        function checkExercise10() {
+            const answers = {
+                'ex10a': 25,
+                'ex10b': 50,
+                'ex10c': 75,
+                'ex10d': 10,
+                'ex10e': 33
+            };
+            
+            let allCorrect = true;
+            for (const [id, correctValue] of Object.entries(answers)) {
+                const userValue = parseFloat(document.getElementById(id).value);
+                const isCorrect = userValue === correctValue;
+                markInput(id, isCorrect);
+                if (!isCorrect) allCorrect = false;
+            }
+            
+            if (allCorrect) {
+                showFeedback(10, true, 'Alle richtig! Dezimalzahl × 100 = Prozent');
+            } else {
+                showFeedback(10, false, 'Einige Umwandlungen sind noch falsch.');
+            }
+        }
+
+        // Exercise 11: Brüche
+        function checkExercise11() {
+            const answers = {
+                'ex11a': 25,
+                'ex11b': 75,
+                'ex11c': 50,
+                'ex11d': 20,
+                'ex11e': 90
+            };
+            
+            let allCorrect = true;
+            for (const [id, correctValue] of Object.entries(answers)) {
+                const userValue = parseFloat(document.getElementById(id).value);
+                const isCorrect = userValue === correctValue;
+                markInput(id, isCorrect);
+                if (!isCorrect) allCorrect = false;
+            }
+            
+            if (allCorrect) {
+                showFeedback(11, true, 'Super! Du kannst Brüche in Prozent umwandeln!');
+            } else {
+                showFeedback(11, false, 'Einige Umwandlungen sind noch nicht korrekt.');
+            }
+        }
+
+        // Exercise 12: Gemischte Aufgabe
+        function checkExercise12() {
+            const answer = parseFloat(document.getElementById('ex12-answer').value);
+            const isCorrect = answer === 8.5;
+            
+            markInput('ex12-answer', isCorrect);
+            
+            if (isCorrect) {
+                showFeedback(12, true, 'Richtig! Die Einnahmen sind um 8,5% gestiegen.');
+            } else {
+                showFeedback(12, false, 'Noch nicht richtig. 6120 ÷ 720 = 8,5%');
+            }
+        }
+
+        // Enter key support
+        document.querySelectorAll('.answer-input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const card = input.closest('.exercise-card');
+                    const btn = card.querySelector('.btn-check');
+                    if (btn) btn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

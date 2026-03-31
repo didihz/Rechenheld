@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prozent- & Zinsrechnung – 9.5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600&display=swap');
+
+:root{
+  --bg:#fdf4ff;--card:#fff;
+  --pri:#9333ea;--pri-l:#f3e8ff;--pri-d:#7e22ce;--pri-m:#c084fc;
+  --teal:#0d9488;--teal-l:#ccfbf1;
+  --green:#16a34a;--green-l:#dcfce7;
+  --amber:#d97706;--amber-l:#fef3c7;
+  --red:#dc2626;--red-l:#fee2e2;
+  --blue:#2563eb;--blue-l:#dbeafe;
+  --pink:#db2777;--pink-l:#fce7f3;
+  --text:#3b0764;--muted:#6b7280;
+  --border:#e9d5ff;--border2:#e5e7eb;
+  --r:13px;--rs:9px;--sh:0 2px 16px rgba(147,51,234,.09)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.hdr{background:linear-gradient(135deg,#581c87 0%,#9333ea 55%,#c084fc 100%);color:#fff;padding:26px 18px 20px;text-align:center;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:-50px;right:-40px;width:200px;height:200px;background:rgba(255,255,255,.05);border-radius:50%}
+.hdr::after{content:'';position:absolute;bottom:-60px;left:-30px;width:160px;height:160px;background:rgba(255,255,255,.04);border-radius:50%}
+.hdr-icon{font-size:2.4rem;display:block;margin-bottom:6px;position:relative;z-index:1}
+.hdr h1{font-family:'Nunito',sans-serif;font-size:1.7rem;font-weight:900;letter-spacing:-.5px;position:relative;z-index:1}
+.hdr p{font-size:.87rem;opacity:.82;margin-top:5px;position:relative;z-index:1}
+
+.nav{display:flex;gap:3px;padding:13px 13px 0;overflow-x:auto;background:var(--bg);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:8px 14px;border:none;border-radius:var(--rs) var(--rs) 0 0;background:#e9d5ff;color:#581c87;font-family:'Nunito',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .18s;white-space:nowrap}
+.tab:hover{background:#d8b4fe}
+.tab.active{background:var(--card);color:var(--pri);box-shadow:0 -2px 0 var(--pri) inset}
+
+.cnt{padding:0 13px 34px;max-width:820px;margin:0 auto}
+.sec{display:none;animation:up .22s ease}
+.sec.active{display:block}
+@keyframes up{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border-radius:var(--r);padding:19px;margin-top:13px;box-shadow:var(--sh);border:1px solid var(--border)}
+.card h2{font-family:'Nunito',sans-serif;font-size:1.06rem;font-weight:800;color:var(--pri);margin-bottom:11px;display:flex;align-items:center;gap:7px}
+
+.fbox{background:linear-gradient(135deg,#fdf4ff,#f3e8ff);border:2px solid #d8b4fe;border-radius:var(--r);padding:13px;text-align:center;margin:10px 0}
+.fbig{font-family:'Nunito',sans-serif;font-size:1.25rem;font-weight:900;color:var(--pri-d);letter-spacing:.5px}
+.fsub{font-size:.82rem;color:var(--muted);margin-top:4px}
+
+.steps{display:flex;flex-direction:column;gap:8px;margin-top:9px}
+.step{display:flex;gap:10px;align-items:flex-start;padding:10px;background:#fdf4ff;border-radius:var(--rs);border-left:3px solid var(--pri);font-size:.88rem;line-height:1.55}
+.sn{background:var(--pri);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.76rem;min-width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+.btn{padding:8px 17px;border:none;border-radius:var(--rs);font-family:'Nunito',sans-serif;font-weight:700;font-size:.86rem;cursor:pointer;transition:all .16s}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--pri);color:#fff}.btn-p:hover{background:var(--pri-d)}
+.btn-g{background:var(--green);color:#fff}.btn-g:hover{background:#15803d}
+.btn-o{background:transparent;border:2px solid var(--pri);color:var(--pri)}.btn-o:hover{background:var(--pri-l)}
+.btn-sm{padding:5px 12px;font-size:.78rem}
+
+.inp{border:2px solid var(--border2);border-radius:var(--rs);padding:8px 12px;font-size:.93rem;font-family:'Nunito Sans',sans-serif;transition:border-color .18s;background:#fff;color:var(--text)}
+.inp:focus{outline:none;border-color:var(--pri)}
+.inp.ok{border-color:var(--green);background:var(--green-l)}
+.inp.err{border-color:var(--red);background:var(--red-l)}
+
+.fb{padding:10px 13px;border-radius:var(--rs);font-size:.86rem;font-weight:700;margin-top:8px;display:none;animation:up .2s ease}
+.fb.show{display:block}
+.fb.ok{background:var(--green-l);color:var(--green);border:1px solid #86efac}
+.fb.err{background:var(--red-l);color:var(--red);border:1px solid #fca5a5}
+.fb.info{background:var(--blue-l);color:#1e40af;border:1px solid #93c5fd}
+
+.qopts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.qopt{padding:10px 14px;border:2px solid var(--border2);border-radius:var(--rs);cursor:pointer;font-size:.88rem;background:#fff;transition:all .14s;text-align:left;font-family:'Nunito Sans',sans-serif}
+.qopt:hover{border-color:var(--pri);background:var(--pri-l)}
+.qopt.ok{border-color:var(--green);background:var(--green-l);color:var(--green);font-weight:700}
+.qopt.err{border-color:var(--red);background:var(--red-l);color:var(--red)}
+
+.cl{display:inline-block;border:none;border-bottom:2px solid var(--pri);background:transparent;font-size:.93rem;font-family:'Nunito Sans',sans-serif;text-align:center;color:var(--pri-d);font-weight:700;padding:1px 3px;outline:none}
+.cl.ok{border-color:var(--green);color:var(--green)}
+.cl.err{border-color:var(--red);color:var(--red)}
+
+.prog-o{height:7px;background:var(--border2);border-radius:8px;overflow:hidden;margin:6px 0}
+.prog-i{height:100%;background:var(--pri);border-radius:8px;transition:width .4s ease}
+
+.dtabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.dtab{padding:5px 13px;border:2px solid var(--border2);border-radius:20px;font-size:.77rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;background:#fff;color:var(--muted);transition:all .14s}
+.dtab.ae{border-color:var(--green);background:var(--green-l);color:var(--green)}
+.dtab.am{border-color:var(--amber);background:var(--amber-l);color:var(--amber)}
+.dtab.ah{border-color:var(--red);background:var(--red-l);color:var(--red)}
+
+.mi{padding:9px 12px;border:2px solid var(--border2);border-radius:var(--rs);font-size:.83rem;cursor:pointer;background:#fff;transition:all .14s;text-align:center;line-height:1.4}
+.mi:hover{border-color:var(--pri)}
+.mi.sel{border-color:var(--pri);background:var(--pri-l)}
+.mi.done{border-color:var(--green);background:var(--green-l);color:#14532d;font-weight:700;cursor:default}
+.mi.bad{border-color:var(--red);background:var(--red-l);animation:shk .3s}
+@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+.blitz-d{font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--pri-d);background:var(--pri-l);border-radius:var(--r);padding:16px;margin:10px 0;text-align:center;min-height:64px;display:flex;align-items:center;justify-content:center;line-height:1.45}
+.blitz-os{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.blitz-o{padding:11px 7px;border:2px solid var(--border2);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;background:#fff;transition:all .14s;text-align:center}
+.blitz-o:hover{border-color:var(--pri);background:var(--pri-l)}
+.blitz-o.ok{border-color:var(--green);background:var(--green-l);color:var(--green)}
+.blitz-o.err{border-color:var(--red);background:var(--red-l);color:var(--red)}
+
+.sc-row{display:flex;gap:9px;align-items:center;justify-content:center;flex-wrap:wrap;margin:9px 0}
+.sc-box{background:var(--pri-l);color:var(--pri-d);border-radius:var(--rs);padding:6px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.97rem}
+
+.hint-btn{background:none;border:1px dashed var(--muted);border-radius:var(--rs);color:var(--muted);padding:4px 10px;font-size:.76rem;cursor:pointer;font-family:'Nunito Sans',sans-serif;margin-top:6px}
+.hint-box{display:none;font-size:.83rem;color:#92400e;margin-top:6px;padding:9px;background:var(--amber-l);border-radius:var(--rs);border-left:3px solid var(--amber);line-height:1.55}
+.hint-box.show{display:block}
+.irow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+
+/* Prozentbalken (visual) */
+.pbar-outer{height:26px;background:#e9d5ff;border-radius:8px;overflow:hidden;margin:8px 0;position:relative}
+.pbar-inner{height:100%;background:var(--pri);border-radius:8px;transition:width .5s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+.pbar-lbl{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:var(--pri-d);font-family:'Nunito',sans-serif}
+
+/* Dreisatz table */
+.ds-tbl{width:100%;border-collapse:collapse;font-size:.88rem;margin:8px 0}
+.ds-tbl th{background:var(--pri-l);color:var(--pri-d);padding:8px 12px;font-family:'Nunito',sans-serif;font-weight:700;border:1px solid var(--border);text-align:center}
+.ds-tbl td{padding:8px 12px;border:1px solid var(--border2);text-align:center;background:#fff}
+.ds-tbl input{width:90px;padding:4px 6px;border:1.5px solid var(--border2);border-radius:6px;font-size:.82rem;text-align:center}
+.ds-tbl input:focus{outline:none;border-color:var(--pri)}
+.ds-tbl input.ok{border-color:var(--green);background:var(--green-l)}
+.ds-tbl input.err{border-color:var(--red);background:var(--red-l)}
+
+/* Pill badges */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:.78rem;font-family:'Nunito',sans-serif;font-weight:700}
+.pill-p{background:var(--pri-l);color:var(--pri-d)}
+.pill-g{background:var(--green-l);color:#14532d}
+.pill-b{background:var(--blue-l);color:#1e40af}
+.pill-a{background:var(--amber-l);color:#92400e}
+
+/* Calc output */
+.cbox{background:#1e1b4b;color:#a5b4fc;border-radius:var(--rs);padding:12px 15px;font-family:monospace;font-size:.83rem;line-height:1.9;margin:9px 0;min-height:72px}
+.ch{color:#c4b5fd;font-weight:bold}
+.cr{color:#34d399;font-size:.95rem;font-weight:bold}
+
+@media(max-width:500px){.blitz-os{grid-template-columns:1fr}.hdr h1{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span class="hdr-icon">💰</span>
+  <h1>Prozent- &amp; Zinsrechnung</h1>
+  <p>Lernen · Üben · Verstehen</p>
+</div>
+
+<div class="nav">
+  <button class="tab active" onclick="showSec('lernen',this)">📖 Lernen</button>
+  <button class="tab" onclick="showSec('begriffe',this)">🔤 Begriffe</button>
+  <button class="tab" onclick="showSec('rechner',this)">🔢 Rechner</button>
+  <button class="tab" onclick="showSec('dreisatz',this)">📐 Dreisatz</button>
+  <button class="tab" onclick="showSec('zinsen',this)">🏦 Zinsen</button>
+  <button class="tab" onclick="showSec('luecke',this)">✏️ Lückentext</button>
+  <button class="tab" onclick="showSec('quiz',this)">❓ Quiz</button>
+  <button class="tab" onclick="showSec('zuordnen',this)">🔗 Zuordnen</button>
+  <button class="tab" onclick="showSec('blitz',this)">⚡ Blitz</button>
+  <button class="tab" onclick="showSec('aufgaben',this)">🌍 Aufgaben</button>
+  <button class="tab" onclick="showSec('generator',this)">🎲 Neu</button>
+</div>
+
+<div class="cnt">
+
+<!-- ══════ LERNEN ══════ -->
+<div id="sec-lernen" class="sec active">
+
+  <div class="card">
+    <h2>💡 Die drei Grundformeln</h2>
+    <p style="font-size:.88rem;line-height:1.65;margin-bottom:10px;">
+      Prozentrechnung dreht sich immer um drei Größen: <strong>Grundwert G</strong>, <strong>Prozentwert W</strong> und <strong>Prozentsatz p%</strong>.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:9px;">
+      <div class="fbox">
+        <div class="fbig">W = G · p ÷ 100</div>
+        <div class="fsub">Prozentwert berechnen · „Wie viel sind x% von G?"</div>
+      </div>
+      <div class="fbox" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac;">
+        <div class="fbig" style="color:#14532d;">G = W · 100 ÷ p</div>
+        <div class="fsub">Grundwert berechnen · „100% entsprechen …"</div>
+      </div>
+      <div class="fbox" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#93c5fd;">
+        <div class="fbig" style="color:#1e40af;">p = W · 100 ÷ G</div>
+        <div class="fsub">Prozentsatz berechnen · „Wie viel Prozent sind W von G?"</div>
+      </div>
+    </div>
+
+    <!-- Interactive percent bar -->
+    <div style="margin-top:14px;">
+      <label style="font-size:.8rem;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">Prozentsatz p = <span id="pct-lbl">30</span>%</label>
+      <input type="range" id="pct-sl" min="0" max="100" value="30" style="width:100%" oninput="updatePctBar()">
+      <div class="pbar-outer" style="margin-top:6px;">
+        <div class="pbar-inner" id="pbar-i" style="width:30%"></div>
+        <div class="pbar-lbl" id="pbar-lbl">30% von 200€ = 60€</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);">
+        <span>0%</span><span style="font-size:.78rem;font-weight:600;color:var(--pri-d);" id="pbar-sub">G = 200€</span><span>100%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Verminderter & Vermehrter Grundwert</h2>
+    <p style="font-size:.88rem;line-height:1.65;margin-bottom:10px;">
+      Das sind zwei besondere Situationen in der Prozentrechnung.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="padding:11px;background:#dcfce7;border-radius:9px;border-left:3px solid var(--green);font-size:.86rem;">
+        <strong style="color:#14532d;">⬆️ Vermehrter Grundwert</strong><br>
+        <span style="color:var(--muted)">Preis + Aufschlag (z.B. + 19% MwSt.)<br>Neuer Preis = G · (1 + p/100)</span>
+      </div>
+      <div style="padding:11px;background:var(--red-l);border-radius:9px;border-left:3px solid var(--red);font-size:.86rem;">
+        <strong style="color:#991b1b;">⬇️ Verminderter Grundwert</strong><br>
+        <span style="color:var(--muted)">Preis − Rabatt (z.B. − 15% Rabatt)<br>Neuer Preis = G · (1 − p/100)</span>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:10px;background:#fdf4ff;border-radius:8px;font-size:.85rem;border-left:3px solid var(--pri);">
+      <strong>Beispiel MwSt. (19%):</strong> Netto 915€ → Steuer = 915 · 19/100 = 173,85€ → Brutto = 915 + 173,85 = <strong>1088,85€</strong><br>
+      <em>Kurzweg: Brutto = 915 · 1,19 = 1088,85€</em>
+    </div>
+    <div style="margin-top:7px;padding:10px;background:#fce7f3;border-radius:8px;font-size:.85rem;border-left:3px solid var(--pink);">
+      <strong>Beispiel Rabatt (15%):</strong> Preis 590€ → Rabatt = 590 · 15/100 = 88,50€ → Neu = 590 − 88,50 = <strong>501,50€</strong><br>
+      <em>Kurzweg: Neu = 590 · 0,85 = 501,50€</em>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📐 Dreisatz – Schritt für Schritt</h2>
+    <div class="dtabs" id="ex-tabs">
+      <button class="dtab ae" onclick="showEx('prozen',this)">Prozentwert</button>
+      <button class="dtab" onclick="showEx('grund',this)">Grundwert</button>
+      <button class="dtab" onclick="showEx('psatz',this)">Prozentsatz</button>
+    </div>
+    <div id="ex-prozen">
+      <p style="font-size:.88rem;margin-bottom:8px;"><strong>29% Lohnsteuer von 3870€</strong></p>
+      <div class="steps">
+        <div class="step"><span class="sn">1</span><div>Aufstellen: <br>100% → 3870€ <br>29% → ?€</div></div>
+        <div class="step"><span class="sn">2</span><div>Dreisatz: <strong>3870 · 29 ÷ 100 = 1122,30€</strong></div></div>
+        <div class="step"><span class="sn">3</span><div>Antwortsatz: Die Lohnsteuer beträgt <strong>1122,30€</strong>.</div></div>
+      </div>
+    </div>
+    <div id="ex-grund" style="display:none">
+      <p style="font-size:.88rem;margin-bottom:8px;"><strong>65% entsprechen 376 Schüler → G = ?</strong></p>
+      <div class="steps">
+        <div class="step"><span class="sn">1</span><div>Aufstellen:<br>65% → 376<br>100% → ?</div></div>
+        <div class="step"><span class="sn">2</span><div>Dreisatz: <strong>376 · 100 ÷ 65 ≈ 578,46 ≈ 579 Schüler</strong></div></div>
+        <div class="step"><span class="sn">3</span><div>Antwortsatz: Die Schule hat insgesamt ca. <strong>579 Schüler</strong>.</div></div>
+      </div>
+    </div>
+    <div id="ex-psatz" style="display:none">
+      <p style="font-size:.88rem;margin-bottom:8px;"><strong>15 Mädchen von 27 Schülern → p = ?</strong></p>
+      <div class="steps">
+        <div class="step"><span class="sn">1</span><div>Aufstellen:<br>27 → 100%<br>15 → ?%</div></div>
+        <div class="step"><span class="sn">2</span><div>Dreisatz: <strong>15 · 100 ÷ 27 ≈ 55,56%</strong></div></div>
+        <div class="step"><span class="sn">3</span><div>Antwortsatz: Ca. <strong>55,56%</strong> der Klasse sind Mädchen.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🏦 Zinsrechnung – Grundformel</h2>
+    <div class="fbox">
+      <div class="fbig">Z = K · p · t ÷ (100 · 12)</div>
+      <div class="fsub"><strong>K</strong> = Kapital (€) &nbsp;|&nbsp; <strong>p</strong> = Zinssatz (% p.a.) &nbsp;|&nbsp; <strong>t</strong> = Zeit (Monate)</div>
+    </div>
+    <div style="margin-top:10px;padding:10px;background:#fdf4ff;border-radius:8px;font-size:.85rem;border-left:3px solid var(--pri);">
+      <strong>Beispiel Herr Krause:</strong> K = 12 000€, p = 2,8%, t = 4 Monate<br>
+      Z = 12 000 · 2,8 · 4 ÷ (100 · 12) = 134 400 ÷ 1200 = <strong>112€</strong><br>
+      Gesamtbetrag = 12 000 + 112 = <strong>12 112€</strong>
+    </div>
+    <div style="margin-top:8px;padding:10px;background:var(--amber-l);border-radius:8px;font-size:.83rem;color:#92400e;border-left:3px solid var(--amber);">
+      💡 <strong>p.a.</strong> = pro Jahr (per annum). Wenn t in Monaten: durch 12 dividieren!<br>
+      Für <strong>ganze Jahre</strong>: Z = K · p · t ÷ 100 (t in Jahren)
+    </div>
+  </div>
+
+</div><!-- /lernen -->
+
+<!-- ══════ BEGRIFFE ══════ -->
+<div id="sec-begriffe" class="sec">
+  <div class="card">
+    <h2>🔤 Alle Begriffe im Überblick</h2>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div style="padding:10px;background:#fdf4ff;border-radius:8px;border-left:3px solid var(--pri);font-size:.86rem;"><strong>Grundwert G (100%)</strong> – Die Ausgangsmenge, auf die sich der Prozentsatz bezieht.</div>
+      <div style="padding:10px;background:var(--green-l);border-radius:8px;border-left:3px solid var(--green);font-size:.86rem;"><strong>Prozentwert W</strong> – Der berechnete Anteil: W = G · p ÷ 100</div>
+      <div style="padding:10px;background:var(--blue-l);border-radius:8px;border-left:3px solid var(--blue);font-size:.86rem;"><strong>Prozentsatz p%</strong> – Der Anteil in Prozent: p = W · 100 ÷ G</div>
+      <div style="padding:10px;background:var(--teal-l);border-radius:8px;border-left:3px solid var(--teal);font-size:.86rem;"><strong>Vermehrter Grundwert</strong> – G + Aufschlag (z.B. + MwSt.). Neuer Preis = G · (1 + p/100)</div>
+      <div style="padding:10px;background:var(--red-l);border-radius:8px;border-left:3px solid var(--red);font-size:.86rem;"><strong>Verminderter Grundwert</strong> – G − Abzug (z.B. − Rabatt). Neuer Preis = G · (1 − p/100)</div>
+      <div style="padding:10px;background:var(--pink-l);border-radius:8px;border-left:3px solid var(--pink);font-size:.86rem;"><strong>Mehrwertsteuer (MwSt.)</strong> – 19% Aufschlag auf den Nettopreis → Bruttopreis</div>
+      <div style="padding:10px;background:var(--amber-l);border-radius:8px;border-left:3px solid var(--amber);font-size:.86rem;"><strong>Rabatt / Preisnachlass</strong> – Prozentualer Abzug vom ursprünglichen Preis</div>
+      <div style="padding:10px;background:#fdf4ff;border-radius:8px;border-left:3px solid var(--pri);font-size:.86rem;"><strong>Zinsen Z</strong> – Vergütung für angelegtes Geld (Kapital K). Z = K·p·t÷(100·12)</div>
+      <div style="padding:10px;background:var(--green-l);border-radius:8px;border-left:3px solid var(--green);font-size:.86rem;"><strong>Kapital K</strong> – Das angelegte Geldbeträg (Anfangsbetrag)</div>
+      <div style="padding:10px;background:var(--blue-l);border-radius:8px;border-left:3px solid var(--blue);font-size:.86rem;"><strong>Zinssatz p (p.a.)</strong> – Jahreszinssatz in Prozent. p.a. = pro Jahr.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>✓✗ Richtig oder Falsch?</h2>
+    <div id="rf-area"></div>
+    <button class="btn btn-o btn-sm" onclick="loadRF()" style="margin-top:9px;">🔄 Neue Aussagen</button>
+  </div>
+</div><!-- /begriffe -->
+
+<!-- ══════ RECHNER ══════ -->
+<div id="sec-rechner" class="sec">
+  <div class="card">
+    <h2>🔢 Prozentwert berechnen</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px;">Gib zwei Werte ein – der dritte wird berechnet.</p>
+    <div class="dtabs" id="calc-tabs">
+      <button class="dtab ae" onclick="showCalcMode('w',this)">Prozentwert W</button>
+      <button class="dtab" onclick="showCalcMode('g',this)">Grundwert G</button>
+      <button class="dtab" onclick="showCalcMode('p',this)">Prozentsatz p%</button>
+    </div>
+    <div id="calc-w">
+      <div class="irow">
+        <span style="font-size:.87rem;white-space:nowrap;">G =</span>
+        <input class="inp" id="cw-g" type="number" step="0.01" placeholder="z.B. 3870" style="width:130px">
+        <span style="font-size:.87rem;white-space:nowrap;">&nbsp; p =</span>
+        <input class="inp" id="cw-p" type="number" step="0.1" placeholder="z.B. 29" style="width:90px">
+        <span style="font-size:.87rem;">%</span>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="calcProz('w')">Berechnen</button>
+      <div class="cbox" id="out-w">Gib G und p ein…</div>
+    </div>
+    <div id="calc-g" style="display:none">
+      <div class="irow">
+        <span style="font-size:.87rem;white-space:nowrap;">W =</span>
+        <input class="inp" id="cg-w" type="number" step="0.01" placeholder="z.B. 376" style="width:130px">
+        <span style="font-size:.87rem;white-space:nowrap;">&nbsp; p =</span>
+        <input class="inp" id="cg-p" type="number" step="0.1" placeholder="z.B. 65" style="width:90px">
+        <span style="font-size:.87rem;">%</span>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="calcProz('g')">Berechnen</button>
+      <div class="cbox" id="out-g">Gib W und p ein…</div>
+    </div>
+    <div id="calc-p" style="display:none">
+      <div class="irow">
+        <span style="font-size:.87rem;white-space:nowrap;">W =</span>
+        <input class="inp" id="cp-w" type="number" step="0.01" placeholder="z.B. 15" style="width:130px">
+        <span style="font-size:.87rem;white-space:nowrap;">&nbsp; G =</span>
+        <input class="inp" id="cp-g" type="number" step="0.01" placeholder="z.B. 27" style="width:130px">
+      </div>
+      <button class="btn btn-p btn-sm" onclick="calcProz('p')">Berechnen</button>
+      <div class="cbox" id="out-p">Gib W und G ein…</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔢 MwSt. & Rabatt – Rechner</h2>
+    <div class="dtabs" id="mwr-tabs">
+      <button class="dtab ae" onclick="showMwrMode('mwst',this)">+ MwSt. (Aufschlag)</button>
+      <button class="dtab" onclick="showMwrMode('rabatt',this)">− Rabatt (Abzug)</button>
+    </div>
+    <div id="mwr-mwst">
+      <div class="irow">
+        <span style="font-size:.87rem;white-space:nowrap;">Nettopreis =</span>
+        <input class="inp" id="mw-netto" type="number" step="0.01" placeholder="z.B. 915" style="width:120px">
+        <span style="font-size:.87rem;">€</span>
+        <span style="font-size:.87rem;white-space:nowrap;">&nbsp; MwSt. =</span>
+        <input class="inp" id="mw-pct" type="number" step="0.1" placeholder="19" style="width:75px">
+        <span style="font-size:.87rem;">%</span>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="calcMwr('mwst')">Berechnen</button>
+      <div class="cbox" id="out-mwst">Gib Nettopreis und MwSt.-Satz ein…</div>
+    </div>
+    <div id="mwr-rabatt" style="display:none">
+      <div class="irow">
+        <span style="font-size:.87rem;white-space:nowrap;">Originalpreis =</span>
+        <input class="inp" id="rb-orig" type="number" step="0.01" placeholder="z.B. 590" style="width:120px">
+        <span style="font-size:.87rem;">€</span>
+        <span style="font-size:.87rem;white-space:nowrap;">&nbsp; Rabatt =</span>
+        <input class="inp" id="rb-pct" type="number" step="0.1" placeholder="15" style="width:75px">
+        <span style="font-size:.87rem;">%</span>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="calcMwr('rabatt')">Berechnen</button>
+      <div class="cbox" id="out-rabatt">Gib Originalpreis und Rabattsatz ein…</div>
+    </div>
+  </div>
+</div><!-- /rechner -->
+
+<!-- ══════ DREISATZ ══════ -->
+<div id="sec-dreisatz" class="sec">
+  <div class="card">
+    <h2>📐 Dreisatz üben</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px;">Fülle den Dreisatz aus und berechne den gesuchten Wert.</p>
+    <div id="ds-task-area"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn btn-p btn-sm" onclick="checkDS()">✓ Überprüfen</button>
+      <button class="btn btn-o btn-sm" onclick="loadDS()">🔄 Neue Aufgabe</button>
+    </div>
+    <div class="fb" id="fb-ds"></div>
+  </div>
+
+  <div class="card">
+    <h2>📐 Dreisatz: Klasse &amp; Mädchenanteil (Aufg. 4)</h2>
+    <p style="font-size:.9rem;line-height:1.65;margin-bottom:10px;">
+      Eine Klasse hat <strong>27 Schüler</strong>, davon <strong>15 Mädchen</strong>.<br>
+      Wie viel Prozent sind Mädchen?
+    </p>
+    <div style="overflow-x:auto;">
+      <table class="ds-tbl">
+        <tr><th>Anzahl</th><th>Prozent</th></tr>
+        <tr><td>27 (alle)</td><td>100%</td></tr>
+        <tr><td>15 (Mädchen)</td><td><input type="number" step="0.01" id="kl1" placeholder="?%"></td></tr>
+      </table>
+    </div>
+    <button class="btn btn-p btn-sm" onclick="checkKlasse()">Prüfen</button>
+    <div class="fb" id="fb-kl"></div>
+  </div>
+</div><!-- /dreisatz -->
+
+<!-- ══════ ZINSEN ══════ -->
+<div id="sec-zinsen" class="sec">
+  <div class="card">
+    <h2>🏦 Zinsrechner</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px;">Kapital, Zinssatz und Zeit eingeben – Zinsen und Endkapital werden berechnet.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:.78rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">Kapital K (€)</label>
+        <input class="inp" id="zk" type="number" step="0.01" placeholder="z.B. 12000" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:.78rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">Zinssatz p (% p.a.)</label>
+        <input class="inp" id="zp" type="number" step="0.1" placeholder="z.B. 2,8" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:.78rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">Laufzeit (Monate)</label>
+        <input class="inp" id="zt" type="number" step="1" placeholder="z.B. 4" style="width:100%">
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button class="btn btn-p" onclick="calcZins()" style="width:100%;">Berechnen</button>
+      </div>
+    </div>
+    <div class="cbox" id="out-zins">Gib Kapital, Zinssatz und Zeit ein…</div>
+  </div>
+
+  <div class="card">
+    <h2>🏦 Herr Krause (Aufgabe 9)</h2>
+    <p style="font-size:.9rem;line-height:1.65;margin-bottom:10px;">
+      Herr Krause legt <strong>12 000€</strong> zu einem Zinssatz von <strong>2,8% p.a.</strong> für <strong>4 Monate</strong> an.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="irow">
+        <span style="font-size:.87rem;flex:1">Wie viel Zinsen bekommt er?</span>
+        <input class="inp" id="kr1" type="number" step="0.01" placeholder="€" style="width:95px">
+        <span>€</span>
+        <button class="btn btn-p btn-sm" onclick="checkZins('kr1',112,'fb-kr1',0.05)">✓</button>
+      </div>
+      <div class="fb" id="fb-kr1"></div>
+      <div class="irow">
+        <span style="font-size:.87rem;flex:1">Wie viel Geld insgesamt nach 4 Monaten?</span>
+        <input class="inp" id="kr2" type="number" step="0.01" placeholder="€" style="width:95px">
+        <span>€</span>
+        <button class="btn btn-p btn-sm" onclick="checkZins('kr2',12112,'fb-kr2',0.05)">✓</button>
+      </div>
+      <div class="fb" id="fb-kr2"></div>
+    </div>
+    <button class="hint-btn" onclick="toggleHint('hkr')">💡 Rechenweg</button>
+    <div class="hint-box" id="hkr">Z = K·p·t÷(100·12) = 12000·2,8·4÷1200 = 134400÷1200 = 112€<br>Gesamt = 12000 + 112 = 12112€</div>
+  </div>
+
+  <div class="card">
+    <h2>🏦 Zinsen üben – Tabelle</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:9px;">Berechne die Zinsen und trage sie ein.</p>
+    <div style="overflow-x:auto;">
+      <table class="ds-tbl">
+        <tr><th>Kapital K</th><th>Zinssatz p%</th><th>Zeit t</th><th>Zinsen Z</th></tr>
+        <tr><td>5000€</td><td>3%</td><td>12 Monate</td><td><input type="number" step="0.01" id="zt1" placeholder="€"></td></tr>
+        <tr><td>8000€</td><td>2%</td><td>6 Monate</td><td><input type="number" step="0.01" id="zt2" placeholder="€"></td></tr>
+        <tr><td>2500€</td><td>4%</td><td>3 Monate</td><td><input type="number" step="0.01" id="zt3" placeholder="€"></td></tr>
+        <tr><td>15000€</td><td>1,5%</td><td>8 Monate</td><td><input type="number" step="0.01" id="zt4" placeholder="€"></td></tr>
+      </table>
+    </div>
+    <button class="btn btn-p btn-sm" onclick="checkZinsTbl()" style="margin-top:9px;">✓ Überprüfen</button>
+    <div class="fb" id="fb-ztbl"></div>
+  </div>
+</div><!-- /zinsen -->
+
+<!-- ══════ LÜCKENTEXT ══════ -->
+<div id="sec-luecke" class="sec">
+  <div class="card">
+    <h2>✏️ Grundbegriffe – Lückentext</h2>
+    <div style="font-size:.93rem;line-height:2.6;margin:10px 0;">
+      Der <input class="cl" id="l1" data-a="Grundwert" style="width:100px"> (G) entspricht immer
+      <input class="cl" id="l2" data-a="100" style="width:45px"> %.
+      Der Prozentwert W berechnet sich mit:
+      <input class="cl" id="l3" data-a="W = G · p ÷ 100" style="width:140px">.
+      Um den Grundwert zu berechnen, rechnet man:
+      G = <input class="cl" id="l4" data-a="W · 100 ÷ p" style="width:120px">.
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+      <button class="btn btn-p btn-sm" onclick="checkCloze(['l1','l2','l3','l4'],'fb-l1')">✓ Prüfen</button>
+      <button class="btn btn-o btn-sm" onclick="resetCloze(['l1','l2','l3','l4'],'fb-l1')">↺ Reset</button>
+    </div>
+    <div class="fb" id="fb-l1"></div>
+  </div>
+
+  <div class="card">
+    <h2>✏️ Aufschlag &amp; Abzug – Lückentext</h2>
+    <div style="font-size:.93rem;line-height:2.6;margin:10px 0;">
+      Wenn ein Preis um 19% erhöht wird, spricht man von einem
+      <input class="cl" id="l5" data-a="vermehrten" style="width:100px"> Grundwert.
+      Das Ergebnis heißt <input class="cl" id="l6" data-a="Bruttopreis" style="width:100px">.
+      Bei einem Rabatt von 15% berechnet man den neuen Preis mit Faktor
+      <input class="cl" id="l7" data-a="0,85" style="width:50px">.
+      Der ursprüngliche Preis ist der
+      <input class="cl" id="l8" data-a="Grundwert" style="width:100px">.
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+      <button class="btn btn-p btn-sm" onclick="checkCloze(['l5','l6','l7','l8'],'fb-l2')">✓ Prüfen</button>
+      <button class="btn btn-o btn-sm" onclick="resetCloze(['l5','l6','l7','l8'],'fb-l2')">↺ Reset</button>
+    </div>
+    <div class="fb" id="fb-l2"></div>
+  </div>
+
+  <div class="card">
+    <h2>✏️ Zinsformel – Lückentext</h2>
+    <div style="font-size:.93rem;line-height:2.6;margin:10px 0;">
+      Zinsen berechnet man mit: Z =
+      <input class="cl" id="l9" data-a="K · p · t" style="width:90px"> ÷ (100 · 12).
+      Dabei ist K das <input class="cl" id="l10" data-a="Kapital" style="width:80px">,
+      p der <input class="cl" id="l11" data-a="Zinssatz" style="width:80px"> (in % p.a.)
+      und t die <input class="cl" id="l12" data-a="Zeit" style="width:55px"> in Monaten.
+      Nach der Anlage hat man K + Z =
+      <input class="cl" id="l13" data-a="Endkapital" style="width:100px">.
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+      <button class="btn btn-p btn-sm" onclick="checkCloze(['l9','l10','l11','l12','l13'],'fb-l3')">✓ Prüfen</button>
+      <button class="btn btn-o btn-sm" onclick="resetCloze(['l9','l10','l11','l12','l13'],'fb-l3')">↺ Reset</button>
+    </div>
+    <div class="fb" id="fb-l3"></div>
+  </div>
+
+  <div class="card">
+    <h2>✏️ Rechenweg – Mofa mit MwSt. (Aufg. 7)</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:7px;">Mofa: 915€ + 19% MwSt.</p>
+    <div style="font-family:monospace;font-size:.9rem;line-height:2.9;margin:8px 0;">
+      MwSt. = 915 · <input class="cl" id="rw1" data-a="19" style="width:38px"> ÷ 100
+            = <input class="cl" id="rw2" data-a="173,85" style="width:70px"> €<br>
+      Bruttopreis = 915 + <input class="cl" id="rw3" data-a="173,85" style="width:70px">
+                 = <input class="cl" id="rw4" data-a="1088,85" style="width:80px"> €<br>
+      Kurzweg: 915 · <input class="cl" id="rw5" data-a="1,19" style="width:50px">
+             = <input class="cl" id="rw6" data-a="1088,85" style="width:80px"> €
+    </div>
+    <button class="btn btn-p btn-sm" onclick="checkCloze(['rw1','rw2','rw3','rw4','rw5','rw6'],'fb-rw')">Prüfen</button>
+    <div class="fb" id="fb-rw"></div>
+  </div>
+</div><!-- /luecke -->
+
+<!-- ══════ QUIZ ══════ -->
+<div id="sec-quiz" class="sec">
+  <div class="card">
+    <h2>❓ Wissens-Quiz</h2>
+    <div class="prog-o"><div class="prog-i" id="qprog" style="width:0%"></div></div>
+    <div style="font-size:.76rem;color:var(--muted);text-align:right;margin-bottom:8px;" id="q-cnt">Frage 1 von 10</div>
+    <div id="q-area">
+      <div id="q-txt" style="font-size:.95rem;font-weight:600;margin-bottom:8px;line-height:1.55;"></div>
+      <div class="qopts" id="q-opts"></div>
+      <div class="fb" id="fb-q"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:9px;">
+        <button class="btn btn-o btn-sm" id="q-nxt" onclick="nextQ()" style="display:none;">Nächste →</button>
+      </div>
+    </div>
+    <div id="q-res" style="display:none;text-align:center;padding:14px;">
+      <div style="font-size:2.6rem;margin-bottom:7px;" id="q-emoji">🎉</div>
+      <div style="font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;" id="q-fin"></div>
+      <button class="btn btn-p" onclick="restartQ()" style="margin-top:12px;">Nochmal</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>❓ Richtig / Falsch – Schnellcheck</h2>
+    <div id="mc-area"></div>
+    <button class="btn btn-o btn-sm" onclick="loadMC()" style="margin-top:9px;">🔄 Neue Aufgaben</button>
+  </div>
+</div><!-- /quiz -->
+
+<!-- ══════ ZUORDNEN ══════ -->
+<div id="sec-zuordnen" class="sec">
+  <div class="card">
+    <h2>🔗 Begriffe zuordnen</h2>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:9px;">Klicke links, dann rechts.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div id="m-left"  style="display:flex;flex-direction:column;gap:6px;"></div>
+      <div id="m-right" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+    <div class="fb" id="fb-m"></div>
+    <button class="btn btn-o btn-sm" onclick="setupMatch()" style="margin-top:8px;">↺ Neu mischen</button>
+  </div>
+  <div class="card">
+    <h2>🔗 Formel-Zuordnung</h2>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:9px;">Welche Formel berechnet was?</p>
+    <div id="fm-area"></div>
+    <button class="btn btn-o btn-sm" onclick="loadFM()" style="margin-top:8px;">🔄 Neu laden</button>
+  </div>
+</div><!-- /zuordnen -->
+
+<!-- ══════ BLITZ ══════ -->
+<div id="sec-blitz" class="sec">
+  <div class="card">
+    <h2>⚡ Blitz-Prozentrechnen</h2>
+    <p style="font-size:.83rem;color:var(--muted);margin-bottom:5px;">Berechne den Prozentwert blitzschnell!</p>
+    <div class="sc-row">
+      <div class="sc-box">⭐ <span id="bs">0</span></div>
+      <div style="font-size:.82rem;color:var(--muted)">Richtig: <span id="br">0</span> / <span id="bt">0</span></div>
+    </div>
+    <div class="blitz-d" id="bd">Drücke Start!</div>
+    <div class="blitz-os" id="bos"></div>
+    <div style="display:flex;gap:7px;justify-content:center;margin-top:9px;flex-wrap:wrap;">
+      <button class="btn btn-p" onclick="startBlitz()">▶ Start</button>
+      <button class="btn btn-o" onclick="resetBlitz()">↺ Reset</button>
+    </div>
+    <div id="bfb" style="text-align:center;font-size:.83rem;margin-top:6px;color:var(--muted)"></div>
+  </div>
+  <div class="card">
+    <h2>⚡ Begriff erkennen</h2>
+    <div class="blitz-d" id="tbd" style="font-size:.92rem;min-height:58px;padding:12px;">Klicke Start!</div>
+    <div class="blitz-os" id="tbos" style="margin-top:7px;"></div>
+    <div style="text-align:center;margin-top:8px;">
+      <button class="btn btn-p btn-sm" onclick="startTBlitz()">▶ Start</button>
+    </div>
+    <div id="tbfb" style="text-align:center;font-size:.83rem;margin-top:6px;color:var(--muted)"></div>
+  </div>
+  <div class="card">
+    <h2>⚡ Zinsen – Blitzrechnen</h2>
+    <div class="blitz-d" id="zbd" style="font-size:.88rem;min-height:58px;padding:12px">Klicke Start!</div>
+    <div class="blitz-os" id="zbos" style="margin-top:7px;"></div>
+    <div style="text-align:center;margin-top:8px;">
+      <button class="btn btn-p btn-sm" onclick="startZBlitz()">▶ Start</button>
+    </div>
+    <div id="zbfb" style="text-align:center;font-size:.83rem;margin-top:6px;color:var(--muted)"></div>
+  </div>
+</div><!-- /blitz -->
+
+<!-- ══════ AUFGABEN ══════ -->
+<div id="sec-aufgaben" class="sec">
+  <div class="card">
+    <h2>🌍 Sachaufgaben mit Schwierigkeitsstufen</h2>
+    <div class="dtabs">
+      <button class="dtab ae" onclick="showDiff('e',this)">⭐ Einfach</button>
+      <button class="dtab" onclick="showDiff('m',this)">⭐⭐ Mittel</button>
+      <button class="dtab" onclick="showDiff('h',this)">⭐⭐⭐ Schwer</button>
+    </div>
+
+    <div id="diff-e">
+      <div style="text-align:center;font-size:2.8rem;margin:6px 0;">👗</div>
+      <p style="font-size:.93rem;line-height:1.7;margin-bottom:9px;">
+        Eine Jacke kostet <strong>80€</strong>. Im Sale gibt es <strong>25% Rabatt</strong>.<br>
+        <strong>a) Wie viel Euro Rabatt bekommt man?</strong><br>
+        <strong>b) Was kostet die Jacke im Sale?</strong>
+      </p>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div class="irow"><span style="font-size:.87rem;width:120px;">a) Rabatt =</span>
+          <input class="inp" id="de1" type="number" step="0.01" style="width:90px">
+          <span>€</span><button class="btn btn-p btn-sm" onclick="chkT('de1',20,'fb-de1',0.01)">✓</button></div>
+        <div class="fb" id="fb-de1"></div>
+        <div class="irow"><span style="font-size:.87rem;width:120px;">b) Preis Sale =</span>
+          <input class="inp" id="de2" type="number" step="0.01" style="width:90px">
+          <span>€</span><button class="btn btn-p btn-sm" onclick="chkT('de2',60,'fb-de2',0.01)">✓</button></div>
+        <div class="fb" id="fb-de2"></div>
+      </div>
+    </div>
+
+    <div id="diff-m" style="display:none">
+      <div style="text-align:center;font-size:2.8rem;margin:6px 0;">📱</div>
+      <p style="font-size:.93rem;line-height:1.7;margin-bottom:9px;">
+        <strong>Welches Angebot ist günstiger?</strong> (Aufgabe 8 aus der Arbeit)<br>
+        Angebot 1: Samsung ohne MwSt. für <strong>490€</strong> (+19% MwSt.)<br>
+        Angebot 2: iPhone mit <strong>15% Rabatt</strong>, vorher <strong>590€</strong>
+      </p>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div class="irow"><span style="font-size:.87rem;flex:1">Samsung mit MwSt. =</span>
+          <input class="inp" id="dm1" type="number" step="0.01" style="width:90px">
+          <span>€</span><button class="btn btn-p btn-sm" onclick="chkT('dm1',583.10,'fb-dm1',0.05)">✓</button></div>
+        <div class="fb" id="fb-dm1"></div>
+        <div class="irow"><span style="font-size:.87rem;flex:1">iPhone nach Rabatt =</span>
+          <input class="inp" id="dm2" type="number" step="0.01" style="width:90px">
+          <span>€</span><button class="btn btn-p btn-sm" onclick="chkT('dm2',501.50,'fb-dm2',0.05)">✓</button></div>
+        <div class="fb" id="fb-dm2"></div>
+        <div style="margin-top:4px;">
+          <p style="font-size:.88rem;font-weight:600;margin-bottom:5px;">Welches ist günstiger?</p>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-p btn-sm" onclick="showFB('fb-dm3','✅ Richtig! Das iPhone (501,50€) ist günstiger als der Samsung (583,10€).',true)">iPhone</button>
+            <button class="btn btn-o btn-sm" onclick="showFB('fb-dm3','❌ Nein. Das iPhone kostet 501,50€, der Samsung 583,10€. Das iPhone ist günstiger!',false)">Samsung</button>
+          </div>
+          <div class="fb" id="fb-dm3"></div>
+        </div>
+      </div>
+      <button class="hint-btn" onclick="toggleHint('hdm')">💡 Hinweis</button>
+      <div class="hint-box" id="hdm">Samsung: 490 · 1,19 = 583,10€. iPhone: 590 · 0,85 = 501,50€</div>
+    </div>
+
+    <div id="diff-h" style="display:none">
+      <div style="text-align:center;font-size:2.8rem;margin:6px 0;">🎮</div>
+      <p style="font-size:.93rem;line-height:1.7;margin-bottom:9px;">
+        Ein PC-Spiel kostet <strong>88€</strong>. Wegen einer Beschädigung werden <strong>22% Preisnachlass</strong> gewährt.<br>
+        <strong>a) Wie viel Euro Preisnachlass sind das?</strong><br>
+        <strong>b) Was kostet das Spiel mit Nachlass?</strong><br>
+        <strong>c) Ein Freund kauft ein anderes Spiel nach 12% Rabatt für 79,20€. Was war der Originalpreis?</strong>
+      </p>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div class="irow"><span style="font-size:.87rem;width:130px;">a) Nachlass =</span>
+          <input class="inp" id="dh1" type="number" step="0.01" style="width:90px">
+          <span>€</span><button class="btn btn-p btn-sm" onclick="chkT('dh1',19.36,'fb-dh1',0.05)">✓</button></div>
+        <div class="fb" id="fb-dh1"></div>
+        <div class="irow"><span style="font-size:.87rem;width:130px;">b) Preis neu =</span>
+          <input class="inp" id="dh2" type="number" step="0.01" style="width:90px">
+          <span>€</span><button class="btn btn-p btn-sm" onclick="chkT('dh2',68.64,'fb-dh2',0.05)">✓</button></div>
+        <div class="fb" id="fb-dh2"></div>
+        <div class="irow"><span style="font-size:.87rem;width:130px;">c) Originalpreis =</span>
+          <input class="inp" id="dh3" type="number" step="0.01" style="width:90px">
+          <span>€</span><button class="btn btn-p btn-sm" onclick="chkT('dh3',90,'fb-dh3',0.05)">✓</button></div>
+        <div class="fb" id="fb-dh3"></div>
+        <button class="hint-btn" onclick="toggleHint('hdh')">💡 Hinweis</button>
+        <div class="hint-box" id="hdh">a) 88·22÷100=19,36€. b) 88–19,36=68,64€. c) 79,20÷0,88=90€ (denn 79,20=G·0,88)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aufgabe 5: Angestellter & Lohnsteuer -->
+  <div class="card">
+    <h2>💼 Lohnsteuer (Aufgabe 5)</h2>
+    <p style="font-size:.9rem;line-height:1.65;margin-bottom:9px;">
+      Ein Angestellter hat ein Bruttoeinkommen von <strong>3870€</strong>.
+      Er zahlt <strong>29% Lohnsteuer</strong>.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div class="irow">
+        <span style="font-size:.87rem;flex:1">Lohnsteuer (Prozentwert):</span>
+        <input class="inp" id="ls1" type="number" step="0.01" style="width:90px">
+        <span>€</span>
+        <button class="btn btn-p btn-sm" onclick="chkT('ls1',1122.30,'fb-ls1',0.05)">✓</button>
+      </div>
+      <div class="fb" id="fb-ls1"></div>
+      <div class="irow">
+        <span style="font-size:.87rem;flex:1">Nettoeinkommen (nach Steuer):</span>
+        <input class="inp" id="ls2" type="number" step="0.01" style="width:90px">
+        <span>€</span>
+        <button class="btn btn-p btn-sm" onclick="chkT('ls2',2747.70,'fb-ls2',0.05)">✓</button>
+      </div>
+      <div class="fb" id="fb-ls2"></div>
+    </div>
+    <button class="hint-btn" onclick="toggleHint('hls')">💡 Hinweis</button>
+    <div class="hint-box" id="hls">W = G·p÷100 = 3870·29÷100 = 1122,30€. Netto = 3870 – 1122,30 = 2747,70€</div>
+  </div>
+
+  <!-- Aufgabe 6: Grundwert rückrechnen -->
+  <div class="card">
+    <h2>🏫 Grundwert berechnen (Aufgabe 6)</h2>
+    <p style="font-size:.9rem;line-height:1.65;margin-bottom:9px;">
+      <strong>65%</strong> der Schüler einer Schule haben Geschwister. Das entspricht <strong>376 Schüler</strong>.<br>
+      <strong>Wie viele Schüler hat die Schule insgesamt?</strong>
+    </p>
+    <div class="irow">
+      <span style="font-size:.87rem;">G =</span>
+      <input class="inp" id="gs1" type="number" step="1" style="width:100px">
+      <span style="font-size:.87rem;">Schüler</span>
+      <button class="btn btn-p btn-sm" onclick="chkT('gs1',578.46,'fb-gs1',1)">✓</button>
+    </div>
+    <div class="fb" id="fb-gs1"></div>
+    <button class="hint-btn" onclick="toggleHint('hgs')">💡 Hinweis</button>
+    <div class="hint-box" id="hgs">G = W·100÷p = 376·100÷65 ≈ 578,46 ≈ 579 Schüler</div>
+  </div>
+</div><!-- /aufgaben -->
+
+<!-- ══════ GENERATOR ══════ -->
+<div id="sec-generator" class="sec">
+  <div class="card">
+    <h2>🎲 Neue Aufgaben erstellen</h2>
+    <div class="dtabs">
+      <button class="dtab ae" onclick="setGD('e',this)">⭐ Einfach</button>
+      <button class="dtab" onclick="setGD('m',this)">⭐⭐ Mittel</button>
+      <button class="dtab" onclick="setGD('h',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px;">
+      <button class="btn btn-o btn-sm" onclick="genTask('w')">📊 Prozentwert</button>
+      <button class="btn btn-o btn-sm" onclick="genTask('g')">📊 Grundwert</button>
+      <button class="btn btn-o btn-sm" onclick="genTask('p')">📊 Prozentsatz</button>
+      <button class="btn btn-o btn-sm" onclick="genTask('rabatt')">🏷️ Rabatt</button>
+      <button class="btn btn-o btn-sm" onclick="genTask('mwst')">🧾 MwSt.</button>
+      <button class="btn btn-o btn-sm" onclick="genTask('zins')">🏦 Zinsen</button>
+      <button class="btn btn-p btn-sm" onclick="genTask('all')">🎲 Zufall</button>
+    </div>
+    <div id="gen-out"></div>
+  </div>
+  <div class="card">
+    <h2>📋 Übungsblatt – 5 Aufgaben</h2>
+    <button class="btn btn-p" onclick="genSheet()">📋 Erstellen</button>
+    <div id="gen-sheet" style="margin-top:11px;"></div>
+  </div>
+</div><!-- /generator -->
+
+</div><!-- /cnt -->
+
+<script>
+const r2=v=>Math.round(v*100)/100;
+const r0=v=>Math.round(v);
+
+function showFB(id,msg,ok){const e=document.getElementById(id);if(!e)return;e.textContent=msg;e.className='fb show '+(ok?'ok':'err')}
+function hideFB(id){const e=document.getElementById(id);if(e)e.className='fb'}
+function showSec(id,btn){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('sec-'+id).classList.add('active');btn.classList.add('active')}
+function toggleHint(id){document.getElementById(id).classList.toggle('show')}
+function chkT(id,cor,fbId,tol){const v=parseFloat(document.getElementById(id).value);if(Math.abs(v-cor)<=tol)showFB(fbId,`✅ Richtig! ${r2(cor)}€`,true);else showFB(fbId,`❌ Nicht ganz. Ergebnis: ${r2(cor)}`,false)}
+function checkZins(id,cor,fbId,tol){chkT(id,cor,fbId,tol)}
+
+// ── PBAR ──
+function updatePctBar(){
+  const p=parseInt(document.getElementById('pct-sl').value);
+  const G=200;
+  document.getElementById('pct-lbl').textContent=p;
+  document.getElementById('pbar-i').style.width=p+'%';
+  document.getElementById('pbar-lbl').textContent=`${p}% von ${G}€ = ${r2(G*p/100)}€`;
+}
+
+// ── EXAMPLE SWITCHER ──
+function showEx(t,btn){
+  ['prozen','grund','psatz'].forEach(k=>{const e=document.getElementById('ex-'+k);if(e)e.style.display=k===t?'block':'none'});
+  document.getElementById('ex-tabs').querySelectorAll('.dtab').forEach(b=>b.classList.remove('ae','am','ah'));
+  btn.classList.add(t==='prozen'?'ae':t==='grund'?'am':'ah');
+}
+
+// ── CALC MODES ──
+function showCalcMode(m,btn){
+  ['w','g','p'].forEach(k=>{const e=document.getElementById('calc-'+k);if(e)e.style.display=k===m?'block':'none'});
+  document.getElementById('calc-tabs').querySelectorAll('.dtab').forEach(b=>b.classList.remove('ae','am','ah'));
+  btn.classList.add(m==='w'?'ae':m==='g'?'am':'ah');
+}
+function calcProz(mode){
+  if(mode==='w'){
+    const G=parseFloat(document.getElementById('cw-g').value);
+    const p=parseFloat(document.getElementById('cw-p').value);
+    if(isNaN(G)||isNaN(p)){document.getElementById('out-w').innerHTML='Bitte Werte eingeben!';return}
+    const W=r2(G*p/100);
+    document.getElementById('out-w').innerHTML=`<span class="ch">W = G · p ÷ 100</span>\nW = ${G} · ${p} ÷ 100 = <span class="cr">${W}</span>`;
+  }else if(mode==='g'){
+    const W=parseFloat(document.getElementById('cg-w').value);
+    const p=parseFloat(document.getElementById('cg-p').value);
+    if(isNaN(W)||isNaN(p)){document.getElementById('out-g').innerHTML='Bitte Werte eingeben!';return}
+    const G=r2(W*100/p);
+    document.getElementById('out-g').innerHTML=`<span class="ch">G = W · 100 ÷ p</span>\nG = ${W} · 100 ÷ ${p} = <span class="cr">${G}</span>`;
+  }else{
+    const W=parseFloat(document.getElementById('cp-w').value);
+    const G=parseFloat(document.getElementById('cp-g').value);
+    if(isNaN(W)||isNaN(G)){document.getElementById('out-p').innerHTML='Bitte Werte eingeben!';return}
+    const p=r2(W*100/G);
+    document.getElementById('out-p').innerHTML=`<span class="ch">p = W · 100 ÷ G</span>\np = ${W} · 100 ÷ ${G} = <span class="cr">${p} %</span>`;
+  }
+}
+
+// ── MWR ──
+function showMwrMode(m,btn){
+  ['mwst','rabatt'].forEach(k=>{const e=document.getElementById('mwr-'+k);if(e)e.style.display=k===m?'block':'none'});
+  document.getElementById('mwr-tabs').querySelectorAll('.dtab').forEach(b=>b.classList.remove('ae','am','ah'));
+  btn.classList.add(m==='mwst'?'ae':'am');
+}
+function calcMwr(mode){
+  if(mode==='mwst'){
+    const n=parseFloat(document.getElementById('mw-netto').value);
+    const p=parseFloat(document.getElementById('mw-pct').value)||19;
+    if(isNaN(n)){document.getElementById('out-mwst').innerHTML='Bitte Nettopreis eingeben!';return}
+    const steuer=r2(n*p/100);const brutto=r2(n+steuer);
+    document.getElementById('out-mwst').innerHTML=`<span class="ch">MwSt. (${p}%): ${n} · ${p} ÷ 100 = ${steuer}€</span>\nBrutto = ${n} + ${steuer} = <span class="cr">${brutto}€</span>\nKurzweg: ${n} · ${r2(1+p/100)} = <span class="cr">${brutto}€</span>`;
+  }else{
+    const o=parseFloat(document.getElementById('rb-orig').value);
+    const p=parseFloat(document.getElementById('rb-pct').value)||15;
+    if(isNaN(o)){document.getElementById('out-rabatt').innerHTML='Bitte Originalpreis eingeben!';return}
+    const rab=r2(o*p/100);const neu=r2(o-rab);
+    document.getElementById('out-rabatt').innerHTML=`<span class="ch">Rabatt (${p}%): ${o} · ${p} ÷ 100 = ${rab}€</span>\nNeuer Preis = ${o} - ${rab} = <span class="cr">${neu}€</span>\nKurzweg: ${o} · ${r2(1-p/100)} = <span class="cr">${neu}€</span>`;
+  }
+}
+
+// ── DREISATZ ──
+const dsTasks=[
+  {q:'Ein T-Shirt kostet <strong>40€</strong>. Davon sind <strong>19% MwSt.</strong>',mode:'w',G:40,p:19,desc:'Prozentwert (MwSt.-Betrag)',unit:'€'},
+  {q:'Eine Schule hat <strong>65% Schüler mit Geschwistern</strong>, das sind <strong>376</strong>.',mode:'g',W:376,p:65,desc:'Grundwert (Gesamtzahl)',unit:'Schüler'},
+  {q:'Von <strong>250 Schülern</strong> fahren <strong>75</strong> mit dem Fahrrad.',mode:'p',W:75,G:250,desc:'Prozentsatz',unit:'%'},
+  {q:'Ein Fahrrad kostet <strong>350€</strong> mit <strong>20% Rabatt</strong>.',mode:'w',G:350,p:20,desc:'Rabattbetrag',unit:'€'},
+  {q:'Preis nach 25% Rabatt ist <strong>150€</strong>. Was war der Originalpreis?',mode:'g',W:150,p:75,desc:'Grundwert (Original, 150€=75%)',unit:'€'},
+];
+let dsIdx=0;
+function loadDS(){
+  dsIdx=Math.floor(Math.random()*dsTasks.length);
+  const t=dsTasks[dsIdx];
+  let html=`<p style="font-size:.9rem;line-height:1.7;margin-bottom:10px;">${t.q}<br><strong>Gesucht:</strong> ${t.desc}</p>`;
+  if(t.mode==='w'){
+    html+=`<table class="ds-tbl"><tr><th>Grundwert G</th><th>Prozentsatz p</th><th>Prozentwert W</th></tr>
+      <tr><td>${t.G} ${t.unit==='€'?'€':''}</td><td>${t.p}%</td><td><input type="number" step="0.01" id="ds-ans" placeholder="?"> ${t.unit}</td></tr></table>`;
+  }else if(t.mode==='g'){
+    html+=`<table class="ds-tbl"><tr><th>Prozentwert W</th><th>Prozentsatz p</th><th>Grundwert G</th></tr>
+      <tr><td>${t.W}</td><td>${t.p}%</td><td><input type="number" step="0.01" id="ds-ans" placeholder="?"></td></tr></table>`;
+  }else{
+    html+=`<table class="ds-tbl"><tr><th>Prozentwert W</th><th>Grundwert G</th><th>Prozentsatz p</th></tr>
+      <tr><td>${t.W}</td><td>${t.G}</td><td><input type="number" step="0.01" id="ds-ans" placeholder="?"> %</td></tr></table>`;
+  }
+  document.getElementById('ds-task-area').innerHTML=html;
+  hideFB('fb-ds');
+}
+function checkDS(){
+  const t=dsTasks[dsIdx];
+  const v=parseFloat(document.getElementById('ds-ans').value);
+  let cor;
+  if(t.mode==='w') cor=r2(t.G*t.p/100);
+  else if(t.mode==='g') cor=r2(t.W*100/t.p);
+  else cor=r2(t.W*100/t.G);
+  if(Math.abs(v-cor)<=0.5) showFB('fb-ds',`✅ Richtig! ${cor}`,true);
+  else showFB('fb-ds',`❌ Das Ergebnis ist ${cor}`,false);
+}
+function checkKlasse(){
+  const v=parseFloat(document.getElementById('kl1').value);
+  const cor=r2(15*100/27);
+  if(Math.abs(v-cor)<=0.1) showFB('fb-kl',`✅ Richtig! ${cor}% der Klasse sind Mädchen.`,true);
+  else showFB('fb-kl',`❌ Nicht ganz. 15·100÷27 = ${cor}%`,false);
+}
+
+// ── ZINSRECHNER ──
+function calcZins(){
+  const K=parseFloat(document.getElementById('zk').value);
+  const p=parseFloat(document.getElementById('zp').value);
+  const t=parseFloat(document.getElementById('zt').value);
+  const out=document.getElementById('out-zins');
+  if([K,p,t].some(isNaN)){out.innerHTML='<span style="color:#f87171">Bitte alle Felder ausfüllen!</span>';return}
+  const Z=r2(K*p*t/(100*12));const end=r2(K+Z);
+  out.innerHTML=`<span class="ch">Z = K·p·t÷(100·12)</span>\nZ = ${K}·${p}·${t}÷${100*12} = <span class="cr">${Z}€</span>\nEndkapital = ${K} + ${Z} = <span class="cr">${end}€</span>`;
+}
+function checkZinsTbl(){
+  const answers=[5000*3*12/(100*12),8000*2*6/(100*12),2500*4*3/(100*12),15000*1.5*8/(100*12)];
+  let c=0;
+  [1,2,3,4].forEach((i,idx)=>{
+    const el=document.getElementById(`zt${i}`);
+    el.classList.remove('ok','err');
+    const v=parseFloat(el.value);const cor=r2(answers[idx]);
+    if(Math.abs(v-cor)<=0.01){el.classList.add('ok');c++}else if(!isNaN(v))el.classList.add('err');
+  });
+  showFB('fb-ztbl',c===4?'✅ Alle Zinsen richtig!':`${c} von 4 Werten korrekt.`,c===4);
+}
+
+// ── CLOZE ──
+function checkCloze(ids,fbId){
+  let c=0;
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    const v=el.value.trim().toLowerCase().replace(/\s+/g,'').replace(/,/g,'.');
+    const a=el.dataset.a.toLowerCase().replace(/\s+/g,'').replace(/,/g,'.');
+    el.classList.remove('ok','err');
+    if(v===a){el.classList.add('ok');c++}else if(el.value.trim())el.classList.add('err');
+  });
+  showFB(fbId,c===ids.length?`✅ Perfekt! Alle ${ids.length} Lücken richtig!`:`${c} von ${ids.length} richtig.`,c===ids.length);
+}
+function resetCloze(ids,fbId){ids.forEach(id=>{const e=document.getElementById(id);e.value='';e.classList.remove('ok','err')});hideFB(fbId)}
+
+// ── R/F ──
+const rfData=[
+  {s:'Der Grundwert G entspricht immer 100%.',ok:true},
+  {s:'W = G · p ÷ 100 berechnet den Prozentwert.',ok:true},
+  {s:'Bei 19% MwSt. multipliziert man den Nettopreis mit 1,19.',ok:true},
+  {s:'Bei 15% Rabatt beträgt der neue Preis 85% des Originals.',ok:true},
+  {s:'Der Grundwert ist das Ergebnis der Prozentrechnung.',ok:false},
+  {s:'Zinsen werden mit Z = K · p · t ÷ (100 · 12) berechnet, wenn t in Monaten.',ok:true},
+  {s:'p.a. bedeutet "pro Angebot".',ok:false},
+  {s:'Wenn W = 376 und p = 65%, ist G ≈ 578.',ok:true},
+  {s:'Ein Vermehrter Grundwert entsteht durch einen Preisabzug.',ok:false},
+  {s:'Prozentwert = 0, wenn der Prozentsatz 0% ist.',ok:true},
+];
+function loadRF(){
+  const area=document.getElementById('rf-area');
+  const sample=[...rfData].sort(()=>Math.random()-.5).slice(0,5);
+  area.innerHTML='';
+  sample.forEach((item,i)=>{
+    const d=document.createElement('div');d.style.cssText='padding:10px;border:1px solid var(--border2);border-radius:8px;margin-bottom:7px;';
+    d.innerHTML=`<p style="font-size:.88rem;font-weight:600;margin-bottom:6px;">${item.s}</p><div style="display:flex;gap:7px;">
+      <button class="btn btn-sm" id="rf-t-${i}" onclick="chkRF(${i},true,${item.ok})" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">✓ Richtig</button>
+      <button class="btn btn-sm" id="rf-f-${i}" onclick="chkRF(${i},false,${item.ok})" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;">✗ Falsch</button>
+    </div><div class="fb" id="rf-fb-${i}"></div>`;
+    area.appendChild(d);
+  });
+}
+function chkRF(i,c,ok){
+  document.getElementById(`rf-t-${i}`).disabled=true;document.getElementById(`rf-f-${i}`).disabled=true;
+  showFB(`rf-fb-${i}`,c===ok?'✅ Richtig!':`❌ Die Aussage ist ${ok?'richtig':'falsch'}.`,c===ok);
+}
+
+// ── QUIZ ──
+const qData=[
+  {q:'Wie lautet die Formel für den Prozentwert W?',o:['W=G+p','W=G·p÷100','W=p÷G·100','W=100·G÷p'],c:1},
+  {q:'29% von 3870€ sind:',o:['1125€','1122,30€','1000€','876€'],c:1},
+  {q:'Was ist der "vermehrte Grundwert"?',o:['G nach einem Abzug','G nach einem Aufschlag','Der Prozentwert','100% des Wertes'],c:1},
+  {q:'Samsung kostet 490€ netto + 19% MwSt. Bruttopreis?',o:['509€','583,10€','590€','579€'],c:1},
+  {q:'Formel Grundwert berechnen:',o:['G=W÷p','G=W·100÷p','G=p·100÷W','G=W+p÷100'],c:1},
+  {q:'Z = K·p·t÷(100·12). Was ist t?',o:['Zinssatz','Kapital','Zeit in Monaten','Endkapital'],c:2},
+  {q:'Herr Krause: K=12000€, p=2,8%, t=4 Monate. Zinsen =?',o:['100€','112€','134€','84€'],c:1},
+  {q:'Bei 15% Rabatt multipliziert man mit:',o:['0,15','1,15','0,85','85'],c:2},
+  {q:'65% = 376 Schüler. Gesamtzahl ≈?',o:['450','500','579','600'],c:2},
+  {q:'Nettopreis 100€, MwSt. 19%. Bruttopreis?',o:['119€','190€','109€','181€'],c:0},
+];
+let qi=0,qsc=0;
+function initQ(){qi=0;qsc=0;loadQ()}
+function loadQ(){
+  if(qi>=qData.length){document.getElementById('q-area').style.display='none';document.getElementById('q-res').style.display='block';const p=Math.round(qsc/qData.length*100);document.getElementById('q-emoji').textContent=p===100?'🎉':p>=70?'👍':'📚';document.getElementById('q-fin').textContent=`${qsc}/${qData.length} Punkte (${p}%)`;return}
+  const q=qData[qi];
+  document.getElementById('q-txt').textContent=`${qi+1}. ${q.q}`;
+  document.getElementById('q-cnt').textContent=`Frage ${qi+1} von ${qData.length}`;
+  document.getElementById('qprog').style.width=`${qi/qData.length*100}%`;
+  const opts=document.getElementById('q-opts');opts.innerHTML='';
+  document.getElementById('q-nxt').style.display='none';hideFB('fb-q');
+  q.o.forEach((o,i)=>{const b=document.createElement('button');b.className='qopt';b.textContent=o;b.onclick=()=>pickQ(i,q.c,q.o[q.c]);opts.appendChild(b)});
+}
+function pickQ(chosen,cor,ct){
+  document.querySelectorAll('.qopt').forEach(b=>b.disabled=true);
+  if(chosen===cor){document.querySelectorAll('.qopt')[chosen].classList.add('ok');qsc++;showFB('fb-q','✅ Richtig!',true)}
+  else{document.querySelectorAll('.qopt')[chosen].classList.add('err');document.querySelectorAll('.qopt')[cor].classList.add('ok');showFB('fb-q',`❌ Falsch. Richtig: „${ct}"`,false)}
+  document.getElementById('q-nxt').style.display='inline-block';
+}
+function nextQ(){qi++;loadQ()}
+function restartQ(){document.getElementById('q-area').style.display='block';document.getElementById('q-res').style.display='none';initQ()}
+
+// MC
+const mcData=[
+  {s:'W = G · p ÷ 100 berechnet den Prozentwert.',ok:true},
+  {s:'Bei 20% Rabatt zahlt man 120% des ursprünglichen Preises.',ok:false},
+  {s:'G = W · 100 ÷ p berechnet den Grundwert.',ok:true},
+  {s:'p.a. steht für "pro Jahr".',ok:true},
+  {s:'Zinsformel: Z = K · p · t ÷ (100 · 12) für Zeit in Jahren.',ok:false},
+  {s:'Vermehrter Grundwert = Preis nach einer Erhöhung.',ok:true},
+];
+function loadMC(){
+  const area=document.getElementById('mc-area');
+  const sample=[...mcData].sort(()=>Math.random()-.5).slice(0,4);
+  area.innerHTML='';
+  sample.forEach((item,i)=>{
+    const d=document.createElement('div');d.style.cssText='padding:10px;border:1px solid var(--border2);border-radius:8px;margin-bottom:7px;';
+    d.innerHTML=`<p style="font-size:.88rem;font-weight:600;margin-bottom:6px;">${item.s}</p><div style="display:flex;gap:7px;">
+      <button class="btn btn-sm" id="mc-t-${i}" onclick="chkMC(${i},true,${item.ok})" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">✓ Richtig</button>
+      <button class="btn btn-sm" id="mc-f-${i}" onclick="chkMC(${i},false,${item.ok})" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;">✗ Falsch</button>
+    </div><div class="fb" id="mc-fb-${i}"></div>`;
+    area.appendChild(d);
+  });
+}
+function chkMC(i,c,ok){document.getElementById(`mc-t-${i}`).disabled=true;document.getElementById(`mc-f-${i}`).disabled=true;showFB(`mc-fb-${i}`,c===ok?'✅ Richtig!':`❌ Die Aussage ist ${ok?'richtig':'falsch'}.`,c===ok)}
+
+// ── MATCHING ──
+const mData=[
+  {t:'Grundwert G',d:'Entspricht 100% – die Ausgangsmenge'},
+  {t:'Prozentwert W',d:'W = G · p ÷ 100'},
+  {t:'Prozentsatz p%',d:'p = W · 100 ÷ G'},
+  {t:'Vermehrter Grundwert',d:'G nach einem Aufschlag (z.B. + MwSt.)'},
+  {t:'Verminderter Grundwert',d:'G nach einem Abzug (z.B. − Rabatt)'},
+  {t:'Zinsen Z',d:'Z = K · p · t ÷ (100 · 12)'},
+];
+let mSel=null,mDone=[];
+function setupMatch(){
+  const left=[...mData].sort(()=>Math.random()-.5);
+  const right=[...mData].sort(()=>Math.random()-.5);
+  mSel=null;mDone=[];hideFB('fb-m');
+  const lc=document.getElementById('m-left'),rc=document.getElementById('m-right');
+  lc.innerHTML='';rc.innerHTML='';
+  left.forEach(item=>{
+    const d=document.createElement('div');d.className='mi';d.dataset.t=item.t;d.textContent=item.t;
+    d.onclick=()=>{if(d.classList.contains('done'))return;document.querySelectorAll('#m-left .mi').forEach(e=>e.classList.remove('sel'));d.classList.add('sel');mSel=d};
+    lc.appendChild(d);
+  });
+  right.forEach(item=>{
+    const d=document.createElement('div');d.className='mi';d.dataset.t=item.t;d.textContent=item.d;
+    d.onclick=()=>{
+      if(!mSel||d.classList.contains('done'))return;
+      if(mSel.dataset.t===d.dataset.t){mSel.classList.remove('sel');mSel.classList.add('done');d.classList.add('done');mDone.push(mSel.dataset.t);mSel=null;if(mDone.length===mData.length)showFB('fb-m','🎉 Alle Begriffe richtig zugeordnet!',true)}
+      else{d.classList.add('bad');setTimeout(()=>d.classList.remove('bad'),500);mSel.classList.remove('sel');mSel=null;showFB('fb-m','❌ Passt nicht!',false);setTimeout(()=>hideFB('fb-m'),1400)}
+    };
+    rc.appendChild(d);
+  });
+}
+
+// FM
+const fmData=[
+  {lbl:'W = G · p ÷ 100',what:'Prozentwert berechnen'},
+  {lbl:'G = W · 100 ÷ p',what:'Grundwert berechnen'},
+  {lbl:'p = W · 100 ÷ G',what:'Prozentsatz berechnen'},
+  {lbl:'Z = K·p·t÷(100·12)',what:'Zinsen (Monate) berechnen'},
+  {lbl:'Brutto = Netto · 1,19',what:'Preis + 19% MwSt.'},
+];
+let fmSel=null;
+function loadFM(){
+  const area=document.getElementById('fm-area');
+  const left=[...fmData].sort(()=>Math.random()-.5);
+  const right=[...fmData].sort(()=>Math.random()-.5);
+  fmSel=null;
+  area.innerHTML='';
+  const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:7px;';
+  const lc=document.createElement('div');lc.style.cssText='display:flex;flex-direction:column;gap:6px;';
+  const rc=document.createElement('div');rc.style.cssText='display:flex;flex-direction:column;gap:6px;';
+  grid.appendChild(lc);grid.appendChild(rc);area.appendChild(grid);
+  left.forEach(item=>{
+    const d=document.createElement('div');d.className='mi';d.dataset.k=item.lbl;d.textContent=item.lbl;d.style.fontFamily='monospace;font-size:.82rem';
+    d.onclick=()=>{if(d.classList.contains('done'))return;lc.querySelectorAll('.mi').forEach(e=>e.classList.remove('sel'));d.classList.add('sel');fmSel=d};
+    lc.appendChild(d);
+  });
+  right.forEach(item=>{
+    const d=document.createElement('div');d.className='mi';d.dataset.k=item.lbl;d.textContent=item.what;
+    d.onclick=()=>{
+      if(!fmSel||d.classList.contains('done'))return;
+      if(fmSel.dataset.k===d.dataset.k){fmSel.classList.remove('sel');fmSel.classList.add('done');d.classList.add('done');fmSel=null}
+      else{d.classList.add('bad');setTimeout(()=>d.classList.remove('bad'),500);fmSel.classList.remove('sel');fmSel=null}
+    };
+    rc.appendChild(d);
+  });
+}
+
+// ── BLITZ ──
+function genBItem(diff){
+  const Gs=diff==='e'?[100,200,300,400,50]:diff==='m'?[350,480,750,1200,620]:[3870,490,590,12000,8750];
+  const ps=diff==='e'?[10,20,25,50,5]:diff==='m'?[15,19,30,8,12]:[29,22,19,2.8,3.5];
+  const G=Gs[Math.floor(Math.random()*Gs.length)];
+  const p=ps[Math.floor(Math.random()*ps.length)];
+  const W=r2(G*p/100);
+  const type=Math.floor(Math.random()*3);
+  if(type===0)return{q:`${p}% von ${G}€ =`,a:`${W}€`,w:[r2(W+G*0.01),r2(W-G*0.02),r2(W*1.1)].map(v=>r2(v)+'€')};
+  if(type===1)return{q:`Grundwert? W=${W}€, p=${p}%`,a:`${G}€`,w:[r2(G*1.05),r2(G*0.95),r2(G+p)].map(v=>v+'€')};
+  return{q:`Prozentsatz? W=${W}€, G=${G}€`,a:`${p}%`,w:[r2(p+3),r2(p-2),r2(p+10)].map(v=>v+'%')};
+}
+let bsS=0,bsR=0,bsT=0,bDiff='e';
+function startBlitz(){
+  const item=genBItem(bDiff);
+  document.getElementById('bd').textContent=item.q;
+  const opts=[item.a,...item.w.slice(0,3)].sort(()=>Math.random()-.5);
+  const c=document.getElementById('bos');c.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='blitz-o';b.textContent=o;b.onclick=()=>chkBlitz(b,o===item.a,item.a);c.appendChild(b)});
+  document.getElementById('bfb').textContent='';
+}
+function chkBlitz(btn,ok,correct){
+  document.querySelectorAll('#bos .blitz-o').forEach(b=>b.disabled=true);bsT++;
+  if(ok){btn.classList.add('ok');bsR++;bsS+=10;document.getElementById('bfb').textContent='✅ Richtig! +10'}
+  else{btn.classList.add('err');document.getElementById('bfb').textContent=`❌ Richtig: ${correct}`}
+  document.getElementById('bs').textContent=bsS;document.getElementById('br').textContent=bsR;document.getElementById('bt').textContent=bsT;
+  setTimeout(startBlitz,1100);
+}
+function resetBlitz(){bsS=bsR=bsT=0;['bs','br','bt'].forEach(id=>document.getElementById(id).textContent=0);document.getElementById('bd').textContent='Drücke Start!';document.getElementById('bos').innerHTML='';document.getElementById('bfb').textContent=''}
+
+// Term Blitz
+const tbPool=[
+  {d:'Die Ausgangsmenge – entspricht 100%',a:'Grundwert G',w:['Prozentwert','Prozentsatz','Zinsen']},
+  {d:'W = G · p ÷ 100',a:'Prozentwert W',w:['Grundwert','Prozentsatz','Kapital']},
+  {d:'Preis + MwSt. = ?',a:'Vermehrter Grundwert',w:['Verminderter Grundwert','Prozentwert','Rabatt']},
+  {d:'Preis − Rabatt = ?',a:'Verminderter Grundwert',w:['Vermehrter Grundwert','Prozentwert','Zinsen']},
+  {d:'p.a. bedeutet…',a:'pro Jahr',w:['pro Monat','pro Angebot','pro Artikel']},
+  {d:'Z = K · p · t ÷ (100 · 12) – was ist t?',a:'Zeit in Monaten',w:['Zinssatz','Kapital','Endkapital']},
+];
+let tbC=null;
+function startTBlitz(){
+  tbC=tbPool[Math.floor(Math.random()*tbPool.length)];
+  document.getElementById('tbd').textContent=tbC.d;
+  const opts=[tbC.a,...tbC.w.slice(0,3)].sort(()=>Math.random()-.5);
+  const c=document.getElementById('tbos');c.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='blitz-o';b.textContent=o;b.onclick=()=>chkTB(b,o===tbC.a);c.appendChild(b)});
+  document.getElementById('tbfb').textContent='';
+}
+function chkTB(btn,ok){
+  document.querySelectorAll('#tbos .blitz-o').forEach(b=>b.disabled=true);
+  if(ok){btn.classList.add('ok');document.getElementById('tbfb').textContent='✅ Super!'}
+  else{btn.classList.add('err');document.getElementById('tbfb').textContent=`❌ Richtig: ${tbC.a}`}
+  setTimeout(startTBlitz,1300);
+}
+
+// Zins Blitz
+const zbPool=[
+  {q:'K=1000€, p=3%, t=12 Mon. → Z=?',a:'30€',w:['3€','300€','12€']},
+  {q:'K=5000€, p=2%, t=6 Mon. → Z=?',a:'50€',w:['100€','60€','25€']},
+  {q:'K=12000€, p=2,8%, t=4 Mon. → Z=?',a:'112€',w:['134€','100€','96€']},
+  {q:'K=800€, p=5%, t=3 Mon. → Z=?',a:'10€',w:['40€','5€','120€']},
+  {q:'K=2000€, p=4%, t=12 Mon. → Z=?',a:'80€',w:['40€','8€','800€']},
+];
+let zbC=null;
+function startZBlitz(){
+  zbC=zbPool[Math.floor(Math.random()*zbPool.length)];
+  document.getElementById('zbd').textContent=zbC.q;
+  const opts=[zbC.a,...zbC.w.slice(0,3)].sort(()=>Math.random()-.5);
+  const c=document.getElementById('zbos');c.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='blitz-o';b.textContent=o;b.onclick=()=>chkZB(b,o===zbC.a);c.appendChild(b)});
+  document.getElementById('zbfb').textContent='';
+}
+function chkZB(btn,ok){
+  document.querySelectorAll('#zbos .blitz-o').forEach(b=>b.disabled=true);
+  if(ok){btn.classList.add('ok');document.getElementById('zbfb').textContent='✅ Richtig!'}
+  else{btn.classList.add('err');document.getElementById('zbfb').textContent=`❌ Richtig: ${zbC.a}`}
+  setTimeout(startZBlitz,1200);
+}
+
+// ── AUFGABEN ──
+function showDiff(l,btn){
+  ['e','m','h'].forEach(k=>{const e=document.getElementById('diff-'+k);if(e)e.style.display=k===l?'block':'none'});
+  btn.parentElement.querySelectorAll('.dtab').forEach(b=>b.classList.remove('ae','am','ah'));
+  btn.classList.add(l==='e'?'ae':l==='m'?'am':'ah');
+}
+
+// ── GENERATOR ──
+let gDiff='e';
+function setGD(d,btn){gDiff=d;btn.parentElement.querySelectorAll('.dtab').forEach(b=>b.classList.remove('ae','am','ah'));btn.classList.add(d==='e'?'ae':d==='m'?'am':'ah')}
+function rndG(){
+  if(gDiff==='e')return [100,200,300,50,80,150][Math.floor(Math.random()*6)];
+  if(gDiff==='m')return [350,480,750,920,1200][Math.floor(Math.random()*5)];
+  return [3870,4500,12000,8750,6500][Math.floor(Math.random()*5)];
+}
+function rndP(){
+  if(gDiff==='e')return [10,20,25,50][Math.floor(Math.random()*4)];
+  if(gDiff==='m')return [15,19,22,12,8][Math.floor(Math.random()*5)];
+  return [29,19,2.8,3.5,13.5][Math.floor(Math.random()*5)];
+}
+
+function genTask(type){
+  if(type==='all')type=['w','g','p','rabatt','mwst','zins'][Math.floor(Math.random()*6)];
+  const id='g'+Date.now();let html='';
+  const G=rndG(),p=rndP();
+  if(type==='w'){
+    const W=r2(G*p/100);
+    html=`<div class="card" style="border-left:4px solid var(--pri);"><div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">PROZENTWERT</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">G = <strong>${G}€</strong>, p = <strong>${p}%</strong><br>Berechne den Prozentwert W.</p>
+      <div class="irow"><span>W =</span><input class="inp" id="${id}" type="number" step="0.01" style="width:100px"><span>€</span><button class="btn btn-p btn-sm" onclick="chkT('${id}',${W},'fb-${id}',0.01)">✓</button></div>
+      <div class="fb" id="fb-${id}"></div>
+      <button class="btn btn-sm" style="margin-top:7px;background:#fdf4ff;color:var(--muted);border:1px solid var(--border);" onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung</button>
+      <div id="sol-${id}" style="display:none;font-size:.82rem;margin-top:6px;padding:8px;background:var(--pri-l);border-radius:8px;color:var(--pri-d);">W = ${G} · ${p} ÷ 100 = <strong>${W}€</strong></div></div>`;
+  }else if(type==='g'){
+    const W=r2(G*p/100);
+    html=`<div class="card" style="border-left:4px solid var(--green);"><div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">GRUNDWERT</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">W = <strong>${W}€</strong> sind <strong>${p}%</strong><br>Berechne den Grundwert G.</p>
+      <div class="irow"><span>G =</span><input class="inp" id="${id}" type="number" step="0.01" style="width:100px"><span>€</span><button class="btn btn-p btn-sm" onclick="chkT('${id}',${G},'fb-${id}',0.05)">✓</button></div>
+      <div class="fb" id="fb-${id}"></div>
+      <button class="btn btn-sm" style="margin-top:7px;background:#f0fdf4;color:var(--muted);border:1px solid #86efac;" onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung</button>
+      <div id="sol-${id}" style="display:none;font-size:.82rem;margin-top:6px;padding:8px;background:var(--green-l);border-radius:8px;color:#14532d;">G = ${W} · 100 ÷ ${p} = <strong>${G}€</strong></div></div>`;
+  }else if(type==='p'){
+    const W=r2(G*p/100);
+    html=`<div class="card" style="border-left:4px solid var(--blue);"><div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">PROZENTSATZ</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">W = <strong>${W}€</strong> von G = <strong>${G}€</strong><br>Wie viel Prozent sind das?</p>
+      <div class="irow"><span>p =</span><input class="inp" id="${id}" type="number" step="0.01" style="width:100px"><span>%</span><button class="btn btn-p btn-sm" onclick="chkT('${id}',${p},'fb-${id}',0.05)">✓</button></div>
+      <div class="fb" id="fb-${id}"></div></div>`;
+  }else if(type==='rabatt'){
+    const rab=r2(G*p/100);const neu=r2(G-rab);
+    html=`<div class="card" style="border-left:4px solid var(--red);"><div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">RABATT</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">Originalpreis: <strong>${G}€</strong>, Rabatt: <strong>${p}%</strong><br>Berechne den neuen Preis.</p>
+      <div class="irow"><span>Neu =</span><input class="inp" id="${id}" type="number" step="0.01" style="width:100px"><span>€</span><button class="btn btn-p btn-sm" onclick="chkT('${id}',${neu},'fb-${id}',0.01)">✓</button></div>
+      <div class="fb" id="fb-${id}"></div>
+      <button class="btn btn-sm" style="margin-top:7px;background:#fef2f2;color:var(--muted);border:1px solid #fca5a5;" onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung</button>
+      <div id="sol-${id}" style="display:none;font-size:.82rem;margin-top:6px;padding:8px;background:var(--red-l);border-radius:8px;color:#991b1b;">Rabatt = ${rab}€ → Neu = ${G}−${rab} = <strong>${neu}€</strong></div></div>`;
+  }else if(type==='mwst'){
+    const mwp=[7,19][Math.floor(Math.random()*2)];const brutto=r2(G*(1+mwp/100));
+    html=`<div class="card" style="border-left:4px solid var(--amber);"><div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">MEHRWERTSTEUER</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">Nettopreis: <strong>${G}€</strong>, MwSt.: <strong>${mwp}%</strong><br>Wie viel kostet es mit MwSt.?</p>
+      <div class="irow"><span>Brutto =</span><input class="inp" id="${id}" type="number" step="0.01" style="width:100px"><span>€</span><button class="btn btn-p btn-sm" onclick="chkT('${id}',${brutto},'fb-${id}',0.01)">✓</button></div>
+      <div class="fb" id="fb-${id}"></div></div>`;
+  }else{
+    const K=[1000,2000,5000,8000,10000][Math.floor(Math.random()*5)];
+    const zp=[2,3,4,2.5,1.5][Math.floor(Math.random()*5)];
+    const t=[3,6,12,4,9][Math.floor(Math.random()*5)];
+    const Z=r2(K*zp*t/(100*12));const end=r2(K+Z);
+    html=`<div class="card" style="border-left:4px solid var(--teal);"><div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">ZINSEN</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">K=<strong>${K}€</strong>, p=<strong>${zp}%</strong>, t=<strong>${t} Monate</strong><br>Zinsen und Endkapital berechnen.</p>
+      <div class="irow"><span>Z =</span><input class="inp" id="${id}-z" type="number" step="0.01" style="width:100px"><span>€</span><button class="btn btn-p btn-sm" onclick="chkT('${id}-z',${Z},'fb-${id}-z',0.01)">✓</button></div>
+      <div class="fb" id="fb-${id}-z"></div>
+      <div class="irow"><span>End =</span><input class="inp" id="${id}-e" type="number" step="0.01" style="width:100px"><span>€</span><button class="btn btn-p btn-sm" onclick="chkT('${id}-e',${end},'fb-${id}-e',0.01)">✓</button></div>
+      <div class="fb" id="fb-${id}-e"></div></div>`;
+  }
+  document.getElementById('gen-out').innerHTML=html;
+}
+
+function genSheet(){
+  const types=['w','rabatt','mwst','g','zins'];
+  let html='<div style="display:flex;flex-direction:column;gap:8px;">';
+  types.forEach((type,i)=>{
+    const G=rndG(),p=rndP();
+    if(type==='w'){const W=r2(G*p/100);html+=`<div style="padding:10px;background:#fdf4ff;border-radius:8px;border-left:3px solid var(--pri);"><strong>Aufg. ${i+1}:</strong> ${p}% von ${G}€ = ?<span style="float:right;font-size:.78rem;color:var(--muted);">${W}€</span></div>`}
+    else if(type==='rabatt'){const neu=r2(G*(1-p/100));html+=`<div style="padding:10px;background:var(--red-l);border-radius:8px;border-left:3px solid var(--red);"><strong>Aufg. ${i+1}:</strong> ${G}€ − ${p}% Rabatt = ?<span style="float:right;font-size:.78rem;color:var(--muted);">${neu}€</span></div>`}
+    else if(type==='mwst'){const b=r2(G*1.19);html+=`<div style="padding:10px;background:var(--amber-l);border-radius:8px;border-left:3px solid var(--amber);"><strong>Aufg. ${i+1}:</strong> ${G}€ + 19% MwSt. = ?<span style="float:right;font-size:.78rem;color:var(--muted);">${b}€</span></div>`}
+    else if(type==='g'){const W=r2(G*p/100);html+=`<div style="padding:10px;background:var(--green-l);border-radius:8px;border-left:3px solid var(--green);"><strong>Aufg. ${i+1}:</strong> W=${W}€ = ${p}% → G = ?<span style="float:right;font-size:.78rem;color:var(--muted);">${G}€</span></div>`}
+    else{const K=2000,zp=3,t=6;const Z=r2(K*zp*t/1200);html+=`<div style="padding:10px;background:var(--teal-l);border-radius:8px;border-left:3px solid var(--teal);"><strong>Aufg. ${i+1}:</strong> K=${K}€, p=${zp}%, t=${t}Mo → Z=?<span style="float:right;font-size:.78rem;color:var(--muted);">${Z}€</span></div>`}
+  });
+  html+='</div><p style="font-size:.75rem;color:#9ca3af;margin-top:7px;">Lösungen sind klein angezeigt.</p>';
+  document.getElementById('gen-sheet').innerHTML=html;
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+  updatePctBar();setupMatch();loadFM();loadMC();loadRF();initQ();loadDS();
+});
+</script>
+</body>
+</html>

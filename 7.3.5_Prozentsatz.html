@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prozentsatz Trainer – Dreisatz-Tabelle</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:#0a0e1a;color:#f1f5f9;font-family:'Nunito',sans-serif;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px}
+
+  .header{text-align:center;margin-bottom:24px}
+  .header .chip{font-size:11px;letter-spacing:4px;color:#a78bfa;text-transform:uppercase;display:block;margin-bottom:8px}
+  .header h1{font-size:28px;font-weight:900;background:linear-gradient(135deg,#a78bfa,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header p{color:#64748b;font-size:13px;margin-top:6px}
+
+  .progress{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
+  .pb{width:34px;height:34px;border-radius:50%;border:2px solid #1f2937;background:transparent;color:#475569;font-weight:800;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s}
+  .pb.active{border-color:#8b5cf6;background:rgba(139,92,246,.18);color:#a78bfa}
+  .pb.done{border-color:#10b981;background:rgba(16,185,129,.15);color:#10b981}
+
+  .card{background:#111827;border:1px solid #1f2937;border-radius:20px;padding:28px 28px 32px;max-width:640px;width:100%;box-shadow:0 0 60px rgba(139,92,246,.08),0 24px 60px rgba(0,0,0,.5)}
+
+  .task-box{background:#0a0e1a;border-left:4px solid #8b5cf6;border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:22px;font-size:16px;line-height:1.8}
+  .task-lbl{font-size:10px;letter-spacing:3px;color:#a78bfa;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:800}
+
+  .phase-hint{font-size:13px;color:#94a3b8;margin-bottom:16px;line-height:1.6;padding:10px 14px;background:#0a0e1a;border-radius:8px;border-left:3px solid #8b5cf6}
+
+  .sec-lbl{font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;margin-top:16px;font-weight:800}
+  .badges{display:flex;gap:8px;flex-wrap:wrap}
+  .badge{padding:7px 16px;border-radius:999px;border:2px solid #1f2937;background:transparent;color:#64748b;font-weight:700;font-size:13px;cursor:pointer;transition:all .16s;font-family:'Nunito',sans-serif}
+  .badge:hover{border-color:#374151;color:#94a3b8}
+  .badge.sb{border-color:#06b6d4;background:rgba(6,182,212,.12);color:#06b6d4}
+  .badge.sa{border-color:#f59e0b;background:rgba(245,158,11,.12);color:#f59e0b}
+
+  .btn-main{width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#8b5cf6,#06b6d4);color:#fff;font-weight:900;font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:18px;transition:opacity .18s}
+  .btn-main:hover{opacity:.88}
+
+  .alert{border-radius:10px;padding:11px 15px;font-size:13px;margin-top:12px;line-height:1.5}
+  .alert.red{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:#f87171}
+  .alert.green{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#10b981;margin-bottom:16px}
+
+  /* ── Dreisatz-Tabelle ── */
+  .table-wrap{margin-bottom:22px}
+  .table-title{font-size:11px;letter-spacing:2px;color:#06b6d4;text-transform:uppercase;margin-bottom:10px;font-weight:800}
+
+  .dreisatz{border-collapse:collapse;width:auto;min-width:280px}
+  .dreisatz th{background:#0a0e1a;color:#94a3b8;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:8px 18px;border:1px solid #1f2937;font-weight:800;text-align:center}
+  .dreisatz td{border:1px solid #1f2937;padding:0;text-align:center;vertical-align:middle}
+  .dreisatz tr.row-given td{background:#0a0e1a}
+  .dreisatz tr.row-calc td{background:#0d1a2e}
+  .dreisatz tr.row-result td{background:#0a0e1a}
+
+  .cell-fixed{padding:10px 18px;color:#94a3b8;font-weight:700;font-size:16px;min-width:90px}
+  .cell-fixed.highlight{color:#06b6d4}
+
+  .cell-input{padding:4px 6px;min-width:90px}
+  .cell-input input{width:100%;padding:7px 10px;border-radius:8px;border:2px solid #1f2937;background:#060a14;color:#f1f5f9;font-size:16px;font-weight:700;font-family:'Nunito',sans-serif;outline:none;text-align:center;transition:border-color .2s}
+  .cell-input input:focus{border-color:#8b5cf6}
+  .cell-input input.ok{border-color:#10b981;background:rgba(16,185,129,.1);color:#10b981}
+  .cell-input input.err{border-color:#f87171;background:rgba(248,113,113,.08);color:#f87171}
+  .cell-input input.neutral{border-color:#1f2937}
+
+  .arrow-row td{border:none;background:transparent;padding:2px 0;font-size:12px;color:#374151;text-align:center;font-weight:700}
+
+  .btn-check{padding:11px 24px;border-radius:10px;border:none;background:linear-gradient(135deg,#8b5cf6,#06b6d4);color:#fff;font-weight:900;font-size:14px;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:16px}
+  .btn-check:hover{opacity:.88}
+
+  .res-box{border-radius:12px;padding:18px 20px;margin-top:14px}
+  .res-box.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3)}
+  .res-box .t{color:#10b981;font-weight:900;font-size:17px;margin-bottom:4px}
+  .res-box .c{color:#94a3b8;font-size:13px;line-height:1.7}
+  .res-box .c strong{color:#f1f5f9}
+  .btn-next{margin-top:12px;background:#10b981;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px}
+  .all-done{margin-top:8px;color:#a78bfa;font-weight:900;font-size:17px}
+
+  .antwort{margin-top:10px;background:#0a0e1a;border:1px solid #1f2937;border-radius:8px;padding:10px 16px;font-size:14px;color:#94a3b8}
+  .antwort strong{color:#f1f5f9}
+
+  .footer{margin-top:20px;color:#1f2937;font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="chip">Prozentrechnung · Klasse 7</span>
+  <h1>Prozentsatz berechnen</h1>
+  <p>Fülle die Dreisatz-Tabelle aus – Schritt für Schritt</p>
+</div>
+
+<div class="progress" id="prog"></div>
+<div class="card" id="card"></div>
+<p class="footer" id="foot"></p>
+
+<script>
+// Dreisatz Prozentsatz:
+// Spalten: Anzahl | %
+// Zeile 1: G     | 100%   ← vorausgefüllt (G ist gegeben)
+// Zeile 2: 1     | 100/G  ← Schüler füllt aus (÷G-Schritt)
+// Zeile 3: W     | p%     ← Schüler füllt aus (·W-Schritt) → p ist gesucht
+
+const AUF = [
+  { text:"In einem Kinosaal sind 150 von 200 Plätzen belegt. Wie viel Prozent der Plätze sind besetzt?",
+    G:200, W:150, p:75, col1:"Anzahl Plätze", col2:"%", einheit:"%" },
+  { text:"In einer Klasse sind 25 Schülerinnen und Schüler. 21 haben die Hausaufgaben gemacht. Wie viel Prozent sind das?",
+    G:25, W:21, p:84, col1:"Anzahl Schüler", col2:"%", einheit:"%" },
+  { text:"Ein Mädchen erhält bei der Klassensprecherwahl 13 von 20 Stimmen. Wie viel Prozent bekommt sie?",
+    G:20, W:13, p:65, col1:"Anzahl Stimmen", col2:"%", einheit:"%" },
+  { text:"Fabian wiegt 80 kg. Nach einer Krankheit wiegt er 78 kg. Wie viel Prozent seines ursprünglichen Gewichts hat er noch?",
+    G:80, W:78, p:97.5, col1:"Gewicht (kg)", col2:"%", einheit:"%" },
+  { text:"In einer Klasse sind 17 Jungen und 8 Mädchen. Wie viel Prozent der Schüler sind Jungen?",
+    G:25, W:17, p:68, col1:"Anzahl Schüler", col2:"%", einheit:"%" },
+  { text:"Von 400 Teilnehmern eines Marathons kommen 320 ins Ziel. Wie viel Prozent schaffen es?",
+    G:400, W:320, p:80, col1:"Anzahl Teilnehmer", col2:"%", einheit:"%" },
+  { text:"Ein Schüler löst 18 von 24 Aufgaben richtig. Wie viel Prozent hat er richtig?",
+    G:24, W:18, p:75, col1:"Anzahl Aufgaben", col2:"%", einheit:"%" },
+  { text:"In einem Zug sitzen 180 Fahrgäste. 45 davon haben kein Ticket. Wie viel Prozent haben kein Ticket?",
+    G:180, W:45, p:25, col1:"Anzahl Fahrgäste", col2:"%", einheit:"%" },
+  { text:"Eine Mannschaft hat 30 Spiele gespielt und 24 gewonnen. Wie viel Prozent hat sie gewonnen?",
+    G:30, W:24, p:80, col1:"Anzahl Spiele", col2:"%", einheit:"%" },
+  { text:"Von 500 befragten Schülern gehen 350 gerne zur Schule. Wie viel Prozent sind das?",
+    G:500, W:350, p:70, col1:"Anzahl Schüler", col2:"%", einheit:"%" }
+];
+
+let idx=0, phase='id', gesucht=null, gegeben=[], gelöst=new Set();
+function getA(){ return AUF[idx]; }
+
+function render(){
+  const prog=document.getElementById('prog');
+  prog.innerHTML='';
+  AUF.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='pb'+(i===idx?' active':gelöst.has(i)?' done':'');
+    b.textContent=gelöst.has(i)?'✓':i+1;
+    b.onclick=()=>reset(i);
+    prog.appendChild(b);
+  });
+  document.getElementById('foot').textContent=`Aufgabe ${idx+1} von ${AUF.length} · ${gelöst.size} gelöst`;
+
+  const a=getA();
+  const card=document.getElementById('card');
+  card.innerHTML='';
+
+  const tb=el('div','task-box');
+  tb.innerHTML=`<span class="task-lbl">Aufgabe ${idx+1}</span>${a.text}`;
+  card.appendChild(tb);
+
+  if(phase==='id') renderIdentify(card,a);
+  else renderTable(card,a);
+}
+
+function renderIdentify(card,a){
+  const hint=el('div','phase-hint');
+  hint.innerHTML='<strong>Schritt 1:</strong> Bestimme zuerst – was ist <em>gegeben</em>, was ist <em>gesucht</em>?';
+  card.appendChild(hint);
+
+  const lblG=el('div','sec-lbl'); lblG.style.color='#06b6d4'; lblG.textContent='Gegeben ist: (mehrere wählen)';
+  card.appendChild(lblG);
+  const bgv=el('div','badges');
+  ['G – Grundwert','p – Prozentsatz','W – Prozentwert'].forEach((l,i)=>{
+    const k=['G','p','W'][i];
+    const b=el('button','badge'+(gegeben.includes(k)?' sb':''));
+    b.textContent=l;
+    b.onclick=()=>{ gegeben.includes(k)?gegeben=gegeben.filter(x=>x!==k):gegeben.push(k); render(); };
+    bgv.appendChild(b);
+  });
+  card.appendChild(bgv);
+
+  const lblQ=el('div','sec-lbl'); lblQ.style.color='#f59e0b'; lblQ.textContent='Gesucht ist:';
+  card.appendChild(lblQ);
+  const bgq=el('div','badges');
+  ['G – Grundwert','p – Prozentsatz','W – Prozentwert'].forEach((l,i)=>{
+    const k=['G','p','W'][i];
+    const b=el('button','badge'+(gesucht===k?' sa':''));
+    b.textContent=l;
+    b.onclick=()=>{ gesucht=k; render(); };
+    bgq.appendChild(b);
+  });
+  card.appendChild(bgq);
+
+  const errDiv=el('div'); errDiv.id='id-err';
+  card.appendChild(errDiv);
+
+  const btn=el('button','btn-main');
+  btn.textContent='Weiter zur Tabelle →';
+  btn.onclick=checkId;
+  card.appendChild(btn);
+}
+
+function renderTable(card,a){
+  const okMsg=el('div','alert green');
+  okMsg.innerHTML='✓ Richtig! Gegeben: <strong>G und W</strong> · Gesucht: <strong>p (Prozentsatz)</strong>';
+  card.appendChild(okMsg);
+
+  const wrap=el('div','table-wrap');
+  const title=el('div','table-title');
+  title.textContent='Fülle den Dreisatz aus:';
+  wrap.appendChild(title);
+
+  const table=document.createElement('table');
+  table.className='dreisatz';
+
+  // Header
+  const thead=document.createElement('thead');
+  const hr=document.createElement('tr');
+  [a.col1, a.col2].forEach(h=>{
+    const th=document.createElement('th'); th.textContent=h; hr.appendChild(th);
+  });
+  thead.appendChild(hr); table.appendChild(thead);
+
+  const tbody=document.createElement('tbody');
+
+  // Zeile 1: G | 100% (vorausgefüllt)
+  const r1=document.createElement('tr'); r1.className='row-given';
+  const r1c1=document.createElement('td');
+  r1c1.innerHTML=`<div class="cell-fixed highlight">${a.G}</div>`;
+  const r1c2=document.createElement('td');
+  r1c2.innerHTML=`<div class="cell-fixed">100 %</div>`;
+  r1.appendChild(r1c1); r1.appendChild(r1c2);
+  tbody.appendChild(r1);
+
+  // Pfeil ÷G
+  addArrow(tbody, `÷ ${a.G}`, `÷ ${a.G}`);
+
+  // Zeile 2: 1 | 100/G  (Schüler füllt aus)
+  const step = Math.round((100/a.G)*10000)/10000;
+  const r2=document.createElement('tr'); r2.className='row-calc';
+  const r2c1=document.createElement('td'); r2c1.className='cell-input';
+  r2c1.innerHTML=`<input type="text" id="i_a1" placeholder="?" autocomplete="off">`;
+  const r2c2=document.createElement('td'); r2c2.className='cell-input';
+  r2c2.innerHTML=`<input type="text" id="i_b1" placeholder="?" autocomplete="off">`;
+  r2.appendChild(r2c1); r2.appendChild(r2c2);
+  tbody.appendChild(r2);
+
+  // Pfeil ·W
+  addArrow(tbody, `· ${a.W}`, `· ${a.W}`);
+
+  // Zeile 3: W | p% (Zielzeile)
+  const r3=document.createElement('tr'); r3.className='row-result';
+  const r3c1=document.createElement('td'); r3c1.className='cell-input';
+  r3c1.innerHTML=`<input type="text" id="i_a2" placeholder="?" autocomplete="off">`;
+  const r3c2=document.createElement('td'); r3c2.className='cell-input';
+  r3c2.innerHTML=`<input type="text" id="i_b2" placeholder="?" autocomplete="off" style="border-color:#8b5cf644">`;
+  r3.appendChild(r3c1); r3.appendChild(r3c2);
+  tbody.appendChild(r3);
+
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+
+  const hint2=el('div');
+  hint2.style.cssText='font-size:12px;color:#374151;margin-top:8px';
+  hint2.innerHTML=`Tipp: Zeile 2 zeigt 1 Stück → wie viel % ist das? · Zeile 3 zeigt ${a.W} Stück → gesucht sind die %`;
+  wrap.appendChild(hint2);
+  card.appendChild(wrap);
+
+  ['i_a1','i_b1','i_a2','i_b2'].forEach(id=>{
+    setTimeout(()=>{
+      const inp=document.getElementById(id);
+      if(inp) inp.onkeydown=e=>{ if(e.key==='Enter') checkTable(); };
+    },0);
+  });
+
+  const errDiv=el('div'); errDiv.id='tbl-err';
+  card.appendChild(errDiv);
+
+  const btn=el('button','btn-check');
+  btn.textContent='Tabelle prüfen ✓';
+  btn.onclick=checkTable;
+  card.appendChild(btn);
+
+  const resDiv=el('div'); resDiv.id='res';
+  card.appendChild(resDiv);
+}
+
+function addArrow(tbody, leftTxt, rightTxt){
+  const ar=document.createElement('tr'); ar.className='arrow-row';
+  const td=document.createElement('td'); td.colSpan=2;
+  // Two columns of arrows side by side
+  td.innerHTML=`<div style="display:flex;justify-content:space-around;padding:2px 18px">
+    <span>↓ ${leftTxt}</span><span>↓ ${rightTxt}</span></div>`;
+  ar.appendChild(td);
+  tbody.appendChild(ar);
+}
+
+function checkId(){
+  const ok=gesucht==='p'&&gegeben.includes('G')&&gegeben.includes('W')&&gegeben.length===2;
+  if(ok){ phase='calc'; render(); }
+  else{
+    document.getElementById('id-err').innerHTML=
+      `<div class="alert red">Nicht ganz richtig. Hinweis: Gegeben sind <strong>G</strong> (Grundwert) und <strong>W</strong> (Prozentwert) – gesucht ist <strong>p</strong> (der Prozentsatz).</div>`;
+  }
+}
+
+function checkTable(){
+  const a=getA();
+  const step=Math.round((100/a.G)*10000)/10000; // 100/G = wie viel % ist 1 Stück
+
+  const fA1=document.getElementById('i_a1'); // Zeile2 Spalte1 → erwarte: 1
+  const fB1=document.getElementById('i_b1'); // Zeile2 Spalte2 → erwarte: step (100/G)
+  const fA2=document.getElementById('i_a2'); // Zeile3 Spalte1 → erwarte: W
+  const fB2=document.getElementById('i_b2'); // Zeile3 Spalte2 → erwarte: p
+
+  if(!fA1||!fB1||!fA2||!fB2) return;
+
+  const vA1=parseFloat((fA1.value||'').replace(',','.'));
+  const vB1=parseFloat((fB1.value||'').replace(',','.'));
+  const vA2=parseFloat((fA2.value||'').replace(',','.'));
+  const vB2=parseFloat((fB2.value||'').replace(',','.'));
+
+  const tol=(val)=>Math.max(Math.abs(val)*0.01,0.05);
+
+  const okA1=vA1===1;
+  const okB1=!isNaN(vB1)&&Math.abs(vB1-step)<=tol(step);
+  const okA2=!isNaN(vA2)&&vA2===a.W;
+  const okB2=!isNaN(vB2)&&Math.abs(vB2-a.p)<=tol(a.p);
+
+  setColor(fA1,okA1); setColor(fB1,okB1);
+  setColor(fA2,okA2); setColor(fB2,okB2);
+
+  const resDiv=document.getElementById('res');
+  if(!resDiv) return;
+
+  if(okA1&&okB1&&okA2&&okB2){
+    gelöst.add(idx);
+    updateProgress();
+    const stepDisp=Number.isInteger(step)?step:step.toString().replace('.',',');
+    resDiv.innerHTML=`
+      <div class="res-box ok">
+        <div class="t">✓ Perfekt! Tabelle vollständig richtig!</div>
+        <div class="c">
+          ${a.G} → 100% &nbsp;÷${a.G}→&nbsp; 1 → <strong>${stepDisp}%</strong> &nbsp;·${a.W}→&nbsp; ${a.W} → <strong>${a.p}%</strong>
+        </div>
+        <div class="antwort">Antwortsatz: <strong>${a.W} von ${a.G} entsprechen ${a.p}%.</strong></div>
+        ${idx<AUF.length-1
+          ?`<button class="btn-next" onclick="reset(${idx+1})">Nächste Aufgabe →</button>`
+          :`<div class="all-done">🎉 Alle 10 Aufgaben geschafft!</div>`}
+      </div>`;
+  } else {
+    const stepDisp=Number.isInteger(step)?step:step.toString().replace('.',',');
+    let msgs=[];
+    if(!okA1) msgs.push(`Zeile 2, Spalte Anzahl: Hier steht <strong>1</strong> (ein einzelnes Stück).`);
+    if(!okB1) msgs.push(`Zeile 2, Spalte %: Hier steht <strong>${stepDisp}</strong> (= 100 ÷ ${a.G}).`);
+    if(!okA2) msgs.push(`Zeile 3, Spalte Anzahl: Hier steht <strong>${a.W}</strong> (der Prozentwert aus der Aufgabe).`);
+    if(!okB2) msgs.push(`Zeile 3, Spalte %: Hier steht <strong>${a.p}</strong> (= ${stepDisp} · ${a.W}).`);
+    resDiv.innerHTML=`<div class="alert red" style="margin-top:12px">
+      ${msgs.map(m=>`<div style="margin-bottom:4px">🔸 ${m}</div>`).join('')}
+    </div>`;
+  }
+}
+
+function updateProgress(){
+  document.querySelectorAll('.pb').forEach((b,i)=>{
+    b.className='pb'+(i===idx?' active':gelöst.has(i)?' done':'');
+    b.textContent=gelöst.has(i)?'✓':i+1;
+  });
+  document.getElementById('foot').textContent=`Aufgabe ${idx+1} von ${AUF.length} · ${gelöst.size} gelöst`;
+}
+
+function setColor(inp,isOk){
+  if(!inp) return;
+  inp.className=inp.value===''?'neutral':(isOk?'ok':'err');
+}
+
+function reset(i){ idx=i; phase='id'; gesucht=null; gegeben=[]; render(); }
+function el(tag,cls){ const e=document.createElement(tag); if(cls) e.className=cls; return e; }
+
+render();
+</script>
+</body>
+</html>

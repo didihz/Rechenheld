@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dezimalzahlen – Klasse 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f9ff;
+    --card: #ffffff;
+    --primary: #0ea5e9;
+    --primary-dark: #0284c7;
+    --secondary: #f72585;
+    --accent: #06d6a0;
+    --green: #06d6a0;
+    --orange: #fb8500;
+    --yellow: #ffd166;
+    --purple: #7209b7;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --shadow: 0 4px 24px rgba(14,165,233,0.11);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #7209b7 100%);
+    color: white; padding: 28px 24px 20px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  header::before {
+    content: ''; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  header h1 { font-family: 'Fredoka One', cursive; font-size: 2.4rem; letter-spacing: 1px; position: relative; }
+  header p { font-size: 1rem; opacity: 0.85; margin-top: 4px; position: relative; }
+  .progress-bar-wrap { background: rgba(255,255,255,0.2); border-radius: 20px; height: 8px; margin: 12px auto 0; max-width: 340px; position: relative; }
+  .progress-bar { background: var(--yellow); height: 100%; border-radius: 20px; transition: width 0.5s ease; }
+  .progress-label { font-size: 0.78rem; opacity: 0.9; margin-top: 4px; position: relative; }
+
+  .tabs { display: flex; overflow-x: auto; gap: 8px; padding: 16px 16px 0; background: white; border-bottom: 2px solid var(--border); scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; padding: 10px 18px; border-radius: 12px 12px 0 0; border: none; background: var(--bg); color: var(--muted); font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+  .tab.active { background: var(--primary); color: white; }
+  .tab:hover:not(.active) { background: #e0f2fe; color: var(--primary); }
+
+  main { padding: 20px 16px 60px; max-width: 820px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; margin-bottom: 18px; border: 1.5px solid var(--border); }
+  .card-title { font-family: 'Fredoka One', cursive; font-size: 1.25rem; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card-title .emoji { font-size: 1.4rem; }
+  .level-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .level-1 { background: #d1fae5; color: #065f46; }
+  .level-2 { background: #fef3c7; color: #92400e; }
+  .level-3 { background: #fee2e2; color: #991b1b; }
+
+  .info-box { background: linear-gradient(135deg, #e0f2fe, #dbeafe); border-left: 4px solid var(--primary); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; font-size: 0.95rem; line-height: 1.6; }
+  .info-box strong { color: var(--primary); }
+  .regel-card { background: linear-gradient(135deg, #0ea5e9, #7209b7); color: white; border-radius: var(--radius); padding: 20px; margin-bottom: 14px; font-size: 1rem; line-height: 1.7; }
+  .regel-card h3 { font-family: 'Fredoka One', cursive; font-size: 1.3rem; margin-bottom: 8px; }
+  .steps { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+  .step { display: flex; gap: 12px; align-items: flex-start; background: #f0f9ff; border-radius: 12px; padding: 12px 14px; font-size: 0.95rem; border: 1.5px solid #bae6fd; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem; flex-shrink: 0; }
+
+  /* Stellentafel */
+  .stellentafel { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 10px 0; }
+  .stellentafel th { background: var(--primary); color: white; padding: 8px 6px; text-align: center; font-weight: 800; border: 1px solid #0284c7; }
+  .stellentafel th.komma-left { border-right: 3px solid var(--yellow) !important; }
+  .stellentafel td { padding: 7px 6px; text-align: center; border: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; }
+  .stellentafel tr:nth-child(even) td { background: #f0f9ff; }
+  .stellentafel td.highlight { background: #bae6fd; font-weight: 900; color: var(--primary-dark); }
+  .stellentafel .komma-cell { color: var(--primary); font-weight: 900; font-size: 1.1rem; border-right: 3px solid var(--yellow) !important; }
+
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quiz-option { padding: 12px 16px; border: 2px solid var(--border); border-radius: 12px; background: white; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .quiz-option:hover { border-color: var(--primary); background: #e0f2fe; }
+  .quiz-option.correct { border-color: var(--green); background: #d1fae5; color: #065f46; }
+  .quiz-option.wrong { border-color: var(--secondary); background: #fee2e2; color: #991b1b; }
+  .quiz-option:disabled { cursor: not-allowed; }
+  .quiz-feedback { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #d1fae5; color: #065f46; }
+  .quiz-feedback.fail { background: #fee2e2; color: #991b1b; }
+
+  .gap-input { display: inline-block; width: 64px; border: none; border-bottom: 3px solid var(--primary); background: transparent; font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 800; text-align: center; color: var(--text); padding: 2px 4px; outline: none; transition: border-color 0.2s; }
+  .gap-input:focus { border-color: var(--secondary); }
+  .gap-input.correct { border-color: var(--green); color: #065f46; }
+  .gap-input.wrong { border-color: var(--secondary); color: #991b1b; }
+
+  .num-input { border: 2px solid var(--border); border-radius: 9px; padding: 7px 10px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; text-align: center; outline: none; transition: border-color 0.2s; background: white; }
+  .num-input:focus { border-color: var(--primary); }
+  .num-input.correct { border-color: var(--green); background: #d1fae5; }
+  .num-input.wrong { border-color: var(--secondary); background: #fee2e2; }
+
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; border-radius: 12px; border: none; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-secondary { background: var(--bg); color: var(--primary); border: 2px solid var(--primary); }
+  .btn-secondary:hover { background: #e0f2fe; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+  .score-display { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 800; color: var(--primary); margin-bottom: 12px; }
+  .score-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+
+  .flash-display { font-family: 'Fredoka One', cursive; font-size: 3rem; color: var(--primary); text-align: center; min-height: 90px; display: flex; align-items: center; justify-content: center; }
+
+  /* Number line SVG container */
+  .nl-wrap { overflow-x: auto; margin: 10px 0; }
+
+  /* Sortable */
+  .sort-items { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .sort-item { padding: 8px 14px; background: white; border: 2px solid var(--border); border-radius: 10px; font-weight: 800; font-size: 1rem; cursor: grab; transition: all 0.15s; user-select: none; }
+  .sort-item:active { cursor: grabbing; }
+  .sort-item.dragging { opacity: 0.5; border-color: var(--primary); }
+  .sort-slot { display: inline-flex; align-items: center; justify-content: center; min-width: 70px; height: 38px; border: 2px dashed #9ca3af; border-radius: 10px; font-weight: 800; font-size: 0.95rem; transition: all 0.15s; }
+  .sort-slot.over { border-color: var(--primary); background: #e0f2fe; }
+  .sort-slot.filled { border-style: solid; border-color: var(--primary); background: #bae6fd; }
+  .sort-slot.correct-slot { border-color: var(--green); background: #d1fae5; color: #065f46; }
+  .sort-slot.wrong-slot { border-color: var(--secondary); background: #fee2e2; color: #991b1b; }
+
+  /* Komma-setzen Aufgabe */
+  .komma-task { display: inline-flex; align-items: center; gap: 3px; font-size: 1.3rem; font-weight: 900; background: #f0f9ff; padding: 8px 14px; border-radius: 10px; border: 2px solid #bae6fd; flex-wrap: wrap; }
+  .komma-digit { width: 32px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 7px; border: 2px solid transparent; cursor: pointer; transition: all 0.15s; font-family: 'Fredoka One', cursive; }
+  .komma-digit:hover { border-color: var(--primary); background: #bae6fd; }
+  .komma-digit.selected { background: var(--primary); color: white; border-color: var(--primary-dark); }
+  .komma-digit.correct-komma { background: var(--green); color: white; border-color: #059669; }
+  .komma-digit.wrong-komma { background: var(--secondary); color: white; border-color: #c21874; }
+
+  @media (max-width: 500px) {
+    header h1 { font-size: 1.8rem; }
+    .quiz-options { grid-template-columns: 1fr; }
+    .flash-display { font-size: 2.2rem; }
+    .stellentafel { font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔢 Dezimalzahlen – Klasse 6</h1>
+  <p>Interaktives Lernprogramm · Thema 6.3</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="globalProgress" style="width:0%"></div>
+  </div>
+  <p class="progress-label" id="progressLabel">Starte dein Abenteuer!</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" onclick="switchTab('info', event)">📖 Erklärung</button>
+  <button class="tab" onclick="switchTab('stellen', event)">🗂️ Stellentafel</button>
+  <button class="tab" onclick="switchTab('zahlenstrahl', event)">📏 Zahlenstrahl</button>
+  <button class="tab" onclick="switchTab('vergleich', event)">⚖️ Vergleichen</button>
+  <button class="tab" onclick="switchTab('runden', event)">🎯 Runden</button>
+  <button class="tab" onclick="switchTab('rechnen', event)">🔢 Rechnen</button>
+  <button class="tab" onclick="switchTab('flash', event)">⚡ Blitzlesen</button>
+  <button class="tab" onclick="switchTab('quiz', event)">🏆 Quiz</button>
+  <button class="tab" onclick="switchTab('profi', event)">🌟 Profi</button>
+</nav>
+
+<main>
+
+<!-- ======================== ERKLÄRUNG ======================== -->
+<section class="section active" id="section-info">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🗂️</span> Die Stellentafel</div>
+    <div class="info-box">
+      Jede Stelle einer Dezimalzahl hat einen festen Platz. Das <strong>Komma</strong> trennt den ganzzahligen Teil vom <strong>Nachkommateil</strong>.
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="stellentafel">
+        <thead>
+          <tr>
+            <th>T</th><th>H</th><th>Z</th><th class="komma-left">E</th>
+            <th style="background:#1d4ed8;font-size:1.1rem;">·</th>
+            <th>z</th><th>h</th><th>t</th>
+          </tr>
+          <tr>
+            <th style="font-size:0.72rem;font-weight:600;">Tausend</th>
+            <th style="font-size:0.72rem;font-weight:600;">Hundert</th>
+            <th style="font-size:0.72rem;font-weight:600;">Zehn</th>
+            <th style="font-size:0.72rem;font-weight:600;" class="komma-left">Einer</th>
+            <th style="background:#1d4ed8;">,</th>
+            <th style="font-size:0.72rem;font-weight:600;">Zehntel</th>
+            <th style="font-size:0.72rem;font-weight:600;">Hundert­stel</th>
+            <th style="font-size:0.72rem;font-weight:600;">Tausend­stel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td></td><td></td><td></td><td class="highlight komma-cell">0</td><td>,</td><td class="highlight">2</td><td class="highlight">3</td><td></td></tr>
+          <tr><td></td><td></td><td class="highlight">1</td><td class="highlight komma-cell">4</td><td>,</td><td class="highlight">8</td><td class="highlight">9</td><td></td></tr>
+          <tr><td></td><td></td><td></td><td class="highlight komma-cell">0</td><td>,</td><td class="highlight">7</td><td></td><td></td></tr>
+          <tr><td></td><td></td><td class="highlight">1</td><td class="highlight komma-cell">5</td><td>,</td><td class="highlight">0</td><td class="highlight">9</td><td></td></tr>
+          <tr><td></td><td></td><td></td><td class="highlight komma-cell">0</td><td>,</td><td class="highlight">0</td><td class="highlight">0</td><td class="highlight">3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px; font-size:0.85rem; color:var(--muted);">
+      💡 Nullen als Platzhalter nicht vergessen! z.B. 15,09 → Z=1, E=5, z=0, h=9
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔄</span> Dezimalzahl ↔ Bruch</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div>
+        <strong>Dezimalzahl → Bruch:</strong> Nachkommastellen zählen = Anzahl Nullen im Nenner<br>
+        0,23 = <sup>23</sup>/<sub>100</sub> &nbsp;&nbsp; 0,7 = <sup>7</sup>/<sub>10</sub> &nbsp;&nbsp; 0,003 = <sup>3</sup>/<sub>1000</sub>
+      </div></div>
+      <div class="step"><div class="step-num">2</div><div>
+        <strong>Bruch → Dezimalzahl:</strong> Nenner bestimmt die Stelle<br>
+        <sup>7</sup>/<sub>10</sub> = 0,7 &nbsp;&nbsp; <sup>15</sup>/<sub>1000</sub> = 0,015 &nbsp;&nbsp; <sup>89</sup>/<sub>100</sub> = 0,89
+      </div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">⚖️</span> Dezimalzahlen vergleichen</div>
+    <div class="regel-card">
+      <h3>Die Strategie</h3>
+      1. Stelle für Stelle von links vergleichen<br>
+      2. Erste unterschiedliche Stelle entscheidet<br>
+      3. Nullen hinten anhängen macht den Vergleich leichter:<br>
+      0,99 = 0,990 → gleich! &nbsp;&nbsp;&nbsp; 6,7 vs 6,666 → 6,<strong>7</strong> &gt; 6,<strong>6</strong>66
+    </div>
+    <div class="info-box">
+      💡 <strong>Achtung:</strong> 0,5 &gt; 0,499 – nicht „mehr Ziffern = mehr Wert"!
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🎯</span> Runden</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div><strong>Auf Einer runden:</strong> Erste Nachkommastelle anschauen. ≥5 → aufrunden, &lt;5 → abrunden<br>1,<strong>7</strong> ≈ 2 &nbsp;&nbsp; 13,<strong>9</strong>2 ≈ 14 &nbsp;&nbsp; 25,<strong>4</strong>6 ≈ 25</div></div>
+      <div class="step"><div class="step-num">2</div><div><strong>Auf Zehntel runden:</strong> Zweite Nachkommastelle anschauen<br>15,6<strong>4</strong> ≈ 15,6 &nbsp;&nbsp; 3,8<strong>8</strong> ≈ 3,9 &nbsp;&nbsp; 12,9<strong>5</strong>6 ≈ 13,0</div></div>
+      <div class="step"><div class="step-num">3</div><div><strong>Auf Hundertstel runden:</strong> Dritte Nachkommastelle anschauen<br>2,46<strong>6</strong> ≈ 2,47 &nbsp;&nbsp; 13,83<strong>3</strong>1 ≈ 13,83 &nbsp;&nbsp; 7,20<strong>9</strong> ≈ 7,21</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">➕</span> Schriftlich addieren &amp; subtrahieren</div>
+    <div class="regel-card">
+      <h3>Die Regel</h3>
+      Komma unter Komma schreiben! Fehlende Stellen mit 0 auffüllen:<br><br>
+      &nbsp; 7,890<br>
+      + 1,452<br>
+      ——————<br>
+      &nbsp; 9,342
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✖️</span> Komma bei Multiplikation</div>
+    <div class="info-box">
+      <strong>Regel:</strong> Alle Nachkommastellen beider Faktoren zusammenzählen = so viele Nachkommastellen hat das Ergebnis.<br><br>
+      41,57 × 3 → 2 NKS + 0 NKS = 2 NKS → 124,71<br>
+      8,4 × 7,3 → 1 NKS + 1 NKS = 2 NKS → 61,32<br>
+      89,4 × 0,4 → 1 NKS + 1 NKS = 2 NKS → 35,76
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== STELLENTAFEL ======================== -->
+<section class="section" id="section-stellen">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🗂️</span> Stellentafel ausfüllen</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Gib die Ziffern der Dezimalzahl in die Tabelle ein.</p>
+    <div id="stellenExercise"></div>
+    <div id="stellenFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStellen()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newStellen()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔄</span> Dezimalzahl ↔ Bruch</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Wandle um.</p>
+    <div id="dezBruchExercise"></div>
+    <div id="dezBruchFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkDezBruch()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newDezBruch()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✏️</span> Lückentext – Stellenwerte</div>
+    <span class="level-badge level-1">Basis</span>
+    <div id="stellenLuecken" style="font-size:1rem; line-height:2.4;"></div>
+    <div id="stellenLueckenFb" class="quiz-feedback" style="margin-top:10px;"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStellenLuecken()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newStellenLuecken()">↺ Neu</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== ZAHLENSTRAHL ======================== -->
+<section class="section" id="section-zahlenstrahl">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">📏</span> Zahlenstrahl lesen</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Auf welche Zahl zeigt der Pfeil?</p>
+    <div class="nl-wrap" id="nlReadDisplay"></div>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
+      <label style="font-weight:700;">Antwort:</label>
+      <input class="num-input" id="nlReadAns" type="number" step="0.01" placeholder="z.B. 3,5" style="width:100px;" onkeydown="if(event.key==='Enter')checkNLRead()">
+    </div>
+    <div id="nlReadFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkNLRead()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newNLRead()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">📏</span> Zahl auf dem Zahlenstrahl finden</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Klicke auf die richtige Stelle für die gesuchte Zahl.</p>
+    <div id="nlFindTask" style="font-weight:700; font-size:1.05rem; margin-bottom:10px;"></div>
+    <div class="nl-wrap" id="nlFindDisplay"></div>
+    <div id="nlFindFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="newNLFind()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔢</span> Zahlenfolge fortsetzen</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Wie geht die Reihe weiter?</p>
+    <div id="folgeExercise"></div>
+    <div id="folgeFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkFolge()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newFolge()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== VERGLEICHEN ======================== -->
+<section class="section" id="section-vergleich">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">⚖️</span> Kleiner, größer oder gleich?</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Setze &lt;, &gt; oder = ein.</p>
+    <div id="cmpExercise"></div>
+    <div id="cmpFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkCmp()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newCmp()">→ Neue Aufgaben</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔢</span> Schnell entscheiden: A oder B?</div>
+    <span class="level-badge level-2">Mittel</span>
+    <div class="score-display">
+      <div class="score-dot"></div>
+      <span>Punkte: <strong id="cmpQScore">0</strong> / <strong id="cmpQTotal">0</strong></span>
+    </div>
+    <div id="cmpQDisplay" style="display:flex; gap:20px; justify-content:center; align-items:center; margin:14px 0; flex-wrap:wrap;"></div>
+    <div class="quiz-options" id="cmpQOptions" style="display:none;"></div>
+    <div id="cmpQFeedback" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="startCmpQ()">▶ Starten</button>
+      <button class="btn btn-secondary" onclick="resetCmpQ()">↺ Neu</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">📋</span> Ordnen – von klein nach groß</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Ziehe die Zahlen in die richtige Reihenfolge.</p>
+    <div id="sortTask" style="font-weight:700; margin-bottom:8px;"></div>
+    <div id="sortItems" class="sort-items"></div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:10px 0;" id="sortSlots"></div>
+    <div id="sortFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkSort()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newSort()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== RUNDEN ======================== -->
+<section class="section" id="section-runden">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🎯</span> Auf Einer runden</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Runde auf die nächste ganze Zahl.</p>
+    <div id="rundenEiner"></div>
+    <div id="rundenEinerFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkRunden('Einer')">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newRunden('Einer')">→ Neue Aufgaben</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🎯</span> Auf Zehntel runden</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Runde auf eine Stelle nach dem Komma.</p>
+    <div id="rundenZehntel"></div>
+    <div id="rundenZehntelFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkRunden('Zehntel')">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newRunden('Zehntel')">→ Neue Aufgaben</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🎯</span> Auf Hundertstel runden</div>
+    <span class="level-badge level-3">Schwer</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Runde auf zwei Stellen nach dem Komma.</p>
+    <div id="rundenHundertstel"></div>
+    <div id="rundenHundertstelFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkRunden('Hundertstel')">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newRunden('Hundertstel')">→ Neue Aufgaben</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== RECHNEN ======================== -->
+<section class="section" id="section-rechnen">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">➕</span> Addieren &amp; Subtrahieren</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Berechne. Denk ans Komma!</p>
+    <div id="addSubExercise"></div>
+    <div id="addSubFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkAddSub()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newAddSub()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✖️</span> Komma richtig setzen</div>
+    <span class="level-badge level-2">Mittel</span>
+    <div class="info-box">Zähle die Nachkommastellen beider Faktoren zusammen. So viele hat das Ergebnis!</div>
+    <div id="kommaExercise"></div>
+    <div id="kommaFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="newKomma()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✖️</span> Multiplizieren</div>
+    <span class="level-badge level-3">Schwer</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Dezimalzahl × natürliche Zahl. Schreibe das Ergebnis.</p>
+    <div id="multExercise"></div>
+    <div id="multFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkMult()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newMult()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== BLITZLESEN ======================== -->
+<section class="section" id="section-flash">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">⚡</span> Blitzlesen – Welche Dezimalzahl?</div>
+    <p style="font-size:0.9rem; margin-bottom:14px;">Eine Dezimalzahl erscheint kurz. Wähle die richtige!</p>
+    <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+      <button class="btn btn-secondary" onclick="setFlashSpeed(2200)" id="spd-easy">🐢 Langsam</button>
+      <button class="btn btn-primary" onclick="setFlashSpeed(1200)" id="spd-mid">🚶 Mittel</button>
+      <button class="btn btn-secondary" onclick="setFlashSpeed(600)" id="spd-fast">⚡ Schnell</button>
+    </div>
+    <div class="score-display">
+      <div class="score-dot"></div>
+      <span>Punkte: <strong id="flashScore">0</strong> / <strong id="flashTotal">0</strong></span>
+    </div>
+    <div style="background:#f0f9ff; border-radius:14px; padding:20px; text-align:center; margin-bottom:14px; min-height:100px; display:flex; align-items:center; justify-content:center; border:2px dashed #bae6fd;">
+      <div id="flashDisplay" class="flash-display" style="display:none;"></div>
+      <div id="flashStart" style="font-size:1.1rem; color:var(--muted); font-weight:700;">Drücke „Starten"!</div>
+    </div>
+    <div class="quiz-options" id="flashOptions" style="display:none;"></div>
+    <div id="flashFeedback" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="startFlash()">▶ Starten</button>
+      <button class="btn btn-secondary" onclick="resetFlash()">↺ Neu</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">⚡</span> Blitzlesen – Größer oder kleiner?</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:10px;">Zwei Dezimalzahlen – welche ist größer?</p>
+    <div class="score-display">
+      <div class="score-dot" style="background:var(--orange);"></div>
+      <span>Punkte: <strong id="flash2Score">0</strong> / <strong id="flash2Total">0</strong></span>
+    </div>
+    <div id="flash2Display" style="display:flex; gap:20px; justify-content:center; align-items:center; margin:14px 0; font-size:1.5rem; font-weight:900; flex-wrap:wrap;"></div>
+    <div class="quiz-options" id="flash2Options" style="display:none;"></div>
+    <div id="flash2Feedback" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="startFlash2()">▶ Starten</button>
+      <button class="btn btn-secondary" onclick="resetFlash2()">↺ Neu</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== QUIZ ======================== -->
+<section class="section" id="section-quiz">
+  <div class="card">
+    <div class="score-display">
+      <div class="score-dot" style="background:var(--yellow);"></div>
+      <span>Quiz-Punkte: <strong id="quizScore">0</strong> / <strong id="quizMax">0</strong></span>
+    </div>
+    <div class="card-title"><span class="emoji">🏆</span> Quiz – Dezimalzahlen</div>
+    <div id="quizContainer"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="nextQuiz()">→ Nächste Frage</button>
+      <button class="btn btn-secondary" onclick="resetQuiz()">↺ Neustart</button>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== PROFI ======================== -->
+<section class="section" id="section-profi">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🌟</span> Profi-Level – Gemischte Aufgaben</div>
+    <span class="level-badge level-3">Herausforderung</span>
+    <div class="score-display">
+      <div class="score-dot" style="background:var(--secondary);"></div>
+      <span>Punkte: <strong id="profiScore">0</strong> / <strong id="profiMax">0</strong></span>
+    </div>
+    <div id="profiExercise"></div>
+    <div id="profiFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkProfi()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newProfi()">→ Weiter</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🛒</span> Textaufgaben</div>
+    <span class="level-badge level-3">Schwer</span>
+    <div id="wordProblem"></div>
+    <div id="wordFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkWord()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newWordProblem()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">⏱️</span> Blitzrechnen – 60 Sekunden</div>
+    <span class="level-badge level-3">Herausforderung</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">So viele Aufgaben wie möglich in einer Minute!</p>
+    <div id="blitzDisplay">
+      <button class="btn btn-primary" onclick="startBlitz()">▶ Blitzrechnen starten</button>
+    </div>
+  </div>
+
+</section>
+</main>
+
+<script>
+// ===== GLOBAL =====
+let totalPoints = 0, maxPoints = 0;
+function addPoints(p) {
+  totalPoints += p; maxPoints++;
+  const pct = Math.round((totalPoints/maxPoints)*100);
+  document.getElementById('globalProgress').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${totalPoints} von ${maxPoints} richtig (${pct}%)`;
+}
+function switchTab(id, e) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  e.target.closest('.tab').classList.add('active');
+}
+function rnd(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function roundTo(v, dec) { return Math.round(v * Math.pow(10, dec)) / Math.pow(10, dec); }
+function fmt(n, dec) { return n.toFixed(dec).replace('.', ','); }
+function parseDE(s) { return parseFloat(String(s).replace(',', '.')); }
+
+// ===== STELLENTAFEL =====
+const stellenPool = [
+  {val:'0,23', digits:{T:0,H:0,Z:0,E:0,z:2,h:3,t:0}, bruch:'23/100'},
+  {val:'14,89', digits:{T:0,H:0,Z:1,E:4,z:8,h:9,t:0}, bruch:'1489/100'},
+  {val:'0,7',  digits:{T:0,H:0,Z:0,E:0,z:7,h:0,t:0}, bruch:'7/10'},
+  {val:'15,09', digits:{T:0,H:0,Z:1,E:5,z:0,h:9,t:0}, bruch:'1509/100'},
+  {val:'0,003', digits:{T:0,H:0,Z:0,E:0,z:0,h:0,t:3}, bruch:'3/1000'},
+  {val:'0,015', digits:{T:0,H:0,Z:0,E:0,z:0,h:1,t:5}, bruch:'15/1000'},
+  {val:'3,456', digits:{T:0,H:0,Z:0,E:3,z:4,h:5,t:6}, bruch:'3456/1000'},
+  {val:'12,5',  digits:{T:0,H:0,Z:1,E:2,z:5,h:0,t:0}, bruch:'125/10'},
+  {val:'100,3', digits:{T:0,H:1,Z:0,E:0,z:3,h:0,t:0}, bruch:'1003/10'},
+  {val:'0,84',  digits:{T:0,H:0,Z:0,E:0,z:8,h:4,t:0}, bruch:'84/100'},
+  {val:'7,05',  digits:{T:0,H:0,Z:0,E:7,z:0,h:5,t:0}, bruch:'705/100'},
+  {val:'2,009', digits:{T:0,H:0,Z:0,E:2,z:0,h:0,t:9}, bruch:'2009/1000'},
+];
+let curStellen = null;
+const cols = ['T','H','Z','E','z','h','t'];
+const colLabels = ['T','H','Z','E','z','h','t'];
+
+function newStellen() {
+  curStellen = pick(stellenPool);
+  const d = curStellen.digits;
+  const mode = Math.random() < 0.5 ? 'fillDigits' : 'fillBruch';
+  let html = `<div style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">
+    Dezimalzahl: <strong style="color:var(--primary);font-size:1.3rem;">${curStellen.val}</strong>
+  </div>
+  <div style="overflow-x:auto;"><table class="stellentafel">
+    <thead><tr>`;
+  cols.forEach(c => html += `<th${c==='E'?' class="komma-left"':''}>${c}</th>`);
+  html += '</tr></thead><tbody><tr>';
+  cols.forEach((c,i) => {
+    const val = d[c];
+    const isCommaLeft = c==='E';
+    html += `<td${isCommaLeft?' class="komma-cell"':''}>`;
+    if (val === 0 && (c==='T'||c==='H') && !['100,3'].includes(curStellen.val)) {
+      html += `<input class="gap-input" id="st_${c}" data-ans="0" placeholder="" style="width:40px;">`;
+    } else {
+      html += `<input class="gap-input" id="st_${c}" data-ans="${val}" placeholder="?" style="width:40px;">`;
+    }
+    html += '</td>';
+  });
+  html += `</tr></tbody></table></div>
+  <div style="margin-top:12px;font-weight:700;">Als Bruch: 
+    <input class="gap-input" id="st_bruch" data-ans="${curStellen.bruch}" placeholder="z.B. 23/100" style="width:120px;">
+  </div>`;
+  document.getElementById('stellenExercise').innerHTML = html;
+  document.getElementById('stellenFb').className = 'quiz-feedback';
+}
+function checkStellen() {
+  const ids = cols.map(c => 'st_' + c).concat(['st_bruch']);
+  let ok = 0;
+  ids.forEach(id => {
+    const inp = document.getElementById(id);
+    const val = inp.value.trim().replace(' ','');
+    const ans = inp.dataset.ans;
+    const isNumeric = !ans.includes('/');
+    const correct = val === ans || (isNumeric && !isNaN(parseFloat(val)) && Math.abs(parseFloat(val) - parseFloat(ans)) < 0.0001);
+    inp.classList.toggle('correct', correct);
+    inp.classList.toggle('wrong', !correct);
+    if (correct) ok++;
+  });
+  const fb = document.getElementById('stellenFb');
+  if (ok === ids.length) { fb.textContent = '✅ Alle Felder richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ ${ok} von ${ids.length} richtig. Überprüfe besonders die Nullen!`; fb.className = 'quiz-feedback show fail'; }
+}
+newStellen();
+
+// ===== DEZ ↔ BRUCH =====
+const dezBruchPool = [
+  {dez:'0,3',bruch:'3/10'},{dez:'0,07',bruch:'7/100'},{dez:'0,009',bruch:'9/1000'},
+  {dez:'1,5',bruch:'15/10'},{dez:'2,48',bruch:'248/100'},{dez:'0,125',bruch:'125/1000'},
+  {dez:'3,6',bruch:'36/10'},{dez:'0,04',bruch:'4/100'},{dez:'10,5',bruch:'105/10'},
+  {dez:'0,75',bruch:'75/100'},{dez:'1,008',bruch:'1008/1000'},{dez:'0,02',bruch:'2/100'},
+];
+let curDezBruch = null;
+function newDezBruch() {
+  curDezBruch = pick(dezBruchPool);
+  const dir = Math.random() < 0.5 ? 'toBruch' : 'toDez';
+  let html = '';
+  if (dir === 'toBruch') {
+    html = `<div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="color:var(--primary);font-size:1.3rem;">${curDezBruch.dez}</span> als Bruch =
+      <input class="num-input" id="db-ans" placeholder="z.B. 3/10" style="width:110px;" data-ans="${curDezBruch.bruch}" data-dir="toBruch">
+    </div>`;
+  } else {
+    html = `<div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="color:var(--primary);font-size:1.3rem;">${curDezBruch.bruch}</span> als Dezimalzahl =
+      <input class="num-input" id="db-ans" placeholder="z.B. 0,3" style="width:100px;" data-ans="${curDezBruch.dez}" data-dir="toDez">
+    </div>`;
+  }
+  document.getElementById('dezBruchExercise').innerHTML = html;
+  document.getElementById('dezBruchFb').className = 'quiz-feedback';
+}
+function checkDezBruch() {
+  const inp = document.getElementById('db-ans');
+  const val = inp.value.trim().replace(' ','');
+  const correct = val === inp.dataset.ans;
+  inp.classList.toggle('correct', correct);
+  inp.classList.toggle('wrong', !correct);
+  const fb = document.getElementById('dezBruchFb');
+  if (correct) { fb.textContent = '✅ Richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Richtig: ${inp.dataset.ans}`; fb.className = 'quiz-feedback show fail'; }
+}
+newDezBruch();
+
+// ===== STELLEN LÜCKENTEXT =====
+const stellenLueckenTemplates = [
+  () => {
+    const z = rnd(1,9);
+    const n = '0,' + z;
+    return {
+      html: `Die Dezimalzahl <strong>${n}</strong> hat genau <input class="gap-input" id="sl_1" data-ans="1" placeholder="?" style="width:44px;"> Nachkommastelle.<br>
+      In der Stellentafel steht eine <input class="gap-input" id="sl_2" data-ans="${z}" placeholder="?" style="width:44px;"> an der Stelle <strong>z (Zehntel)</strong>.<br>
+      Als Bruch ist das: <input class="gap-input" id="sl_3" data-ans="${z}/10" placeholder="?" style="width:80px;">.`,
+      ids: ['sl_1','sl_2','sl_3']
+    };
+  },
+  () => {
+    const a = rnd(1,9), b = rnd(0,9);
+    const n = `0,${a}${b}`;
+    return {
+      html: `<strong>${n}</strong> hat zwei Nachkommastellen.<br>
+      An Stelle <strong>z (Zehntel)</strong> steht die <input class="gap-input" id="sl_1" data-ans="${a}" placeholder="?" style="width:44px;">.<br>
+      An Stelle <strong>h (Hundertstel)</strong> steht die <input class="gap-input" id="sl_2" data-ans="${b}" placeholder="?" style="width:44px;">.<br>
+      Als Bruch: <input class="gap-input" id="sl_3" data-ans="${a*10+b}/100" placeholder="?" style="width:80px;">.`,
+      ids: ['sl_1','sl_2','sl_3']
+    };
+  },
+  () => {
+    const e = rnd(1,5), z = rnd(0,9), h = rnd(0,9);
+    const n = `${e},${z}${h}`;
+    return {
+      html: `Bei <strong>${n}</strong>:<br>
+      An Stelle <strong>E (Einer)</strong> steht <input class="gap-input" id="sl_1" data-ans="${e}" placeholder="?" style="width:44px;">.<br>
+      An Stelle <strong>z (Zehntel)</strong> steht <input class="gap-input" id="sl_2" data-ans="${z}" placeholder="?" style="width:44px;">.<br>
+      An Stelle <strong>h (Hundertstel)</strong> steht <input class="gap-input" id="sl_3" data-ans="${h}" placeholder="?" style="width:44px;">.`,
+      ids: ['sl_1','sl_2','sl_3']
+    };
+  },
+];
+let curStellenLuecken = null;
+function newStellenLuecken() {
+  curStellenLuecken = pick(stellenLueckenTemplates)();
+  document.getElementById('stellenLuecken').innerHTML = curStellenLuecken.html;
+  document.getElementById('stellenLueckenFb').className = 'quiz-feedback';
+}
+function checkStellenLuecken() {
+  const ids = curStellenLuecken.ids;
+  let ok = 0;
+  ids.forEach(id => {
+    const inp = document.getElementById(id);
+    const val = inp.value.trim().replace(' ','');
+    const ans = inp.dataset.ans;
+    // Exact string match first; then numeric match only for non-fraction values
+    const isNumeric = !ans.includes('/');
+    const correct = val === ans || (isNumeric && !isNaN(parseFloat(val)) && Math.abs(parseFloat(val) - parseFloat(ans)) < 0.0001);
+    inp.classList.toggle('correct', correct);
+    inp.classList.toggle('wrong', !correct);
+    if (correct) ok++;
+  });
+  const fb = document.getElementById('stellenLueckenFb');
+  if (ok === ids.length) { fb.textContent = '✅ Alles richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ ${ok} von ${ids.length} richtig.`; fb.className = 'quiz-feedback show fail'; }
+}
+newStellenLuecken();
+
+// ===== ZAHLENSTRAHL LESEN =====
+let curNLRead = null;
+function genNLRead() {
+  const type = pick(['zehntel','hundertstel']);
+  if (type === 'zehntel') {
+    const start = rnd(0, 8);           // integer, e.g. 3
+    const offset = rnd(1, 9);          // 1..9 tenths
+    const val = start + offset / 10;   // e.g. 3.7
+    return { val: roundTo(val,1), start, end: start + 1, steps: 10, type };
+  } else {
+    // hundertstel: between two tenths, e.g. 1.3 → 1.4, arrow at e.g. 1.37
+    const ones   = rnd(0, 2);
+    const tenths = rnd(0, 8);
+    const start  = roundTo(ones + tenths / 10, 1);   // e.g. 1.3
+    const end    = roundTo(start + 0.1, 1);           // e.g. 1.4
+    const offset = rnd(1, 9);                         // 1..9 hundredths
+    const val    = roundTo(start + offset / 100, 2);  // e.g. 1.37
+    return { val, start, end, steps: 10, type };
+  }
+}
+function newNLRead() {
+  curNLRead = genNLRead();
+  drawNLRead(curNLRead);
+  document.getElementById('nlReadAns').value = '';
+  document.getElementById('nlReadAns').classList.remove('correct','wrong');
+  document.getElementById('nlReadFb').className = 'quiz-feedback';
+}
+function drawNLRead(t) {
+  const W=560, H=80, m=50;
+  // number of decimal places for labels
+  const labelDec = t.type === 'zehntel' ? 0 : 1;
+  const pct = (t.val - t.start) / (t.end - t.start);
+  const arrowX = Math.round(m + pct * (W - 2*m));
+  const cy = 40; // center y of axis
+  let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="max-width:100%;font-family:Nunito,sans-serif;">`;
+  // axis line
+  svg += `<line x1="${m}" y1="${cy}" x2="${W-m}" y2="${cy}" stroke="#555" stroke-width="2.5"/>`;
+  svg += `<polygon points="${W-m+1},${cy} ${W-m-7},${cy-4} ${W-m-7},${cy+4}" fill="#555"/>`;
+  // ticks + labels: only at endpoints and every 5th tick (halfway)
+  for (let i=0; i<=t.steps; i++) {
+    const x = Math.round(m + (i/t.steps)*(W-2*m));
+    const isMajor = (i === 0 || i === t.steps);
+    const isMid   = (i % 5 === 0 && i !== 0 && i !== t.steps);
+    const tickH = isMajor ? 9 : isMid ? 6 : 4;
+    svg += `<line x1="${x}" y1="${cy-tickH}" x2="${x}" y2="${cy+tickH}" stroke="#555" stroke-width="${isMajor?2:1}"/>`;
+    // Label only at endpoints (correct integer/decimal values)
+    if (isMajor) {
+      const lv = i === 0 ? t.start : t.end;
+      const label = lv.toFixed(labelDec).replace('.', ',');
+      svg += `<text x="${x}" y="${cy+24}" text-anchor="middle" font-size="13" fill="#333" font-weight="800">${label}</text>`;
+    }
+  }
+  // arrow pointing DOWN onto axis from above
+  svg += `<line x1="${arrowX}" y1="${cy-30}" x2="${arrowX}" y2="${cy-10}" stroke="#0ea5e9" stroke-width="3"/>`;
+  svg += `<polygon points="${arrowX},${cy-2} ${arrowX-6},${cy-13} ${arrowX+6},${cy-13}" fill="#0ea5e9"/>`;
+  svg += `<text x="${arrowX}" y="${cy-34}" text-anchor="middle" font-size="14" fill="#0ea5e9" font-weight="900">?</text>`;
+  svg += '</svg>';
+  document.getElementById('nlReadDisplay').innerHTML = svg;
+}
+function checkNLRead() {
+  const val = parseDE(document.getElementById('nlReadAns').value);
+  const inp = document.getElementById('nlReadAns');
+  const dec = curNLRead.type === 'zehntel' ? 1 : 2;
+  const correct = Math.abs(val - curNLRead.val) < 0.001;
+  inp.classList.toggle('correct', correct);
+  inp.classList.toggle('wrong', !correct);
+  const fb = document.getElementById('nlReadFb');
+  if (correct) { fb.textContent = `✅ Richtig! ${fmt(curNLRead.val, dec)}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Richtig: ${fmt(curNLRead.val, dec)}`; fb.className = 'quiz-feedback show fail'; }
+}
+newNLRead();
+
+// ===== ZAHLENSTRAHL FINDEN =====
+let curNLFind = null;
+function newNLFind() {
+  const targets = [0.3,0.7,1.2,1.8,2.5,0.5,1.5,2.0,0.25,0.75,1.25,1.75,2.25,0.1,0.9];
+  curNLFind = pick(targets);
+  document.getElementById('nlFindTask').innerHTML = `Wo liegt <strong style="color:var(--primary);font-size:1.3rem;">${fmt(curNLFind,2)}</strong>?`;
+  drawNLFind(curNLFind);
+  document.getElementById('nlFindFb').className = 'quiz-feedback';
+}
+function drawNLFind(target) {
+  const W=560, H=80, m=50;
+  const start = 0, end = 3;
+  const steps = 30;
+  const correctX = m + (target - start) / (end - start) * (W - 2*m);
+  // 4 clickable markers
+  const positions = [{x: correctX, correct: true}];
+  const offsets = [0.08, 0.18, 0.28].map(o => (W-2*m)*o);
+  offsets.forEach(off => {
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    let px = correctX + dir * off;
+    px = Math.max(m+10, Math.min(W-m-10, px));
+    if (!positions.find(p => Math.abs(p.x - px) < 15)) positions.push({x:px, correct:false});
+  });
+  positions.sort(() => Math.random()-0.5);
+  let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="max-width:100%;font-family:Nunito,sans-serif;cursor:pointer;">`;
+  svg += `<line x1="${m}" y1="${H/2}" x2="${W-m}" y2="${H/2}" stroke="#555" stroke-width="2.5"/>`;
+  svg += `<polygon points="${W-m},${H/2} ${W-m-8},${H/2-4} ${W-m-8},${H/2+4}" fill="#555"/>`;
+  for (let i=0; i<=steps; i++) {
+    const x = m + (i/steps)*(W-2*m);
+    const major = i%10===0;
+    const tick = major ? 8 : 4;
+    svg += `<line x1="${x}" y1="${H/2-tick}" x2="${x}" y2="${H/2+tick}" stroke="#555" stroke-width="${major?2:1}"/>`;
+    if (major) svg += `<text x="${x}" y="${H/2+22}" text-anchor="middle" font-size="12" fill="#555" font-weight="700">${i/10}</text>`;
+  }
+  positions.forEach((p, i) => {
+    svg += `<circle cx="${p.x.toFixed(1)}" cy="${H/2}" r="9" fill="white" stroke="#0ea5e9" stroke-width="2.5" onclick="checkNLFind(${p.correct})" onmouseover="this.setAttribute('fill','#e0f2fe')" onmouseout="this.setAttribute('fill','white')"/>`;
+    svg += `<text x="${p.x.toFixed(1)}" y="${H/2-14}" text-anchor="middle" font-size="10" fill="#0ea5e9" font-weight="800">${String.fromCharCode(65+i)}</text>`;
+  });
+  svg += '</svg>';
+  document.getElementById('nlFindDisplay').innerHTML = svg;
+}
+function checkNLFind(correct) {
+  const fb = document.getElementById('nlFindFb');
+  if (correct) { fb.textContent = `✅ Richtig! ${fmt(curNLFind,2)} liegt genau dort.`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Nicht ganz. Achte auf den Abstand von 0 (${fmt(curNLFind,2)} ≈ ${curNLFind.toFixed(2)}).`; fb.className = 'quiz-feedback show fail'; }
+}
+newNLFind();
+
+// ===== ZAHLENFOLGE =====
+function genFolge() {
+  const type = rnd(1,4);
+  if (type === 1) { // +0.1
+    const start = roundTo(rnd(10,50)/10, 1);
+    return { start, step: 0.1, dec: 1, count: 3 };
+  } else if (type === 2) { // -0.01
+    const start = roundTo(rnd(300,600)/100, 2);
+    return { start, step: -0.01, dec: 2, count: 3 };
+  } else if (type === 3) { // +0.5
+    const start = roundTo(rnd(5,20)/2, 1);
+    return { start, step: 0.5, dec: 1, count: 3 };
+  } else { // +0.01
+    const start = roundTo(rnd(100,300)/100, 2);
+    return { start, step: 0.01, dec: 2, count: 3 };
+  }
+}
+let curFolge = null;
+function newFolge() {
+  curFolge = genFolge();
+  const {start, step, dec, count} = curFolge;
+  const given = [start, roundTo(start+step, dec), roundTo(start+2*step, dec)];
+  const answers = [roundTo(start+3*step, dec), roundTo(start+4*step, dec), roundTo(start+5*step, dec), roundTo(start+6*step, dec)];
+  curFolge.answers = answers;
+  let html = `<div style="font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+    ${given.map(v=>`<span style="background:#e0f2fe;border-radius:8px;padding:5px 12px;color:var(--primary);">${fmt(v,dec)}</span>`).join(' → ')}
+    → `;
+  answers.forEach((a,i) => {
+    html += `<input class="gap-input" id="fg_${i}" data-ans="${fmt(a,dec)}" placeholder="?" style="width:70px;">`;
+    if (i < 3) html += ' → ';
+  });
+  html += '</div>';
+  const dir = step > 0 ? `+${fmt(step,dec)}` : fmt(step,dec);
+  html += `<div style="font-size:0.82rem;color:var(--muted);">Schritt: <strong>${dir}</strong> (führe das Muster fort)</div>`;
+  document.getElementById('folgeExercise').innerHTML = html;
+  document.getElementById('folgeFb').className = 'quiz-feedback';
+}
+function checkFolge() {
+  let ok = 0;
+  curFolge.answers.forEach((a, i) => {
+    const inp = document.getElementById(`fg_${i}`);
+    const val = inp.value.trim().replace(' ','');
+    const correct = val === inp.dataset.ans;
+    inp.classList.toggle('correct', correct);
+    inp.classList.toggle('wrong', !correct);
+    if (correct) ok++;
+  });
+  const fb = document.getElementById('folgeFb');
+  if (ok === 4) { fb.textContent = '✅ Alle 4 richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { 
+    const hints = curFolge.answers.map(a => fmt(a, curFolge.dec)).join(', ');
+    fb.textContent = `❌ ${ok}/4 richtig. Richtig: ${hints}`; fb.className = 'quiz-feedback show fail';
+  }
+}
+newFolge();
+
+// ===== VERGLEICHEN =====
+function genCmpPairs() {
+  const pool = [
+    ['0,16','0,26','<'],['6,7','6,666','>'],['0,05','0,044','>'],['2,15','2,150','='],
+    ['0,53','0,515','>'],['0,990','0,99','='],['7,01','7,2','<'],['9,335','9,353','<'],
+    ['1,2','1,20','='],['0,9','0,89','>'],['3,14','3,2','<'],['5,05','5,5','<'],
+    ['0,8','0,08','>'],['4,99','5,01','<'],['2,5','2,50','='],['10,1','9,99','>'],
+    ['0,001','0,01','<'],['3,456','3,465','<'],['7,0','7','='],['0,100','0,1','='],
+  ];
+  const shuffled = [...pool].sort(() => Math.random()-0.5);
+  return shuffled.slice(0, 5);
+}
+let cmpPairs = [];
+function newCmp() {
+  cmpPairs = genCmpPairs();
+  let html = '';
+  cmpPairs.forEach((p, i) => {
+    html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;font-size:1.05rem;font-weight:700;">
+      <span style="background:#e0f2fe;padding:5px 12px;border-radius:8px;min-width:70px;text-align:center;">${p[0]}</span>
+      <select id="cmp_${i}" style="font-size:1.1rem;font-weight:800;padding:5px 8px;border:2px solid var(--border);border-radius:8px;cursor:pointer;outline:none;font-family:Nunito;">
+        <option value="">?</option><option>&lt;</option><option>&gt;</option><option>=</option>
+      </select>
+      <span style="background:#e0f2fe;padding:5px 12px;border-radius:8px;min-width:70px;text-align:center;">${p[1]}</span>
+    </div>`;
+  });
+  document.getElementById('cmpExercise').innerHTML = html;
+  document.getElementById('cmpFb').className = 'quiz-feedback';
+}
+function checkCmp() {
+  let ok = 0;
+  cmpPairs.forEach((p, i) => {
+    const sel = document.getElementById(`cmp_${i}`);
+    const correct = sel.value.trim() === p[2];
+    sel.style.borderColor = correct ? 'var(--green)' : 'var(--secondary)';
+    sel.style.background = correct ? '#d1fae5' : '#fee2e2';
+    if (correct) ok++;
+  });
+  const fb = document.getElementById('cmpFb');
+  if (ok === cmpPairs.length) { fb.textContent = '✅ Alle richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ ${ok} von ${cmpPairs.length} richtig.`; fb.className = 'quiz-feedback show fail'; }
+}
+newCmp();
+
+// ===== CMP QUICK =====
+let cmpQScore=0, cmpQTotal=0;
+const cmpQPool = [
+  [0.16,0.26],[6.7,6.666],[0.05,0.044],[0.53,0.515],[3.14,3.2],[0.9,0.89],
+  [5.05,5.5],[0.001,0.01],[3.456,3.465],[10.1,9.99],[1.25,1.3],[7.08,7.1],
+  [0.55,0.505],[2.1,2.099],[4.0,3.99]
+];
+function startCmpQ() {
+  const pair = pick(cmpQPool);
+  const a = pair[0], b = pair[1];
+  const correct = a > b ? 'A' : a < b ? 'B' : 'gleich';
+  document.getElementById('cmpQDisplay').innerHTML = `
+    <div style="text-align:center;"><div style="font-size:0.8rem;font-weight:700;color:var(--muted);">A</div>
+      <div style="font-size:2rem;font-weight:900;color:var(--primary);">${String(a).replace('.',',')}</div></div>
+    <div style="font-size:1.8rem;font-weight:900;color:var(--muted);">vs</div>
+    <div style="text-align:center;"><div style="font-size:0.8rem;font-weight:700;color:var(--muted);">B</div>
+      <div style="font-size:2rem;font-weight:900;color:var(--primary);">${String(b).replace('.',',')}</div></div>`;
+  const opts = document.getElementById('cmpQOptions');
+  opts.style.display='grid';
+  opts.innerHTML=`<button class="quiz-option" onclick="answerCmpQ('A','${correct}',${a},${b})">A ist größer</button>
+                  <button class="quiz-option" onclick="answerCmpQ('B','${correct}',${a},${b})">B ist größer</button>`;
+  document.getElementById('cmpQFeedback').className='quiz-feedback';
+}
+function answerCmpQ(ans,correct,a,b) {
+  cmpQTotal++; document.getElementById('cmpQTotal').textContent=cmpQTotal;
+  const fb=document.getElementById('cmpQFeedback');
+  if(ans===correct){cmpQScore++;document.getElementById('cmpQScore').textContent=cmpQScore;fb.textContent='✅ Richtig!';fb.className='quiz-feedback show ok';addPoints(1);}
+  else{fb.textContent=`❌ ${correct} war größer. (${String(a).replace('.',',')} vs ${String(b).replace('.',',')})`;fb.className='quiz-feedback show fail';}
+  document.querySelectorAll('#cmpQOptions .quiz-option').forEach(b=>b.disabled=true);
+  setTimeout(startCmpQ,1500);
+}
+function resetCmpQ(){cmpQScore=0;cmpQTotal=0;document.getElementById('cmpQScore').textContent='0';document.getElementById('cmpQTotal').textContent='0';document.getElementById('cmpQOptions').style.display='none';document.getElementById('cmpQFeedback').className='quiz-feedback';document.getElementById('cmpQDisplay').innerHTML='';}
+
+// ===== ORDNEN =====
+const sortPool = [
+  [3.56,3.36,3.6,3.95,3.4],
+  [5.2,0.52,0.5,5.02,2.502],
+  [1.05,1.5,1.55,0.5,1.005],
+  [0.8,0.08,0.008,8.0,0.80],
+  [3.9,3.09,3.99,3.0,3.19],
+  [10.1,10.01,10.011,1.01,1.1],
+  [2.5,2.05,2.55,2.005,2.50],
+];
+let sortData = [], sortPlaced = [];
+function newSort() {
+  const nums = pick(sortPool);
+  sortData = [...nums];
+  sortPlaced = new Array(nums.length).fill(null);
+  const sorted = [...nums].sort((a,b) => a-b);
+  document.getElementById('sortTask').textContent = 'Bringe in die richtige Reihenfolge (klein → groß):';
+  const shuffled = [...nums].sort(() => Math.random()-0.5);
+  let itemsHtml = '';
+  shuffled.forEach(n => {
+    itemsHtml += `<div class="sort-item" draggable="true" data-val="${n}"
+      ondragstart="dragStart(event)" ondragend="dragEnd(event)">${String(n).replace('.',',')}</div>`;
+  });
+  document.getElementById('sortItems').innerHTML = itemsHtml;
+  let slotsHtml = '';
+  sortData.forEach((_,i) => {
+    slotsHtml += `<div class="sort-slot" id="slot_${i}" data-idx="${i}"
+      ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropOn(event)"></div>`;
+    if (i < sortData.length-1) slotsHtml += `<span style="font-weight:900;color:var(--muted);">&lt;</span>`;
+  });
+  document.getElementById('sortSlots').innerHTML = slotsHtml;
+  document.getElementById('sortFb').className = 'quiz-feedback';
+}
+let dragVal = null;
+function dragStart(e) { dragVal = e.target.dataset.val; e.target.classList.add('dragging'); }
+function dragEnd(e) { e.target.classList.remove('dragging'); }
+function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+function dragLeave(e) { e.currentTarget.classList.remove('over'); }
+function dropOn(e) {
+  e.preventDefault();
+  const slot = e.currentTarget;
+  slot.classList.remove('over');
+  slot.textContent = String(dragVal).replace('.', ',');
+  slot.dataset.placed = dragVal;
+  slot.classList.add('filled');
+}
+function checkSort() {
+  const sorted = [...sortData].sort((a,b) => a-b);
+  let ok = 0;
+  sortData.forEach((_,i) => {
+    const slot = document.getElementById(`slot_${i}`);
+    const placed = parseFloat(slot.dataset.placed);
+    const correct = Math.abs(placed - sorted[i]) < 0.0001;
+    slot.classList.toggle('correct-slot', correct);
+    slot.classList.toggle('wrong-slot', !correct);
+    if (correct) ok++;
+  });
+  const fb = document.getElementById('sortFb');
+  const correctStr = sorted.map(n => String(n).replace('.',',')).join(' < ');
+  if (ok === sortData.length) { fb.textContent = `✅ Richtig! ${correctStr}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Richtig: ${correctStr}`; fb.className = 'quiz-feedback show fail'; }
+}
+newSort();
+
+// ===== RUNDEN =====
+function genRundNums(type) {
+  const nums = [];
+  for (let i=0; i<4; i++) {
+    if (type === 'Einer') {
+      const v = roundTo(rnd(10, 9999)/100, 2);
+      nums.push({val:v, ans:Math.round(v)});
+    } else if (type === 'Zehntel') {
+      const v = roundTo(rnd(100,99999)/1000, 3);
+      nums.push({val:v, ans:roundTo(Math.round(v*10)/10, 1)});
+    } else {
+      const v = roundTo(rnd(1000,99999)/10000, 4);
+      nums.push({val:v, ans:roundTo(Math.round(v*100)/100, 2)});
+    }
+  }
+  return nums;
+}
+let rundData = {Einer:[], Zehntel:[], Hundertstel:[]};
+function newRunden(type) {
+  rundData[type] = genRundNums(type);
+  const dec = type==='Einer'?2:type==='Zehntel'?3:4;
+  const ansDec = type==='Einer'?0:type==='Zehntel'?1:2;
+  let html = '';
+  rundData[type].forEach((t,i) => {
+    html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap;font-size:1.05rem;font-weight:700;">
+      <span style="background:#e0f2fe;padding:5px 14px;border-radius:8px;min-width:90px;text-align:center;">${fmt(t.val,dec)}</span>
+      <span style="color:var(--muted);">≈</span>
+      <input class="num-input" id="rund_${type}_${i}" data-ans="${fmt(t.ans,ansDec)}" type="number" step="${Math.pow(10,-ansDec)}" placeholder="?" style="width:90px;">
+    </div>`;
+  });
+  document.getElementById(`runden${type}`).innerHTML = html;
+  document.getElementById(`runden${type}Fb`).className = 'quiz-feedback';
+}
+function checkRunden(type) {
+  const ansDec = type==='Einer'?0:type==='Zehntel'?1:2;
+  let ok = 0;
+  rundData[type].forEach((t,i) => {
+    const inp = document.getElementById(`rund_${type}_${i}`);
+    const val = parseDE(inp.value);
+    const correct = Math.abs(val - t.ans) < 0.0001;
+    inp.classList.toggle('correct', correct);
+    inp.classList.toggle('wrong', !correct);
+    if (correct) ok++;
+  });
+  const fb = document.getElementById(`runden${type}Fb`);
+  if (ok===4){fb.textContent='✅ Alle 4 richtig!';fb.className='quiz-feedback show ok';addPoints(1);}
+  else{fb.textContent=`❌ ${ok}/4 richtig.`;fb.className='quiz-feedback show fail';}
+}
+newRunden('Einer'); newRunden('Zehntel'); newRunden('Hundertstel');
+
+// ===== ADD/SUB =====
+function genAddSubTask() {
+  const type = Math.random() < 0.5 ? '+' : '-';
+  const dec = pick([1,2,2,3]);
+  const a = roundTo(rnd(10, 999) / Math.pow(10, dec-1), dec);
+  const b = roundTo(rnd(1, 99) / Math.pow(10, dec), dec);
+  const result = type === '+' ? roundTo(a+b, dec) : roundTo(a-b, dec);
+  return {a, b, op: type, result, dec};
+}
+let curAddSub = null;
+function newAddSub() {
+  curAddSub = genAddSubTask();
+  const t = curAddSub;
+  document.getElementById('addSubExercise').innerHTML = `
+    <div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <span style="color:var(--primary);font-size:1.25rem;">${fmt(t.a, t.dec)}</span>
+      ${t.op}
+      <span style="color:var(--primary);font-size:1.25rem;">${fmt(t.b, t.dec)}</span>
+      =
+      <input class="num-input" id="as-ans" type="number" step="${Math.pow(10,-t.dec)}" placeholder="?" style="width:100px;">
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);">Tipp: Komma unter Komma schreiben!</div>`;
+  document.getElementById('addSubFb').className = 'quiz-feedback';
+}
+function checkAddSub() {
+  const val = parseDE(document.getElementById('as-ans').value);
+  const inp = document.getElementById('as-ans');
+  const correct = Math.abs(val - curAddSub.result) < 0.0001;
+  inp.classList.toggle('correct', correct);
+  inp.classList.toggle('wrong', !correct);
+  const fb = document.getElementById('addSubFb');
+  if (correct) { fb.textContent = `✅ Richtig! = ${fmt(curAddSub.result, curAddSub.dec)}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Richtig: ${fmt(curAddSub.result, curAddSub.dec)}`; fb.className = 'quiz-feedback show fail'; }
+}
+newAddSub();
+
+// ===== KOMMA SETZEN =====
+const kommaPool = [
+  {a:'41,57',b:'3',nksA:2,nksB:0,result:'12471',correct:'124,71'},
+  {a:'8,4',b:'7,3',nksA:1,nksB:1,result:'6132',correct:'61,32'},
+  {a:'89,4',b:'0,4',nksA:1,nksB:1,result:'3576',correct:'35,76'},
+  {a:'8,111',b:'0,48',nksA:3,nksB:2,result:'389328',correct:'3,89328'},
+  {a:'41,2',b:'4',nksA:1,nksB:0,result:'1648',correct:'164,8'},
+  {a:'5,78',b:'3',nksA:2,nksB:0,result:'1734',correct:'17,34'},
+  {a:'2,5',b:'4',nksA:1,nksB:0,result:'100',correct:'10,0'},
+  {a:'1,25',b:'2,4',nksA:2,nksB:1,result:'300',correct:'3,00'},
+  {a:'3,6',b:'1,5',nksA:1,nksB:1,result:'54',correct:'5,4'},
+  {a:'12,3',b:'2',nksA:1,nksB:0,result:'246',correct:'24,6'},
+];
+let curKomma = null;
+function newKomma() {
+  curKomma = pick(kommaPool);
+  const k = curKomma;
+  const totalNKS = k.nksA + k.nksB;
+  const digits = k.result.split('');
+  const correctPos = digits.length - totalNKS; // after this many digits from start
+  let html = `<div style="margin-bottom:12px;font-size:1rem;font-weight:700;">
+    <span style="color:var(--primary);">${k.a}</span> × <span style="color:var(--primary);">${k.b}</span> = 
+    <span style="color:var(--muted);font-size:0.88rem;">(${k.nksA} + ${k.nksB} = ${totalNKS} Nachkommastellen)</span>
+  </div>
+  <div style="margin-bottom:8px;font-size:0.9rem;color:var(--muted);">Klicke auf die Stelle <strong>nach</strong> der das Komma kommen soll:</div>
+  <div class="komma-task" id="komma-display">`;
+  digits.forEach((d, i) => {
+    html += `<div class="komma-digit" id="kd_${i}" data-pos="${i}" onclick="selectKommaPos(${i}, ${correctPos})">${d}</div>`;
+    if (i < digits.length-1) html += `<div style="width:4px;color:#aaa;font-size:0.8rem;">|</div>`;
+  });
+  html += `</div>
+  <div style="margin-top:8px;font-size:0.85rem;color:var(--muted);">Das Komma kommt nach ${totalNKS} Stelle(n) von rechts.</div>`;
+  document.getElementById('kommaExercise').innerHTML = html;
+  document.getElementById('kommaFb').className = 'quiz-feedback';
+}
+function selectKommaPos(pos, correct) {
+  document.querySelectorAll('.komma-digit').forEach(d => d.classList.remove('selected','correct-komma','wrong-komma'));
+  const el = document.getElementById(`kd_${pos}`);
+  el.classList.add('selected');
+  const fb = document.getElementById('kommaFb');
+  // correctPos means comma goes between digit[pos] and digit[pos+1]
+  // i.e. after (correctPos - 1) from 0-indexed → clicking digit at index (correctPos-1)
+  const correctIdx = parseInt(document.querySelector('.komma-task').querySelectorAll('.komma-digit')[correct-1]?.dataset.pos ?? correct-1);
+  if (pos === correct-1) {
+    el.classList.add('correct-komma');
+    fb.textContent = `✅ Richtig! Ergebnis: ${curKomma.correct}`; fb.className = 'quiz-feedback show ok'; addPoints(1);
+  } else {
+    el.classList.add('wrong-komma');
+    fb.textContent = `❌ Richtig wäre: ${curKomma.correct} (Komma nach ${correct} Stelle von links)`; fb.className = 'quiz-feedback show fail';
+  }
+}
+newKomma();
+
+// ===== MULTIPLIZIEREN =====
+function genMultTask() {
+  const deciPairs = [[1.2,4,4.8],[3.6,5,18.0],[2.5,3,7.5],[1.25,4,5.0],[0.8,7,5.6],
+    [4.5,2,9.0],[1.5,6,9.0],[0.25,8,2.0],[3.4,3,10.2],[2.8,5,14.0],[0.75,4,3.0],[1.6,5,8.0]];
+  return pick(deciPairs);
+}
+let curMult = null;
+function newMult() {
+  curMult = genMultTask();
+  const [a,b,res] = curMult;
+  const dec = (String(a).split('.')[1]||'').length;
+  document.getElementById('multExercise').innerHTML = `
+    <div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <span style="color:var(--primary);font-size:1.3rem;">${String(a).replace('.',',')}</span>
+      ×
+      <span style="color:var(--primary);font-size:1.3rem;">${b}</span>
+      =
+      <input class="num-input" id="mult-ans" type="number" step="${Math.pow(10,-dec)}" placeholder="?" style="width:100px;">
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);">Tipp: Zuerst ohne Komma rechnen, dann Komma setzen.</div>`;
+  document.getElementById('multFb').className = 'quiz-feedback';
+}
+function checkMult() {
+  const val = parseDE(document.getElementById('mult-ans').value);
+  const inp = document.getElementById('mult-ans');
+  const correct = Math.abs(val - curMult[2]) < 0.0001;
+  inp.classList.toggle('correct', correct);
+  inp.classList.toggle('wrong', !correct);
+  const fb = document.getElementById('multFb');
+  if (correct) { fb.textContent = `✅ Richtig! = ${String(curMult[2]).replace('.',',')}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Richtig: ${String(curMult[2]).replace('.',',')}`; fb.className = 'quiz-feedback show fail'; }
+}
+newMult();
+
+// ===== FLASH =====
+const flashPool = [0.3,0.7,1.5,2.4,0.25,0.75,1.25,3.5,0.08,0.99,
+  1.04,2.08,0.125,4.5,0.65,3.14,0.005,1.001,2.75,0.48,1.7,3.02];
+let flashSpeed=1200, flashScoreV=0, flashTotalV=0, flashActive=false;
+function setFlashSpeed(s) {
+  flashSpeed=s;
+  ['spd-easy','spd-mid','spd-fast'].forEach(id=>{const el=document.getElementById(id);el.className=el.className.replace('btn-primary','btn-secondary');});
+  const m={2200:'spd-easy',1200:'spd-mid',600:'spd-fast'};
+  document.getElementById(m[s]).className=document.getElementById(m[s]).className.replace('btn-secondary','btn-primary');
+}
+function startFlash() {
+  if (flashActive) return;
+  flashActive = true;
+  const val = pick(flashPool);
+  const disp = document.getElementById('flashDisplay');
+  document.getElementById('flashStart').style.display = 'none';
+  disp.style.display = 'flex';
+  disp.textContent = String(val).replace('.', ',');
+  document.getElementById('flashOptions').style.display = 'none';
+  document.getElementById('flashFeedback').className = 'quiz-feedback';
+  setTimeout(() => {
+    disp.style.display = 'none';
+    showFlashOpts(val); flashActive = false;
+  }, flashSpeed);
+}
+function showFlashOpts(correct) {
+  const opts = [correct];
+  while (opts.length < 4) {
+    const r = pick(flashPool);
+    if (!opts.includes(r)) opts.push(r);
+  }
+  opts.sort(() => Math.random()-0.5);
+  const cont = document.getElementById('flashOptions');
+  cont.style.display = 'grid'; cont.innerHTML = '';
+  opts.forEach(f => {
+    const btn = document.createElement('button'); btn.className = 'quiz-option';
+    btn.textContent = String(f).replace('.', ',');
+    btn.onclick = function() {
+      flashTotalV++; document.getElementById('flashTotal').textContent = flashTotalV;
+      if (f === correct) {
+        this.classList.add('correct'); flashScoreV++;
+        document.getElementById('flashScore').textContent = flashScoreV;
+        const fb = document.getElementById('flashFeedback');
+        fb.textContent = '✅ Richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1);
+      } else {
+        this.classList.add('wrong');
+        const fb = document.getElementById('flashFeedback');
+        fb.textContent = `❌ Es war ${String(correct).replace('.',',')}`; fb.className = 'quiz-feedback show fail';
+      }
+      cont.querySelectorAll('button').forEach(b => b.disabled = true);
+      setTimeout(() => { cont.style.display='none'; const fs=document.getElementById('flashStart'); fs.style.display='block'; fs.textContent='Weiter →'; }, 1200);
+    };
+    cont.appendChild(btn);
+  });
+}
+function resetFlash() {
+  flashScoreV=0; flashTotalV=0;
+  document.getElementById('flashScore').textContent='0'; document.getElementById('flashTotal').textContent='0';
+  document.getElementById('flashOptions').style.display='none'; document.getElementById('flashDisplay').style.display='none';
+  const fs=document.getElementById('flashStart'); fs.style.display='block'; fs.textContent='Drücke „Starten"!';
+  document.getElementById('flashFeedback').className='quiz-feedback';
+}
+
+// ===== FLASH 2 (Vergleich) =====
+let flash2Score=0, flash2Total=0;
+function startFlash2() {
+  const pair = pick(cmpQPool);
+  const a=pair[0], b=pair[1];
+  const correct = a>b?'A':a<b?'B':'gleich';
+  document.getElementById('flash2Display').innerHTML=`
+    <div style="text-align:center;"><span style="font-size:0.8rem;color:var(--muted);">A</span><br>
+      <span style="color:var(--primary);">${String(a).replace('.',',')}</span></div>
+    <span style="color:var(--muted);">vs</span>
+    <div style="text-align:center;"><span style="font-size:0.8rem;color:var(--muted);">B</span><br>
+      <span style="color:var(--primary);">${String(b).replace('.',',')}</span></div>`;
+  const opts=document.getElementById('flash2Options'); opts.style.display='grid'; opts.innerHTML='';
+  [['A','A ist größer'],['B','B ist größer']].forEach(([v,lbl])=>{
+    const btn=document.createElement('button'); btn.className='quiz-option'; btn.textContent=lbl;
+    btn.onclick=function(){
+      flash2Total++; document.getElementById('flash2Total').textContent=flash2Total;
+      const ok=v===correct;
+      this.classList.add(ok?'correct':'wrong');
+      if(ok){flash2Score++;document.getElementById('flash2Score').textContent=flash2Score;addPoints(1);}
+      const fb=document.getElementById('flash2Feedback');
+      fb.textContent=ok?'✅ Richtig!':`❌ ${correct} war größer.`; fb.className='quiz-feedback show '+(ok?'ok':'fail');
+      opts.querySelectorAll('button').forEach(b=>b.disabled=true);
+      setTimeout(startFlash2,1400);
+    };
+    opts.appendChild(btn);
+  });
+  document.getElementById('flash2Feedback').className='quiz-feedback';
+}
+function resetFlash2(){flash2Score=0;flash2Total=0;document.getElementById('flash2Score').textContent='0';document.getElementById('flash2Total').textContent='0';document.getElementById('flash2Options').style.display='none';document.getElementById('flash2Feedback').className='quiz-feedback';document.getElementById('flash2Display').innerHTML='';}
+
+// ===== QUIZ =====
+const quizQuestions = [
+  {q:'Welche Stelle hat die <strong>2</strong> in der Zahl 3,<strong>2</strong>5?',
+   opts:['Einerstelle','Zehntelstelle','Hundertste\lstelle','Tausendstelle'], ans:1},
+  {q:'0,07 als Bruch?', opts:['7/10','7/100','7/1000','70/100'], ans:1},
+  {q:'Ordne von klein nach groß. Was kommt zuerst?', opts:['3,56','3,36','3,6','3,95'], ans:1},
+  {q:'Runde 3,88 auf Zehntel.', opts:['3,8','3,9','4,0','3,88'], ans:1},
+  {q:'4,36 + 2,63 = ?', opts:['6,99','6,89','7,09','6,98'], ans:0},
+  {q:'8,01 – 7,38 = ?', opts:['0,73','0,63','1,63','0,64'], ans:1},
+  {q:'Wie viele Nachkommastellen hat 41,57 × 3?', opts:['0','1','2','3'], ans:2},
+  {q:'Welche Zahl ist die größte?', opts:['0,9','0,99','0,09','0,999'], ans:3},
+  {q:'0,990 ○ 0,99 – welches Zeichen passt?', opts:['<','>','=','≈'], ans:2},
+  {q:'Runde 25,46 auf Einer.', opts:['25','26','24','25,5'], ans:0},
+  {q:'5,2 ○ 0,52 – welches Zeichen passt?', opts:['<','>','=','≠'], ans:1},
+  {q:'0,003 als Bruch?', opts:['3/10','3/100','3/1000','30/100'], ans:2},
+  {q:'Runde 13,92 auf Zehntel.', opts:['13,9','14,0','13,8','14,9'], ans:0},
+  {q:'32,1 – 4,953 = ?', opts:['27,147','27,157','28,147','27,153'], ans:0},
+  {q:'7,89 + 1,452 = ?', opts:['9,342','9,242','9,352','9,342'], ans:0},
+];
+let quizIdx=0, quizScore=0;
+function renderQuiz() {
+  const q = quizQuestions[quizIdx % quizQuestions.length];
+  document.getElementById('quizMax').textContent = quizQuestions.length;
+  document.getElementById('quizContainer').innerHTML = `
+    <div style="font-size:1.05rem;font-weight:700;margin-bottom:14px;line-height:1.5;">${q.q}</div>
+    <div class="quiz-options">${q.opts.map((o,i)=>`<button class="quiz-option" onclick="answerQuiz(${i})">${o}</button>`).join('')}</div>
+    <div id="qfb" class="quiz-feedback"></div>`;
+}
+function answerQuiz(i) {
+  const q=quizQuestions[quizIdx%quizQuestions.length];
+  const btns=document.querySelectorAll('#quizContainer .quiz-option');
+  btns.forEach(b=>b.disabled=true); btns[q.ans].classList.add('correct');
+  const fb=document.getElementById('qfb');
+  if(i===q.ans){quizScore++;document.getElementById('quizScore').textContent=quizScore;fb.textContent='✅ Richtig!';fb.className='quiz-feedback show ok';addPoints(1);}
+  else{btns[i].classList.add('wrong');fb.textContent='❌ Die richtige Antwort ist markiert.';fb.className='quiz-feedback show fail';}
+}
+function nextQuiz(){quizIdx++;renderQuiz();}
+function resetQuiz(){quizIdx=0;quizScore=0;document.getElementById('quizScore').textContent='0';renderQuiz();}
+renderQuiz();
+
+// ===== PROFI =====
+let profiScore=0, profiMax=0, curProfi=null;
+const profiTypes = ['cmp','round','addSub','komma','folge','stellentafel'];
+function newProfi() {
+  const type = pick(profiTypes);
+  curProfi = {type};
+  let html = '';
+  const fb = document.getElementById('profiFb');
+  fb.className = 'quiz-feedback';
+
+  if (type === 'cmp') {
+    const pair = pick(cmpQPool);
+    const a=pair[0], b=pair[1];
+    curProfi.a=a; curProfi.b=b;
+    curProfi.ans=a>b?'>':a<b?'<':'=';
+    html=`<div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="background:#e0f2fe;padding:6px 14px;border-radius:8px;">${String(a).replace('.',',')}</span>
+      <select id="pr-sel" style="font-size:1.1rem;font-weight:800;padding:6px 10px;border:2px solid var(--border);border-radius:8px;outline:none;font-family:Nunito;">
+        <option value="">?</option><option>&lt;</option><option>&gt;</option><option>=</option>
+      </select>
+      <span style="background:#e0f2fe;padding:6px 14px;border-radius:8px;">${String(b).replace('.',',')}</span>
+    </div>`;
+  } else if (type === 'round') {
+    const t = pick(['Einer','Zehntel','Hundertstel']);
+    const dec = t==='Einer'?2:t==='Zehntel'?3:4;
+    const ansDec = t==='Einer'?0:t==='Zehntel'?1:2;
+    const v = roundTo(rnd(100,9999)/Math.pow(10,dec-1+1), dec);
+    const ans = roundTo(Math.round(v*Math.pow(10,ansDec))/Math.pow(10,ansDec), ansDec);
+    curProfi.ans = fmt(ans,ansDec); curProfi.ansDec = ansDec;
+    html=`<div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      Runde <span style="color:var(--primary);font-size:1.2rem;">${fmt(v,dec)}</span> auf <strong>${t}</strong>: ≈
+      <input class="num-input" id="pr-inp" type="number" step="${Math.pow(10,-ansDec)}" placeholder="?" style="width:100px;">
+    </div>`;
+  } else if (type === 'addSub') {
+    curProfi.task = genAddSubTask();
+    const t = curProfi.task;
+    curProfi.ans = fmt(t.result, t.dec);
+    html=`<div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="color:var(--primary);font-size:1.2rem;">${fmt(t.a,t.dec)}</span> ${t.op}
+      <span style="color:var(--primary);font-size:1.2rem;">${fmt(t.b,t.dec)}</span> =
+      <input class="num-input" id="pr-inp" type="number" step="${Math.pow(10,-t.dec)}" placeholder="?" style="width:110px;">
+    </div>`;
+  } else if (type === 'komma') {
+    const k = pick(kommaPool);
+    const nks = k.nksA + k.nksB;
+    curProfi.ans = k.correct;
+    html=`<div style="font-size:1.1rem;font-weight:700;margin-bottom:10px;">
+      <span style="color:var(--primary);">${k.a}</span> × <span style="color:var(--primary);">${k.b}</span> = ${k.result}<br>
+      <span style="font-size:0.88rem;color:var(--muted);">${k.nksA} + ${k.nksB} = ${nks} Nachkommastellen → wo ist das Komma?</span>
+    </div>
+    <input class="num-input" id="pr-inp" placeholder="${k.correct.replace(/[^,]/g,'?')}" style="width:120px;">`;
+  } else if (type === 'folge') {
+    const f = genFolge();
+    const {start, step, dec} = f;
+    const given = [start, roundTo(start+step,dec), roundTo(start+2*step,dec)];
+    const next = roundTo(start+3*step, dec);
+    curProfi.ans = fmt(next, dec);
+    html=`<div style="font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      ${given.map(v=>`<span style="background:#e0f2fe;border-radius:8px;padding:4px 10px;">${fmt(v,dec)}</span>`).join(' → ')}
+      → <input class="num-input" id="pr-inp" placeholder="?" style="width:90px;">
+      → ...
+    </div>`;
+  } else {
+    const s = pick(stellenPool);
+    const col = pick(['z','h','E']);
+    const colNames = {z:'Zehntelstelle (z)',h:'Hundertste\lstelle (h)',E:'Einerstelle (E)'};
+    curProfi.ans = String(s.digits[col]);
+    html=`<div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      Welche Ziffer steht bei <strong>${s.val}</strong> an der <strong>${colNames[col]}</strong>?
+      <input class="num-input" id="pr-inp" type="number" placeholder="?" style="width:70px;">
+    </div>`;
+  }
+  document.getElementById('profiExercise').innerHTML = html;
+}
+function checkProfi() {
+  const t = curProfi;
+  const fb = document.getElementById('profiFb');
+  profiMax++; document.getElementById('profiMax').textContent = profiMax;
+  let ok = false;
+  if (t.type === 'cmp') {
+    const val = document.getElementById('pr-sel').value.trim();
+    ok = val === t.ans;
+  } else if (t.type === 'komma') {
+    const val = document.getElementById('pr-inp').value.trim().replace('.',',');
+    ok = val === t.ans;
+  } else {
+    const val = parseDE(document.getElementById('pr-inp').value);
+    ok = Math.abs(val - parseDE(t.ans)) < 0.00001;
+  }
+  if (ok) { profiScore++; document.getElementById('profiScore').textContent=profiScore; fb.textContent='✅ Super!'; fb.className='quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent=`❌ Richtig: ${t.ans}`; fb.className='quiz-feedback show fail'; }
+}
+newProfi();
+
+// ===== WORD PROBLEMS =====
+const wordPool = [
+  {text:'Hanna kauft eine Flasche Saft für <strong>0,79 €</strong> und einen Schokoriegel für <strong>1,19 €</strong>. Wie viel muss sie bezahlen?', ans:'1,98', hint:'0,79 + 1,19 = 1,98'},
+  {text:'Hanna hat 5 € dabei und bezahlt <strong>1,98 €</strong>. Wie viel Geld bekommt sie zurück?', ans:'3,02', hint:'5,00 – 1,98 = 3,02'},
+  {text:'Ein Lineal kostet <strong>1,25 €</strong>, ein Heft <strong>0,85 €</strong>. Was kosten beide zusammen?', ans:'2,10', hint:'1,25 + 0,85 = 2,10'},
+  {text:'Tom läuft jeden Tag <strong>3,5 km</strong>. Wie viele km läuft er in <strong>4 Tagen</strong>?', ans:'14,0', hint:'3,5 × 4 = 14,0'},
+  {text:'Eine Schnur ist <strong>8,5 m</strong> lang. Man schneidet <strong>2,75 m</strong> ab. Wie viel bleibt übrig?', ans:'5,75', hint:'8,5 – 2,75 = 5,75'},
+  {text:'Runde <strong>3,456</strong> auf Hundertstel. Schreibe das Ergebnis.', ans:'3,46', hint:'Die dritte Nachkommastelle ist 6 ≥ 5 → aufrunden'},
+  {text:'Ein Saft kostet <strong>0,89 €</strong>. Wie viel kosten <strong>3 Flaschen</strong>?', ans:'2,67', hint:'0,89 × 3 = 2,67'},
+  {text:'Schreibe als Dezimalzahl: <strong>15/1000</strong>', ans:'0,015', hint:'15/1000 = 0,015 (3 Stellen nach Komma)'},
+];
+let curWord = null;
+function newWordProblem() {
+  curWord = pick(wordPool);
+  document.getElementById('wordProblem').innerHTML = `
+    <div style="background:#f0f9ff;border-radius:12px;padding:14px;font-size:1rem;line-height:1.6;margin-bottom:14px;border:1.5px solid #bae6fd;">${curWord.text}</div>
+    <div style="display:flex;align-items:center;gap:8px;font-weight:700;">
+      Antwort: <input id="wordAns" style="width:110px;border:2px solid var(--border);border-radius:10px;padding:8px;font-weight:800;font-size:1rem;outline:none;font-family:Nunito;" placeholder="z.B. 1,98">
+    </div>`;
+  document.getElementById('wordFb').className = 'quiz-feedback';
+}
+function checkWord() {
+  const val = document.getElementById('wordAns').value.trim().replace('.',',');
+  const fb = document.getElementById('wordFb');
+  if (val === curWord.ans) { fb.textContent='✅ Richtig!'; fb.className='quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent='❌ Tipp: ' + curWord.hint; fb.className='quiz-feedback show fail'; }
+}
+newWordProblem();
+
+// ===== BLITZRECHNEN =====
+let blitzScore=0, blitzTotalV=0, blitzInterval=null;
+function startBlitz() {
+  blitzScore=0; blitzTotalV=0;
+  let timeLeft=60;
+  const disp=document.getElementById('blitzDisplay');
+  nextBlitzTask(disp);
+  blitzInterval=setInterval(()=>{
+    timeLeft--;
+    const timer=document.getElementById('blitz-timer');
+    if(timer) timer.textContent=timeLeft+'s';
+    if(timeLeft<=0){
+      clearInterval(blitzInterval);
+      disp.innerHTML=`<div style="text-align:center;padding:18px;">
+        <div style="font-size:2.8rem;">⏱️</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;margin:8px 0;">Zeit ist um!</div>
+        <div style="font-size:1.05rem;">Du hast <strong>${blitzScore}</strong> von <strong>${blitzTotalV}</strong> richtig gelöst.</div>
+        <div style="margin-top:4px;font-size:0.85rem;color:var(--muted);">${blitzScore>=blitzTotalV*0.8?'🏆 Super!':blitzScore>=blitzTotalV*0.5?'👍 Gut gemacht!':'💪 Weiter üben!'}</div>
+        <button class="btn btn-primary" style="margin-top:14px;" onclick="startBlitz()">↺ Nochmal</button>
+      </div>`;
+    }
+  },1000);
+}
+function nextBlitzTask(disp) {
+  const types=['add','sub','round'];
+  const type=pick(types);
+  let q='', ans=0;
+  if(type==='add'){
+    const a=roundTo(rnd(10,99)/10,1), b=roundTo(rnd(1,9)/10,1);
+    q=`${fmt(a,1)} + ${fmt(b,1)} = ?`; ans=roundTo(a+b,1);
+  } else if(type==='sub'){
+    const a=roundTo(rnd(20,99)/10,1), b=roundTo(rnd(1,Math.floor(a*10)-1)/10,1);
+    q=`${fmt(a,1)} − ${fmt(b,1)} = ?`; ans=roundTo(a-b,1);
+  } else {
+    const v=roundTo(rnd(10,999)/100,2);
+    q=`${fmt(v,2)} auf Einer ≈ ?`; ans=Math.round(v);
+  }
+  blitzTotalV++;
+  disp.innerHTML=`<div style="text-align:center;">
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:6px;">Aufgabe ${blitzTotalV} · <span id="blitz-timer">60s</span> · ✅ ${blitzScore}</div>
+    <div style="font-size:1.1rem;font-weight:700;margin:10px 0;">${q}</div>
+    <div style="display:flex;align-items:center;gap:8px;justify-content:center;">
+      <input type="number" id="blitz-inp" step="0.1" placeholder="?" style="width:90px;text-align:center;padding:8px;border:2.5px solid var(--primary);border-radius:9px;font-size:1.1rem;font-weight:800;font-family:Nunito;outline:none;" onkeydown="if(event.key==='Enter')submitBlitz(${ans},this)">
+      <button class="btn btn-primary" onclick="submitBlitz(${ans},document.getElementById('blitz-inp'))">→</button>
+    </div>
+  </div>`;
+  setTimeout(()=>{const inp=document.getElementById('blitz-inp');if(inp)inp.focus();},50);
+}
+function submitBlitz(ans,inp) {
+  if(Math.abs(parseDE(inp.value)-ans)<0.001) blitzScore++;
+  nextBlitzTask(document.getElementById('blitzDisplay'));
+}
+</script>
+</body>
+</html>

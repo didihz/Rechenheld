@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathe 6.1 – kgV & ggT</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d2e;
+    --surface2: #232740;
+    --accent1: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --accent4: #f9ca24;
+    --accent5: #38ada9;
+    --text: #e8eaf6;
+    --text2: #9fa8c7;
+    --radius: 16px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #1a1d2e 0%, #232740 100%);
+    padding: 20px 24px 16px;
+    border-bottom: 2px solid #6c63ff44;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  header .logo {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 900; color: white;
+    flex-shrink: 0;
+  }
+  header h1 { font-size: 1.4rem; font-weight: 900; line-height: 1.2; }
+  header h1 span { color: var(--accent1); }
+  header .subtitle { font-size: 0.78rem; color: var(--text2); }
+  .progress-bar-container { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .progress-label { font-size: 0.75rem; color: var(--text2); white-space: nowrap; }
+  .progress-bar { width: 120px; height: 8px; background: #2a2d40; border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent1), var(--accent3)); border-radius: 99px; transition: width 0.6s ease; }
+  .xp-badge { background: var(--accent4); color: #1a1a00; font-weight: 800; font-size: 0.75rem; border-radius: 99px; padding: 3px 10px; white-space: nowrap; }
+
+  /* NAV */
+  nav {
+    display: flex; gap: 6px; padding: 14px 20px;
+    overflow-x: auto; background: var(--surface);
+    border-bottom: 1px solid #ffffff08;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0; padding: 8px 16px;
+    border-radius: 99px; border: 2px solid transparent;
+    background: var(--surface2); color: var(--text2);
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    transition: all 0.2s; white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav-btn:hover { border-color: var(--accent1); color: var(--text); }
+  .nav-btn.active { background: var(--accent1); color: white; border-color: var(--accent1); }
+  .nav-btn .nav-icon { font-size: 1rem; }
+
+  /* MAIN */
+  main { padding: 20px; max-width: 860px; margin: 0 auto; }
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 18px;
+    border: 1px solid #ffffff0a;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 1.1rem; font-weight: 800;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-title .badge {
+    background: var(--accent1);
+    color: white; font-size: 0.7rem;
+    padding: 3px 10px; border-radius: 99px;
+  }
+  .info-box {
+    background: var(--surface2);
+    border-radius: 12px; padding: 16px;
+    margin: 12px 0; font-size: 0.9rem;
+    border-left: 4px solid var(--accent1);
+    line-height: 1.7;
+  }
+  .info-box.green { border-left-color: var(--accent3); }
+  .info-box.yellow { border-left-color: var(--accent4); }
+  .info-box.pink { border-left-color: var(--accent2); }
+  .info-box.teal { border-left-color: var(--accent5); }
+  .info-box strong { color: var(--accent1); }
+  .info-box.green strong { color: var(--accent3); }
+  .info-box.yellow strong { color: var(--accent4); }
+  .info-box.pink strong { color: var(--accent2); }
+  .info-box.teal strong { color: var(--accent5); }
+
+  .keyword { 
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent1)22, var(--accent1)44);
+    color: var(--accent1); font-weight: 800;
+    padding: 2px 10px; border-radius: 8px;
+    border: 1px solid var(--accent1)55;
+  }
+  .formula-box {
+    background: linear-gradient(135deg, #232740, #1e2235);
+    border: 2px solid var(--accent1)55;
+    border-radius: 14px; padding: 18px;
+    margin: 14px 0; text-align: center;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--accent3);
+    letter-spacing: 0.5px;
+  }
+
+  /* STEP-BY-STEP */
+  .steps { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+  .step {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--surface2); border-radius: 12px; padding: 14px;
+  }
+  .step-num {
+    width: 32px; height: 32px; flex-shrink: 0;
+    background: var(--accent1); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 0.9rem; color: white;
+  }
+  .step-content { font-size: 0.88rem; line-height: 1.6; }
+  .step-content strong { color: var(--accent4); }
+
+  /* NUMBER ROW VIZ */
+  .number-strip {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 12px 0;
+  }
+  .num-chip {
+    min-width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.9rem;
+    background: var(--surface2); color: var(--text2);
+    transition: all 0.3s; cursor: default;
+    border: 2px solid transparent;
+  }
+  .num-chip.highlight1 { background: var(--accent1)33; color: var(--accent1); border-color: var(--accent1); }
+  .num-chip.highlight2 { background: var(--accent2)33; color: var(--accent2); border-color: var(--accent2); }
+  .num-chip.highlight3 { background: var(--accent3)33; color: var(--accent3); border-color: var(--accent3); }
+  .num-chip.ggt { background: var(--accent4)33; color: var(--accent4); border-color: var(--accent4); }
+
+  /* QUIZ */
+  .quiz-question { font-size: 1.05rem; font-weight: 700; margin-bottom: 14px; line-height: 1.5; }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quiz-opt {
+    background: var(--surface2); border: 2px solid #ffffff10;
+    border-radius: 12px; padding: 12px 16px;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem; font-weight: 700; color: var(--text);
+    transition: all 0.2s; text-align: left;
+  }
+  .quiz-opt:hover { border-color: var(--accent1); background: var(--accent1)11; }
+  .quiz-opt.correct { border-color: var(--accent3); background: var(--accent3)22; color: var(--accent3); }
+  .quiz-opt.wrong { border-color: var(--accent2); background: var(--accent2)22; color: var(--accent2); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-feedback {
+    margin-top: 12px; padding: 12px 16px;
+    border-radius: 10px; font-size: 0.88rem; font-weight: 700;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: var(--accent3)22; color: var(--accent3); border: 1px solid var(--accent3)44; }
+  .quiz-feedback.fail { background: var(--accent2)22; color: var(--accent2); border: 1px solid var(--accent2)44; }
+
+  /* INPUT TASKS */
+  .input-row {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin: 10px 0;
+  }
+  .task-label { font-size: 0.9rem; font-weight: 700; color: var(--text2); min-width: 80px; }
+  .task-input {
+    background: var(--surface2); border: 2px solid #ffffff15;
+    border-radius: 10px; padding: 10px 14px;
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem; font-weight: 700; width: 90px;
+    transition: border-color 0.2s; outline: none;
+  }
+  .task-input:focus { border-color: var(--accent1); }
+  .task-input.ok { border-color: var(--accent3); background: var(--accent3)11; }
+  .task-input.fail { border-color: var(--accent2); background: var(--accent2)11; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 10px 22px; border-radius: 99px; border: none;
+    font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent1); color: white; }
+  .btn-primary:hover { background: #5a52e0; transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 2px solid #ffffff15; }
+  .btn-secondary:hover { border-color: var(--accent1); color: var(--accent1); }
+  .btn-success { background: var(--accent3); color: #0f2a1a; }
+  .btn-generate { background: linear-gradient(135deg, var(--accent4), #f0932b); color: #1a1000; }
+  .btn-generate:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(249,202,36,0.3); }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+  /* FILL-IN-THE-BLANK */
+  .blank-task { font-size: 0.95rem; line-height: 2.2; font-weight: 600; }
+  .blank {
+    display: inline-block; width: 70px; height: 34px;
+    background: var(--surface2); border: 2px solid #ffffff20;
+    border-radius: 8px; text-align: center; vertical-align: middle;
+    font-weight: 800; font-size: 0.9rem; color: var(--text);
+    outline: none; font-family: 'Nunito', sans-serif;
+    transition: border-color 0.2s;
+  }
+  .blank:focus { border-color: var(--accent1); }
+  .blank.ok { border-color: var(--accent3); background: var(--accent3)15; color: var(--accent3); }
+  .blank.fail { border-color: var(--accent2); background: var(--accent2)15; color: var(--accent2); }
+  .blank.wide { width: 120px; }
+
+  /* DIVISIBILITY TABLE */
+  .div-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .div-table th, .div-table td {
+    padding: 10px 12px; text-align: center;
+    border: 1px solid #ffffff0a;
+  }
+  .div-table th { background: var(--surface2); font-weight: 800; color: var(--accent1); }
+  .div-table tr:nth-child(even) td { background: #ffffff04; }
+  .div-table td.yes { color: var(--accent3); font-weight: 800; }
+  .div-table td.no { color: var(--accent2)77; }
+
+  /* SIEVE */
+  .sieve-grid {
+    display: grid; grid-template-columns: repeat(10, 1fr);
+    gap: 5px; margin: 14px 0;
+  }
+  .sieve-cell {
+    aspect-ratio: 1; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.8rem;
+    background: var(--surface2); color: var(--text);
+    cursor: pointer; border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .sieve-cell:hover { border-color: var(--accent1)66; }
+  .sieve-cell.crossed { background: #2a1a1a; color: #ffffff22; text-decoration: line-through; border-color: #ffffff05; cursor: default; }
+  .sieve-cell.prime { background: var(--accent3)33; color: var(--accent3); border-color: var(--accent3)66; }
+  .sieve-cell.start { background: var(--accent4)33; color: var(--accent4); border-color: var(--accent4)66; }
+
+  /* MULTIPLIKATION TABLE */
+  .multi-vis {
+    display: flex; gap: 18px; flex-wrap: wrap; margin: 12px 0;
+  }
+  .multi-col { flex: 1; min-width: 140px; }
+  .multi-col h4 { font-size: 0.8rem; font-weight: 800; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .multi-item {
+    padding: 6px 12px; margin: 4px 0; border-radius: 8px;
+    font-weight: 700; font-size: 0.88rem;
+    background: var(--surface2); color: var(--text2);
+  }
+  .multi-item.shared { background: var(--accent3)22; color: var(--accent3); font-weight: 900; }
+
+  /* SCORE */
+  .score-display {
+    display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .score-chip {
+    background: var(--surface2); border-radius: 12px;
+    padding: 12px 18px; text-align: center; flex: 1; min-width: 100px;
+  }
+  .score-chip .score-val { font-size: 1.8rem; font-weight: 900; color: var(--accent3); }
+  .score-chip .score-lbl { font-size: 0.7rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* DIFFICULTY TABS */
+  .diff-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .diff-tab {
+    padding: 7px 16px; border-radius: 99px; border: 2px solid transparent;
+    background: var(--surface2); color: var(--text2);
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem; font-weight: 800;
+  }
+  .diff-tab.active { border-color: currentColor; }
+  .diff-tab.easy.active { color: var(--accent3); border-color: var(--accent3); background: var(--accent3)11; }
+  .diff-tab.medium.active { color: var(--accent4); border-color: var(--accent4); background: var(--accent4)11; }
+  .diff-tab.hard.active { color: var(--accent2); border-color: var(--accent2); background: var(--accent2)11; }
+
+  /* FLASHCARD */
+  .flashcard-container { perspective: 800px; margin: 14px 0; }
+  .flashcard {
+    width: 100%; min-height: 140px;
+    position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s; cursor: pointer; border-radius: 16px;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back {
+    position: absolute; width: 100%; min-height: 140px; border-radius: 16px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px; padding: 20px;
+    text-align: center;
+  }
+  .flashcard-front {
+    background: linear-gradient(135deg, var(--accent1)22, var(--accent1)11);
+    border: 2px solid var(--accent1)44;
+  }
+  .flashcard-back {
+    background: linear-gradient(135deg, var(--accent3)22, var(--accent3)11);
+    border: 2px solid var(--accent3)44;
+    transform: rotateY(180deg);
+  }
+  .flashcard-front .fc-question { font-size: 1.1rem; font-weight: 800; }
+  .flashcard-back .fc-answer { font-size: 1.3rem; font-weight: 900; color: var(--accent3); }
+  .fc-hint { font-size: 0.75rem; color: var(--text2); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .quiz-options { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.1rem; }
+    .progress-bar { width: 80px; }
+    .sieve-grid { grid-template-columns: repeat(10, 1fr); }
+    .sieve-cell { font-size: 0.65rem; }
+  }
+
+  /* HIGHLIGHT PULSE */
+  @keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  .pulse { animation: pulse 0.4s ease; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--accent3); color: #0a2a16;
+    padding: 12px 24px; border-radius: 99px;
+    font-weight: 800; font-size: 0.9rem;
+    transform: translateY(60px); opacity: 0;
+    transition: all 0.3s; z-index: 9999;
+    box-shadow: 0 4px 20px rgba(67,233,123,0.3);
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.bad { background: var(--accent2); color: white; box-shadow: 0 4px 20px rgba(255,101,132,0.3); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">∑</div>
+  <div>
+    <h1>Mathe 6.1 – <span>kgV & ggT</span></h1>
+    <div class="subtitle">Zahlen, Teilbarkeit &amp; Vielfache • Klasse 6</div>
+  </div>
+  <div class="progress-bar-container">
+    <span class="progress-label">Fortschritt</span>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="xp-badge" id="xpBadge">0 XP</div>
+  </div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="showSection('start')" id="nav-start">
+    <span class="nav-icon">🏠</span> Start
+  </button>
+  <button class="nav-btn" onclick="showSection('vielfache')" id="nav-vielfache">
+    <span class="nav-icon">✖️</span> Vielfache
+  </button>
+  <button class="nav-btn" onclick="showSection('teiler')" id="nav-teiler">
+    <span class="nav-icon">➗</span> Teiler
+  </button>
+  <button class="nav-btn" onclick="showSection('teilbarkeit')" id="nav-teilbarkeit">
+    <span class="nav-icon">🔍</span> Teilbarkeit
+  </button>
+  <button class="nav-btn" onclick="showSection('primzahlen')" id="nav-primzahlen">
+    <span class="nav-icon">⭐</span> Primzahlen
+  </button>
+  <button class="nav-btn" onclick="showSection('kgv')" id="nav-kgv">
+    <span class="nav-icon">⬆️</span> kgV
+  </button>
+  <button class="nav-btn" onclick="showSection('ggt')" id="nav-ggt">
+    <span class="nav-icon">⬇️</span> ggT
+  </button>
+  <button class="nav-btn" onclick="showSection('ueben')" id="nav-ueben">
+    <span class="nav-icon">🎯</span> Üben
+  </button>
+  <button class="nav-btn" onclick="showSection('quiz')" id="nav-quiz">
+    <span class="nav-icon">🧠</span> Quiz
+  </button>
+</nav>
+
+<main>
+
+<!-- ============ START ============ -->
+<div class="section active" id="start">
+  <div class="card">
+    <div class="card-title">🎯 Willkommen zur Lerneinheit! <span class="badge">Klasse 6</span></div>
+    <p style="color:var(--text2); font-size:0.9rem; line-height:1.7; margin-bottom:16px;">
+      In dieser Einheit lernst du alles über <strong style="color:var(--accent1)">Vielfache</strong>, 
+      <strong style="color:var(--accent2)">Teiler</strong>, 
+      <strong style="color:var(--accent4)">Teilbarkeitsregeln</strong>,
+      <strong style="color:var(--accent3)">Primzahlen</strong>, das 
+      <strong style="color:var(--accent5)">kleinste gemeinsame Vielfache (kgV)</strong> und den 
+      <strong style="color:var(--accent3)">größten gemeinsamen Teiler (ggT)</strong>.
+    </p>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+      <div class="info-box" style="cursor:pointer;" onclick="showSection('vielfache')">
+        <div style="font-size:1.5rem;">✖️</div>
+        <strong>Vielfache</strong><br>
+        <span style="font-size:0.8rem; color:var(--text2)">Vielfachenreihen aufstellen</span>
+      </div>
+      <div class="info-box green" style="cursor:pointer;" onclick="showSection('teiler')">
+        <div style="font-size:1.5rem;">➗</div>
+        <strong>Teiler</strong><br>
+        <span style="font-size:0.8rem; color:var(--text2)">Alle Teiler einer Zahl finden</span>
+      </div>
+      <div class="info-box yellow" style="cursor:pointer;" onclick="showSection('teilbarkeit')">
+        <div style="font-size:1.5rem;">🔍</div>
+        <strong>Teilbarkeitsregeln</strong><br>
+        <span style="font-size:0.8rem; color:var(--text2)">Schnell prüfen ohne Rechnen</span>
+      </div>
+      <div class="info-box pink" style="cursor:pointer;" onclick="showSection('primzahlen')">
+        <div style="font-size:1.5rem;">⭐</div>
+        <strong>Primzahlen</strong><br>
+        <span style="font-size:0.8rem; color:var(--text2)">Das Sieb des Eratosthenes</span>
+      </div>
+      <div class="info-box teal" style="cursor:pointer;" onclick="showSection('kgv')">
+        <div style="font-size:1.5rem;">⬆️</div>
+        <strong>kgV</strong><br>
+        <span style="font-size:0.8rem; color:var(--text2)">Kleinstes gemeinsames Vielfaches</span>
+      </div>
+      <div class="info-box green" style="cursor:pointer;" onclick="showSection('ggt')">
+        <div style="font-size:1.5rem;">⬇️</div>
+        <strong>ggT</strong><br>
+        <span style="font-size:0.8rem; color:var(--text2)">Größter gemeinsamer Teiler</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="border:2px solid var(--accent4)33;">
+    <div class="card-title">📊 Dein Lernstand</div>
+    <div class="score-display">
+      <div class="score-chip"><div class="score-val" id="xpTotal">0</div><div class="score-lbl">XP gesamt</div></div>
+      <div class="score-chip"><div class="score-val" id="correctTotal">0</div><div class="score-lbl">Richtig</div></div>
+      <div class="score-chip"><div class="score-val" id="tasksTotal">0</div><div class="score-lbl">Aufgaben</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VIELFACHE ============ -->
+<div class="section" id="vielfache">
+  <div class="card">
+    <div class="card-title">✖️ Vielfache einer Zahl <span class="badge">Lernen</span></div>
+    <div class="info-box">
+      <strong>Was sind Vielfache?</strong><br>
+      Die <strong>Vielfachen</strong> einer Zahl erhält man, indem man die Zahl mit 1, 2, 3, 4, 5, … multipliziert.<br><br>
+      📌 <em>V<sub>5</sub> = { 5, 10, 15, 20, 25, 30, … }</em><br>
+      📌 <em>V<sub>6</sub> = { 6, 12, 18, 24, 30, 36, … }</em>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content">Schreibe die Zahl auf: z.B. <strong>7</strong></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content">Multipliziere: <strong>7×1=7, 7×2=14, 7×3=21, 7×4=28, 7×5=35, …</strong></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content">Die Vielfachenreihe geht <strong>unendlich</strong> weiter!</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎮 Vielfachenreihe vervollständigen <span class="badge">Üben</span></div>
+    <div id="vielfacheTask"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkVielfache()">✓ Prüfen</button>
+      <button class="btn btn-generate" onclick="generateVielfache()">🎲 Neue Zahlen</button>
+    </div>
+    <div id="vielfacheFeedback"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎴 Karteikarten – Vielfache <span class="badge">Blitzwissen</span></div>
+    <div class="flashcard-container">
+      <div class="flashcard" id="flashcard1" onclick="flipCard('flashcard1')">
+        <div class="flashcard-front">
+          <div class="fc-question" id="fc1q">Was ist das 7. Vielfache von 8?</div>
+          <div class="fc-hint">👆 Klicke zum Umdrehen</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="fc-answer" id="fc1a">56</div>
+          <div class="fc-hint">8 × 7 = 56</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="newFlashcard()">▶ Nächste Karte</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TEILER ============ -->
+<div class="section" id="teiler">
+  <div class="card">
+    <div class="card-title">➗ Teiler einer Zahl <span class="badge">Lernen</span></div>
+    <div class="info-box green">
+      <strong>Was sind Teiler?</strong><br>
+      Eine Zahl <strong>a</strong> ist ein Teiler von <strong>b</strong>, wenn die Division <strong>b ÷ a</strong> keinen Rest ergibt.<br><br>
+      📌 Teiler von 12: <em>1, 2, 3, 4, 6, 12</em><br>
+      📌 Teiler von 20: <em>1, 2, 4, 5, 10, 20</em>
+    </div>
+    <div class="info-box yellow">
+      <strong>💡 Merke:</strong> Teiler werden immer paarweise gefunden!<br>
+      12 ÷ 1 = 12 → Teiler: <strong>1 und 12</strong><br>
+      12 ÷ 2 = 6 &nbsp;→ Teiler: <strong>2 und 6</strong><br>
+      12 ÷ 3 = 4 &nbsp;→ Teiler: <strong>3 und 4</strong>
+    </div>
+    <div id="teilerViz"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ Alle Teiler finden <span class="badge">Üben</span></div>
+    <div id="teilerTask"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkTeiler()">✓ Prüfen</button>
+      <button class="btn btn-generate" onclick="generateTeilerTask()">🎲 Neue Zahl</button>
+    </div>
+    <div id="teilerFeedback"></div>
+  </div>
+</div>
+
+<!-- ============ TEILBARKEIT ============ -->
+<div class="section" id="teilbarkeit">
+  <div class="card">
+    <div class="card-title">🔍 Teilbarkeitsregeln <span class="badge">Lernen</span></div>
+    <p style="color:var(--text2); font-size:0.88rem; margin-bottom:14px;">Mit diesen Regeln kannst du <strong style="color:var(--accent4)">sofort</strong> prüfen, ob eine Zahl teilbar ist – ohne zu rechnen!</p>
+    <div class="info-box" style="margin:8px 0;">
+      <strong>÷ 2</strong> – Die letzte Ziffer ist <strong>gerade</strong> (0, 2, 4, 6, 8).<br>
+      <em style="color:var(--text2)">Beispiel: 348 → letzte Ziffer 8 → durch 2 teilbar ✓</em>
+    </div>
+    <div class="info-box green" style="margin:8px 0;">
+      <strong>÷ 3</strong> – Die <strong>Quersumme</strong> ist durch 3 teilbar.<br>
+      <em style="color:var(--text2)">Beispiel: 234 → 2+3+4=9 → 9÷3=3 → teilbar ✓</em>
+    </div>
+    <div class="info-box yellow" style="margin:8px 0;">
+      <strong>÷ 5</strong> – Die letzte Ziffer ist <strong>0 oder 5</strong>.<br>
+      <em style="color:var(--text2)">Beispiel: 735 → letzte Ziffer 5 → durch 5 teilbar ✓</em>
+    </div>
+    <div class="info-box pink" style="margin:8px 0;">
+      <strong>÷ 10</strong> – Die letzte Ziffer ist <strong>0</strong>.<br>
+      <em style="color:var(--text2)">Beispiel: 420 → letzte Ziffer 0 → durch 10 teilbar ✓</em>
+    </div>
+    <div class="info-box teal" style="margin:8px 0;">
+      <strong>÷ 4</strong> – Die letzten <strong>zwei Ziffern</strong> bilden eine durch 4 teilbare Zahl.<br>
+      <em style="color:var(--text2)">Beispiel: 524 → 24÷4=6 → durch 4 teilbar ✓</em>
+    </div>
+    <div class="info-box" style="margin:8px 0; border-left-color: var(--accent5);">
+      <strong>÷ 6</strong> – Die Zahl ist durch <strong>2 UND 3</strong> teilbar.<br>
+      <em style="color:var(--text2)">Beispiel: 132 → gerade ✓, Quersumme 1+3+2=6 ✓ → durch 6 teilbar ✓</em>
+    </div>
+    <div class="info-box green" style="margin:8px 0;">
+      <strong>÷ 9</strong> – Die <strong>Quersumme</strong> ist durch 9 teilbar.<br>
+      <em style="color:var(--text2)">Beispiel: 432 → 4+3+2=9 → durch 9 teilbar ✓</em>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧪 Teilbarkeits-Checker <span class="badge">Interaktiv</span></div>
+    <p style="font-size:0.88rem; color:var(--text2); margin-bottom:12px;">Gib eine Zahl ein und sehe sofort, durch was sie teilbar ist:</p>
+    <div class="input-row">
+      <input type="number" id="divCheckInput" class="task-input" style="width:130px;" placeholder="z.B. 360" oninput="checkDivisibility()">
+    </div>
+    <div id="divCheckResult" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ Lückentext – Teilbarkeitsregeln <span class="badge">Üben</span></div>
+    <div class="blank-task" id="teilbarkeitLuecke">
+      Wird geladen...
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkTeilbarkeitLuecke()">✓ Prüfen</button>
+      <button class="btn btn-generate" onclick="generateTeilbarkeitLuecke()">🎲 Neue Aufgabe</button>
+    </div>
+    <div id="teilbarkeitLueckeFeedback"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔢 Ziffer ergänzen <span class="badge">Differenziert</span></div>
+    <div class="diff-tabs">
+      <button class="diff-tab easy active" onclick="setDiff('ziffer','easy',this)">⭐ Leicht</button>
+      <button class="diff-tab medium" onclick="setDiff('ziffer','medium',this)">⭐⭐ Mittel</button>
+      <button class="diff-tab hard" onclick="setDiff('ziffer','hard',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div id="zifferTask"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkZiffer()">✓ Prüfen</button>
+      <button class="btn btn-generate" onclick="generateZifferTask()">🎲 Neue Aufgabe</button>
+    </div>
+    <div id="zifferFeedback"></div>
+  </div>
+</div>
+
+<!-- ============ PRIMZAHLEN ============ -->
+<div class="section" id="primzahlen">
+  <div class="card">
+    <div class="card-title">⭐ Primzahlen <span class="badge">Lernen</span></div>
+    <div class="info-box pink">
+      <strong>Was ist eine Primzahl?</strong><br>
+      Eine Primzahl ist eine natürliche Zahl <strong>größer als 1</strong>, die <strong>genau zwei Teiler</strong> hat: die 1 und sich selbst.<br><br>
+      📌 Primzahlen: <em>2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, …</em><br><br>
+      <strong>Keine Primzahlen:</strong> 1 (nur ein Teiler), 4 (Teiler: 1,2,4), 9 (Teiler: 1,3,9)
+    </div>
+    <div class="info-box yellow">
+      <strong>💡 Merke:</strong> 2 ist die <strong>einzige gerade Primzahl</strong>. Alle anderen Primzahlen sind ungerade.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🪣 Sieb des Eratosthenes <span class="badge">Interaktiv</span></div>
+    <p style="font-size:0.88rem; color:var(--text2); margin-bottom:12px;">
+      Klicke auf Zahlen um sie zu streichen. Primzahlen bleiben übrig!<br>
+      <em style="color:var(--accent4)">Tipp: Streiche alle Vielfachen von 2, dann 3, dann 5, dann 7…</em>
+    </p>
+    <div class="sieve-grid" id="sieve"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="resetSieve()">↺ Zurücksetzen</button>
+      <button class="btn btn-success" onclick="autoSieve()">✨ Zeige alle Primzahlen</button>
+    </div>
+    <div id="sieveFeedback" style="margin-top:10px; font-size:0.85rem; color:var(--text2);"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">❓ Primzahl-Quiz <span class="badge">Üben</span></div>
+    <div id="primQuiz"></div>
+    <div class="btn-row">
+      <button class="btn btn-generate" onclick="generatePrimQuiz()">🎲 Neue Frage</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ KGV ============ -->
+<div class="section" id="kgv">
+  <div class="card">
+    <div class="card-title">⬆️ Kleinstes gemeinsames Vielfaches (kgV) <span class="badge">Lernen</span></div>
+    <div class="info-box teal">
+      <strong>Was ist das kgV?</strong><br>
+      Das <strong>kleinste gemeinsame Vielfache</strong> von zwei oder mehr Zahlen ist die <strong>kleinste Zahl</strong>, die ein Vielfaches <em>aller</em> dieser Zahlen ist.<br><br>
+      📌 kgV(4, 6) = <strong>12</strong><br>
+      <em style="color:var(--text2)">V₄ = {4, 8, <u>12</u>, 16, …}</em><br>
+      <em style="color:var(--text2)">V₆ = {6, <u>12</u>, 18, …}</em>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content">Schreibe die Vielfachenreihen beider Zahlen auf.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content">Suche die <strong>gemeinsamen Vielfachen</strong> (die in beiden Reihen vorkommen).</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content">Das <strong>kleinste</strong> dieser gemeinsamen Vielfachen ist das kgV!</div></div>
+    </div>
+    <div class="info-box">
+      <strong>Alltagsbezug:</strong> Zwei Busse fahren ab dem Bahnhof. Bus A alle 4 Minuten, Bus B alle 6 Minuten. Wann fahren sie <em>gleichzeitig</em>? → kgV(4,6) = <strong>12 Minuten</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎮 kgV visualisieren <span class="badge">Interaktiv</span></div>
+    <div class="input-row" style="flex-wrap:wrap; gap:12px;">
+      <div>
+        <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Zahl 1</label>
+        <input type="number" id="kgvA" class="task-input" value="4" min="2" max="20" oninput="updateKGVViz()">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Zahl 2</label>
+        <input type="number" id="kgvB" class="task-input" value="6" min="2" max="20" oninput="updateKGVViz()">
+      </div>
+    </div>
+    <div id="kgvViz" style="margin-top:14px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ kgV berechnen <span class="badge">Üben</span></div>
+    <div class="diff-tabs">
+      <button class="diff-tab easy active" onclick="setDiff('kgv','easy',this)">⭐ Leicht</button>
+      <button class="diff-tab medium" onclick="setDiff('kgv','medium',this)">⭐⭐ Mittel</button>
+      <button class="diff-tab hard" onclick="setDiff('kgv','hard',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div id="kgvTask"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkKGVTask()">✓ Prüfen</button>
+      <button class="btn btn-generate" onclick="generateKGVTask()">🎲 Neue Aufgabe</button>
+    </div>
+    <div id="kgvFeedback"></div>
+  </div>
+</div>
+
+<!-- ============ GGT ============ -->
+<div class="section" id="ggt">
+  <div class="card">
+    <div class="card-title">⬇️ Größter gemeinsamer Teiler (ggT) <span class="badge">Lernen</span></div>
+    <div class="info-box green">
+      <strong>Was ist der ggT?</strong><br>
+      Der <strong>größte gemeinsame Teiler</strong> von zwei oder mehr Zahlen ist die <strong>größte Zahl</strong>, die alle diese Zahlen teilt.<br><br>
+      📌 ggT(12, 18) = <strong>6</strong><br>
+      <em style="color:var(--text2)">T₁₂ = {1, 2, 3, 4, <u>6</u>, 12}</em><br>
+      <em style="color:var(--text2)">T₁₈ = {1, 2, 3, <u>6</u>, 9, 18}</em>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content">Schreibe <strong>alle Teiler</strong> beider Zahlen auf.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content">Finde die <strong>gemeinsamen Teiler</strong> (die in beiden Listen stehen).</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content">Der <strong>größte</strong> davon ist der ggT!</div></div>
+    </div>
+    <div class="info-box yellow">
+      <strong>Alltagsbezug:</strong> Du möchtest 12 Äpfel und 18 Orangen in gleiche Gruppen aufteilen, ohne etwas übrig zu haben. Wie viele Gruppen maximal? → ggT(12,18) = <strong>6 Gruppen</strong>
+    </div>
+    <div class="info-box pink">
+      <strong>Zusammenhang kgV und ggT:</strong><br>
+      kgV(a,b) × ggT(a,b) = a × b<br>
+      <em style="color:var(--text2)">Beispiel: kgV(4,6) × ggT(4,6) = 12 × 2 = 24 = 4 × 6 ✓</em>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎮 ggT visualisieren <span class="badge">Interaktiv</span></div>
+    <div class="input-row" style="flex-wrap:wrap; gap:12px;">
+      <div>
+        <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Zahl 1</label>
+        <input type="number" id="ggtA" class="task-input" value="12" min="2" max="50" oninput="updateGGTViz()">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Zahl 2</label>
+        <input type="number" id="ggtB" class="task-input" value="18" min="2" max="50" oninput="updateGGTViz()">
+      </div>
+    </div>
+    <div id="ggtViz" style="margin-top:14px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ ggT berechnen <span class="badge">Üben</span></div>
+    <div class="diff-tabs">
+      <button class="diff-tab easy active" onclick="setDiff('ggt','easy',this)">⭐ Leicht</button>
+      <button class="diff-tab medium" onclick="setDiff('ggt','medium',this)">⭐⭐ Mittel</button>
+      <button class="diff-tab hard" onclick="setDiff('ggt','hard',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div id="ggtTask"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkGGTTask()">✓ Prüfen</button>
+      <button class="btn btn-generate" onclick="generateGGTTask()">🎲 Neue Aufgabe</button>
+    </div>
+    <div id="ggtFeedback"></div>
+  </div>
+</div>
+
+<!-- ============ ÜBEN ============ -->
+<div class="section" id="ueben">
+  <div class="card">
+    <div class="card-title">🎯 Gemischte Übungen <span class="badge">Alle Themen</span></div>
+    <div class="diff-tabs">
+      <button class="diff-tab easy active" onclick="setDiff('mixed','easy',this)">⭐ Leicht</button>
+      <button class="diff-tab medium" onclick="setDiff('mixed','medium',this)">⭐⭐ Mittel</button>
+      <button class="diff-tab hard" onclick="setDiff('mixed','hard',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div id="mixedTask"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkMixed()">✓ Prüfen</button>
+      <button class="btn btn-generate" onclick="generateMixed()">🎲 Nächste Aufgabe</button>
+    </div>
+    <div id="mixedFeedback"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚡ Schnellrunde – 5 Aufgaben <span class="badge">Challenge</span></div>
+    <div id="speedRound"></div>
+    <div class="btn-row">
+      <button class="btn btn-success" onclick="startSpeedRound()" id="speedStartBtn">▶ Start</button>
+    </div>
+    <div id="speedFeedback"></div>
+  </div>
+</div>
+
+<!-- ============ QUIZ ============ -->
+<div class="section" id="quiz">
+  <div class="card">
+    <div class="card-title">🧠 Wissens-Quiz <span class="badge">Multiple Choice</span></div>
+    <div class="score-display">
+      <div class="score-chip"><div class="score-val" id="quizScore">0</div><div class="score-lbl">Punkte</div></div>
+      <div class="score-chip"><div class="score-val" id="quizStreak">0</div><div class="score-lbl">Streak 🔥</div></div>
+      <div class="score-chip"><div class="score-val" id="quizTotal">0</div><div class="score-lbl">Fragen</div></div>
+    </div>
+    <div id="quizArea"></div>
+    <div class="btn-row">
+      <button class="btn btn-generate" onclick="nextQuizQuestion()" id="nextQuizBtn" style="display:none;">▶ Weiter</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<div id="toast">+10 XP! 🎉</div>
+
+<script>
+// ===== STATE =====
+let state = {
+  xp: 0, correct: 0, tasks: 0,
+  diffs: { kgv:'easy', ggt:'easy', mixed:'easy', ziffer:'easy' },
+  quizScore: 0, quizStreak: 0, quizTotal: 0,
+  speedRound: { active:false, answers:[], current:0, tasks:[] }
+};
+
+function addXP(n, correct=true) {
+  if(correct) { state.xp+=n; state.correct++; }
+  state.tasks++;
+  updateScoreDisplay();
+}
+function updateScoreDisplay() {
+  document.getElementById('xpBadge').textContent = state.xp + ' XP';
+  document.getElementById('xpTotal').textContent = state.xp;
+  document.getElementById('correctTotal').textContent = state.correct;
+  document.getElementById('tasksTotal').textContent = state.tasks;
+  const prog = Math.min(100, (state.xp / 200) * 100);
+  document.getElementById('progressFill').style.width = prog + '%';
+}
+
+function showToast(msg, bad=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = bad ? 'bad show' : 'show';
+  setTimeout(()=>t.className='', 2000);
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  // Init sections on first visit
+  if(id==='vielfache' && !document.getElementById('vielfacheTask').innerHTML) generateVielfache();
+  if(id==='teiler') { generateTeilerTask(); renderTeilerViz(12); }
+  if(id==='teilbarkeit') { generateTeilbarkeitLuecke(); generateZifferTask(); }
+  if(id==='primzahlen') { initSieve(); generatePrimQuiz(); }
+  if(id==='kgv') { updateKGVViz(); generateKGVTask(); }
+  if(id==='ggt') { updateGGTViz(); generateGGTTask(); }
+  if(id==='ueben') generateMixed();
+  if(id==='quiz') { if(!document.getElementById('quizArea').innerHTML) nextQuizQuestion(); }
+}
+
+function setDiff(topic, diff, el) {
+  state.diffs[topic] = diff;
+  el.parentElement.querySelectorAll('.diff-tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  if(topic==='kgv') generateKGVTask();
+  if(topic==='ggt') generateGGTTask();
+  if(topic==='mixed') generateMixed();
+  if(topic==='ziffer') generateZifferTask();
+}
+
+// ===== MATH HELPERS =====
+function gcd(a,b){ while(b){ let t=b; b=a%b; a=t; } return a; }
+function lcm(a,b){ return (a*b)/gcd(a,b); }
+function isPrime(n){ if(n<2)return false; if(n<4)return true; if(n%2===0||n%3===0)return false; for(let i=5;i*i<=n;i+=6)if(n%i===0||n%(i+2)===0)return false; return true; }
+function getDivisors(n){ let d=[]; for(let i=1;i<=n;i++) if(n%i===0) d.push(i); return d; }
+function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function digitSum(n){ return String(n).split('').reduce((s,d)=>s+parseInt(d),0); }
+
+// ===== VIELFACHE =====
+let vielfacheData = {};
+function generateVielfache() {
+  const nums = [3,4,5,6,7,8,9,12,15].sort(()=>Math.random()-0.5).slice(0,3);
+  vielfacheData = { nums, given:3 };
+  let html = '';
+  nums.forEach(n => {
+    const all = Array.from({length:10},(_,i)=>(i+1)*n);
+    html += `<div class="input-row" style="margin:10px 0; flex-wrap:wrap;">
+      <span class="task-label">V<sub>${n}</sub>:</span>
+      <span style="font-size:0.95rem; font-weight:800; color:var(--accent3); min-width:120px;">${all[0]}, ${all[1]}, ${all[2]}, …</span>
+      <input class="blank" style="width:55px;" data-n="${n}" data-pos="3" placeholder="?">
+      <span style="color:var(--text2);">,</span>
+      <input class="blank" style="width:55px;" data-n="${n}" data-pos="4" placeholder="?">
+      <span style="color:var(--text2);">,</span>
+      <input class="blank" style="width:55px;" data-n="${n}" data-pos="5" placeholder="?">
+    </div>`;
+  });
+  document.getElementById('vielfacheTask').innerHTML = html;
+  document.getElementById('vielfacheFeedback').innerHTML = '';
+}
+function checkVielfache() {
+  let allOk = true;
+  document.querySelectorAll('#vielfacheTask .blank').forEach(inp => {
+    const n = parseInt(inp.dataset.n), pos = parseInt(inp.dataset.pos);
+    const correct = n * (pos+1);
+    const val = parseInt(inp.value);
+    if(val === correct) { inp.classList.remove('fail'); inp.classList.add('ok'); }
+    else { inp.classList.remove('ok'); inp.classList.add('fail'); allOk=false; }
+  });
+  const fb = document.getElementById('vielfacheFeedback');
+  if(allOk) { fb.innerHTML = '<div class="quiz-feedback show ok">🎉 Alle Vielfachen richtig! +15 XP</div>'; addXP(15); showToast('+15 XP! Super!'); }
+  else { fb.innerHTML = '<div class="quiz-feedback show fail">❌ Nicht ganz – überprüfe die roten Felder.</div>'; addXP(0,false); }
+}
+
+// ===== FLASHCARD =====
+let fcIndex = 0;
+const fcData = [
+  {q:'Was ist das 6. Vielfache von 7?', a:'42', hint:'7 × 6 = 42'},
+  {q:'Was ist das 8. Vielfache von 9?', a:'72', hint:'9 × 8 = 72'},
+  {q:'Nenne 3 Vielfache von 5.', a:'5, 10, 15', hint:'5×1, 5×2, 5×3'},
+  {q:'Ist 45 ein Vielfaches von 9?', a:'Ja!', hint:'9 × 5 = 45'},
+  {q:'Nenne das 12. Vielfache von 6.', a:'72', hint:'6 × 12 = 72'},
+  {q:'Was ist das 4. Vielfache von 11?', a:'44', hint:'11 × 4 = 44'},
+];
+function newFlashcard() {
+  const fc = document.getElementById('flashcard1');
+  fc.classList.remove('flipped');
+  fcIndex = (fcIndex+1)%fcData.length;
+  setTimeout(()=>{
+    document.getElementById('fc1q').textContent = fcData[fcIndex].q;
+    document.getElementById('fc1a').textContent = fcData[fcIndex].a;
+    fc.querySelector('.flashcard-back .fc-hint').textContent = fcData[fcIndex].hint;
+  }, 250);
+}
+function flipCard(id) { document.getElementById(id).classList.toggle('flipped'); }
+
+// ===== TEILER =====
+let teilerNum = 12;
+function renderTeilerViz(n) {
+  const divs = getDivisors(n);
+  let html = `<div class="info-box green">Teiler von <strong>${n}</strong> = { `;
+  html += divs.map(d => `<span class="keyword">${d}</span>`).join(' , ');
+  html += ` }</div>`;
+  html += '<div class="number-strip">';
+  divs.forEach(d=>{
+    html+=`<div class="num-chip highlight3">${d}</div>`;
+  });
+  html+='</div>';
+  document.getElementById('teilerViz').innerHTML = html;
+}
+function generateTeilerTask() {
+  const options = [12,18,20,24,28,30,36,40,45,48,60];
+  teilerNum = options[randInt(0,options.length-1)];
+  renderTeilerViz(teilerNum);
+  const divs = getDivisors(teilerNum);
+  document.getElementById('teilerTask').innerHTML = `
+    <p style="font-size:0.92rem; margin-bottom:12px;">Finde <strong>alle Teiler</strong> von <span class="keyword">${teilerNum}</span>.</p>
+    <p style="font-size:0.82rem; color:var(--text2); margin-bottom:10px;">Tipp: Es gibt ${divs.length} Teiler. Trenne sie mit Komma.</p>
+    <input class="task-input" id="teilerInput" style="width:100%; max-width:400px;" placeholder="z.B. 1, 2, 3, 6" type="text">
+  `;
+  document.getElementById('teilerFeedback').innerHTML = '';
+}
+function checkTeiler() {
+  const divs = getDivisors(teilerNum).sort((a,b)=>a-b);
+  const raw = document.getElementById('teilerInput').value;
+  const entered = raw.split(/[,;\s]+/).map(s=>parseInt(s.trim())).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+  const correct = JSON.stringify(divs)===JSON.stringify(entered);
+  const inp = document.getElementById('teilerInput');
+  const fb = document.getElementById('teilerFeedback');
+  if(correct) {
+    inp.classList.add('ok'); inp.classList.remove('fail');
+    fb.innerHTML = `<div class="quiz-feedback show ok">✅ Richtig! Alle ${divs.length} Teiler gefunden. +10 XP</div>`;
+    addXP(10); showToast('+10 XP!');
+  } else {
+    inp.classList.add('fail'); inp.classList.remove('ok');
+    fb.innerHTML = `<div class="quiz-feedback show fail">❌ Nicht ganz. Lösung: { ${divs.join(', ')} }</div>`;
+    addXP(0,false);
+  }
+}
+
+// ===== TEILBARKEIT CHECKER =====
+function checkDivisibility() {
+  const n = parseInt(document.getElementById('divCheckInput').value);
+  const res = document.getElementById('divCheckResult');
+  if(!n || n<2) { res.innerHTML=''; return; }
+  const rules = [
+    {d:2, test:n=>n%2===0, rule:'letzte Ziffer gerade'},
+    {d:3, test:n=>digitSum(n)%3===0, rule:`Quersumme ${digitSum(n)} ÷ 3`},
+    {d:4, test:n=>n%4===0, rule:'letzte 2 Ziffern durch 4'},
+    {d:5, test:n=>n%5===0, rule:'letzte Ziffer 0 oder 5'},
+    {d:6, test:n=>n%2===0&&digitSum(n)%3===0, rule:'durch 2 und 3 teilbar'},
+    {d:9, test:n=>digitSum(n)%9===0, rule:`Quersumme ${digitSum(n)} ÷ 9`},
+    {d:10,test:n=>n%10===0, rule:'letzte Ziffer 0'},
+  ];
+  let html = '<div style="display:flex; flex-wrap:wrap; gap:8px;">';
+  rules.forEach(r=>{
+    const ok = r.test(n);
+    html+=`<div style="padding:8px 14px; border-radius:10px; font-weight:800; font-size:0.85rem;
+      background:${ok?'var(--accent3)22':'var(--surface2)'}; color:${ok?'var(--accent3)':'var(--text2)'};
+      border: 2px solid ${ok?'var(--accent3)44':'transparent'}">
+      ÷${r.d} ${ok?'✓':'✗'} <span style="font-weight:400; font-size:0.75rem;">${r.rule}</span>
+    </div>`;
+  });
+  html+='</div>';
+  document.getElementById('divCheckResult').innerHTML = html;
+}
+
+// ===== TEILBARKEIT LÜCKENTEXT =====
+let teilbarkeitLueckeData = {};
+const lueckeTemplates = [
+  { text: (n) => `Die Zahl ${n} ist durch 2 teilbar, weil die letzte Ziffer __ ist.`,
+    blanks: (n) => [String(n%10)], key: ['durch 2'], cond: n=>n%2===0 },
+  { text: (n) => `Die Quersumme von ${n} ist __. Daher ist ${n} durch 3 __.`,
+    blanks: (n) => [String(digitSum(n)), n%3===0?'teilbar':'nicht teilbar'] },
+  { text: (n) => `${n} ist durch 5 __, weil die letzte Ziffer __ ist.`,
+    blanks: (n) => [n%5===0?'teilbar':'nicht teilbar', String(n%10)] },
+];
+function generateTeilbarkeitLuecke() {
+  const n = randInt(100, 999);
+  const tmpl = lueckeTemplates[randInt(0,lueckeTemplates.length-1)];
+  const answers = tmpl.blanks(n);
+  const rawText = tmpl.text(n);
+  const parts = rawText.split('__');
+  let html = '<div class="blank-task">';
+  parts.forEach((p,i)=>{
+    html += p;
+    if(i<answers.length) {
+      const w = answers[i].length > 5 ? 'wide' : '';
+      html += `<input class="blank ${w}" data-answer="${answers[i]}" data-idx="${i}">`;
+    }
+  });
+  html += '</div>';
+  document.getElementById('teilbarkeitLuecke').innerHTML = html;
+  document.getElementById('teilbarkeitLueckeFeedback').innerHTML = '';
+}
+function checkTeilbarkeitLuecke() {
+  let allOk = true;
+  document.querySelectorAll('#teilbarkeitLuecke .blank').forEach(inp=>{
+    const correct = inp.dataset.answer.toLowerCase().trim();
+    const val = inp.value.toLowerCase().trim();
+    if(val===correct) { inp.classList.add('ok'); inp.classList.remove('fail'); }
+    else { inp.classList.add('fail'); inp.classList.remove('ok'); allOk=false; }
+  });
+  const fb = document.getElementById('teilbarkeitLueckeFeedback');
+  if(allOk) { fb.innerHTML='<div class="quiz-feedback show ok">✅ Richtig! +10 XP</div>'; addXP(10); showToast('+10 XP!'); }
+  else { fb.innerHTML='<div class="quiz-feedback show fail">❌ Falsch – rote Felder überprüfen!</div>'; addXP(0,false); }
+}
+
+// ===== ZIFFER ERGÄNZEN =====
+let zifferData = {};
+function generateZifferTask() {
+  const d = state.diffs.ziffer;
+  const divs = d==='easy' ? [2,5,10] : d==='medium' ? [3,6,9] : [4,3,9];
+  const div = divs[randInt(0,divs.length-1)];
+  // Create number with one digit missing
+  const full = randInt(10, d==='hard'?9999:999);
+  const digits = String(full).split('');
+  const pos = randInt(0, digits.length-1);
+  const missing = digits[pos];
+  digits[pos] = '_';
+  
+  zifferData = { full, div, missing, pos };
+  let html = `<p style="font-size:0.92rem; margin-bottom:12px;">Ergänze die fehlende Ziffer, sodass die Zahl durch <span class="keyword">${div}</span> teilbar ist:</p>`;
+  html += `<p style="font-size:1.3rem; font-weight:900; letter-spacing:4px; margin:16px 0; color:var(--accent4);">`;
+  digits.forEach((d,i)=>{ if(d==='_') html+='<input class="blank" id="zifferBlank" placeholder="?" style="width:48px;">'; else html+=d; });
+  html += '</p>';
+  if(div===3||div===9) html+=`<p style="font-size:0.8rem; color:var(--text2);">Tipp: Berechne die Quersumme!</p>`;
+  document.getElementById('zifferTask').innerHTML = html;
+  document.getElementById('zifferFeedback').innerHTML = '';
+}
+function checkZiffer() {
+  const inp = document.getElementById('zifferBlank');
+  const val = parseInt(inp.value);
+  const correct = parseInt(zifferData.missing);
+  const fb = document.getElementById('zifferFeedback');
+  if(val===correct && zifferData.full % zifferData.div === 0) {
+    inp.classList.add('ok'); inp.classList.remove('fail');
+    fb.innerHTML=`<div class="quiz-feedback show ok">✅ Richtig! Die Ziffer ist ${correct}. +15 XP</div>`;
+    addXP(15); showToast('+15 XP!');
+  } else {
+    inp.classList.add('fail'); inp.classList.remove('ok');
+    fb.innerHTML=`<div class="quiz-feedback show fail">❌ Falsch. Die fehlende Ziffer ist ${correct}.</div>`;
+    addXP(0,false);
+  }
+}
+
+// ===== PRIMZAHLEN SIEB =====
+function initSieve() {
+  const grid = document.getElementById('sieve');
+  if(grid.querySelector('.sieve-cell')) return;
+  grid.innerHTML='';
+  for(let i=2;i<=100;i++){
+    const c=document.createElement('div');
+    c.className='sieve-cell'; c.textContent=i; c.dataset.n=i;
+    c.onclick=()=>{ if(!c.classList.contains('prime')) c.classList.toggle('crossed'); updateSieveFeedback(); };
+    grid.appendChild(c);
+  }
+}
+function resetSieve() {
+  document.querySelectorAll('.sieve-cell').forEach(c=>{
+    c.className='sieve-cell';
+  });
+  document.getElementById('sieveFeedback').innerHTML='';
+}
+function autoSieve() {
+  document.querySelectorAll('.sieve-cell').forEach(c=>{
+    const n=parseInt(c.dataset.n);
+    if(isPrime(n)) c.className='sieve-cell prime';
+    else c.className='sieve-cell crossed';
+  });
+  const primes = Array.from({length:99},(_,i)=>i+2).filter(isPrime);
+  document.getElementById('sieveFeedback').innerHTML=`<strong style="color:var(--accent3)">Primzahlen von 2–100:</strong> ${primes.join(', ')}`;
+}
+function updateSieveFeedback() {
+  const crossed = document.querySelectorAll('.sieve-cell.crossed').length;
+  document.getElementById('sieveFeedback').innerHTML = `${crossed} Zahlen gestrichen`;
+}
+
+// ===== PRIM QUIZ =====
+function generatePrimQuiz() {
+  const n = randInt(2,60);
+  const prime = isPrime(n);
+  const divs = getDivisors(n);
+  document.getElementById('primQuiz').innerHTML=`
+    <div class="quiz-question">Ist <span class="keyword">${n}</span> eine Primzahl?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answerPrimQuiz(true,${prime},this)">✅ Ja, Primzahl</button>
+      <button class="quiz-opt" onclick="answerPrimQuiz(false,${prime},this)">❌ Nein, keine Primzahl</button>
+    </div>
+    <div class="quiz-feedback" id="primFb"></div>
+  `;
+}
+function answerPrimQuiz(answer, correct, btn) {
+  const isCorrect = answer===correct;
+  btn.classList.add(isCorrect?'correct':'wrong');
+  const fb=document.getElementById('primFb');
+  const divs = getDivisors(parseInt(btn.closest('.quiz-options').previousElementSibling.querySelector('.keyword').textContent));
+  if(isCorrect) {
+    fb.className='quiz-feedback show ok';
+    fb.innerHTML = correct ? '✅ Richtig! Diese Zahl hat genau 2 Teiler: 1 und sich selbst.' : `✅ Richtig! Die Teiler sind: {${divs.join(', ')}}`;
+    addXP(10); showToast('+10 XP!');
+  } else {
+    fb.className='quiz-feedback show fail';
+    fb.innerHTML = correct ? `❌ Falsch. ${divs[0]+divs[divs.length-1]>2 ? 'Sie ist eine Primzahl!' : 'Falsch!'}` : `❌ Falsch. Sie hat ${divs.length} Teiler: {${divs.join(', ')}} → keine Primzahl.`;
+    addXP(0,false);
+  }
+  btn.parentElement.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+}
+
+// ===== KGV VIZ =====
+function updateKGVViz() {
+  const a=parseInt(document.getElementById('kgvA').value)||4;
+  const b=parseInt(document.getElementById('kgvB').value)||6;
+  if(isNaN(a)||isNaN(b)||a<2||b<2) return;
+  const k=lcm(a,b);
+  const multA=Array.from({length:10},(_,i)=>(i+1)*a);
+  const multB=Array.from({length:10},(_,i)=>(i+1)*b);
+  let html=`<div class="multi-vis">`;
+  html+=`<div class="multi-col"><h4>Vielfache von ${a}</h4>`;
+  multA.forEach(v=>html+=`<div class="multi-item ${multB.includes(v)?'shared':''}">${v}${multB.includes(v)&&v===k?' ← kgV':''}</div>`);
+  html+=`</div>`;
+  html+=`<div class="multi-col"><h4>Vielfache von ${b}</h4>`;
+  multB.forEach(v=>html+=`<div class="multi-item ${multA.includes(v)?'shared':''}">${v}${multA.includes(v)&&v===k?' ← kgV':''}</div>`);
+  html+=`</div></div>`;
+  html+=`<div class="formula-box">kgV(${a}, ${b}) = <span style="color:var(--accent4)">${k}</span></div>`;
+  document.getElementById('kgvViz').innerHTML=html;
+}
+
+// ===== KGV TASK =====
+let kgvTaskData={};
+function generateKGVTask() {
+  const d=state.diffs.kgv;
+  let pairs;
+  if(d==='easy') pairs=[[2,3],[3,4],[4,6],[2,5],[3,6],[5,10],[2,8],[4,8]];
+  else if(d==='medium') pairs=[[6,8],[4,10],[6,9],[8,12],[5,8],[6,10],[3,8],[4,9]];
+  else pairs=[[12,15],[8,18],[9,15],[10,14],[12,18],[6,14],[8,20],[15,20]];
+  const pair=pairs[randInt(0,pairs.length-1)];
+  kgvTaskData={a:pair[0],b:pair[1],ans:lcm(pair[0],pair[1])};
+  document.getElementById('kgvTask').innerHTML=`
+    <p style="font-size:0.92rem; margin-bottom:12px;">Berechne: <strong>kgV(${pair[0]}, ${pair[1]})</strong> = ?</p>
+    <input class="task-input" id="kgvInput" placeholder="Antwort" type="number" style="width:120px;">
+  `;
+  document.getElementById('kgvFeedback').innerHTML='';
+}
+function checkKGVTask() {
+  const val=parseInt(document.getElementById('kgvInput').value);
+  const inp=document.getElementById('kgvInput');
+  const fb=document.getElementById('kgvFeedback');
+  if(val===kgvTaskData.ans) {
+    inp.classList.add('ok');inp.classList.remove('fail');
+    fb.innerHTML=`<div class="quiz-feedback show ok">✅ Richtig! kgV(${kgvTaskData.a},${kgvTaskData.b}) = ${kgvTaskData.ans} +10 XP</div>`;
+    addXP(10);showToast('+10 XP!');
+  } else {
+    inp.classList.add('fail');inp.classList.remove('ok');
+    const dA=Array.from({length:8},(_,i)=>(i+1)*kgvTaskData.a);
+    const dB=Array.from({length:8},(_,i)=>(i+1)*kgvTaskData.b);
+    fb.innerHTML=`<div class="quiz-feedback show fail">❌ Falsch. V${kgvTaskData.a}: ${dA.join(', ')}… | V${kgvTaskData.b}: ${dB.join(', ')}… → kgV = ${kgvTaskData.ans}</div>`;
+    addXP(0,false);
+  }
+}
+
+// ===== GGT VIZ =====
+function updateGGTViz() {
+  const a=parseInt(document.getElementById('ggtA').value)||12;
+  const b=parseInt(document.getElementById('ggtB').value)||18;
+  if(isNaN(a)||isNaN(b)||a<2||b<2) return;
+  const g=gcd(a,b);
+  const divA=getDivisors(a), divB=getDivisors(b);
+  const common=divA.filter(d=>divB.includes(d));
+  let html=`<div class="multi-vis">`;
+  html+=`<div class="multi-col"><h4>Teiler von ${a}</h4>`;
+  divA.forEach(v=>html+=`<div class="multi-item ${common.includes(v)?'shared':''}">${v}${v===g?' ← ggT':''}</div>`);
+  html+=`</div>`;
+  html+=`<div class="multi-col"><h4>Teiler von ${b}</h4>`;
+  divB.forEach(v=>html+=`<div class="multi-item ${common.includes(v)?'shared':''}">${v}${v===g?' ← ggT':''}</div>`);
+  html+=`</div></div>`;
+  html+=`<div class="formula-box">ggT(${a}, ${b}) = <span style="color:var(--accent4)">${g}</span></div>`;
+  document.getElementById('ggtViz').innerHTML=html;
+}
+
+// ===== GGT TASK =====
+let ggtTaskData={};
+function generateGGTTask() {
+  const d=state.diffs.ggt;
+  let pairs;
+  if(d==='easy') pairs=[[6,9],[8,12],[10,15],[4,6],[6,8],[9,12],[4,8],[6,12]];
+  else if(d==='medium') pairs=[[12,18],[15,20],[16,24],[12,16],[18,24],[10,25],[14,21],[20,30]];
+  else pairs=[[24,36],[30,45],[18,27],[28,42],[20,36],[24,40],[36,54],[15,35]];
+  const pair=pairs[randInt(0,pairs.length-1)];
+  ggtTaskData={a:pair[0],b:pair[1],ans:gcd(pair[0],pair[1])};
+  document.getElementById('ggtTask').innerHTML=`
+    <p style="font-size:0.92rem; margin-bottom:12px;">Berechne: <strong>ggT(${pair[0]}, ${pair[1]})</strong> = ?</p>
+    <input class="task-input" id="ggtInput" placeholder="Antwort" type="number" style="width:120px;">
+  `;
+  document.getElementById('ggtFeedback').innerHTML='';
+}
+function checkGGTTask() {
+  const val=parseInt(document.getElementById('ggtInput').value);
+  const inp=document.getElementById('ggtInput');
+  const fb=document.getElementById('ggtFeedback');
+  if(val===ggtTaskData.ans) {
+    inp.classList.add('ok');inp.classList.remove('fail');
+    fb.innerHTML=`<div class="quiz-feedback show ok">✅ Richtig! ggT(${ggtTaskData.a},${ggtTaskData.b}) = ${ggtTaskData.ans} +10 XP</div>`;
+    addXP(10);showToast('+10 XP!');
+  } else {
+    inp.classList.add('fail');inp.classList.remove('ok');
+    const dA=getDivisors(ggtTaskData.a), dB=getDivisors(ggtTaskData.b);
+    const common=dA.filter(d=>dB.includes(d));
+    fb.innerHTML=`<div class="quiz-feedback show fail">❌ Falsch. T${ggtTaskData.a}={${dA.join(',')}} | T${ggtTaskData.b}={${dB.join(',')}} → gemeinsame: {${common.join(',')}} → ggT = ${ggtTaskData.ans}</div>`;
+    addXP(0,false);
+  }
+}
+
+// ===== MIXED =====
+let mixedData={};
+const mixedTypes=['kgv','ggt','vielfach','teiler','prim','teilbar'];
+function generateMixed() {
+  const d=state.diffs.mixed;
+  const type=mixedTypes[randInt(0,mixedTypes.length-1)];
+  let html='', data={};
+  if(type==='kgv') {
+    const pairs=d==='easy'?[[2,3],[3,4],[4,6]]:d==='medium'?[[6,8],[4,10],[6,9]]:[[12,15],[8,18],[9,15]];
+    const p=pairs[randInt(0,pairs.length-1)];
+    data={type,a:p[0],b:p[1],ans:lcm(p[0],p[1])};
+    html=`<p class="quiz-question">⬆️ Berechne <strong>kgV(${p[0]}, ${p[1]})</strong> = <input class="task-input" id="mixedInput" type="number" style="width:100px;"></p>`;
+  } else if(type==='ggt') {
+    const pairs=d==='easy'?[[6,9],[8,12],[10,15]]:d==='medium'?[[12,18],[15,20],[16,24]]:[[24,36],[30,45],[28,42]];
+    const p=pairs[randInt(0,pairs.length-1)];
+    data={type,a:p[0],b:p[1],ans:gcd(p[0],p[1])};
+    html=`<p class="quiz-question">⬇️ Berechne <strong>ggT(${p[0]}, ${p[1]})</strong> = <input class="task-input" id="mixedInput" type="number" style="width:100px;"></p>`;
+  } else if(type==='vielfach') {
+    const n=d==='easy'?randInt(2,6):d==='medium'?randInt(5,9):randInt(7,12);
+    const pos=d==='easy'?randInt(4,8):randInt(6,12);
+    data={type,n,pos,ans:n*pos};
+    html=`<p class="quiz-question">✖️ Das <strong>${pos}. Vielfache</strong> von <strong>${n}</strong> = <input class="task-input" id="mixedInput" type="number" style="width:100px;"></p>`;
+  } else if(type==='teiler') {
+    const nums=d==='easy'?[6,8,10,12]:d==='medium'?[18,20,24,30]:[36,40,48,60];
+    const n=nums[randInt(0,nums.length-1)];
+    data={type,n,ans:getDivisors(n).length};
+    html=`<p class="quiz-question">➗ Wie viele Teiler hat <strong>${n}</strong>?<br><span style="font-size:0.8rem;color:var(--text2);">Zähle alle Teiler</span><br><input class="task-input" id="mixedInput" type="number" style="width:100px;"></p>`;
+  } else if(type==='prim') {
+    const n=d==='easy'?randInt(2,20):d==='medium'?randInt(10,40):randInt(20,100);
+    const prime=isPrime(n);
+    data={type,n,prime};
+    html=`<p class="quiz-question">⭐ Ist <strong>${n}</strong> eine Primzahl?</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answerMixed(true,${prime},this)">Ja</button>
+      <button class="quiz-opt" onclick="answerMixed(false,${prime},this)">Nein</button>
+    </div>`;
+  } else {
+    const n=randInt(100,999);
+    const divs=[2,3,5,9,10].filter(d=>n%d===0);
+    data={type,n,ans:divs};
+    html=`<p class="quiz-question">🔍 Durch welche Zahlen ist <strong>${n}</strong> teilbar? (aus: 2, 3, 5, 9, 10)<br>
+    <span style="font-size:0.8rem;color:var(--text2);">Quersumme: ${digitSum(n)}</span></p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+      ${[2,3,5,9,10].map(d=>`<label style="display:flex;align-items:center;gap:5px;font-weight:700;cursor:pointer;"><input type="checkbox" value="${d}" style="width:18px;height:18px;cursor:pointer;"> ÷${d}</label>`).join('')}
+    </div>`;
+  }
+  mixedData=data;
+  document.getElementById('mixedTask').innerHTML=html;
+  document.getElementById('mixedFeedback').innerHTML='';
+}
+function answerMixed(answer, correct, btn) {
+  const isOk=answer===correct;
+  btn.classList.add(isOk?'correct':'wrong');
+  btn.parentElement.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  showMixedResult(isOk, isOk?`✅ Richtig!`:`❌ Falsch. ${correct?'Es ist eine Primzahl.':'Es ist keine Primzahl.'}`);
+}
+function checkMixed() {
+  const d=mixedData;
+  if(d.type==='kgv'||d.type==='ggt'||d.type==='vielfach'||d.type==='teiler') {
+    const val=parseInt(document.getElementById('mixedInput').value);
+    if(val===d.ans) showMixedResult(true,'✅ Richtig! +10 XP');
+    else showMixedResult(false,`❌ Falsch. Antwort: ${d.ans}`);
+  } else if(d.type==='prim') {
+    // handled by buttons
+  } else if(d.type==='teilbar') {
+    const checked=Array.from(document.querySelectorAll('#mixedTask input[type=checkbox]:checked')).map(c=>parseInt(c.value));
+    const correct=JSON.stringify(d.ans.sort()===JSON.stringify(checked.sort()||[]));
+    const ok=d.ans.sort().join(',')===checked.sort().join(',');
+    showMixedResult(ok, ok?`✅ Richtig! Teilbar durch: ${d.ans.join(', ')}`:`❌ Falsch. Teilbar durch: ${d.ans.join(', ') || 'keine der genannten Zahlen'}`);
+  }
+}
+function showMixedResult(ok, msg) {
+  const fb=document.getElementById('mixedFeedback');
+  fb.innerHTML=`<div class="quiz-feedback show ${ok?'ok':'fail'}">${msg}</div>`;
+  if(ok) { addXP(10); showToast('+10 XP!'); } else addXP(0,false);
+}
+
+// ===== SPEED ROUND =====
+function startSpeedRound() {
+  document.getElementById('speedStartBtn').style.display='none';
+  const tasks=[];
+  for(let i=0;i<5;i++){
+    const type=['kgv','ggt','prim'][randInt(0,2)];
+    if(type==='kgv'){
+      const pairs=[[2,3],[3,4],[4,6],[2,5],[3,6]];
+      const p=pairs[randInt(0,pairs.length-1)];
+      tasks.push({type,q:`kgV(${p[0]},${p[1]}) = ?`,ans:lcm(p[0],p[1]),input:'number'});
+    } else if(type==='ggt'){
+      const pairs=[[6,9],[8,12],[10,15],[4,6],[6,8]];
+      const p=pairs[randInt(0,pairs.length-1)];
+      tasks.push({type,q:`ggT(${p[0]},${p[1]}) = ?`,ans:gcd(p[0],p[1]),input:'number'});
+    } else {
+      const n=randInt(2,30);
+      tasks.push({type:'prim',q:`Ist ${n} eine Primzahl? (ja/nein)`,ans:isPrime(n)?'ja':'nein',input:'text'});
+    }
+  }
+  state.speedRound={active:true,current:0,tasks,answers:[],score:0};
+  renderSpeedTask();
+}
+function renderSpeedTask() {
+  const sr=state.speedRound;
+  if(sr.current>=sr.tasks.length) {
+    document.getElementById('speedRound').innerHTML='';
+    document.getElementById('speedFeedback').innerHTML=`<div class="quiz-feedback show ok" style="font-size:1rem;">🏁 Fertig! ${sr.score}/${sr.tasks.length} richtig! +${sr.score*5} XP</div>`;
+    addXP(sr.score*5);
+    setTimeout(()=>document.getElementById('speedStartBtn').style.display='',3000);
+    return;
+  }
+  const t=sr.tasks[sr.current];
+  document.getElementById('speedRound').innerHTML=`
+    <p style="font-size:0.8rem;color:var(--text2);">Aufgabe ${sr.current+1}/${sr.tasks.length}</p>
+    <p style="font-size:1.05rem;font-weight:800;margin:10px 0;">${t.q}</p>
+    <div class="input-row">
+      <input class="task-input" id="speedInput" type="${t.input}" placeholder="Antwort" autofocus onkeydown="if(event.key==='Enter')submitSpeed()">
+      <button class="btn btn-primary" onclick="submitSpeed()">→</button>
+    </div>
+  `;
+  setTimeout(()=>document.getElementById('speedInput')?.focus(),100);
+}
+function submitSpeed() {
+  const inp=document.getElementById('speedInput');
+  if(!inp) return;
+  const sr=state.speedRound;
+  const t=sr.tasks[sr.current];
+  const val=inp.value.trim().toLowerCase();
+  const correct=String(t.ans).toLowerCase();
+  if(val===correct) sr.score++;
+  sr.current++;
+  renderSpeedTask();
+}
+
+// ===== QUIZ =====
+let quizData={};
+function nextQuizQuestion() {
+  const types=['kgv','ggt','vielfach_n','teiler_n','prim','divisible','application'];
+  const type=types[randInt(0,types.length-1)];
+  let q='', opts=[], correct=0;
+  
+  if(type==='kgv') {
+    const pairs=[[3,4],[4,6],[2,9],[5,6],[6,8],[4,9],[3,8]];
+    const p=pairs[randInt(0,pairs.length-1)];
+    const ans=lcm(p[0],p[1]);
+    q=`Was ist kgV(${p[0]}, ${p[1]})?`;
+    opts=shuffle([ans,ans+p[0],ans+p[1],ans*2].filter((v,i,a)=>a.indexOf(v)===i).slice(0,4).map(String));
+    correct=opts.indexOf(String(ans));
+  } else if(type==='ggt') {
+    const pairs=[[6,9],[8,12],[10,15],[12,18],[15,20]];
+    const p=pairs[randInt(0,pairs.length-1)];
+    const ans=gcd(p[0],p[1]);
+    q=`Was ist ggT(${p[0]}, ${p[1]})?`;
+    opts=shuffle([ans,ans-1,ans+1,ans+2].filter(v=>v>0).slice(0,4).map(String));
+    correct=opts.indexOf(String(ans));
+  } else if(type==='vielfach_n') {
+    const n=randInt(3,9), pos=randInt(5,10);
+    const ans=n*pos;
+    q=`Was ist das ${pos}. Vielfache von ${n}?`;
+    opts=shuffle([ans,ans-n,ans+n,n*(pos-2)].filter(v=>v>0).slice(0,4).map(String));
+    correct=opts.indexOf(String(ans));
+  } else if(type==='teiler_n') {
+    const nums=[8,12,16,18,20,24];
+    const n=nums[randInt(0,nums.length-1)];
+    const ans=getDivisors(n).length;
+    q=`Wie viele Teiler hat die Zahl ${n}?`;
+    opts=shuffle([ans,ans-1,ans+1,ans+2].map(String));
+    correct=opts.indexOf(String(ans));
+  } else if(type==='prim') {
+    const primes=[7,11,13,17,19,23,29];
+    const nonPrimes=[9,15,21,25,27,33];
+    const all=[...primes,...nonPrimes];
+    const n=all[randInt(0,all.length-1)];
+    q=`Ist ${n} eine Primzahl?`;
+    opts=['Ja','Nein','Vielleicht','Kommt darauf an'];
+    correct=isPrime(n)?0:1;
+  } else if(type==='divisible') {
+    const n=randInt(100,500);
+    const ruleOpts=[{d:2,rule:'gerader Zahl'},{d:3,rule:'Quersumme durch 3'},{d:5,rule:'endet auf 0 oder 5'},{d:10,rule:'endet auf 0'}];
+    const rule=ruleOpts[randInt(0,ruleOpts.length-1)];
+    const ok=n%rule.d===0;
+    q=`Ist ${n} durch ${rule.d} teilbar? (${rule.rule})`;
+    opts=['Ja','Nein','Nur manchmal','Kann nicht bestimmt werden'];
+    correct=ok?0:1;
+  } else {
+    const scenarios=[
+      {q:'Bus A fährt alle 4 Minuten, Bus B alle 6 Minuten. Wann fahren sie gleichzeitig?',
+       ans:`kgV(4,6) = ${lcm(4,6)} Minuten`,
+       wrongs:[`${lcm(4,6)+4} Minuten`,`${lcm(4,6)-2} Minuten`,`${lcm(4,6)+6} Minuten`]},
+      {q:'12 Äpfel und 18 Orangen sollen gleichmäßig aufgeteilt werden. Wie viele Gruppen maximal?',
+       ans:`ggT(12,18) = ${gcd(12,18)} Gruppen`,
+       wrongs:[`${gcd(12,18)+1} Gruppen`,`${gcd(12,18)+2} Gruppen`,`${gcd(12,18)-1} Gruppen`]},
+    ];
+    const s=scenarios[randInt(0,scenarios.length-1)];
+    q=s.q;
+    opts=shuffle([s.ans,...s.wrongs]);
+    correct=opts.indexOf(s.ans);
+  }
+  
+  quizData={opts,correct,answered:false};
+  state.quizTotal++;
+  document.getElementById('quizTotal').textContent=state.quizTotal;
+  document.getElementById('nextQuizBtn').style.display='none';
+  document.getElementById('quizArea').innerHTML=`
+    <div class="quiz-question">${q}</div>
+    <div class="quiz-options">
+      ${opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i},this)">${o}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quizFb"></div>
+  `;
+}
+function answerQuiz(idx, btn) {
+  if(quizData.answered) return;
+  quizData.answered=true;
+  const isOk=idx===quizData.correct;
+  btn.classList.add(isOk?'correct':'wrong');
+  document.querySelectorAll('#quizArea .quiz-opt')[quizData.correct].classList.add('correct');
+  document.querySelectorAll('#quizArea .quiz-opt').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('quizFb');
+  if(isOk) {
+    state.quizScore++; state.quizStreak++;
+    fb.className='quiz-feedback show ok';
+    fb.innerHTML=`✅ Richtig! 🔥 Streak: ${state.quizStreak}`;
+    addXP(state.quizStreak>=3?15:10);
+    showToast(state.quizStreak>=3?`🔥 Streak ×${state.quizStreak}! +15 XP`:'+10 XP!');
+  } else {
+    state.quizStreak=0;
+    fb.className='quiz-feedback show fail';
+    fb.innerHTML=`❌ Falsch. Richtig war: "${quizData.opts[quizData.correct]}"`;
+    addXP(0,false);
+  }
+  document.getElementById('quizScore').textContent=state.quizScore;
+  document.getElementById('quizStreak').textContent=state.quizStreak;
+  document.getElementById('nextQuizBtn').style.display='';
+}
+function shuffle(a) { return [...a].sort(()=>Math.random()-0.5); }
+
+// Init
+document.getElementById('fc1q').textContent = fcData[0].q;
+document.getElementById('fc1a').textContent = fcData[0].a;
+document.querySelector('.flashcard-back .fc-hint').textContent = fcData[0].hint;
+</script>
+</body>
+</html>

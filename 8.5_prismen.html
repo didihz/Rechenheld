@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prismen – Zeichnen und Berechnen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --or:#ea580c;--orl:#ffedd5;--ord:#9a3412;
+  --te:#0d9488;--tel:#ccfbf1;--ted:#0f766e;
+  --bl:#2563eb;--bll:#dbeafe;--bld:#1d4ed8;
+  --vi:#7c3aed;--vil:#ede9fe;--vid:#5b21b6;
+  --em:#059669;--eml:#d1fae5;--emd:#047857;
+  --am:#d97706;--aml:#fef3c7;--amd:#b45309;
+  --ro:#e11d48;--rol:#ffe4e6;--rod:#be123c;
+  --gr:#64748b;--grl:#f1f5f9;
+  --bg:#fff7ed;--white:#fff;
+  --text:#1e293b;--muted:#64748b;
+  --border:#e2e8f0;
+  --r:12px;--shadow:0 2px 14px rgba(234,88,12,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6}
+h1,h2,h3,h4{font-family:'Nunito',sans-serif}
+
+.nav{background:var(--white);border-bottom:2px solid var(--orl);padding:0 .75rem;display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(234,88,12,.08)}
+.nav-btn{background:none;border:none;cursor:pointer;padding:.85rem .9rem;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--or);border-bottom-color:var(--or)}
+
+.sec{display:none;padding:1.5rem 1rem;max-width:880px;margin:0 auto}
+.sec.active{display:block}
+
+.hero{border-radius:var(--r);padding:1.8rem 1.5rem;margin-bottom:1.25rem;text-align:center;color:white}
+.hero h1{font-size:1.7rem;margin-bottom:.3rem;font-weight:900}
+.hero p{opacity:.9;font-size:.95rem}
+
+.card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);padding:1.4rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.card h3{font-size:1rem;margin-bottom:.7rem;font-weight:800}
+
+.badge{display:inline-block;font-size:10.5px;font-weight:900;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:.7rem}
+.bo{background:var(--orl);color:var(--ord)} .bt{background:var(--tel);color:var(--ted)}
+.bb{background:var(--bll);color:var(--bld)} .bv{background:var(--vil);color:var(--vid)}
+.be{background:var(--eml);color:var(--emd)} .ba{background:var(--aml);color:var(--amd)}
+.br{background:var(--rol);color:var(--rod)}
+
+.fbox{border-left:4px solid var(--or);border-radius:8px;padding:.85rem 1.1rem;margin:.6rem 0;font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:700}
+.fbox .ft{font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.2rem}
+.fo{background:var(--orl);border-color:var(--or)} .fo .ft{color:var(--ord)}
+.ft-te{background:var(--tel);border-color:var(--te)} .ft-te .ft{color:var(--ted)}
+.ft-bl{background:var(--bll);border-color:var(--bl)} .ft-bl .ft{color:var(--bld)}
+.ft-vi{background:var(--vil);border-color:var(--vi)} .ft-vi .ft{color:var(--vid)}
+.ft-em{background:var(--eml);border-color:var(--em)} .ft-em .ft{color:var(--emd)}
+.ft-am{background:var(--aml);border-color:var(--am)} .ft-am .ft{color:var(--amd)}
+
+.step{display:flex;gap:.85rem;margin-bottom:.65rem;align-items:flex-start}
+.sn{flex-shrink:0;width:28px;height:28px;background:var(--or);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem}
+.st{padding-top:3px;font-size:.93rem}
+
+.info{background:var(--aml);border-left:4px solid var(--am);border-radius:8px;padding:.7rem 1rem;margin:.6rem 0;font-size:.9rem}
+.tip{background:var(--tel);border-left:4px solid var(--te);border-radius:8px;padding:.7rem 1rem;margin:.6rem 0;font-size:.9rem}
+.warn{background:var(--rol);border-left:4px solid var(--ro);border-radius:8px;padding:.7rem 1rem;margin:.6rem 0;font-size:.9rem}
+
+/* QUIZ */
+.qquote{font-family:'Nunito',sans-serif;font-weight:800;margin-bottom:.8rem;font-size:1rem;line-height:1.5}
+.opts{display:grid;gap:.4rem}
+.obt{background:var(--grl);border:1.5px solid var(--border);border-radius:8px;padding:.6rem 1rem;text-align:left;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:.9rem;transition:all .12s}
+.obt:hover:not(:disabled){border-color:var(--or);background:var(--orl)}
+.obt.correct{background:var(--eml);border-color:var(--em);color:var(--emd)}
+.obt.wrong{background:var(--rol);border-color:var(--ro);color:var(--rod)}
+.fb{margin-top:.6rem;padding:.65rem 1rem;border-radius:8px;font-size:.88rem;display:none}
+.fb.ok{background:var(--eml);color:var(--emd);border-left:4px solid var(--em);display:block}
+.fb.no{background:var(--rol);color:var(--rod);border-left:4px solid var(--ro);display:block}
+
+.btn{background:var(--or);color:white;border:none;border-radius:8px;padding:.55rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--ord)}
+.btn-out{background:transparent;color:var(--or);border:1.5px solid var(--or)}
+.btn-out:hover{background:var(--orl)}
+.btn-te{background:var(--te)}.btn-te:hover{background:var(--ted)}
+.btn-am{background:var(--am)}.btn-am:hover{background:var(--amd)}
+.btn-em{background:var(--em)}.btn-em:hover{background:var(--emd)}
+
+.inp{border:2px solid var(--border);border-radius:7px;padding:.4rem .65rem;font-size:.95rem;font-family:'Nunito',sans-serif;text-align:center;transition:border-color .2s;background:var(--white);width:90px}
+.inp:focus{outline:none;border-color:var(--or)}
+.inp.ok{border-color:var(--em);background:var(--eml)}
+.inp.no{border-color:var(--ro);background:var(--rol)}
+.inp-wide{width:130px} .inp-xl{width:170px}
+.fill-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem;font-size:.95rem;font-family:'Nunito',sans-serif}
+
+.lvl-tabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
+.lvl-tab{padding:.35rem .85rem;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .15s}
+.lvl-tab.active{background:var(--or);color:white;border-color:var(--or)}
+
+.pbwrap{background:var(--border);border-radius:20px;height:7px;margin-bottom:.25rem}
+.pb{height:100%;border-radius:20px;background:var(--or);transition:width .3s}
+.score-pill{display:inline-flex;align-items:center;gap:.4rem;background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:.28rem .9rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem}
+.sdot{width:9px;height:9px;border-radius:50%;background:var(--or)}
+
+.reveal{background:var(--aml);color:var(--amd);border-radius:8px;padding:.6rem 1rem;font-weight:700;font-size:.92rem;display:none;margin-top:.6rem;font-family:'Nunito',sans-serif;line-height:1.8}
+.gen-area{background:var(--grl);border-radius:var(--r);padding:1.1rem;margin-top:.9rem;border:1px solid var(--border)}
+
+/* 3D SVG PRISM */
+.prism-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.prism-card{background:var(--grl);border-radius:var(--r);border:1.5px solid var(--border);padding:1rem;text-align:center;cursor:pointer;transition:all .15s}
+.prism-card:hover,.prism-card.sel{border-color:var(--or);background:var(--orl)}
+.prism-card h4{font-size:.9rem;font-weight:800;font-family:'Nunito',sans-serif;margin-top:.5rem;margin-bottom:.2rem}
+.prism-card p{font-size:.78rem;color:var(--muted)}
+
+/* WAHR/FALSCH */
+.wf-row{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.75rem;padding:.75rem;background:var(--grl);border-radius:8px;border:1px solid var(--border)}
+.wf-text{flex:1;font-size:.9rem;line-height:1.5}
+.wf-btns{display:flex;gap:.4rem;flex-shrink:0}
+.wf-btn{padding:.3rem .7rem;border-radius:6px;border:1.5px solid var(--border);background:var(--white);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .12s}
+.wf-btn:hover{border-color:var(--or)}
+.wf-btn.sel-w{background:var(--eml);border-color:var(--em);color:var(--emd)}
+.wf-btn.sel-f{background:var(--rol);border-color:var(--ro);color:var(--rod)}
+.wf-btn.right{background:var(--eml);border-color:var(--em)}
+.wf-btn.wrong{background:var(--rol);border-color:var(--ro)}
+
+/* MATCH */
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:.75rem}
+.match-col{display:flex;flex-direction:column;gap:.4rem}
+.mi{background:var(--grl);border:1.5px solid var(--border);border-radius:8px;padding:.55rem .85rem;cursor:pointer;font-size:.85rem;font-weight:700;text-align:center;transition:all .12s;user-select:none;font-family:'Nunito',sans-serif}
+.mi:hover:not(.matched):not(.sel){border-color:var(--or)}
+.mi.sel{border-color:var(--bl);background:var(--bll)}
+.mi.matched{border-color:var(--em);background:var(--eml);color:var(--emd);pointer-events:none}
+.mi.flash{border-color:var(--ro);background:var(--rol)}
+
+/* FLASH */
+.flash-box{background:var(--vil);border-radius:var(--r);padding:2rem 1.5rem;text-align:center;min-height:130px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.4rem}
+.flash-word{font-family:'Nunito',sans-serif;font-size:1.7rem;font-weight:900;color:var(--vid)}
+
+/* NEAT TABLE */
+.ntable{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+.ntable th{background:var(--orl);color:var(--ord);padding:.5rem .7rem;font-family:'Nunito',sans-serif;font-weight:900;border:1px solid var(--border);text-align:center}
+.ntable td{padding:.4rem .7rem;border:1px solid var(--border);text-align:center;font-family:'Nunito',sans-serif}
+.ntable tr:nth-child(even) td{background:var(--grl)}
+
+@media(max-width:520px){
+  .hero h1{font-size:1.4rem}
+  .match-wrap{grid-template-columns:1fr}
+  .prism-gallery{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <button class="nav-btn active" onclick="show('lernen')">🔷 Lernen</button>
+  <button class="nav-btn" onclick="show('bauteile')">🧱 Bauteile</button>
+  <button class="nav-btn" onclick="show('wahrf')">✅ Wahr/Falsch</button>
+  <button class="nav-btn" onclick="show('definition')">📝 Definition</button>
+  <button class="nav-btn" onclick="show('oberflaeche')">📐 Oberfläche</button>
+  <button class="nav-btn" onclick="show('volumen')">📦 Volumen</button>
+  <button class="nav-btn" onclick="show('quiz')">❓ Quiz</button>
+  <button class="nav-btn" onclick="show('blitz')">⚡ Blitz</button>
+</nav>
+
+<!-- ══════════════════ LERNEN ══════════════════ -->
+<section class="sec active" id="lernen">
+<div class="hero" style="background:linear-gradient(135deg,#ea580c,#7c3aed)">
+  <h1>🔷 Prismen</h1>
+  <p>Zeichnen, erkennen und berechnen – Schritt für Schritt</p>
+</div>
+
+<div class="card">
+  <div class="badge bo">Was ist ein Prisma?</div>
+  <h3>Das Prisma – ein besonderer Körper</h3>
+  <p>Ein <strong>Prisma</strong> ist ein Körper mit zwei <strong>deckungsgleichen (kongruenten) und parallelen Grundflächen</strong>. Die Seitenflächen (Mantelfläche) bestehen aus <strong>Rechtecken</strong>.</p>
+  <div class="info">🏠 <strong>Alltag:</strong> Ein Toblerone-Karton, ein Zelt, eine Treppe – das alles sind Prismen!</div>
+  <div style="display:grid;gap:.5rem;margin:.75rem 0">
+    <div class="fbox fo"><div class="ft">Grundfläche G</div>Die obere und untere Fläche – immer das gleiche Vieleck.</div>
+    <div class="fbox ft-te"><div class="ft">Mantelfläche M</div>Alle Seitenflächen zusammen – bestehen aus Rechtecken.</div>
+    <div class="fbox ft-bl"><div class="ft">Körperhöhe h<sub>k</sub></div>Der senkrechte Abstand zwischen den beiden Grundflächen.</div>
+  </div>
+  <div class="tip">💡 <strong>Prismentypen</strong> werden nach der Grundfläche benannt:<br>Dreieck → <em>Dreiecksprisma</em>, Viereck → <em>Quader / Vierecksprisma</em>, Fünfeck → <em>Fünfecksprisma</em></div>
+</div>
+
+<div class="card">
+  <div class="badge bt">3D-Ansicht</div>
+  <h3>Prismen im Überblick – klick auf einen Typ!</h3>
+  <div class="prism-gallery" id="prism-gallery">
+    <div class="prism-card sel" onclick="showPrism(0,this)">
+      <svg width="120" height="90" viewBox="0 0 120 90">
+        <!-- Dreiecksprisma -->
+        <polygon points="30,75 90,75 60,75" fill="none"/>
+        <polygon points="20,70 70,70 45,30" fill="#ffedd5" stroke="#ea580c" stroke-width="1.8"/>
+        <polygon points="70,70 100,55 75,15 45,30" fill="#fed7aa" stroke="#ea580c" stroke-width="1.8"/>
+        <polygon points="20,70 70,70 100,55 50,55" fill="#fcd9b5" stroke="#ea580c" stroke-width="1.8"/>
+        <line x1="45" y1="30" x2="75" y2="15" stroke="#ea580c" stroke-width="1.8"/>
+        <line x1="20" y1="70" x2="50" y2="55" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="3,2"/>
+        <line x1="50" y1="55" x2="75" y2="15" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="3,2"/>
+        <line x1="50" y1="55" x2="100" y2="55" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="3,2"/>
+      </svg>
+      <h4>Dreiecksprisma</h4>
+      <p>5 Flächen, 9 Kanten, 6 Ecken</p>
+    </div>
+    <div class="prism-card" onclick="showPrism(1,this)">
+      <svg width="120" height="90" viewBox="0 0 120 90">
+        <!-- Quader -->
+        <polygon points="15,65 75,65 75,25 15,25" fill="#ffedd5" stroke="#ea580c" stroke-width="1.8"/>
+        <polygon points="75,25 105,10 105,50 75,65" fill="#fed7aa" stroke="#ea580c" stroke-width="1.8"/>
+        <polygon points="15,25 75,25 105,10 45,10" fill="#fcd9b5" stroke="#ea580c" stroke-width="1.8"/>
+        <line x1="15" y1="65" x2="45" y2="50" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="3,2"/>
+        <line x1="45" y1="50" x2="105" y2="50" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="3,2"/>
+        <line x1="45" y1="50" x2="45" y2="10" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="3,2"/>
+      </svg>
+      <h4>Quader (Vierecksprisma)</h4>
+      <p>6 Flächen, 12 Kanten, 8 Ecken</p>
+    </div>
+    <div class="prism-card" onclick="showPrism(2,this)">
+      <svg width="120" height="90" viewBox="0 0 120 90">
+        <!-- Fünfecksprisma -->
+        <polygon points="20,70 35,45 60,30 85,45 80,70" fill="#ffedd5" stroke="#ea580c" stroke-width="1.8"/>
+        <polygon points="80,70 110,55 105,30 75,15 50,15 35,45 60,30 85,45" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5"/>
+        <line x1="60" y1="30" x2="50" y2="15" stroke="#ea580c" stroke-width="1.5"/>
+        <line x1="85" y1="45" x2="75" y2="15" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <line x1="80" y1="70" x2="110" y2="55" stroke="#ea580c" stroke-width="1.5"/>
+        <line x1="20" y1="70" x2="50" y2="55" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <line x1="50" y1="55" x2="105" y2="30" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <line x1="50" y1="55" x2="75" y2="15" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,2"/>
+      </svg>
+      <h4>Fünfecksprisma</h4>
+      <p>7 Flächen, 15 Kanten, 10 Ecken</p>
+    </div>
+  </div>
+  <div id="prism-info" class="fbox fo">
+    <div class="ft">Dreiecksprisma</div>
+    Grundfläche: Dreieck &nbsp;|&nbsp; Seitenflächen: 3 Rechtecke &nbsp;|&nbsp; Flächen gesamt: 5 &nbsp;|&nbsp; Kanten: 9 &nbsp;|&nbsp; Ecken: 6
+  </div>
+</div>
+
+<div class="card">
+  <div class="badge bo">Formeln</div>
+  <h3>Die drei wichtigsten Formeln</h3>
+  <div class="fbox ft-te"><div class="ft">Mantelfläche M</div>M = u · h<sub>k</sub> &nbsp;&nbsp; (u = Umfang der Grundfläche)</div>
+  <div class="fbox ft-bl"><div class="ft">Oberfläche O</div>O = 2 · G + M &nbsp;&nbsp; (2 Grundflächen + alle Seitenflächen)</div>
+  <div class="fbox ft-vi"><div class="ft">Volumen V</div>V = G · h<sub>k</sub> &nbsp;&nbsp; (Grundfläche × Höhe)</div>
+  <div class="info">📏 <strong>Einheiten:</strong><br>Fläche → cm², m² &nbsp;|&nbsp; Volumen → cm³, m³<br>1 m³ = 1 000 000 cm³ &nbsp;|&nbsp; 1 dm³ = 1 Liter</div>
+
+  <div class="tip" style="margin-top:.75rem">
+    🔑 <strong>Schritt-für-Schritt bei Berechnungen:</strong><br>
+    <span style="font-weight:700">1.</span> G berechnen (Grundfläche) &nbsp;
+    <span style="font-weight:700">2.</span> u berechnen (Umfang) &nbsp;
+    <span style="font-weight:700">3.</span> M = u · h<sub>k</sub> &nbsp;
+    <span style="font-weight:700">4.</span> O = 2G + M &nbsp;
+    <span style="font-weight:700">5.</span> V = G · h<sub>k</sub>
+  </div>
+</div>
+
+<div class="card">
+  <div class="badge bv">Schrägbild</div>
+  <h3>Schrägbild eines Quaders zeichnen</h3>
+  <p>Im <strong>Schrägbild</strong> werden 3D-Körper auf einer 2D-Fläche dargestellt. Dabei gelten besondere Regeln:</p>
+  <div class="step"><div class="sn">1</div><div class="st">Die Vorderseite (Rechteck) normal zeichnen</div></div>
+  <div class="step"><div class="sn">2</div><div class="st">Die hinteren Kanten schräg nach hinten-oben zeichnen (45°, halb so lang)</div></div>
+  <div class="step"><div class="sn">3</div><div class="st">Nicht sichtbare Kanten gestrichelt einzeichnen</div></div>
+  <div class="info">✏️ <strong>Aufgabe 7 der Arbeit:</strong> Zeichne das Schrägbild eines Quaders. Dies ist eine Zeichenaufgabe – nutze die interaktive 3D-Ansicht oben als Vorlage!</div>
+</div>
+</section>
+
+<!-- ══════════════════ BAUTEILE ══════════════════ -->
+<section class="sec" id="bauteile">
+<div class="hero" style="background:linear-gradient(135deg,#0d9488,#ea580c)">
+  <h1>🧱 Bauteile des Prismas</h1>
+  <p>Flächen, Kanten und Ecken – Aufgabe 4 aus der Arbeit</p>
+</div>
+
+<div class="card">
+  <div class="badge bt">Tabelle</div>
+  <h3>Fülle die Tabelle aus – Aufgabe 4</h3>
+  <p style="font-size:.88rem;color:var(--muted);margin-bottom:.75rem">Trage die Anzahl der Flächen, Kanten und Ecken für jedes Prisma ein.</p>
+  <div style="overflow-x:auto">
+    <table class="ntable" id="bauteile-table">
+      <thead>
+        <tr>
+          <th>Prismatyp</th>
+          <th>Grundfläche</th>
+          <th>Flächen</th>
+          <th>Kanten</th>
+          <th>Ecken</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Dreiecksprisma</td>
+          <td>Dreieck</td>
+          <td><input class="inp" data-ans="5" type="number" placeholder="?"></td>
+          <td><input class="inp" data-ans="9" type="number" placeholder="?"></td>
+          <td><input class="inp" data-ans="6" type="number" placeholder="?"></td>
+        </tr>
+        <tr>
+          <td>Quader</td>
+          <td>Rechteck</td>
+          <td><input class="inp" data-ans="6" type="number" placeholder="?"></td>
+          <td><input class="inp" data-ans="12" type="number" placeholder="?"></td>
+          <td><input class="inp" data-ans="8" type="number" placeholder="?"></td>
+        </tr>
+        <tr>
+          <td>Fünfecksprisma</td>
+          <td>Fünfeck</td>
+          <td><input class="inp" data-ans="7" type="number" placeholder="?"></td>
+          <td><input class="inp" data-ans="15" type="number" placeholder="?"></td>
+          <td><input class="inp" data-ans="10" type="number" placeholder="?"></td>
+        </tr>
+        <tr>
+          <td>Sechsecksprisma</td>
+          <td>Sechseck</td>
+          <td><input class="inp" data-ans="8" type="number" placeholder="?"></td>
+          <td><input class="inp" data-ans="18" type="number" placeholder="?"></td>
+          <td><input class="inp" data-ans="12" type="number" placeholder="?"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem">
+    <button class="btn" onclick="checkBauteile()">✓ Prüfen</button>
+    <button class="btn-out btn" onclick="resetBauteile()">↺ Zurücksetzen</button>
+    <button class="btn-te" onclick="showBauteileSol()">Lösung</button>
+  </div>
+  <div class="fb" id="bauteile-fb"></div>
+  <div class="reveal" id="bauteile-sol">
+    Dreiecksprisma: F=5, K=9, E=6 &nbsp;|&nbsp; Quader: F=6, K=12, E=8<br>
+    Fünfecksprisma: F=7, K=15, E=10 &nbsp;|&nbsp; Sechsecksprisma: F=8, K=18, E=12<br>
+    <span style="font-size:.85rem">Formel: Flächen = n+2, Kanten = 3n, Ecken = 2n (n = Ecken der Grundfläche)</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="badge bo">Formel erkennen</div>
+  <h3>Das Muster bei Prismen</h3>
+  <p>Es gibt eine Formel für alle Prismentypen. Ist n die Anzahl der Ecken der Grundfläche:</p>
+  <div class="fbox fo"><div class="ft">Allgemeine Formel (n = Ecken der Grundfläche)</div>
+    Flächen = n + 2 &nbsp;|&nbsp; Kanten = 3 · n &nbsp;|&nbsp; Ecken = 2 · n
+  </div>
+  <div class="gen-area">
+    <div id="bt-gen-q" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;color:var(--ord);margin-bottom:.6rem">–</div>
+    <div class="fill-row">
+      Flächen: <input class="inp" type="number" id="bt-gen-f" placeholder="?">
+      Kanten: <input class="inp" type="number" id="bt-gen-k" placeholder="?">
+      Ecken: <input class="inp" type="number" id="bt-gen-e" placeholder="?">
+      <button class="btn" onclick="checkBTGen()">Prüfen</button>
+    </div>
+    <div class="fb" id="bt-gen-fb"></div>
+  </div>
+  <div style="margin-top:.75rem"><button class="btn btn-am" onclick="genBT()">🎲 Neue Aufgabe</button></div>
+  <div class="reveal" id="bt-gen-sol"></div>
+</div>
+
+<div class="card">
+  <div class="badge bv">Zuordnung</div>
+  <h3>Ordne zu: Begriff → Beschreibung</h3>
+  <div id="match-status" style="font-weight:800;font-size:.9rem;min-height:1.2rem;margin:.4rem 0"></div>
+  <div class="match-wrap">
+    <div class="match-col" id="mcol-l"></div>
+    <div class="match-col" id="mcol-r"></div>
+  </div>
+  <div style="margin-top:.75rem"><button class="btn-out btn" onclick="initMatch()">🔀 Neu mischen</button></div>
+</div>
+</section>
+
+<!-- ══════════════════ WAHR/FALSCH ══════════════════ -->
+<section class="sec" id="wahrf">
+<div class="hero" style="background:linear-gradient(135deg,#7c3aed,#0d9488)">
+  <h1>✅ Wahr oder Falsch?</h1>
+  <p>Aussagen über Prismen prüfen – Aufgabe 5 aus der Arbeit</p>
+</div>
+
+<div class="card">
+  <div class="badge bv">Aufgaben aus der Arbeit</div>
+  <h3>Ist die Aussage wahr oder falsch? Kreuz an!</h3>
+  <div id="wf-container"></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem">
+    <button class="btn" onclick="checkWF()">✓ Alle prüfen</button>
+    <button class="btn-out btn" onclick="resetWF()">↺ Zurücksetzen</button>
+  </div>
+  <div class="fb" id="wf-fb"></div>
+</div>
+
+<div class="card">
+  <div class="badge bo">Mehr Aussagen</div>
+  <h3>🎲 Neue Wahr/Falsch-Aufgaben</h3>
+  <div id="wf2-container"></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem">
+    <button class="btn" onclick="checkWF2()">✓ Prüfen</button>
+    <button class="btn-am" onclick="genWF2()">🎲 Neue Aussagen</button>
+  </div>
+  <div class="fb" id="wf2-fb"></div>
+</div>
+</section>
+
+<!-- ══════════════════ DEFINITION ══════════════════ -->
+<section class="sec" id="definition">
+<div class="hero" style="background:linear-gradient(135deg,#2563eb,#ea580c)">
+  <h1>📝 Definition des Prismas</h1>
+  <p>Lückentext vervollständigen – Aufgabe 6 aus der Arbeit</p>
+</div>
+
+<div class="card">
+  <div class="badge bb">Aufgabe 6 – aus der Arbeit</div>
+  <h3>Vervollständige die Definition</h3>
+  <p style="font-size:.88rem;color:var(--muted);margin-bottom:.75rem">
+    Wortvorrat: <em>Körperhöhe (h<sub>k</sub>), Mantelfläche (M), zwei, Grundfläche (G), parallelen, deckungsgleichen, beiden</em>
+  </p>
+  <p style="line-height:3;font-size:.95rem">
+    Das <strong>Prisma</strong> ist ein Körper mit
+    <select class="wf-sel" data-ans="zwei" id="def-1" style="border:1.5px solid var(--border);border-radius:7px;padding:.3rem .5rem;font-family:'Nunito',sans-serif;font-size:.9rem">
+      <option value="">–wählen–</option><option value="zwei">zwei</option><option value="drei">drei</option><option value="vier">vier</option>
+    </select>
+    <select class="wf-sel" data-ans="deckungsgleichen" id="def-2" style="border:1.5px solid var(--border);border-radius:7px;padding:.3rem .5rem;font-family:'Nunito',sans-serif;font-size:.9rem">
+      <option value="">–wählen–</option><option value="deckungsgleichen">deckungsgleichen</option><option value="verschiedenen">verschiedenen</option><option value="ähnlichen">ähnlichen</option>
+    </select>
+    Vielecken als
+    <select class="wf-sel" data-ans="Grundfläche (G)" id="def-3" style="border:1.5px solid var(--border);border-radius:7px;padding:.3rem .5rem;font-family:'Nunito',sans-serif;font-size:.9rem">
+      <option value="">–wählen–</option><option value="Grundfläche (G)">Grundfläche (G)</option><option value="Mantelfläche (M)">Mantelfläche (M)</option><option value="Seitenfläche">Seitenfläche</option>
+    </select>
+    .
+    Die
+    <select class="wf-sel" data-ans="Mantelfläche (M)" id="def-4" style="border:1.5px solid var(--border);border-radius:7px;padding:.3rem .5rem;font-family:'Nunito',sans-serif;font-size:.9rem">
+      <option value="">–wählen–</option><option value="Mantelfläche (M)">Mantelfläche (M)</option><option value="Grundfläche (G)">Grundfläche (G)</option><option value="Deckfläche">Deckfläche</option>
+    </select>
+    besteht aus Rechtecken.
+    Der Abstand zwischen den
+    <select class="wf-sel" data-ans="parallelen" id="def-5" style="border:1.5px solid var(--border);border-radius:7px;padding:.3rem .5rem;font-family:'Nunito',sans-serif;font-size:.9rem">
+      <option value="">–wählen–</option><option value="parallelen">parallelen</option><option value="senkrechten">senkrechten</option><option value="schrägen">schrägen</option>
+    </select>
+    Grundflächen ist die
+    <select class="wf-sel" data-ans="Körperhöhe (h_k)" id="def-6" style="border:1.5px solid var(--border);border-radius:7px;padding:.3rem .5rem;font-family:'Nunito',sans-serif;font-size:.9rem">
+      <option value="">–wählen–</option><option value="Körperhöhe (h_k)">Körperhöhe (h<sub>k</sub>)</option><option value="Grundfläche (G)">Grundfläche (G)</option><option value="Mantelfläche (M)">Mantelfläche (M)</option>
+    </select>
+    .
+  </p>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">
+    <button class="btn" onclick="checkDef()">✓ Prüfen</button>
+    <button class="btn-out btn" onclick="resetDef()">↺ Zurücksetzen</button>
+  </div>
+  <div class="fb" id="def-fb"></div>
+</div>
+
+<div class="card">
+  <div class="badge bo">Fachbegriffe</div>
+  <h3>Alle wichtigen Begriffe</h3>
+  <table class="ntable">
+    <tr><th>Begriff</th><th>Abkürzung</th><th>Was es bedeutet</th></tr>
+    <tr><td><strong>Grundfläche</strong></td><td>G</td><td>Ober- und Unterseite des Prismas</td></tr>
+    <tr><td><strong>Mantelfläche</strong></td><td>M</td><td>Alle Seitenflächen zusammen</td></tr>
+    <tr><td><strong>Oberfläche</strong></td><td>O</td><td>Gesamte Außenfläche (2G + M)</td></tr>
+    <tr><td><strong>Körperhöhe</strong></td><td>h<sub>k</sub></td><td>Abstand zwischen den Grundflächen</td></tr>
+    <tr><td><strong>Umfang</strong></td><td>u</td><td>Umfang der Grundfläche</td></tr>
+    <tr><td><strong>Volumen</strong></td><td>V</td><td>Inhalt des Körpers (Raum)</td></tr>
+    <tr><td><strong>kongruent</strong></td><td>≅</td><td>Deckungsgleich / gleich groß und gleich geformt</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- ══════════════════ OBERFLÄCHE ══════════════════ -->
+<section class="sec" id="oberflaeche">
+<div class="hero" style="background:linear-gradient(135deg,#ea580c,#059669)">
+  <h1>📐 Oberfläche berechnen</h1>
+  <p>O = 2G + M – Aufgabe 8 aus der Arbeit</p>
+</div>
+
+<div class="card">
+  <div class="badge bo">Formeln</div>
+  <h3>So berechnest du die Oberfläche</h3>
+  <div class="fbox ft-te"><div class="ft">Mantelfläche M</div>M = u · h<sub>k</sub></div>
+  <div class="fbox ft-bl"><div class="ft">Oberfläche O</div>O = 2 · G + M</div>
+  <div class="fbox fo">
+    <div class="ft">Durchgerechnetes Beispiel: G=12 m², u=8 m, h_k=9 m</div>
+    M = 8 · 9 = <strong>72 m²</strong><br>
+    O = 2 · 12 + 72 = 24 + 72 = <strong>96 m²</strong>
+  </div>
+</div>
+
+<div class="card">
+  <div class="badge bb">Aufgabe 8a – aus der Arbeit</div>
+  <h3>Berechne die Oberfläche: G = 12 m², u = 8 m, h<sub>k</sub> = 9 m</h3>
+  <div class="fill-row">M = u · h<sub>k</sub> = 8 · <input class="inp" data-ans="9" id="o8a-hk" placeholder="?"> = <input class="inp-wide" data-ans="72" id="o8a-m" placeholder="? m²"> m²</div>
+  <div class="fill-row">O = 2 · G + M = 2 · <input class="inp" data-ans="12" id="o8a-g" placeholder="?"> + <input class="inp" data-ans="72" id="o8a-m2" placeholder="?"> = <input class="inp-wide" data-ans="96" id="o8a-o" placeholder="? m²"> m²</div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem">
+    <button class="btn" onclick="checkO8a()">✓ Prüfen</button>
+    <button class="btn-out btn" onclick="resetO8a()">↺ Zurücksetzen</button>
+    <button class="btn-te" onclick="showO8aSol()">Lösung</button>
+  </div>
+  <div class="fb" id="o8a-fb"></div>
+  <div class="reveal" id="o8a-sol">M = 8·9 = 72 m² &nbsp;|&nbsp; O = 2·12 + 72 = 24 + 72 = <strong>96 m²</strong></div>
+</div>
+
+<div class="card">
+  <div class="badge bb">Aufgabe 8b – aus der Arbeit</div>
+  <h3>Berechne die Oberfläche: G = 25 m², u = 12 m, h<sub>k</sub> = 20 m</h3>
+  <div class="fill-row">M = <input class="inp" data-ans="12" id="o8b-u" placeholder="?"> · <input class="inp" data-ans="20" id="o8b-hk" placeholder="?"> = <input class="inp-wide" data-ans="240" id="o8b-m" placeholder="? m²"> m²</div>
+  <div class="fill-row">O = 2 · <input class="inp" data-ans="25" id="o8b-g" placeholder="?"> + <input class="inp" data-ans="240" id="o8b-m2" placeholder="?"> = <input class="inp-wide" data-ans="290" id="o8b-o" placeholder="? m²"> m²</div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem">
+    <button class="btn" onclick="checkO8b()">✓ Prüfen</button>
+    <button class="btn-out btn" onclick="resetO8b()">↺ Zurücksetzen</button>
+    <button class="btn-te" onclick="showO8bSol()">Lösung</button>
+  </div>
+  <div class="fb" id="o8b-fb"></div>
+  <div class="reveal" id="o8b-sol">M = 12·20 = 240 m² &nbsp;|&nbsp; O = 2·25 + 240 = 50 + 240 = <strong>290 m²</strong></div>
+</div>
+
+<div class="card">
+  <div class="badge be">Generator</div>
+  <h3>🎲 Neue Oberflächen-Aufgaben</h3>
+  <div class="lvl-tabs">
+    <button class="lvl-tab active" onclick="setOLvl(0,this)">⭐ Einfach</button>
+    <button class="lvl-tab" onclick="setOLvl(1,this)">⭐⭐ Mittel</button>
+    <button class="lvl-tab" onclick="setOLvl(2,this)">⭐⭐⭐ Quader komplett</button>
+  </div>
+  <div class="gen-area">
+    <div id="o-gen-q" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;color:var(--ord);margin-bottom:.75rem;line-height:1.7">–</div>
+    <div class="fill-row" id="o-gen-inputs">
+      Ergebnis O = <input class="inp inp-wide" type="number" step="0.1" id="o-gen-inp" placeholder="?">
+      <span id="o-gen-unit">m²</span>
+      <button class="btn" onclick="checkOGen()">Prüfen</button>
+    </div>
+    <div class="fb" id="o-gen-fb"></div>
+  </div>
+  <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
+    <button class="btn btn-am" onclick="genO()">🎲 Neue Aufgabe</button>
+    <button class="btn-out btn" onclick="showOGenSol()">Lösung</button>
+  </div>
+  <div class="reveal" id="o-gen-sol"></div>
+</div>
+</section>
+
+<!-- ══════════════════ VOLUMEN ══════════════════ -->
+<section class="sec" id="volumen">
+<div class="hero" style="background:linear-gradient(135deg,#7c3aed,#ea580c)">
+  <h1>📦 Volumen berechnen</h1>
+  <p>V = G · h<sub>k</sub> – Aufgaben 9 und 10 aus der Arbeit</p>
+</div>
+
+<div class="card">
+  <div class="badge bv">Formeln</div>
+  <h3>Volumen und Oberfläche – alle Formeln</h3>
+  <div class="fbox ft-vi"><div class="ft">Volumen V (für alle Prismen!)</div>V = G · h<sub>k</sub></div>
+  <div class="fbox fo"><div class="ft">Quader: G berechnen</div>G = a · b (Länge × Breite)</div>
+  <div class="fbox ft-te"><div class="ft">Dreiecksprisma: G berechnen</div>G = (a · h<sub>a</sub>) / 2 (Grundseite × Dreieckshöhe ÷ 2)</div>
+  <div class="tip">💡 <strong>Trick:</strong> Das Volumen ist immer „Grundfläche × Höhe". Erst G ausrechnen, dann mit h<sub>k</sub> multiplizieren!</div>
+</div>
+
+<div class="card">
+  <div class="badge bb">Aufgabe 9 – Quader</div>
+  <h3>Berechne Flächen und Volumen des Quaders</h3>
+  <div class="info">📦 <strong>Maße des Quaders:</strong> a = 6 m, b = 4 m, h<sub>k</sub> = 5 m</div>
+  <div class="step"><div class="sn">1</div><div class="st">
+    Grundfläche: G = a · b =
+    <input class="inp" data-ans="6" id="q9-a" placeholder="?"> ·
+    <input class="inp" data-ans="4" id="q9-b" placeholder="?"> =
+    <input class="inp-wide" data-ans="24" id="q9-g" placeholder="? m²"> m²
+  </div></div>
+  <div class="step"><div class="sn">2</div><div class="st">
+    Umfang: u = 2·(a+b) = 2·(<input class="inp" style="width:60px" data-ans="6" id="q9-a2" placeholder="?">+<input class="inp" style="width:60px" data-ans="4" id="q9-b2" placeholder="?">) =
+    <input class="inp" data-ans="20" id="q9-u" placeholder="? m"> m
+  </div></div>
+  <div class="step"><div class="sn">3</div><div class="st">
+    M = u · h<sub>k</sub> = <input class="inp" data-ans="20" id="q9-u2" placeholder="?"> · <input class="inp" data-ans="5" id="q9-hk" placeholder="?"> =
+    <input class="inp-wide" data-ans="100" id="q9-m" placeholder="? m²"> m²
+  </div></div>
+  <div class="step"><div class="sn">4</div><div class="st">
+    O = 2·G + M = 2·<input class="inp" data-ans="24" id="q9-g2" placeholder="?"> + <input class="inp" data-ans="100" id="q9-m2" placeholder="?"> =
+    <input class="inp-wide" data-ans="148" id="q9-o" placeholder="? m²"> m²
+  </div></div>
+  <div class="step"><div class="sn">5</div><div class="st">
+    V = G · h<sub>k</sub> = <input class="inp" data-ans="24" id="q9-g3" placeholder="?"> · <input class="inp" data-ans="5" id="q9-hk2" placeholder="?"> =
+    <input class="inp-wide" data-ans="120" id="q9-v" placeholder="? m³"> m³
+  </div></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem">
+    <button class="btn" onclick="checkQ9()">✓ Prüfen</button>
+    <button class="btn-out btn" onclick="resetQ9()">↺ Zurücksetzen</button>
+    <button class="btn-te" onclick="showQ9Sol()">Lösung</button>
+  </div>
+  <div class="fb" id="q9-fb"></div>
+  <div class="reveal" id="q9-sol">
+    G = 6·4 = 24 m² &nbsp;|&nbsp; u = 2·(6+4) = 20 m &nbsp;|&nbsp; M = 20·5 = 100 m²<br>
+    O = 2·24+100 = 148 m² &nbsp;|&nbsp; <strong>V = 24·5 = 120 m³</strong>
+  </div>
+</div>
+
+<div class="card">
+  <div class="badge bv">Aufgabe 10 – Dreiecksprisma</div>
+  <h3>Berechne Flächen und Volumen des Dreiecksprismas</h3>
+  <div class="info">🔺 <strong>Maße:</strong> Grundseite a = 6 m, Dreieckshöhe h<sub>a</sub> = 4 m, Körperhöhe h<sub>k</sub> = 10 m, Seiten des Dreiecks: 5 m, 5 m, 6 m</div>
+  <div class="step"><div class="sn">1</div><div class="st">
+    Grundfläche (Dreieck): G = (a · h<sub>a</sub>) / 2 = (6 · 4) / 2 =
+    <input class="inp-wide" data-ans="12" id="dp-g" placeholder="? m²"> m²
+  </div></div>
+  <div class="step"><div class="sn">2</div><div class="st">
+    Umfang: u = a + b + c = 6 + 5 + 5 =
+    <input class="inp" data-ans="16" id="dp-u" placeholder="? m"> m
+  </div></div>
+  <div class="step"><div class="sn">3</div><div class="st">
+    M = u · h<sub>k</sub> = 16 · 10 =
+    <input class="inp-wide" data-ans="160" id="dp-m" placeholder="? m²"> m²
+  </div></div>
+  <div class="step"><div class="sn">4</div><div class="st">
+    O = 2·G + M = 2·12 + 160 =
+    <input class="inp-wide" data-ans="184" id="dp-o" placeholder="? m²"> m²
+  </div></div>
+  <div class="step"><div class="sn">5</div><div class="st">
+    V = G · h<sub>k</sub> = 12 · 10 =
+    <input class="inp-wide" data-ans="120" id="dp-v" placeholder="? m³"> m³
+  </div></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem">
+    <button class="btn" onclick="checkDP()">✓ Prüfen</button>
+    <button class="btn-out btn" onclick="resetDP()">↺ Zurücksetzen</button>
+    <button class="btn-te" onclick="showDPSol()">Lösung</button>
+  </div>
+  <div class="fb" id="dp-fb"></div>
+  <div class="reveal" id="dp-sol">
+    G = (6·4)/2 = 12 m² &nbsp;|&nbsp; u = 6+5+5 = 16 m &nbsp;|&nbsp; M = 16·10 = 160 m²<br>
+    O = 2·12+160 = 184 m² &nbsp;|&nbsp; <strong>V = 12·10 = 120 m³</strong>
+  </div>
+</div>
+
+<div class="card">
+  <div class="badge be">Generator</div>
+  <h3>🎲 Neue Volumen-Aufgaben</h3>
+  <div class="lvl-tabs">
+    <button class="lvl-tab active" onclick="setVLvl(0,this)">⭐ Quader</button>
+    <button class="lvl-tab" onclick="setVLvl(1,this)">⭐⭐ Dreiecksprisma</button>
+    <button class="lvl-tab" onclick="setVLvl(2,this)">⭐⭐⭐ Alles berechnen</button>
+  </div>
+  <div class="gen-area">
+    <div id="v-gen-q" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;color:var(--ord);margin-bottom:.75rem;line-height:1.8">–</div>
+    <div class="fill-row">
+      Ergebnis V = <input class="inp inp-wide" type="number" step="0.1" id="v-gen-inp" placeholder="?">
+      <span id="v-gen-unit">m³</span>
+      <button class="btn" onclick="checkVGen()">Prüfen</button>
+    </div>
+    <div class="fb" id="v-gen-fb"></div>
+  </div>
+  <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
+    <button class="btn btn-am" onclick="genV()">🎲 Neue Aufgabe</button>
+    <button class="btn-out btn" onclick="showVGenSol()">Lösung</button>
+  </div>
+  <div class="reveal" id="v-gen-sol"></div>
+</div>
+</section>
+
+<!-- ══════════════════ QUIZ ══════════════════ -->
+<section class="sec" id="quiz">
+<div class="hero" style="background:linear-gradient(135deg,#e11d48,#ea580c)">
+  <h1>❓ Quiz</h1>
+  <p>Teste dein Wissen über Prismen!</p>
+</div>
+<div class="lvl-tabs">
+  <button class="lvl-tab active" onclick="setQLvl(0)">⭐ Einfach</button>
+  <button class="lvl-tab" onclick="setQLvl(1)">⭐⭐ Mittel</button>
+  <button class="lvl-tab" onclick="setQLvl(2)">⭐⭐⭐ Schwierig</button>
+</div>
+<div class="card" id="quiz-card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+    <span class="score-pill"><span class="sdot"></span><span id="q-score">0 Punkte</span></span>
+    <span style="font-size:.85rem;color:var(--muted)" id="q-counter">Frage 1 / 8</span>
+  </div>
+  <div class="pbwrap"><div class="pb" id="q-pb" style="width:0%"></div></div>
+  <div style="margin-top:.9rem">
+    <div class="qquote" id="q-q"></div>
+    <div class="opts" id="q-opts"></div>
+    <div class="fb" id="q-fb"></div>
+  </div>
+  <div style="margin-top:.9rem"><button class="btn" id="q-next" onclick="nextQ()" style="display:none">Weiter →</button></div>
+</div>
+</section>
+
+<!-- ══════════════════ BLITZ ══════════════════ -->
+<section class="sec" id="blitz">
+<div class="hero" style="background:linear-gradient(135deg,#7c3aed,#ea580c)">
+  <h1>⚡ Blitzlesen</h1>
+  <p>Fachbegriffe und Formeln – sofort antworten!</p>
+</div>
+<div class="card">
+  <div class="badge bv">Tempo-Übung</div>
+  <h3>Begriff oder Formel blitzschnell erkennen</h3>
+  <div style="margin-bottom:.9rem">
+    <label style="font-size:.88rem;display:flex;align-items:center;gap:.35rem">⏱ Tempo:
+      <select id="blitz-speed" style="border:1px solid var(--border);border-radius:6px;padding:.2rem .4rem;font-size:.88rem">
+        <option value="3000">3 Sek. (langsam)</option>
+        <option value="1500" selected>1,5 Sek. (normal)</option>
+        <option value="800">0,8 Sek. (schnell)</option>
+      </select>
+    </label>
+  </div>
+  <div class="flash-box" id="blitz-display"><div style="color:var(--vid);font-size:.9rem">Klick auf "Start" ▶</div></div>
+  <div class="opts" id="blitz-opts" style="margin-top:.9rem"></div>
+  <div class="fb" id="blitz-fb"></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;align-items:center">
+    <button class="btn" onclick="startBlitz()">▶ Start</button>
+    <button class="btn-out btn" onclick="stopBlitz()">⏹ Stop</button>
+    <span class="score-pill" style="margin-left:.3rem">✅ <span id="blitz-score">0</span> / 10</span>
+  </div>
+  <div style="font-size:.83rem;color:var(--muted);margin-top:.5rem" id="blitz-counter">Runde 0 / 10</div>
+</div>
+</section>
+
+<script>
+// ═══ NAVIGATION ═══
+const SECS=['lernen','bauteile','wahrf','definition','oberflaeche','volumen','quiz','blitz'];
+function show(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn')[SECS.indexOf(id)].classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ═══ PRISM GALLERY ═══
+const PRISM_DATA=[
+  {title:'Dreiecksprisma',info:'Grundfläche: Dreieck | Seitenflächen: 3 Rechtecke | Flächen: 5 | Kanten: 9 | Ecken: 6'},
+  {title:'Quader (Vierecksprisma)',info:'Grundfläche: Rechteck | Seitenflächen: 4 Rechtecke | Flächen: 6 | Kanten: 12 | Ecken: 8'},
+  {title:'Fünfecksprisma',info:'Grundfläche: Fünfeck | Seitenflächen: 5 Rechtecke | Flächen: 7 | Kanten: 15 | Ecken: 10'},
+];
+function showPrism(idx,el){
+  document.querySelectorAll('.prism-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const box=document.getElementById('prism-info');
+  box.querySelector('.ft').textContent=PRISM_DATA[idx].title;
+  box.childNodes[1].textContent=PRISM_DATA[idx].info;
+}
+
+// ═══ BAUTEILE TABLE ═══
+function checkBauteile(){
+  const inputs=document.querySelectorAll('#bauteile-table input');
+  let ok=0;
+  inputs.forEach(inp=>{
+    inp.classList.remove('ok','no');
+    const v=parseFloat(inp.value),a=parseFloat(inp.dataset.ans);
+    if(!isNaN(v)&&v===a){inp.classList.add('ok');ok++;}
+    else if(inp.value.trim())inp.classList.add('no');
+  });
+  const fb=document.getElementById('bauteile-fb');
+  if(ok===inputs.length){fb.className='fb ok';fb.textContent='🎉 Alle Werte richtig!';}
+  else{fb.className='fb no';fb.textContent=`${ok} von ${inputs.length} richtig.`;}
+}
+function resetBauteile(){
+  document.querySelectorAll('#bauteile-table input').forEach(i=>{i.value='';i.classList.remove('ok','no');});
+  document.getElementById('bauteile-fb').className='fb';
+}
+function showBauteileSol(){const s=document.getElementById('bauteile-sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+// BT Generator
+let btN=4,btGenAns={f:6,k:12,e:8};
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function genBT(){
+  btN=rnd(3,8);
+  btGenAns={f:btN+2,k:3*btN,e:2*btN};
+  const names={3:'Dreieck',4:'Viereck',5:'Fünfeck',6:'Sechseck',7:'Siebeneck',8:'Achteck'};
+  document.getElementById('bt-gen-q').textContent=`Ein ${names[btN]}sprisma – wie viele Flächen, Kanten und Ecken?`;
+  ['bt-gen-f','bt-gen-k','bt-gen-e'].forEach(id=>{const i=document.getElementById(id);i.value='';i.classList.remove('ok','no');});
+  document.getElementById('bt-gen-fb').className='fb';
+  document.getElementById('bt-gen-sol').style.display='none';
+  document.getElementById('bt-gen-sol').textContent=`Flächen: ${btGenAns.f}, Kanten: ${btGenAns.k}, Ecken: ${btGenAns.e}`;
+}
+function checkBTGen(){
+  const fv=parseFloat(document.getElementById('bt-gen-f').value);
+  const kv=parseFloat(document.getElementById('bt-gen-k').value);
+  const ev=parseFloat(document.getElementById('bt-gen-e').value);
+  const fb=document.getElementById('bt-gen-fb');
+  if(fv===btGenAns.f&&kv===btGenAns.k&&ev===btGenAns.e){fb.className='fb ok';fb.textContent='🎉 Alle richtig!';}
+  else{fb.className='fb no';fb.textContent=`F:${fv===btGenAns.f?'✅':'❌'} K:${kv===btGenAns.k?'✅':'❌'} E:${ev===btGenAns.e?'✅':'❌'}`;}
+}
+
+// ═══ MATCH ═══
+const MATCH_DATA=[
+  {term:'Grundfläche G',expl:'Ober- und Unterseite (gleich)'},
+  {term:'Mantelfläche M',expl:'M = u · h_k'},
+  {term:'Oberfläche O',expl:'O = 2G + M'},
+  {term:'Volumen V',expl:'V = G · h_k'},
+  {term:'Körperhöhe h_k',expl:'Abstand der Grundflächen'},
+  {term:'kongruent',expl:'Deckungsgleich'},
+];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let mSel=null,mDone=0;
+function initMatch(){
+  mSel=null;mDone=0;
+  document.getElementById('match-status').textContent='';
+  const terms=shuffle(MATCH_DATA.map(b=>b.term));
+  const expls=shuffle(MATCH_DATA.map(b=>b.expl));
+  const L=document.getElementById('mcol-l'),R=document.getElementById('mcol-r');
+  L.innerHTML='';R.innerHTML='';
+  terms.forEach(t=>{const d=document.createElement('div');d.className='mi';d.textContent=t;d.dataset.val=t;d.dataset.type='term';d.onclick=()=>mClick(d);L.appendChild(d);});
+  expls.forEach(e=>{const d=document.createElement('div');d.className='mi';d.textContent=e;d.dataset.val=e;d.dataset.type='expl';d.onclick=()=>mClick(d);R.appendChild(d);});
+}
+function mClick(el){
+  if(el.classList.contains('matched'))return;
+  if(mSel&&mSel.dataset.type===el.dataset.type){mSel.classList.remove('sel');mSel=null;}
+  if(!mSel){el.classList.add('sel');mSel=el;return;}
+  const t=mSel.dataset.type==='term'?mSel.dataset.val:el.dataset.val;
+  const e=mSel.dataset.type==='expl'?mSel.dataset.val:el.dataset.val;
+  const item=MATCH_DATA.find(b=>b.term===t);
+  if(item&&item.expl===e){
+    [mSel,el].forEach(x=>{x.classList.remove('sel');x.classList.add('matched');});mDone++;
+    if(mDone===MATCH_DATA.length)document.getElementById('match-status').textContent='🎉 Alle richtig zugeordnet!';
+  } else {[mSel,el].forEach(x=>{x.classList.add('flash');setTimeout(()=>x.classList.remove('flash','sel'),500);});}
+  mSel=null;
+}
+
+// ═══ WAHR/FALSCH ═══
+const WF_DATA=[
+  {text:'Jedes Prisma besteht aus 5 Flächen.',ans:false,expl:'Falsch! Nur ein Dreiecksprisma. Ein Quader hat 6, ein Fünfecksprisma 7 Flächen.'},
+  {text:'Bei einem Prisma sind die beiden Grundflächen immer deckungsgleich (kongruent) und parallel.',ans:true,expl:'Richtig! Das ist die Definition eines Prismas.'},
+  {text:'Die Seitenflächen eines Dreiecksprismas sind Dreiecke.',ans:false,expl:'Falsch! Die Seitenflächen (Mantel) bestehen aus Rechtecken. Nur die Grundflächen sind Dreiecke.'},
+  {text:'Bei einem Prisma gibt es mindestens zwei kongruente und parallele Flächen.',ans:true,expl:'Richtig! Die beiden Grundflächen sind immer deckungsgleich und parallel.'},
+  {text:'Die Mantelfläche eines geraden Prismas steht senkrecht zur Grundfläche.',ans:true,expl:'Richtig! Bei einem geraden Prisma stehen die Seitenkanten senkrecht auf der Grundfläche.'},
+];
+function initWF(){
+  const cont=document.getElementById('wf-container');cont.innerHTML='';
+  WF_DATA.forEach((item,i)=>{
+    const div=document.createElement('div');div.className='wf-row';
+    div.innerHTML=`<div class="wf-text"><strong>${String.fromCharCode(97+i)})</strong> ${item.text}</div>
+    <div class="wf-btns">
+      <button class="wf-btn" data-idx="${i}" data-choice="w" onclick="wfClick(this,'w')">wahr</button>
+      <button class="wf-btn" data-idx="${i}" data-choice="f" onclick="wfClick(this,'f')">falsch</button>
+    </div>`;
+    cont.appendChild(div);
+  });
+}
+function wfClick(btn,choice){
+  const row=btn.closest('.wf-row');
+  row.querySelectorAll('.wf-btn').forEach(b=>b.classList.remove('sel-w','sel-f'));
+  btn.classList.add(choice==='w'?'sel-w':'sel-f');
+}
+function checkWF(){
+  let ok=0;
+  WF_DATA.forEach((item,i)=>{
+    const row=document.querySelectorAll('.wf-row')[i];
+    const wBtn=row.querySelector('[data-choice="w"]');
+    const fBtn=row.querySelector('[data-choice="f"]');
+    wBtn.classList.remove('right','wrong');fBtn.classList.remove('right','wrong');
+    const selW=wBtn.classList.contains('sel-w'),selF=fBtn.classList.contains('sel-f');
+    if(item.ans&&selW){wBtn.classList.add('right');ok++;}
+    else if(!item.ans&&selF){fBtn.classList.add('right');ok++;}
+    else{(item.ans?wBtn:fBtn).classList.add('right');(item.ans?fBtn:wBtn).classList.add('wrong');}
+  });
+  const fb=document.getElementById('wf-fb');
+  if(ok===WF_DATA.length){fb.className='fb ok';fb.textContent='🎉 Alle Aussagen richtig bewertet!';}
+  else{fb.className='fb no';fb.textContent=`${ok} von ${WF_DATA.length} richtig.`;}
+}
+function resetWF(){
+  document.querySelectorAll('.wf-row .wf-btn').forEach(b=>b.classList.remove('sel-w','sel-f','right','wrong'));
+  document.getElementById('wf-fb').className='fb';
+}
+
+// WF2 Extra
+const WF_EXTRA=[
+  {text:'Der Quader ist ein spezielles Prisma mit Rechtecken als Grundflächen.',ans:true},
+  {text:'Das Volumen eines Prismas berechnet man mit V = G · u.',ans:false,expl:'Falsch! V = G · h_k (nicht Umfang u, sondern Körperhöhe h_k)'},
+  {text:'Die Formel für die Oberfläche lautet: O = 2·G + M',ans:true},
+  {text:'Mantelfläche M bedeutet die Grundfläche des Prismas.',ans:false,expl:'Falsch! M sind alle Seitenflächen, G ist die Grundfläche.'},
+  {text:'Für ein n-eckiges Prisma gilt: Flächen = n + 2',ans:true},
+  {text:'Ein Prisma kann auch eine kreisförmige Grundfläche haben.',ans:false,expl:'Falsch! Dann heißt es Zylinder, nicht Prisma.'},
+  {text:'Beim Dreiecksprisma berechnet man G = (g · h) / 2.',ans:true},
+  {text:'Die Einheit für Volumen ist m² (Quadratmeter).',ans:false,expl:'Falsch! Volumen wird in m³ (Kubikmeter) gemessen.'},
+];
+let wf2Sel=[];
+function genWF2(){
+  const shuffled=shuffle([...WF_EXTRA]).slice(0,3);
+  wf2Sel=shuffled;
+  const cont=document.getElementById('wf2-container');cont.innerHTML='';
+  shuffled.forEach((item,i)=>{
+    const div=document.createElement('div');div.className='wf-row';
+    div.innerHTML=`<div class="wf-text">${item.text}</div>
+    <div class="wf-btns">
+      <button class="wf-btn" data-choice="w2" onclick="wfClick(this,'w')">wahr</button>
+      <button class="wf-btn" data-choice="f2" onclick="wfClick(this,'f')">falsch</button>
+    </div>`;
+    cont.appendChild(div);
+  });
+  document.getElementById('wf2-fb').className='fb';
+}
+function checkWF2(){
+  let ok=0;
+  wf2Sel.forEach((item,i)=>{
+    const row=document.querySelectorAll('#wf2-container .wf-row')[i];
+    const wBtn=row.querySelector('[data-choice="w2"]');
+    const fBtn=row.querySelector('[data-choice="f2"]');
+    wBtn.classList.remove('right','wrong');fBtn.classList.remove('right','wrong');
+    const selW=wBtn.classList.contains('sel-w'),selF=fBtn.classList.contains('sel-f');
+    if(item.ans&&selW){wBtn.classList.add('right');ok++;}
+    else if(!item.ans&&selF){fBtn.classList.add('right');ok++;}
+    else{(item.ans?wBtn:fBtn).classList.add('right');(item.ans?fBtn:wBtn).classList.add('wrong');}
+  });
+  const fb=document.getElementById('wf2-fb');
+  if(ok===wf2Sel.length){fb.className='fb ok';fb.textContent='🎉 Alle richtig!';}
+  else{fb.className='fb no';fb.textContent=`${ok} von ${wf2Sel.length} richtig.`;}
+}
+
+// ═══ DEFINITION ═══
+function checkDef(){
+  const sels=document.querySelectorAll('#definition .wf-sel');
+  let ok=0;
+  sels.forEach(sel=>{
+    sel.style.borderColor=sel.value===sel.dataset.ans?'var(--em)':'var(--ro)';
+    sel.style.background=sel.value===sel.dataset.ans?'var(--eml)':sel.value?'var(--rol)':'';
+    if(sel.value===sel.dataset.ans)ok++;
+  });
+  const fb=document.getElementById('def-fb');
+  if(ok===sels.length){fb.className='fb ok';fb.textContent='🎉 Definition vollständig und richtig!';}
+  else{fb.className='fb no';fb.textContent=`${ok} von ${sels.length} richtig.`;}
+}
+function resetDef(){
+  document.querySelectorAll('#definition .wf-sel').forEach(s=>{s.value='';s.style.borderColor='';s.style.background='';});
+  document.getElementById('def-fb').className='fb';
+}
+
+// ═══ OBERFLÄCHE FIXED ═══
+function checkNums(pairs,fbId){
+  let ok=0;
+  pairs.forEach(([id,ans])=>{
+    const inp=document.getElementById(id);
+    inp.classList.remove('ok','no');
+    const v=parseFloat(inp.value);
+    if(!isNaN(v)&&Math.abs(v-ans)<0.05){inp.classList.add('ok');ok++;}
+    else if(inp.value.trim())inp.classList.add('no');
+  });
+  const fb=document.getElementById(fbId);
+  if(ok===pairs.length){fb.className='fb ok';fb.textContent='🎉 Richtig!';}
+  else{fb.className='fb no';fb.textContent=`${ok} von ${pairs.length} richtig.`;}
+}
+function resetIds(ids,fbId,solId){
+  ids.forEach(id=>{const i=document.getElementById(id);if(i){i.value='';i.classList.remove('ok','no');}});
+  document.getElementById(fbId).className='fb';
+  if(solId){const s=document.getElementById(solId);if(s)s.style.display='none';}
+}
+
+function checkO8a(){checkNums([['o8a-hk',9],['o8a-m',72],['o8a-g',12],['o8a-m2',72],['o8a-o',96]],'o8a-fb');}
+function resetO8a(){resetIds(['o8a-hk','o8a-m','o8a-g','o8a-m2','o8a-o'],'o8a-fb','o8a-sol');}
+function showO8aSol(){const s=document.getElementById('o8a-sol');s.style.display=s.style.display==='block'?'none':'block';}
+function checkO8b(){checkNums([['o8b-u',12],['o8b-hk',20],['o8b-m',240],['o8b-g',25],['o8b-m2',240],['o8b-o',290]],'o8b-fb');}
+function resetO8b(){resetIds(['o8b-u','o8b-hk','o8b-m','o8b-g','o8b-m2','o8b-o'],'o8b-fb','o8b-sol');}
+function showO8bSol(){const s=document.getElementById('o8b-sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+// ═══ OBERFLÄCHE GENERATOR ═══
+let oLevel=0,oGenAns=0;
+function setOLvl(l,el){oLevel=l;document.querySelectorAll('#oberflaeche .lvl-tab').forEach((t,i)=>t.classList.toggle('active',i===l));genO();}
+function genO(){
+  document.getElementById('o-gen-inp').value='';document.getElementById('o-gen-fb').className='fb';document.getElementById('o-gen-sol').style.display='none';
+  const units=['m','cm','dm'];const unit=units[rnd(0,units.length-1)];
+  let q,ans;
+  if(oLevel===0){
+    const G=rnd(5,30),u=rnd(6,20),hk=rnd(4,15);
+    const M=u*hk,O=2*G+M;
+    ans=O;q=`G = ${G} ${unit}², u = ${u} ${unit}, h_k = ${hk} ${unit}<br>Berechne die <strong>Oberfläche O</strong>.`;
+    document.getElementById('o-gen-sol').textContent=`M=${u}·${hk}=${M} ${unit}² | O=2·${G}+${M}=${O} ${unit}²`;
+    document.getElementById('o-gen-unit').textContent=unit+'²';
+  } else if(oLevel===1){
+    const a=rnd(3,10),b=rnd(3,10),hk=rnd(5,20);
+    const G=a*b,u=2*(a+b),M=u*hk,O=2*G+M;
+    ans=O;q=`Quader: a=${a} ${unit}, b=${b} ${unit}, h_k=${hk} ${unit}<br>Berechne <strong>O</strong> (zuerst G und u berechnen!).`;
+    document.getElementById('o-gen-sol').textContent=`G=${a}·${b}=${G} | u=2·(${a}+${b})=${u} | M=${u}·${hk}=${M} | O=2·${G}+${M}=${O} ${unit}²`;
+    document.getElementById('o-gen-unit').textContent=unit+'²';
+  } else {
+    const a=rnd(3,10),b=rnd(3,10),c=rnd(3,10),hk=rnd(5,15);
+    const G=a*b,u=2*(a+b),M=u*hk,O=2*G+M,V=G*hk;
+    ans=V;q=`Quader: a=${a} ${unit}, b=${b} ${unit}, c=${c} ${unit} (Höhe h_k=${c})<br>Berechne <strong>O und V</strong>. Gib V ein.`;
+    const G2=a*b,u2=2*(a+b),M2=u2*c,O2=2*G2+M2,V2=G2*c;
+    document.getElementById('o-gen-sol').textContent=`G=${a}·${b}=${G2} | u=${u2} | M=${u2}·${c}=${M2} | O=2·${G2}+${M2}=${O2} ${unit}² | V=${G2}·${c}=${V2} ${unit}³`;
+    document.getElementById('o-gen-unit').textContent=unit+'³';
+    oGenAns=V2;
+    document.getElementById('o-gen-q').innerHTML=q;return;
+  }
+  oGenAns=ans;
+  document.getElementById('o-gen-q').innerHTML=q;
+}
+function checkOGen(){
+  const v=parseFloat(document.getElementById('o-gen-inp').value);
+  const fb=document.getElementById('o-gen-fb');
+  if(Math.abs(v-oGenAns)<0.1){fb.className='fb ok';fb.textContent=`✅ Richtig! (${oGenAns})`;}
+  else{fb.className='fb no';fb.textContent='❌ Nicht ganz – Lösung anzeigen?';}
+}
+function showOGenSol(){const s=document.getElementById('o-gen-sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+// ═══ VOLUMEN FIXED ═══
+function checkQ9(){
+  checkNums([['q9-a',6],['q9-b',4],['q9-g',24],['q9-a2',6],['q9-b2',4],['q9-u',20],
+    ['q9-u2',20],['q9-hk',5],['q9-m',100],['q9-g2',24],['q9-m2',100],['q9-o',148],
+    ['q9-g3',24],['q9-hk2',5],['q9-v',120]],'q9-fb');
+}
+function resetQ9(){resetIds(['q9-a','q9-b','q9-g','q9-a2','q9-b2','q9-u','q9-u2','q9-hk','q9-m','q9-g2','q9-m2','q9-o','q9-g3','q9-hk2','q9-v'],'q9-fb','q9-sol');}
+function showQ9Sol(){const s=document.getElementById('q9-sol');s.style.display=s.style.display==='block'?'none':'block';}
+function checkDP(){checkNums([['dp-g',12],['dp-u',16],['dp-m',160],['dp-o',184],['dp-v',120]],'dp-fb');}
+function resetDP(){resetIds(['dp-g','dp-u','dp-m','dp-o','dp-v'],'dp-fb','dp-sol');}
+function showDPSol(){const s=document.getElementById('dp-sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+// ═══ VOLUMEN GENERATOR ═══
+let vLevel=0,vGenAns=0;
+function setVLvl(l,el){vLevel=l;document.querySelectorAll('#volumen .lvl-tab').forEach((t,i)=>t.classList.toggle('active',i===l));genV();}
+function genV(){
+  document.getElementById('v-gen-inp').value='';document.getElementById('v-gen-fb').className='fb';document.getElementById('v-gen-sol').style.display='none';
+  const units=['m','cm'];const unit=units[rnd(0,1)];
+  if(vLevel===0){
+    const a=rnd(2,10),b=rnd(2,10),hk=rnd(3,15);
+    const G=a*b,V=G*hk;
+    vGenAns=V;document.getElementById('v-gen-unit').textContent=unit+'³';
+    document.getElementById('v-gen-q').innerHTML=`Quader: a=${a} ${unit}, b=${b} ${unit}, h_k=${hk} ${unit}<br>Berechne das <strong>Volumen V</strong>.`;
+    document.getElementById('v-gen-sol').textContent=`G=${a}·${b}=${G} ${unit}² | V=${G}·${hk}=${V} ${unit}³`;
+  } else if(vLevel===1){
+    const g=rnd(4,12),h=rnd(2,8),hk=rnd(4,15);
+    const G=Math.round(g*h/2*10)/10,V=Math.round(G*hk*10)/10;
+    vGenAns=V;document.getElementById('v-gen-unit').textContent=unit+'³';
+    document.getElementById('v-gen-q').innerHTML=`Dreiecksprisma: Grundseite g=${g} ${unit}, Dreieckshöhe h_a=${h} ${unit}, Körperhöhe h_k=${hk} ${unit}<br>Berechne <strong>V</strong>.`;
+    document.getElementById('v-gen-sol').textContent=`G=(${g}·${h})/2=${G} ${unit}² | V=${G}·${hk}=${V} ${unit}³`;
+  } else {
+    const a=rnd(3,8),b=rnd(3,8),hk=rnd(4,12);
+    const G=a*b,u=2*(a+b),M=u*hk,O=2*G+M,V=G*hk;
+    vGenAns=V;document.getElementById('v-gen-unit').textContent=unit+'³';
+    document.getElementById('v-gen-q').innerHTML=`Quader: a=${a} ${unit}, b=${b} ${unit}, h_k=${hk} ${unit}<br>Berechne <strong>G, M, O und V</strong>. Gib V ein.`;
+    document.getElementById('v-gen-sol').textContent=`G=${G} ${unit}² | u=${u} ${unit} | M=${u}·${hk}=${M} ${unit}² | O=2·${G}+${M}=${O} ${unit}² | V=${G}·${hk}=${V} ${unit}³`;
+  }
+}
+function checkVGen(){
+  const v=parseFloat(document.getElementById('v-gen-inp').value);
+  const fb=document.getElementById('v-gen-fb');
+  if(Math.abs(v-vGenAns)<0.1){fb.className='fb ok';fb.textContent=`✅ Richtig! V=${vGenAns}`;}
+  else{fb.className='fb no';fb.textContent='❌ Nicht ganz – Lösung anzeigen?';}
+}
+function showVGenSol(){const s=document.getElementById('v-gen-sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+// ═══ QUIZ ═══
+const QDATA=[
+  [
+    {q:'Was ist ein Prisma?',opts:['Körper mit Kreisflächen','Körper mit zwei deckungsgleichen, parallelen Grundflächen','Ein Körper mit 6 gleichen Seiten','Ein Körper mit einer Spitze'],ans:1,expl:'Prisma = Körper mit 2 kongruenten, parallelen Grundflächen ✓'},
+    {q:'Wie viele Flächen hat ein Dreiecksprisma?',opts:['3','4','5','6'],ans:2,expl:'Dreiecksprisma: 2 Dreiecke + 3 Rechtecke = 5 Flächen ✓'},
+    {q:'Was bedeutet Mantelfläche M?',opts:['Die Grundfläche','Alle Seitenflächen zusammen','Das Volumen','Die Körperhöhe'],ans:1,expl:'M = alle Seitenflächen (Rechtecke) zusammen ✓'},
+    {q:'Wie lautet die Formel für die Mantelfläche?',opts:['M = G · h_k','M = u · h_k','M = 2G + u','M = G · u'],ans:1,expl:'M = u · h_k (Umfang × Körperhöhe) ✓'},
+    {q:'Wie lautet die Volumenformel für alle Prismen?',opts:['V = u · h_k','V = O · G','V = G · h_k','V = 2G + M'],ans:2,expl:'V = G · h_k (Grundfläche × Körperhöhe) ✓'},
+    {q:'Wie viele Kanten hat ein Quader?',opts:['8','10','12','6'],ans:2,expl:'Quader = Vierecksprisma: 3·4 = 12 Kanten ✓'},
+    {q:'Was bedeutet h_k beim Prisma?',opts:['Grundfläche','Mantelfläche','Körperhöhe','Umfang'],ans:2,expl:'h_k = Körperhöhe = senkrechter Abstand der Grundflächen ✓'},
+    {q:'Welche Form haben die Seitenflächen (Mantel) eines geraden Prismas?',opts:['Dreiecke','Kreise','Fünfecke','Rechtecke'],ans:3,expl:'Die Mantelfläche besteht immer aus Rechtecken ✓'},
+  ],
+  [
+    {q:'Berechne M: u = 10 m, h_k = 6 m',opts:['16 m²','60 m²','100 m²','600 m²'],ans:1,expl:'M = 10 · 6 = 60 m² ✓'},
+    {q:'Berechne O: G = 12 m², M = 72 m²',opts:['84 m²','96 m²','24 m²','60 m²'],ans:1,expl:'O = 2·12 + 72 = 24 + 72 = 96 m² ✓'},
+    {q:'Berechne V: G = 24 m², h_k = 5 m',opts:['29 m³','120 m³','48 m³','240 m³'],ans:1,expl:'V = 24 · 5 = 120 m³ ✓'},
+    {q:'Ein Fünfecksprisma – wie viele Kanten?',opts:['10','12','15','20'],ans:2,expl:'Kanten = 3·n = 3·5 = 15 ✓'},
+    {q:'Berechne O: G = 25 m², u = 12 m, h_k = 20 m',opts:['240 m²','290 m²','300 m²','265 m²'],ans:1,expl:'M=12·20=240 m² | O=2·25+240=290 m² ✓'},
+    {q:'Welche Aussage ist FALSCH?',opts:['V = G · h_k','O = 2G + M','M = u · h_k','V = O · G'],ans:3,expl:'V = G · h_k, NICHT V = O · G ✓'},
+    {q:'Quader: a=5m, b=4m, h_k=3m. Wie groß ist G?',opts:['12 m²','15 m²','20 m²','60 m²'],ans:2,expl:'G = 5·4 = 20 m² ✓'},
+    {q:'Wie viele Flächen hat ein n-Eck-Prisma?',opts:['n','2n','n+2','3n'],ans:2,expl:'Flächen = n+2 (2 Grundflächen + n Seitenflächen) ✓'},
+  ],
+  [
+    {q:'Quader a=6m, b=4m, hk=5m. Berechne O.',opts:['96 m²','148 m²','120 m²','24 m²'],ans:1,expl:'G=24,u=20,M=100 | O=2·24+100=148 m² ✓'},
+    {q:'Dreieck: g=6m, h_a=4m, hk=10m. Berechne V.',opts:['240 m³','60 m³','120 m³','30 m³'],ans:2,expl:'G=(6·4)/2=12 m² | V=12·10=120 m³ ✓'},
+    {q:'Welche Einheit hat das Volumen?',opts:['m²','m³','cm²','dm'],ans:1,expl:'Volumen wird in m³ (Kubikmeter) gemessen ✓'},
+    {q:'Was ist kongruent?',opts:['Gleich groß aber verschieden geformt','Deckungsgleich (gleich groß UND gleich geformt)','Parallel','Senkrecht'],ans:1,expl:'Kongruent = deckungsgleich ✓'},
+    {q:'Prisma G=30m², u=18m, hk=8m. Berechne M.',opts:['144 m²','240 m²','540 m²','48 m²'],ans:0,expl:'M = 18·8 = 144 m² ✓'},
+    {q:'Ein Hausquerschnitt ist ein Fünfeck (G=20m²). Länge=12m. Berechne V.',opts:['240 m³','60 m³','32 m³','20 m³'],ans:0,expl:'V = G·hk = 20·12 = 240 m³ ✓'},
+    {q:'Quader mit Volumen 360 m³, G=30m². Wie hoch ist h_k?',opts:['12 m','30 m','6 m','18 m'],ans:0,expl:'V=G·hk → hk = 360÷30 = 12 m ✓'},
+    {q:'Was beschreibt die Oberfläche O eines Prismas?',opts:['Nur die Grundfläche','Nur die Seitenflächen','Die gesamte Außenfläche (2G+M)','Das Volumen'],ans:2,expl:'O = gesamte Außenfläche = 2·Grundfläche + Mantelfläche ✓'},
+  ]
+];
+let qLevel=0,qIdx=0,qScore=0,qAns=false;
+function setQLvl(l){qLevel=l;qIdx=0;qScore=0;document.querySelectorAll('#quiz .lvl-tab').forEach((t,i)=>t.classList.toggle('active',i===l));renderQ();}
+function renderQ(){
+  qAns=false;
+  const data=QDATA[qLevel];
+  if(qIdx>=data.length){
+    document.getElementById('quiz-card').innerHTML=`
+    <div style="text-align:center;padding:1.5rem">
+      <div style="font-size:2.8rem;margin-bottom:.75rem">${qScore>=data.length*.8?'🏆':qScore>=data.length*.5?'👍':'💪'}</div>
+      <h3 style="font-size:1.3rem;margin-bottom:.4rem">Quiz beendet!</h3>
+      <p style="color:var(--muted);margin-bottom:.9rem">${qScore} von ${data.length} Punkten</p>
+      <div style="font-size:1.4rem;letter-spacing:3px">${'⭐'.repeat(qScore>=data.length?3:qScore>=Math.ceil(data.length*.6)?2:1)}</div>
+      <button class="btn" style="margin-top:1rem" onclick="qIdx=0;qScore=0;renderQ()">Nochmal 🔄</button>
+    </div>`;return;
+  }
+  const q=data[qIdx];
+  document.getElementById('q-q').textContent=q.q;
+  document.getElementById('q-counter').textContent=`Frage ${qIdx+1} / ${data.length}`;
+  document.getElementById('q-score').textContent=`${qScore} Punkte`;
+  document.getElementById('q-pb').style.width=((qIdx/data.length)*100)+'%';
+  const opts=document.getElementById('q-opts');opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='obt';b.textContent=o;
+    b.onclick=()=>selQ(i,q.ans,q.expl);opts.appendChild(b);
+  });
+  document.getElementById('q-fb').className='fb';
+  document.getElementById('q-next').style.display='none';
+}
+function selQ(i,ans,expl){
+  if(qAns)return;qAns=true;
+  document.querySelectorAll('.obt').forEach((b,j)=>{b.disabled=true;if(j===ans)b.classList.add('correct');if(j===i&&i!==ans)b.classList.add('wrong');});
+  const fb=document.getElementById('q-fb');
+  if(i===ans){qScore++;fb.className='fb ok';fb.textContent='✅ '+expl;}
+  else{fb.className='fb no';fb.textContent='❌ '+expl;}
+  document.getElementById('q-score').textContent=`${qScore} Punkte`;
+  document.getElementById('q-next').style.display='inline-block';
+}
+function nextQ(){qIdx++;renderQ();}
+
+// ═══ BLITZ ═══
+const BLITZ=[
+  {word:'O = 2G + M',opts:['Formel für Oberfläche','Formel für Volumen','Formel für Mantelfläche','Formel für Grundfläche'],ans:0},
+  {word:'V = G · h_k',opts:['Formel für Volumen','Formel für Oberfläche','Formel für Mantelfläche','Umfangsformel'],ans:0},
+  {word:'M = u · h_k',opts:['Formel für Mantelfläche','Formel für Oberfläche','Formel für Volumen','Formel für Grundfläche'],ans:0},
+  {word:'Grundfläche G',opts:['Ober- und Unterseite des Prismas','Alle Seitenflächen','Körperhöhe','Umfang'],ans:0},
+  {word:'Körperhöhe h_k',opts:['Abstand zwischen den Grundflächen','Die Seitenfläche','Die Oberfläche','Umfang der Grundfläche'],ans:0},
+  {word:'kongruent',opts:['Deckungsgleich','Parallel','Senkrecht','Ähnlich'],ans:0},
+  {word:'Dreiecksprisma',opts:['5 Flächen, 9 Kanten, 6 Ecken','6 Flächen, 12 Kanten, 8 Ecken','7 Flächen, 15 Kanten, 10 Ecken','4 Flächen, 6 Kanten, 4 Ecken'],ans:0},
+  {word:'Quader',opts:['6 Flächen, 12 Kanten, 8 Ecken','5 Flächen, 9 Kanten, 6 Ecken','8 Flächen, 18 Kanten, 12 Ecken','6 Flächen, 10 Kanten, 6 Ecken'],ans:0},
+  {word:'m³',opts:['Einheit für Volumen','Einheit für Fläche','Einheit für Länge','Einheit für Oberfläche'],ans:0},
+  {word:'Mantelfläche M',opts:['Alle Seitenflächen zusammen','Die Grundfläche','Die Oberfläche','Das Volumen'],ans:0},
+];
+let bIdx=0,bScore=0,bTimer=null,bRunning=false;
+function shuffleOpts(item){
+  const s=[...item.opts];for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[s[i],s[j]]=[s[j],s[i]];}
+  return{opts:s,ans:s.indexOf(item.opts[0])};
+}
+function startBlitz(){
+  if(bRunning)return;bRunning=true;bIdx=0;bScore=0;
+  document.getElementById('blitz-score').textContent='0';runBlitzRound();
+}
+function runBlitzRound(){
+  if(bIdx>=BLITZ.length){
+    document.getElementById('blitz-display').innerHTML=`<div class="flash-word">🏁</div><div style="color:var(--vid)">Ergebnis: ${bScore}/${BLITZ.length}</div>`;
+    document.getElementById('blitz-opts').innerHTML='';bRunning=false;return;
+  }
+  const item=BLITZ[bIdx];
+  const speed=parseInt(document.getElementById('blitz-speed').value);
+  document.getElementById('blitz-counter').textContent=`Runde ${bIdx+1} / ${BLITZ.length}`;
+  document.getElementById('blitz-opts').innerHTML='';
+  document.getElementById('blitz-fb').className='fb';
+  document.getElementById('blitz-display').innerHTML=`<div class="flash-word">${item.word}</div>`;
+  bTimer=setTimeout(()=>{
+    document.getElementById('blitz-display').innerHTML=`<div style="color:var(--vid);font-size:.88rem">Was bedeutet das?</div>`;
+    const{opts:s,ans}=shuffleOpts(item);
+    s.forEach((o,i)=>{
+      const b=document.createElement('button');b.className='obt';b.textContent=o;
+      b.onclick=()=>{
+        document.querySelectorAll('#blitz-opts .obt').forEach(x=>x.disabled=true);
+        if(i===ans){b.classList.add('correct');document.getElementById('blitz-fb').className='fb ok';document.getElementById('blitz-fb').textContent='✅ Richtig!';bScore++;document.getElementById('blitz-score').textContent=bScore;}
+        else{b.classList.add('wrong');document.querySelectorAll('#blitz-opts .obt')[ans].classList.add('correct');document.getElementById('blitz-fb').className='fb no';document.getElementById('blitz-fb').textContent=`❌ Richtig: "${s[ans]}"`;}
+        bIdx++;setTimeout(runBlitzRound,1200);
+      };
+      document.getElementById('blitz-opts').appendChild(b);
+    });
+  },speed);
+}
+function stopBlitz(){clearTimeout(bTimer);bRunning=false;document.getElementById('blitz-display').innerHTML='<div style="color:var(--vid)">Gestoppt. Klick auf Start ▶</div>';document.getElementById('blitz-opts').innerHTML='';}
+
+// ═══ INIT ═══
+initWF();
+genWF2();
+initMatch();
+genBT();
+genO();
+genV();
+renderQ();
+</script>
+</body>
+</html>

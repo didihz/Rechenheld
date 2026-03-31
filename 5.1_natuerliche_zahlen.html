@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5.1 Natürliche Zahlen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1d6fa4;
+    --primary-light: #4a9fd4;
+    --primary-bg: #e8f4fd;
+    --accent: #f59e0b;
+    --accent-light: #fef3c7;
+    --success: #10b981;
+    --success-light: #d1fae5;
+    --danger: #ef4444;
+    --danger-light: #fee2e2;
+    --bg: #f0f7fb;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #cbd5e1;
+    --radius: 14px;
+    --shadow: 0 4px 18px rgba(29,111,164,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0f4c75 0%, #1d6fa4 55%, #4a9fd4 100%);
+    color: white; padding: 22px 24px 18px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+  }
+  header h1 { font-family: 'Baloo 2', cursive; font-size: 1.55rem; font-weight: 700; letter-spacing: 0.3px; }
+  header p { font-size: 0.85rem; opacity: 0.88; margin-top: 2px; }
+
+  /* NAV TABS */
+  nav {
+    display: flex; gap: 6px; padding: 14px 16px 0;
+    overflow-x: auto; flex-wrap: nowrap; background: var(--card);
+    border-bottom: 2px solid var(--border); scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0; background: var(--bg); border: none;
+    border-radius: 10px 10px 0 0; padding: 9px 16px;
+    font-family: 'Nunito', sans-serif; font-size: 0.86rem; font-weight: 700;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px; white-space: nowrap;
+  }
+  .tab-btn:hover { background: var(--primary-bg); color: var(--primary); }
+  .tab-btn.active { background: var(--primary); color: white; }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 22px 16px 70px; }
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CARD */
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 22px 22px; margin-bottom: 18px;
+    box-shadow: var(--shadow); border: 1.5px solid var(--border);
+  }
+  .card h2 {
+    font-family: 'Baloo 2', cursive; font-size: 1.2rem;
+    color: var(--primary); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card p { color: var(--muted); font-size: 0.93rem; line-height: 1.65; }
+  .card ul { padding-left: 1.2rem; margin: 8px 0; color: var(--muted); font-size: 0.93rem; }
+  .card li { margin-bottom: 5px; line-height: 1.6; }
+
+  /* INFO BOX */
+  .info-box {
+    background: var(--primary-bg); border-left: 4px solid var(--primary);
+    border-radius: 0 10px 10px 0; padding: 12px 15px; margin: 12px 0;
+    font-size: 0.9rem; line-height: 1.65;
+  }
+  .info-box strong { color: var(--primary); }
+  .info-box.orange { background: var(--accent-light); border-left-color: var(--accent); }
+  .info-box.orange strong { color: #92400e; }
+  .info-box.green { background: var(--success-light); border-left-color: var(--success); }
+  .info-box.green strong { color: #065f46; }
+
+  /* STELLENTAFEL */
+  .stellen-wrap { overflow-x: auto; margin: 16px 0; }
+  .stellen-table { border-collapse: collapse; min-width: 560px; width: 100%; }
+  .stellen-table th {
+    background: var(--primary); color: white; padding: 10px 8px;
+    font-size: 0.82rem; font-weight: 800; text-align: center;
+    border: 2px solid var(--card);
+  }
+  .stellen-table th.group-header {
+    background: #0f4c75; font-size: 0.78rem; letter-spacing: 0.5px;
+  }
+  .stellen-table td {
+    padding: 10px 8px; border: 2px solid var(--border);
+    text-align: center; font-size: 1.05rem; font-weight: 700;
+    min-width: 52px;
+  }
+  .stellen-table td.label-cell {
+    background: var(--primary-bg); color: var(--primary);
+    font-size: 0.82rem; font-weight: 800; text-align: right;
+    padding-right: 14px;
+  }
+  .stellen-table input {
+    width: 44px; border: 2px solid var(--border); border-radius: 8px;
+    padding: 6px 4px; text-align: center; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700; color: var(--primary);
+    background: #f8fafc; outline: none; transition: border-color 0.2s;
+  }
+  .stellen-table input:focus { border-color: var(--primary); background: var(--primary-bg); }
+  .stelle-wert { font-size: 0.72rem; color: var(--muted); display: block; margin-top: 2px; }
+
+  /* NUMBER EXPLORER */
+  .number-input-big {
+    display: block; width: 100%; border: 3px solid var(--border);
+    border-radius: 12px; padding: 14px 18px; font-family: 'Baloo 2', cursive;
+    font-size: 2rem; font-weight: 700; color: var(--primary);
+    text-align: center; outline: none; transition: border-color 0.2s;
+    background: var(--primary-bg); margin-bottom: 14px;
+  }
+  .number-input-big:focus { border-color: var(--primary); }
+  .stellen-display { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 14px 0; }
+  .stelle-chip {
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: 12px; padding: 10px 14px; text-align: center;
+    min-width: 70px; transition: all 0.2s;
+  }
+  .stelle-chip.highlight { border-color: var(--primary); background: var(--primary-bg); }
+  .stelle-chip .digit { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 700; color: var(--primary); line-height: 1; }
+  .stelle-chip .stelle-name { font-size: 0.72rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
+  .stelle-chip .stelle-val { font-size: 0.78rem; color: var(--success); font-weight: 700; margin-top: 2px; }
+
+  /* ZAHLENSTRAHL */
+  .zahlenstrahl-wrap { overflow-x: auto; margin: 16px 0; }
+  .zahlenstrahl-svg { min-width: 500px; }
+
+  /* RUNDEN */
+  .runden-interactive { display: flex; flex-direction: column; gap: 14px; }
+  .runden-input-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .runden-input-row label { font-weight: 700; font-size: 0.9rem; color: var(--primary); }
+  .runden-input-row input, .runden-input-row select {
+    border: 2px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem; color: var(--text); outline: none;
+  }
+  .runden-input-row input:focus, .runden-input-row select:focus { border-color: var(--primary); }
+  .runden-result {
+    background: var(--primary-bg); border-radius: 10px;
+    padding: 14px 16px; font-size: 1rem; font-weight: 700; color: var(--primary);
+    min-height: 50px; display: flex; align-items: center; gap: 10px;
+  }
+
+  /* STECKBRIEFE */
+  .steckbrief {
+    border: 2px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-bottom: 12px;
+  }
+  .steckbrief-hdr {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white; padding: 13px 18px; display: flex;
+    align-items: center; gap: 12px; cursor: pointer;
+    font-weight: 700; font-size: 1rem;
+  }
+  .steckbrief-hdr .arrow { margin-left: auto; transition: transform 0.3s; font-size: 1rem; }
+  .steckbrief-hdr.open .arrow { transform: rotate(180deg); }
+  .steckbrief-body {
+    display: none; padding: 16px 18px; background: #fafcff;
+  }
+  .steckbrief-body.open { display: block; }
+  .def-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .def-table td { padding: 7px 12px; border-bottom: 1px solid #eef2f9; font-size: 0.9rem; }
+  .def-table td:first-child { font-weight: 800; color: var(--primary); width: 38%; }
+
+  /* QUIZ */
+  .level-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .level-btn {
+    border: none; border-radius: 50px; padding: 7px 16px;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.82rem;
+    cursor: pointer; transition: all 0.2s; opacity: 0.6;
+  }
+  .level-btn.active { opacity: 1; box-shadow: 0 3px 10px rgba(0,0,0,0.18); }
+  .level-btn.easy { background: #bbf7d0; color: #065f46; }
+  .level-btn.medium { background: #fde68a; color: #78350f; }
+  .level-btn.hard { background: #fecaca; color: #7f1d1d; }
+
+  .quiz-progress { background: #e2eaf5; border-radius: 50px; height: 9px; margin-bottom: 18px; overflow: hidden; }
+  .quiz-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 50px; transition: width 0.5s; }
+  .quiz-q { font-weight: 800; font-size: 1rem; margin-bottom: 14px; line-height: 1.55; }
+  .quiz-options { display: grid; gap: 9px; }
+  .quiz-opt {
+    background: #f5f8ff; border: 2px solid var(--border); border-radius: 11px;
+    padding: 11px 15px; text-align: left; font-family: 'Nunito', sans-serif;
+    font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: all 0.2s; color: var(--text);
+  }
+  .quiz-opt:hover:not(:disabled) { background: var(--primary-bg); border-color: var(--primary); transform: translateX(3px); }
+  .quiz-opt.correct { background: var(--success-light); border-color: var(--success); color: #065f46; }
+  .quiz-opt.wrong { background: var(--danger-light); border-color: var(--danger); color: #7f1d1d; }
+  .quiz-opt:disabled { cursor: not-allowed; }
+  .quiz-feedback { margin-top: 12px; padding: 11px 15px; border-radius: 11px; font-weight: 700; font-size: 0.93rem; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: var(--success-light); color: #065f46; }
+  .quiz-feedback.wrong { background: var(--danger-light); color: #7f1d1d; }
+  .quiz-nav { display: flex; justify-content: flex-end; margin-top: 16px; }
+  .quiz-counter { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+
+  /* RESULT */
+  .result-screen { text-align: center; padding: 28px 18px; }
+  .result-emoji { font-size: 3.5rem; margin-bottom: 10px; }
+  .result-summary { font-size: 1.6rem; font-weight: 900; color: var(--primary); }
+  .result-msg { color: var(--muted); margin-top: 8px; font-size: 0.93rem; line-height: 1.6; }
+
+  /* BUTTONS */
+  .btn { border: none; border-radius: 50px; padding: 9px 22px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(29,111,164,0.3); }
+  .btn-primary:hover { background: #155d8a; transform: translateY(-2px); }
+  .btn-secondary { background: #e2eaf5; color: var(--primary); }
+  .btn-secondary:hover { background: #c9d9ed; }
+
+  /* LÜCKENTEXT */
+  .luecken-text { font-size: 0.95rem; line-height: 2.3; margin-bottom: 14px; }
+  .luecke { display: inline-block; border-bottom: 3px solid var(--primary); padding: 0 5px; margin: 0 4px; }
+  .luecke input {
+    border: none; outline: none; background: transparent;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700;
+    color: var(--primary); text-align: center;
+  }
+  .luecke.correct { border-color: var(--success); }
+  .luecke.correct input { color: var(--success); }
+  .luecke.wrong { border-color: var(--danger); }
+  .luecke.wrong input { color: var(--danger); }
+  .wortkasten {
+    background: var(--accent-light); border: 2px dashed var(--accent);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    font-size: 0.88rem;
+  }
+  .wortkasten strong { color: #78350f; margin-right: 4px; }
+  .wort-chip { background: white; border: 1.5px solid var(--accent); border-radius: 6px; padding: 2px 10px; font-weight: 700; font-size: 0.85rem; color: var(--text); }
+  .check-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .luecke-result { margin-top: 10px; font-weight: 700; font-size: 0.93rem; }
+
+  /* ZUORDNUNGEN */
+  .zuordnung-container { display: flex; gap: 16px; flex-wrap: wrap; margin: 14px 0; }
+  .zuordnung-col {
+    flex: 1; min-width: 200px; border: 2px dashed var(--border);
+    border-radius: 12px; padding: 14px; min-height: 100px;
+    transition: border-color 0.2s;
+  }
+  .zuordnung-col.dragover { border-color: var(--primary); background: var(--primary-bg); }
+  .zuordnung-col h3 { font-size: 0.88rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pool { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .drag-item {
+    background: var(--primary); color: white; border-radius: 50px;
+    padding: 6px 14px; font-size: 0.85rem; font-weight: 700;
+    cursor: grab; user-select: none; transition: transform 0.15s;
+  }
+  .drag-item:hover { transform: scale(1.05); }
+  .drag-item.placed { background: var(--success); }
+  .drag-item.wrong-place { background: var(--danger); }
+
+  /* BLITZÜBUNGEN */
+  .blitz-box {
+    background: linear-gradient(135deg, #0f4c75, var(--primary));
+    color: white; border-radius: 14px; padding: 30px 20px;
+    text-align: center; min-height: 160px;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    margin-bottom: 16px;
+  }
+  .blitz-word { font-family: 'Baloo 2', cursive; font-size: 2.8rem; font-weight: 700; letter-spacing: 2px; opacity: 0; transition: opacity 0.1s; line-height: 1.1; }
+  .blitz-word.show { opacity: 1; }
+  .blitz-sub { font-size: 0.88rem; opacity: 0.8; margin-top: 6px; min-height: 20px; }
+  .blitz-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .blitz-controls label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+  .blitz-controls select { border: 2px solid var(--border); border-radius: 8px; padding: 6px 10px; font-family: 'Nunito', sans-serif; font-size: 0.85rem; }
+  .flash-log { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .flash-tag { background: var(--primary-bg); color: var(--primary); border-radius: 6px; padding: 3px 10px; font-size: 0.8rem; font-weight: 700; }
+
+  /* VOCAB */
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; margin-top: 12px; }
+  .vocab-card { background: var(--primary-bg); border: 2px solid var(--border); border-radius: 12px; padding: 13px 15px; }
+  .vocab-term { font-weight: 900; font-size: 0.95rem; color: var(--primary); margin-bottom: 4px; }
+  .vocab-def { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+  .vocab-example { font-size: 0.8rem; color: var(--success); margin-top: 4px; font-style: italic; }
+
+  /* TAG */
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; margin: 2px; }
+  .tag.blue { background: var(--primary-bg); color: var(--primary); }
+  .tag.green { background: var(--success-light); color: #065f46; }
+  .tag.orange { background: var(--accent-light); color: #78350f; }
+
+  @media (max-width: 600px) {
+    .stellen-display { gap: 5px; }
+    .blitz-word { font-size: 2rem; }
+    .zuordnung-container { flex-direction: column; }
+    header h1 { font-size: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔢 5.1 Natürliche Zahlen</h1>
+  <p>Klasse 5 · Mathematik · Interaktive Lernapp</p>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showTab('lernen')" data-tab="lernen">📖 Lernen</button>
+  <button class="tab-btn" onclick="showTab('steckbriefe')" data-tab="steckbriefe">📋 Steckbriefe</button>
+  <button class="tab-btn" onclick="showTab('quiz')" data-tab="quiz">🧠 Quiz</button>
+  <button class="tab-btn" onclick="showTab('luecken')" data-tab="luecken">✏️ Lückentext</button>
+  <button class="tab-btn" onclick="showTab('zuordnen')" data-tab="zuordnen">🔗 Zuordnen</button>
+  <button class="tab-btn" onclick="showTab('blitz')" data-tab="blitz">⚡ Blitzübungen</button>
+  <button class="tab-btn" onclick="showTab('wortschatz')" data-tab="wortschatz">📚 Wortschatz</button>
+</nav>
+
+<main>
+
+<!-- ===== LERNEN ===== -->
+<div id="lernen" class="section active">
+
+  <div class="card">
+    <h2>🔢 Stellentafel – Zahlen erkunden</h2>
+    <p>Gib eine Zahl ein und sieh, auf welcher Stelle jede Ziffer steht.</p>
+    <input class="number-input-big" type="number" id="numInput" placeholder="z.B. 34 508" min="0" max="999999999" value="34508" oninput="analyseNumber(this.value)">
+    <div class="stellen-display" id="stellenDisplay"></div>
+    <div id="stellenSatz" style="font-size:0.9rem;color:var(--muted);margin-top:6px;line-height:1.7;"></div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Stellentafel</h2>
+    <div class="stellen-wrap">
+      <table class="stellen-table">
+        <thead>
+          <tr>
+            <td class="label-cell"></td>
+            <th class="group-header" colspan="3">Tausende</th>
+            <th class="group-header" colspan="3">Einer</th>
+          </tr>
+          <tr>
+            <td class="label-cell">Stelle</td>
+            <th>HT<br><span class="stelle-wert">100 000</span></th>
+            <th>ZT<br><span class="stelle-wert">10 000</span></th>
+            <th>T<br><span class="stelle-wert">1 000</span></th>
+            <th>H<br><span class="stelle-wert">100</span></th>
+            <th>Z<br><span class="stelle-wert">10</span></th>
+            <th>E<br><span class="stelle-wert">1</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">Ziffer</td>
+            <td id="st-HT"></td>
+            <td id="st-ZT"></td>
+            <td id="st-T"></td>
+            <td id="st-H"></td>
+            <td id="st-Z"></td>
+            <td id="st-E"></td>
+          </tr>
+          <tr>
+            <td class="label-cell">Wert</td>
+            <td id="wt-HT" style="font-size:0.78rem;color:var(--muted);"></td>
+            <td id="wt-ZT" style="font-size:0.78rem;color:var(--muted);"></td>
+            <td id="wt-T" style="font-size:0.78rem;color:var(--muted);"></td>
+            <td id="wt-H" style="font-size:0.78rem;color:var(--muted);"></td>
+            <td id="wt-Z" style="font-size:0.78rem;color:var(--muted);"></td>
+            <td id="wt-E" style="font-size:0.78rem;color:var(--muted);"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-box" style="margin-top:12px;">
+      <strong>Merke:</strong> Jede Stelle hat einen eigenen Wert. Die Ziffer 3 in 34 508 steht auf der Stelle der Zehntausender – ihr Wert ist also <strong>30 000</strong>.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📏 Zahlen vergleichen und ordnen</h2>
+    <p>Um zwei Zahlen zu vergleichen, schaut man von links nach rechts auf die Stellen:</p>
+    <div class="info-box" style="margin-top:12px;">
+      <strong>Regel:</strong> Die Zahl mit mehr Stellen ist immer größer.<br>
+      Bei gleich vielen Stellen: vergleiche von der höchsten Stelle her.
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px;">
+      <div style="background:var(--success-light);border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:1.2rem;font-weight:900;color:#065f46;">45 320 &gt; 9 870</div>
+        <div style="font-size:0.8rem;color:#065f46;margin-top:4px;">45 320 hat 5 Stellen, 9 870 nur 4</div>
+      </div>
+      <div style="background:var(--primary-bg);border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:1.2rem;font-weight:900;color:var(--primary);">7 430 &lt; 7 850</div>
+        <div style="font-size:0.8rem;color:var(--primary);margin-top:4px;">beide 4-stellig: Hunderter vergleichen (4 &lt; 8)</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-weight:700;font-size:0.9rem;color:var(--primary);margin-bottom:8px;">Übung: Setze &lt;, &gt; oder = ein:</div>
+    <div id="compareExercises"></div>
+    <div class="check-row" style="margin-top:10px;">
+      <button class="btn btn-primary" onclick="checkCompare()">✅ Überprüfen</button>
+      <button class="btn btn-secondary" onclick="newCompare()">🔄 Neue Aufgaben</button>
+    </div>
+    <div id="compareResult" style="margin-top:10px;font-weight:700;font-size:0.93rem;"></div>
+  </div>
+
+  <div class="card">
+    <h2>🎯 Runden</h2>
+    <p>Beim Runden ersetzt man eine Zahl durch eine „glatte" Zahl in der Nähe.</p>
+    <div class="info-box orange" style="margin-top:12px;">
+      <strong>Regel:</strong> Schau auf die Stelle <em>nach</em> der Rundestelle.<br>
+      → 0–4: abrunden (Ziffer bleibt, alles danach → 0)<br>
+      → 5–9: aufrunden (Ziffer +1, alles danach → 0)
+    </div>
+    <div class="runden-interactive">
+      <div class="runden-input-row" style="margin-top:10px;">
+        <label>Zahl:</label>
+        <input type="number" id="rundenZahl" value="3456" min="0" max="999999" style="width:130px;" oninput="calcRunden()">
+        <label>runden auf:</label>
+        <select id="rundenStufe" onchange="calcRunden()">
+          <option value="10">Zehner</option>
+          <option value="100">Hunderter</option>
+          <option value="1000">Tausender</option>
+          <option value="10000">Zehntausender</option>
+        </select>
+      </div>
+      <div class="runden-result" id="rundenResult">
+        Ergebnis erscheint hier …
+      </div>
+    </div>
+  </div>
+
+</div><!-- /lernen -->
+
+<!-- ===== STECKBRIEFE ===== -->
+<div id="steckbriefe" class="section">
+  <div class="card">
+    <h2>📋 Wissens-Steckbriefe</h2>
+    <p>Klappe die Karten auf – ideal zum Wiederholen!</p>
+  </div>
+
+  <div class="steckbrief">
+    <div class="steckbrief-hdr" onclick="toggleSB(this)">
+      🔢 Stellen und Stellenwerte <span class="arrow">▼</span>
+    </div>
+    <div class="steckbrief-body">
+      <p style="margin-bottom:10px;font-size:0.9rem;line-height:1.65;">
+        Jede Stelle im Dezimalsystem hat einen Namen und einen Wert, der <strong>10-mal so groß</strong> ist wie die nächste Stelle rechts davon.
+      </p>
+      <table class="def-table">
+        <tr><td>E – Einer</td><td>= 1</td></tr>
+        <tr><td>Z – Zehner</td><td>= 10 = 10 · 1</td></tr>
+        <tr><td>H – Hunderter</td><td>= 100 = 10 · 10</td></tr>
+        <tr><td>T – Tausender</td><td>= 1 000 = 10 · 100</td></tr>
+        <tr><td>ZT – Zehntausender</td><td>= 10 000 = 10 · 1 000</td></tr>
+        <tr><td>HT – Hunderttausender</td><td>= 100 000 = 10 · 10 000</td></tr>
+        <tr><td>M – Million</td><td>= 1 000 000 = 10 · 100 000</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:10px;">
+        <strong>Beispiel:</strong> In der Zahl 572 steht die 5 auf der Hunderterstelle. Ihr Stellenwert ist <strong>500</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="steckbrief">
+    <div class="steckbrief-hdr" onclick="toggleSB(this)">
+      🔤 Zahlen lesen und schreiben <span class="arrow">▼</span>
+    </div>
+    <div class="steckbrief-body">
+      <table class="def-table">
+        <tr><td>Ziffer</td><td>Die Symbole 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</td></tr>
+        <tr><td>Zahl</td><td>Besteht aus einer oder mehreren Ziffern</td></tr>
+        <tr><td>Dezimalsystem</td><td>Zahlensystem zur Basis 10 – mit 10 Ziffern</td></tr>
+        <tr><td>Schreibweise</td><td>Große Zahlen werden in Dreiergruppen getrennt: 1 234 567</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:10px;">
+        <strong>Beispiel:</strong> 34 508 spricht man: „vierunddreißigtausend­fünfhundertacht"
+      </div>
+    </div>
+  </div>
+
+  <div class="steckbrief">
+    <div class="steckbrief-hdr" onclick="toggleSB(this)">
+      ↕️ Zahlen ordnen und vergleichen <span class="arrow">▼</span>
+    </div>
+    <div class="steckbrief-body">
+      <table class="def-table">
+        <tr><td>&lt; kleiner als</td><td>3 400 &lt; 12 000</td></tr>
+        <tr><td>&gt; größer als</td><td>45 000 &gt; 3 900</td></tr>
+        <tr><td>= gleich</td><td>2 · 6 = 12</td></tr>
+        <tr><td>Aufsteigend</td><td>Von der kleinsten zur größten Zahl</td></tr>
+        <tr><td>Absteigend</td><td>Von der größten zur kleinsten Zahl</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:10px;">
+        <strong>Tipp:</strong> Zähle zuerst die Stellen. Mehr Stellen = größere Zahl.
+      </div>
+    </div>
+  </div>
+
+  <div class="steckbrief">
+    <div class="steckbrief-hdr" onclick="toggleSB(this)">
+      🎯 Runden <span class="arrow">▼</span>
+    </div>
+    <div class="steckbrief-body">
+      <table class="def-table">
+        <tr><td>Zehner runden</td><td>Schau auf die Einerstelle: 0–4 → abrunden, 5–9 → aufrunden</td></tr>
+        <tr><td>Hunderter runden</td><td>Schau auf die Zehnerstelle: 0–4 → abrunden, 5–9 → aufrunden</td></tr>
+        <tr><td>Tausender runden</td><td>Schau auf die Hunderterstelle</td></tr>
+      </table>
+      <div class="info-box orange" style="margin-top:10px;">
+        <strong>Beispiel:</strong><br>
+        4 <u>3</u>8 → Zehner: Einerstelle ist 8 (≥5) → aufrunden → <strong>440</strong><br>
+        4 3<u>8</u> → Einerstelle: genau die Stelle → <strong>440</strong><br>
+        4 <u>3</u>8 → Hunderter: Zehnerstelle ist 3 (&lt;5) → abrunden → <strong>400</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="steckbrief">
+    <div class="steckbrief-hdr" onclick="toggleSB(this)">
+      ➕ Grundrechenarten – Überblick <span class="arrow">▼</span>
+    </div>
+    <div class="steckbrief-body">
+      <table class="def-table">
+        <tr><td>Addition (+)</td><td>Zusammenzählen: Summand + Summand = Summe</td></tr>
+        <tr><td>Subtraktion (−)</td><td>Abziehen: Minuend − Subtrahend = Differenz</td></tr>
+        <tr><td>Multiplikation (·)</td><td>Mal nehmen: Faktor · Faktor = Produkt</td></tr>
+        <tr><td>Division (÷)</td><td>Teilen: Dividend ÷ Divisor = Quotient</td></tr>
+      </table>
+      <div class="info-box green" style="margin-top:10px;">
+        <strong>Tipp:</strong> Punkt- vor Strichrechnung! Zuerst Mal und Geteilt, dann Plus und Minus.
+      </div>
+    </div>
+  </div>
+</div><!-- /steckbriefe -->
+
+<!-- ===== QUIZ ===== -->
+<div id="quiz" class="section">
+  <div class="card">
+    <h2>🧠 Wissensquiz</h2>
+    <p>Teste dein Wissen! Wähle deinen Schwierigkeitsgrad:</p>
+    <div class="level-tabs" style="margin-top:12px;">
+      <button class="level-btn easy active" onclick="setLevel('easy', this)">⭐ Einfach</button>
+      <button class="level-btn medium" onclick="setLevel('medium', this)">⭐⭐ Mittel</button>
+      <button class="level-btn hard" onclick="setLevel('hard', this)">⭐⭐⭐ Schwer</button>
+    </div>
+  </div>
+  <div class="card" id="quizCard">
+    <div class="quiz-progress"><div class="quiz-progress-bar" id="quizBar" style="width:0%"></div></div>
+    <div id="quizContent"></div>
+  </div>
+</div><!-- /quiz -->
+
+<!-- ===== LÜCKENTEXT ===== -->
+<div id="luecken" class="section">
+  <div class="card">
+    <h2>✏️ Lückentext</h2>
+    <p>Fülle die Lücken mit den richtigen Fachbegriffen. Nutze den Wortkasten!</p>
+    <div class="level-tabs" style="margin-top:12px;">
+      <button class="level-btn easy active" onclick="setLueckeLevel('easy', this)">⭐ Einfach</button>
+      <button class="level-btn medium" onclick="setLueckeLevel('medium', this)">⭐⭐ Mittel</button>
+      <button class="level-btn hard" onclick="setLueckeLevel('hard', this)">⭐⭐⭐ Schwer</button>
+    </div>
+  </div>
+  <div class="card">
+    <div id="lueckeContent"></div>
+    <div class="check-row">
+      <button class="btn btn-primary" onclick="checkLuecke()">✅ Überprüfen</button>
+      <button class="btn btn-secondary" onclick="resetLuecke()">🔄 Neu versuchen</button>
+    </div>
+    <div class="luecke-result" id="lueckeResult"></div>
+  </div>
+</div><!-- /luecken -->
+
+<!-- ===== ZUORDNEN ===== -->
+<div id="zuordnen" class="section">
+  <div class="card">
+    <h2>🔗 Zuordnen – Zahlen und ihre Stellenwerte</h2>
+    <p>Ziehe die Zahlen in die richtige Gruppe: Ordne nach der Anzahl der Stellen!</p>
+  </div>
+  <div class="card">
+    <p style="font-weight:700;margin-bottom:12px;">Ziehe jede Zahl in die passende Gruppe:</p>
+    <div class="pool" id="sortPool"></div>
+    <div class="zuordnung-container">
+      <div class="zuordnung-col" id="bin-2" ondragover="ev.preventDefault()" ondrop="dropZ(event,'2')">
+        <h3>2-stellig (10–99)</h3>
+      </div>
+      <div class="zuordnung-col" id="bin-3" ondragover="ev.preventDefault()" ondrop="dropZ(event,'3')">
+        <h3>3-stellig (100–999)</h3>
+      </div>
+      <div class="zuordnung-col" id="bin-4" ondragover="ev.preventDefault()" ondrop="dropZ(event,'4')">
+        <h3>4-stellig (1 000–9 999)</h3>
+      </div>
+      <div class="zuordnung-col" id="bin-5" ondragover="ev.preventDefault()" ondrop="dropZ(event,'5')">
+        <h3>5-stellig (10 000–99 999)</h3>
+      </div>
+    </div>
+    <div class="check-row" style="margin-top:12px;">
+      <button class="btn btn-primary" onclick="checkZuordnung()">✅ Überprüfen</button>
+      <button class="btn btn-secondary" onclick="resetZuordnung()">🔄 Neu starten</button>
+    </div>
+    <div id="zuordnungResult" style="margin-top:10px;font-weight:700;"></div>
+  </div>
+
+  <div class="card">
+    <h2>🔀 Runden – Zuordnen</h2>
+    <p>Welche Aussage über das Runden ist richtig? Klicke auf die richtige Antwort:</p>
+    <div id="rundenZuordnung" style="margin-top:12px;"></div>
+  </div>
+</div><!-- /zuordnen -->
+
+<!-- ===== BLITZÜBUNGEN ===== -->
+<div id="blitz" class="section">
+  <div class="card">
+    <h2>⚡ Blitzübungen – Schnelles Denken</h2>
+    <p>Ein Begriff oder eine Aufgabe erscheint kurz. Denk schnell! Zum Nachschlagen scrolle nach unten.</p>
+  </div>
+  <div class="card">
+    <div class="blitz-box">
+      <div class="blitz-word" id="blitzWord">Drücke Start!</div>
+      <div class="blitz-sub" id="blitzSub"></div>
+    </div>
+    <div class="blitz-controls">
+      <button class="btn btn-primary" onclick="startBlitz()" id="blitzStartBtn">▶ Start</button>
+      <button class="btn btn-secondary" onclick="stopBlitz()">⏹ Stop</button>
+      <label>Geschwindigkeit:
+        <select id="blitzSpeed" onchange="blitzSpeedVal=parseInt(this.value)">
+          <option value="2500">Langsam (2,5 Sek.)</option>
+          <option value="1500" selected>Normal (1,5 Sek.)</option>
+          <option value="800">Schnell (0,8 Sek.)</option>
+          <option value="450">Sehr schnell</option>
+        </select>
+      </label>
+      <label>Thema:
+        <select id="blitzGroup" onchange="blitzGroupVal=this.value">
+          <option value="stellen">Stellenwerte</option>
+          <option value="runden">Runden</option>
+          <option value="rechnen">Rechenregeln</option>
+          <option value="all">Alles</option>
+        </select>
+      </label>
+    </div>
+    <div id="blitzSeen" style="margin-top:12px;font-size:0.82rem;color:var(--muted);">Gesehene Begriffe:</div>
+    <div class="flash-log" id="flashLog"></div>
+  </div>
+  <div class="card">
+    <h2>🔢 Blitz-Rechnen</h2>
+    <p>Klicke auf „Neue Aufgabe" und beantworte schnell:</p>
+    <div id="blitzRechenAufgabe" style="font-size:1.5rem;font-weight:900;color:var(--primary);margin:14px 0;min-height:40px;"></div>
+    <div id="blitzRechenOptionen" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+    <div id="blitzRechenFeedback" style="margin-top:10px;font-weight:700;font-size:0.95rem;"></div>
+    <button class="btn btn-secondary" onclick="newBlitzRechnen()" style="margin-top:12px;">🔄 Neue Aufgabe</button>
+  </div>
+</div><!-- /blitz -->
+
+<!-- ===== WORTSCHATZ ===== -->
+<div id="wortschatz" class="section">
+  <div class="card">
+    <h2>📚 Wortschatz – Fachbegriffe</h2>
+    <p>Alle wichtigen Fachbegriffe zu „Natürliche Zahlen" mit Erklärungen.</p>
+  </div>
+  <div class="card">
+    <h2>🔢 Zahlbegriffe</h2>
+    <div class="vocab-grid" id="vocabZahl"></div>
+  </div>
+  <div class="card">
+    <h2>📍 Stellen & Werte</h2>
+    <div class="vocab-grid" id="vocabStellen"></div>
+  </div>
+  <div class="card">
+    <h2>🎯 Rechnen</h2>
+    <div class="vocab-grid" id="vocabRechnen"></div>
+  </div>
+</div><!-- /wortschatz -->
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector(`[data-tab="${id}"]`).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════
+// LERNEN – STELLENTAFEL
+// ═══════════════════════════════════════════════════
+const STELLEN = [
+  { id:'HT', name:'Hunderttausender', val:100000 },
+  { id:'ZT', name:'Zehntausender', val:10000 },
+  { id:'T', name:'Tausender', val:1000 },
+  { id:'H', name:'Hunderter', val:100 },
+  { id:'Z', name:'Zehner', val:10 },
+  { id:'E', name:'Einer', val:1 },
+];
+
+function analyseNumber(raw) {
+  const num = parseInt(raw) || 0;
+  const display = document.getElementById('stellenDisplay');
+  const satz = document.getElementById('stellenSatz');
+  const numStr = String(num).padStart(6, '0');
+
+  // Update table cells
+  const ids = ['HT','ZT','T','H','Z','E'];
+  const digits = numStr.split('');
+  ids.forEach((id, i) => {
+    const d = parseInt(digits[i]);
+    const cell = document.getElementById('st-' + id);
+    const wt = document.getElementById('wt-' + id);
+    if (cell) cell.textContent = d > 0 || num >= STELLEN[i].val ? digits[i] : (i < 5 ? '–' : digits[i]);
+    if (wt) wt.textContent = d > 0 ? (d * STELLEN[i].val).toLocaleString('de-DE') : '';
+  });
+
+  // Chips
+  display.innerHTML = '';
+  let parts = [];
+  ids.forEach((id, i) => {
+    const d = parseInt(digits[i]);
+    const chip = document.createElement('div');
+    chip.className = 'stelle-chip' + (d > 0 ? ' highlight' : '');
+    chip.innerHTML = `<div class="digit">${digits[i]}</div><div class="stelle-name">${id}</div>${d > 0 ? `<div class="stelle-val">${(d * STELLEN[i].val).toLocaleString('de-DE')}</div>` : ''}`;
+    display.appendChild(chip);
+    if (d > 0) parts.push(`${d * STELLEN[i].val} (${STELLEN[i].name})`);
+  });
+
+  // Satz
+  if (num === 0) { satz.textContent = ''; return; }
+  const numDE = num.toLocaleString('de-DE');
+  satz.innerHTML = `<strong>${numDE}</strong> = ${parts.join(' + ')}`;
+}
+
+// Init
+analyseNumber(34508);
+
+// ═══════════════════════════════════════════════════
+// LERNEN – VERGLEICHEN
+// ═══════════════════════════════════════════════════
+let compareData = [];
+function newCompare() {
+  compareData = [];
+  const container = document.getElementById('compareExercises');
+  container.innerHTML = '';
+  document.getElementById('compareResult').textContent = '';
+  for (let i = 0; i < 5; i++) {
+    const a = Math.floor(Math.random() * 90000) + 1000;
+    const b = Math.floor(Math.random() * 90000) + 1000;
+    compareData.push({ a, b, correct: a < b ? '<' : a > b ? '>' : '=' });
+    container.innerHTML += `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+        <span style="font-weight:800;font-size:1rem;min-width:80px;">${a.toLocaleString('de-DE')}</span>
+        <input type="text" id="cmp${i}" maxlength="1" placeholder="?" style="width:44px;border:2px solid var(--border);border-radius:8px;padding:6px;text-align:center;font-size:1.1rem;font-weight:900;font-family:'Nunito',sans-serif;outline:none;">
+        <span style="font-weight:800;font-size:1rem;min-width:80px;">${b.toLocaleString('de-DE')}</span>
+      </div>`;
+  }
+}
+function checkCompare() {
+  let ok = 0;
+  compareData.forEach((d, i) => {
+    const inp = document.getElementById('cmp'+i);
+    if (!inp) return;
+    const val = inp.value.trim();
+    if (val === d.correct) { inp.style.borderColor = 'var(--success)'; inp.style.color = 'var(--success)'; ok++; }
+    else { inp.style.borderColor = 'var(--danger)'; inp.style.color = 'var(--danger)'; }
+  });
+  const res = document.getElementById('compareResult');
+  res.innerHTML = `<span style="color:${ok===5?'var(--success)':'var(--danger)'}">${ok}/5 richtig</span>${ok===5?' 🎉 Super!':''}`;
+}
+newCompare();
+
+// ═══════════════════════════════════════════════════
+// LERNEN – RUNDEN
+// ═══════════════════════════════════════════════════
+function calcRunden() {
+  const zahl = parseInt(document.getElementById('rundenZahl').value) || 0;
+  const stufe = parseInt(document.getElementById('rundenStufe').value);
+  const gerundet = Math.round(zahl / stufe) * stufe;
+  const res = document.getElementById('rundenResult');
+  const direction = gerundet > zahl ? 'aufgerundet' : gerundet < zahl ? 'abgerundet' : 'bereits eine runde Zahl';
+  res.innerHTML = `${zahl.toLocaleString('de-DE')} gerundet auf ${stufe.toLocaleString('de-DE')}er: <strong style="font-size:1.3rem;">${gerundet.toLocaleString('de-DE')}</strong> <span style="color:var(--muted);font-size:0.85rem;">(${direction})</span>`;
+}
+calcRunden();
+
+// ═══════════════════════════════════════════════════
+// STECKBRIEFE
+// ═══════════════════════════════════════════════════
+function toggleSB(hdr) {
+  hdr.classList.toggle('open');
+  hdr.nextElementSibling.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════
+// QUIZ DATA
+// ═══════════════════════════════════════════════════
+const QUIZ = {
+  easy: [
+    { q:'Auf welcher Stelle steht die 7 in der Zahl 3 <u>7</u>2?', o:['Einerstelle','Zehnerstelle','Hunderterstelle','Tausenderstelle'], a:1 },
+    { q:'Welche Zahl ist größer?', o:['4 500','4 050','4 005','4 500 ist genauso groß wie 4 050'], a:0 },
+    { q:'Wie viele Stellen hat die Zahl 12 345?', o:['3','4','5','6'], a:2 },
+    { q:'Was ist der Stellenwert der 3 in 3 400?', o:['3','300','3 000','30'], a:2 },
+    { q:'8 290 gerundet auf Hunderter ergibt …', o:['8 200','8 300','8 000','8 290'], a:1 },
+    { q:'Welche Aussage stimmt?', o:['999 > 1 000','1 000 > 999','1 000 = 999','999 = 1 000'], a:1 },
+  ],
+  medium: [
+    { q:'Welchen Wert hat die Ziffer 6 in der Zahl 46 <u>8</u>3? (Hinweis: nicht die 6!)', o:['80','800','8 000','8'], a:0 },
+    { q:'5 <u>7</u>49 auf Tausender gerundet ergibt …', o:['5 000','6 000','5 700','5 800'], a:1 },
+    { q:'Welche Zahl ist am kleinsten?', o:['10 405','10 045','10 450','10 504'], a:1 },
+    { q:'Das 10-fache von 3 800 ist …', o:['380','3 800','38 000','380 000'], a:2 },
+    { q:'Wie schreibt man 40 000 + 7 000 + 80 + 3 als eine Zahl?', o:['4 783','47 083','40 783','47 830'], a:1 },
+    { q:'Eine Zahl hat 6 Stellen. Die kleinste 6-stellige Zahl ist …', o:['100 000','999 999','10 000','100 001'], a:0 },
+    { q:'23 567 auf Zehntausender gerundet ergibt …', o:['20 000','30 000','23 000','24 000'], a:0 },
+  ],
+  hard: [
+    { q:'Die Ziffer 5 steht in der Tausenderstelle. Die Ziffer 2 steht in der Zehnerstelle. Die Ziffer 8 steht in der Einerstelle. Die anderen Stellen sind 0. Welche Zahl ist das?', o:['5 028','5 208','52 008','5 280'], a:0 },
+    { q:'Welche Zahl hat als Hunderter-Ziffer eine 4 und als Tausender-Ziffer eine 7?', o:['7 400','4 700','74 000','47 000'], a:0 },
+    { q:'Ein Produkt zweier Faktoren ist 360. Ein Faktor ist 9. Was ist der andere?', o:['30','40','36','45'], a:1 },
+    { q:'99 999 + 1 = ?', o:['99 000','100 000','100 001','999 999'], a:1 },
+    { q:'Welche der folgenden Zahlen ist beim Runden auf Hunderterstelle sowohl auf- als auch abzurunden (d.h. liegt genau in der Mitte)?', o:['345','350','399','300'], a:1 },
+    { q:'Der Stellenwert einer Ziffer ist 7 000. Auf welcher Stelle steht sie?', o:['Hunderterstelle','Zehnerstelle','Tausenderstelle','Zehntausenderstelle'], a:2 },
+  ]
+};
+
+let quizLevel = 'easy';
+let quizIdx = 0;
+let quizCorrect = 0;
+let quizAnswered = false;
+let quizQs = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function setLevel(level, btn) {
+  quizLevel = level;
+  document.querySelectorAll('#quiz .level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  quizQs = shuffle([...QUIZ[level]]);
+  quizIdx = 0; quizCorrect = 0; quizAnswered = false;
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const c = document.getElementById('quizContent');
+  document.getElementById('quizBar').style.width = (quizIdx / quizQs.length * 100) + '%';
+  if (quizIdx >= quizQs.length) {
+    const pct = Math.round(quizCorrect / quizQs.length * 100);
+    const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '😅';
+    c.innerHTML = `<div class="result-screen">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-summary">${quizCorrect} von ${quizQs.length} richtig</div>
+      <div class="result-msg">${pct}% korrekt – ${pct>=80?'Hervorragend!':pct>=50?'Gut gemacht!':'Übe noch einmal!'}</div>
+      <button class="btn btn-primary" style="margin-top:20px" onclick="setLevel(quizLevel, document.querySelector('#quiz .level-btn.active'))">🔄 Nochmal</button>
+    </div>`;
+    document.getElementById('quizBar').style.width = '100%';
+    return;
+  }
+  const q = quizQs[quizIdx];
+  c.innerHTML = `
+    <div class="quiz-counter">Frage ${quizIdx+1} von ${quizQs.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-options">${q.o.map((opt,i)=>`<button class="quiz-opt" onclick="answerQ(${i})">${opt}</button>`).join('')}</div>
+    <div class="quiz-feedback" id="qfb"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-primary" id="nextBtn" style="display:none" onclick="nextQ()">Weiter →</button>
+    </div>`;
+  quizAnswered = false;
+}
+
+function answerQ(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQs[quizIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+  const fb = document.getElementById('qfb');
+  if (idx === q.a) {
+    opts[idx].classList.add('correct');
+    fb.className = 'quiz-feedback show correct';
+    fb.textContent = '✅ Richtig!';
+    quizCorrect++;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.a].classList.add('correct');
+    fb.className = 'quiz-feedback show wrong';
+    fb.textContent = '❌ Leider falsch. Richtig: ' + q.o[q.a];
+  }
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+function nextQ() { quizIdx++; renderQuiz(); }
+
+// Init quiz
+quizQs = shuffle([...QUIZ.easy]);
+renderQuiz();
+
+// ═══════════════════════════════════════════════════
+// LÜCKENTEXT
+// ═══════════════════════════════════════════════════
+const LUECKEN = {
+  easy: {
+    words: ['Stelle','Ziffer','Zahl','Einerstelle','Hunderter'],
+    text: `Eine <LUECKE answer="Ziffer"> ist ein Zeichen wie 0, 1, 2, … 9.
+Mehrere Ziffern bilden eine <LUECKE answer="Zahl">.
+Jede Ziffer hat eine <LUECKE answer="Stelle"> – zum Beispiel die <LUECKE answer="Einerstelle"> oder die <LUECKE answer="Hunderter">stelle.`
+  },
+  medium: {
+    words: ['Tausenderstelle','Stellenwert','100','10','kleiner','größer'],
+    text: `Jede Stelle im Zehnersystem hat einen <LUECKE answer="Stellenwert">.
+Ein Hunderter ist <LUECKE answer="10">-mal so groß wie ein Zehner, und ein Zehner ist <LUECKE answer="10">-mal so groß wie ein Einer.
+Die Ziffer 7 auf der <LUECKE answer="Tausenderstelle"> hat den Wert 7 000.
+Eine Zahl mit mehr Stellen ist immer <LUECKE answer="größer"> als eine Zahl mit weniger Stellen.`
+  },
+  hard: {
+    words: ['abrunden','aufrunden','5','Zehnerstelle','Zehner','Stellenwert'],
+    text: `Beim Runden auf den <LUECKE answer="Zehner"> schaut man auf die Einerstelle.
+Ist die Einerstelle kleiner als <LUECKE answer="5">, so rundet man <LUECKE answer="abrunden">.
+Ist sie größer oder gleich 5, rundet man <LUECKE answer="aufrunden">.
+Die Ziffer 3 auf der <LUECKE answer="Zehnerstelle"> hat den <LUECKE answer="Stellenwert"> 30.`
+  }
+};
+
+let currentLueckeLevel = 'easy';
+
+function setLueckeLevel(level, btn) {
+  currentLueckeLevel = level;
+  document.querySelectorAll('#luecken .level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLuecke();
+}
+
+function renderLuecke() {
+  const data = LUECKEN[currentLueckeLevel];
+  const wortkasten = `<div class="wortkasten"><strong>Wortkasten:</strong> ${data.words.map(w=>`<span class="wort-chip">${w}</span>`).join('')}</div>`;
+  const textHtml = data.text.replace(/<LUECKE answer="([^"]+)">/g, (_, ans) =>
+    `<span class="luecke"><input type="text" data-answer="${ans}" placeholder="______" style="width:${Math.max(ans.length * 11, 70)}px"></span>`
+  );
+  document.getElementById('lueckeContent').innerHTML = wortkasten + `<div class="luecken-text">${textHtml}</div>`;
+  document.getElementById('lueckeResult').textContent = '';
+}
+
+function checkLuecke() {
+  const inputs = document.querySelectorAll('#lueckeContent .luecke input');
+  let ok = 0;
+  inputs.forEach(inp => {
+    const val = inp.value.trim().toLowerCase();
+    const ans = inp.dataset.answer.toLowerCase();
+    const wrap = inp.closest('.luecke');
+    wrap.classList.remove('correct','wrong');
+    if (val === ans) { wrap.classList.add('correct'); ok++; }
+    else wrap.classList.add('wrong');
+  });
+  const res = document.getElementById('lueckeResult');
+  const pct = Math.round(ok / inputs.length * 100);
+  res.innerHTML = `<span style="color:${pct===100?'var(--success)':'var(--danger)'}">${ok}/${inputs.length} richtig (${pct}%)</span>${pct===100?' 🎉 Perfekt!':''}`;
+}
+
+function resetLuecke() { renderLuecke(); }
+renderLuecke();
+
+// ═══════════════════════════════════════════════════
+// ZUORDNEN
+// ═══════════════════════════════════════════════════
+const SORT_NUMS = [
+  {w:'47', g:'2'}, {w:'308', g:'3'}, {w:'1 209', g:'4'}, {w:'56 700', g:'5'},
+  {w:'83', g:'2'}, {w:'750', g:'3'}, {w:'9 004', g:'4'}, {w:'23 001', g:'5'},
+  {w:'12', g:'2'}, {w:'999', g:'3'},
+];
+
+let sortState = {};
+
+function resetZuordnung() {
+  const pool = document.getElementById('sortPool');
+  pool.innerHTML = '';
+  sortState = {};
+  ['2','3','4','5'].forEach(b => {
+    const col = document.getElementById('bin-'+b);
+    col.querySelectorAll('.drag-item').forEach(el => el.remove());
+  });
+  document.getElementById('zuordnungResult').textContent = '';
+
+  shuffle(SORT_NUMS).forEach(n => {
+    sortState[n.w] = { correct: n.g, current: null };
+    const el = document.createElement('span');
+    el.className = 'drag-item';
+    el.id = 'sn_' + n.w.replace(' ','');
+    el.textContent = n.w;
+    el.draggable = true;
+    el.ondragstart = e => e.dataTransfer.setData('num', n.w);
+    pool.appendChild(el);
+  });
+}
+
+function dropZ(e, bin) {
+  e.preventDefault();
+  const num = e.dataTransfer.getData('num');
+  const el = document.getElementById('sn_' + num.replace(' ',''));
+  if (!el) return;
+  el.classList.add('placed');
+  sortState[num].current = bin;
+  document.getElementById('bin-'+bin).appendChild(el);
+}
+
+function checkZuordnung() {
+  let ok = 0;
+  SORT_NUMS.forEach(n => {
+    const el = document.getElementById('sn_' + n.w.replace(' ',''));
+    if (!el) return;
+    el.classList.remove('placed','wrong-place');
+    if (sortState[n.w].current === n.g) { el.classList.add('placed'); ok++; }
+    else if (sortState[n.w].current !== null) el.classList.add('wrong-place');
+  });
+  const res = document.getElementById('zuordnungResult');
+  res.innerHTML = `<span style="color:${ok===SORT_NUMS.length?'var(--success)':'var(--primary)'}">${ok}/${SORT_NUMS.length} richtig!</span>${ok===SORT_NUMS.length?' 🎉 Perfekt!':''}`;
+}
+
+resetZuordnung();
+
+// Runden-Zuordnung
+const rundenFragen = [
+  { q:'3 450 auf Hunderter runden → ?', opts:['3 400','3 500','3 000','3 450'], a:1 },
+  { q:'7 830 auf Tausender runden → ?', opts:['7 000','8 000','7 800','7 900'], a:1 },
+  { q:'456 auf Zehner runden → ?', opts:['450','460','400','500'], a:1 },
+  { q:'2 249 auf Tausender runden → ?', opts:['2 000','3 000','2 200','2 300'], a:0 },
+];
+let rzAnswered = [];
+function buildRundenZuordnung() {
+  rzAnswered = new Array(rundenFragen.length).fill(false);
+  const c = document.getElementById('rundenZuordnung');
+  c.innerHTML = rundenFragen.map((f,i) => `
+    <div style="margin-bottom:12px;padding:14px;background:#f8fafc;border-radius:10px;border:1.5px solid var(--border);">
+      <div style="font-weight:700;margin-bottom:8px;">${i+1}. ${f.q}</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;">
+        ${f.opts.map((o,j)=>`<button onclick="answerRZ(${i},${j},${f.a})" class="quiz-opt" style="padding:8px 14px;">${o}</button>`).join('')}
+      </div>
+      <div id="rzfb${i}" class="quiz-feedback"></div>
+    </div>`).join('');
+}
+function answerRZ(qi, chosen, correct) {
+  if (rzAnswered[qi]) return;
+  rzAnswered[qi] = true;
+  const btns = document.querySelectorAll(`#rundenZuordnung div:nth-child(${qi+1}) .quiz-opt`);
+  btns.forEach(b => b.disabled = true);
+  btns[correct].classList.add('correct');
+  const fb = document.getElementById('rzfb'+qi);
+  fb.className = 'quiz-feedback show ' + (chosen===correct?'correct':'wrong');
+  if (chosen===correct) { btns[chosen].classList.add('correct'); fb.textContent='✅ Richtig!'; }
+  else { btns[chosen].classList.add('wrong'); fb.textContent='❌ Richtig: ' + rundenFragen[qi].opts[correct]; }
+}
+buildRundenZuordnung();
+
+// ═══════════════════════════════════════════════════
+// BLITZÜBUNGEN
+// ═══════════════════════════════════════════════════
+const BLITZ_DATA = {
+  stellen: [
+    { w:'Einerstelle', s:'Wert: 1, 2, 3, … 9' },
+    { w:'Zehnerstelle', s:'Wert: 10, 20, … 90' },
+    { w:'Hunderterstelle', s:'Wert: 100, 200, … 900' },
+    { w:'Tausenderstelle', s:'Wert: 1 000 bis 9 000' },
+    { w:'Zehntausenderstelle', s:'Wert: 10 000 bis 90 000' },
+    { w:'E < Z < H < T', s:'Stellen von klein nach groß' },
+    { w:'Stellenwert', s:'Ziffer × Stelle = Wert' },
+    { w:'45 → 4 auf Z', s:'4 · 10 = 40' },
+    { w:'345 → 3 auf H', s:'3 · 100 = 300' },
+  ],
+  runden: [
+    { w:'< 5 → abrunden', s:'Einerstelle 0–4: abrunden' },
+    { w:'≥ 5 → aufrunden', s:'Einerstelle 5–9: aufrunden' },
+    { w:'438 → 440', s:'auf Zehner gerundet' },
+    { w:'438 → 400', s:'auf Hunderter gerundet' },
+    { w:'7 500 → 8 000', s:'auf Tausender gerundet' },
+    { w:'2 340 → 2 000', s:'auf Tausender gerundet' },
+    { w:'Runden ≠ Abschneiden', s:'Schau auf die nächste Stelle!' },
+  ],
+  rechnen: [
+    { w:'Summand + Summand', s:'= Summe (Addition)' },
+    { w:'Minuend − Subtrahend', s:'= Differenz (Subtraktion)' },
+    { w:'Faktor · Faktor', s:'= Produkt (Multiplikation)' },
+    { w:'Dividend ÷ Divisor', s:'= Quotient (Division)' },
+    { w:'Punkt vor Strich!', s:'· und ÷ vor + und −' },
+    { w:'Kommutativgesetz', s:'a + b = b + a (auch ·)' },
+    { w:'Assoziativgesetz', s:'(a + b) + c = a + (b + c)' },
+  ],
+  all: []
+};
+BLITZ_DATA.all = [...BLITZ_DATA.stellen, ...BLITZ_DATA.runden, ...BLITZ_DATA.rechnen];
+
+let blitzInterval = null;
+let blitzSpeedVal = 1500;
+let blitzGroupVal = 'stellen';
+let blitzList = [];
+let blitzIdx = 0;
+
+function startBlitz() {
+  stopBlitz();
+  const group = document.getElementById('blitzGroup').value;
+  blitzList = shuffle([...BLITZ_DATA[group]]);
+  blitzIdx = 0;
+  document.getElementById('flashLog').innerHTML = '';
+  runBlitz();
+  blitzInterval = setInterval(runBlitz, blitzSpeedVal);
+}
+
+function runBlitz() {
+  if (blitzIdx >= blitzList.length) { stopBlitz(); return; }
+  const item = blitzList[blitzIdx++];
+  const el = document.getElementById('blitzWord');
+  const sub = document.getElementById('blitzSub');
+  el.classList.remove('show');
+  setTimeout(() => { el.textContent = item.w; el.classList.add('show'); sub.textContent = item.s; }, 80);
+  const tag = document.createElement('span');
+  tag.className = 'flash-tag'; tag.textContent = item.w;
+  document.getElementById('flashLog').appendChild(tag);
+}
+
+function stopBlitz() {
+  if (blitzInterval) { clearInterval(blitzInterval); blitzInterval = null; }
+}
+
+// Blitz-Rechnen
+let blitzRechenAns = null;
+function newBlitzRechnen() {
+  const type = Math.floor(Math.random() * 4);
+  let q, ans;
+  if (type === 0) { // Addition
+    const a = Math.floor(Math.random() * 900) + 100;
+    const b = Math.floor(Math.random() * 900) + 100;
+    q = `${a} + ${b} = ?`; ans = a + b;
+  } else if (type === 1) { // Subtraktion
+    const a = Math.floor(Math.random() * 900) + 500;
+    const b = Math.floor(Math.random() * 400) + 100;
+    q = `${a} − ${b} = ?`; ans = a - b;
+  } else if (type === 2) { // Multiplikation (kleines Einmaleins)
+    const a = Math.floor(Math.random() * 9) + 2;
+    const b = Math.floor(Math.random() * 9) + 2;
+    q = `${a} · ${b} = ?`; ans = a * b;
+  } else { // Runden
+    const z = Math.floor(Math.random() * 8000) + 1000;
+    q = `${z.toLocaleString('de-DE')} auf Hunderter runden = ?`;
+    ans = Math.round(z / 100) * 100;
+  }
+  blitzRechenAns = ans;
+  document.getElementById('blitzRechenAufgabe').textContent = q;
+  document.getElementById('blitzRechenFeedback').textContent = '';
+
+  // Generate distractors
+  const wrong = new Set();
+  while (wrong.size < 3) {
+    const d = ans + (Math.floor(Math.random() * 5) - 2) * (type === 2 ? 1 : 10);
+    if (d !== ans && d > 0) wrong.add(d);
+  }
+  const opts = shuffle([ans, ...wrong]);
+  document.getElementById('blitzRechenOptionen').innerHTML = opts.map(o =>
+    `<button class="quiz-opt" onclick="answerBlitzR(${o},this)" style="min-width:80px;font-size:1rem;">${o.toLocaleString('de-DE')}</button>`
+  ).join('');
+}
+
+function answerBlitzR(val, btn) {
+  const opts = document.querySelectorAll('#blitzRechenOptionen .quiz-opt');
+  opts.forEach(b => b.disabled = true);
+  const fb = document.getElementById('blitzRechenFeedback');
+  if (val === blitzRechenAns) {
+    btn.classList.add('correct');
+    fb.innerHTML = '<span style="color:var(--success)">✅ Richtig!</span>';
+  } else {
+    btn.classList.add('wrong');
+    opts.forEach(b => { if (parseInt(b.textContent.replace(/\s/g,'')) === blitzRechenAns) b.classList.add('correct'); });
+    fb.innerHTML = `<span style="color:var(--danger)">❌ Richtig wäre: ${blitzRechenAns.toLocaleString('de-DE')}</span>`;
+  }
+  setTimeout(newBlitzRechnen, 1800);
+}
+
+newBlitzRechnen();
+
+// ═══════════════════════════════════════════════════
+// WORTSCHATZ
+// ═══════════════════════════════════════════════════
+const VOCAB = {
+  zahl: [
+    { term:'die Ziffer', def:'Die Symbole 0–9, mit denen Zahlen geschrieben werden.', ex:'z.B. 7, 0, 3' },
+    { term:'die Zahl', def:'Besteht aus einer oder mehreren Ziffern.', ex:'z.B. 472, 1 000' },
+    { term:'natürliche Zahl', def:'Ganze Zahlen ab 0: 0, 1, 2, 3, …', ex:'z.B. 15, 1 000, 0' },
+    { term:'das Dezimalsystem', def:'Zahlensystem mit den Ziffern 0–9, Basis 10.', ex:'unser Alltags-Zahlensystem' },
+    { term:'aufsteigend', def:'Von der kleinsten zur größten Zahl sortiert.', ex:'3, 7, 12, 45' },
+    { term:'absteigend', def:'Von der größten zur kleinsten Zahl sortiert.', ex:'45, 12, 7, 3' },
+  ],
+  stellen: [
+    { term:'die Stelle', def:'Position einer Ziffer in einer Zahl.', ex:'Einerstelle, Zehnerstelle, …' },
+    { term:'der Stellenwert', def:'Der Wert einer Ziffer aufgrund ihrer Position.', ex:'5 auf Zehnerstelle = Wert 50' },
+    { term:'E – Einer', def:'Die Stelle ganz rechts. Wert: 1.', ex:'in 47: die 7 (Wert 7)' },
+    { term:'Z – Zehner', def:'Zweite Stelle von rechts. Wert: 10.', ex:'in 47: die 4 (Wert 40)' },
+    { term:'H – Hunderter', def:'Dritte Stelle von rechts. Wert: 100.', ex:'in 347: die 3 (Wert 300)' },
+    { term:'T – Tausender', def:'Vierte Stelle von rechts. Wert: 1 000.', ex:'in 1 234: die 1 (Wert 1 000)' },
+  ],
+  rechnen: [
+    { term:'der Summand', def:'Eine der Zahlen, die addiert werden.', ex:'in 4 + 3 = 7: 4 und 3 sind Summanden' },
+    { term:'die Summe', def:'Das Ergebnis einer Addition.', ex:'4 + 3 = 7 (Summe: 7)' },
+    { term:'das Produkt', def:'Das Ergebnis einer Multiplikation.', ex:'4 · 3 = 12 (Produkt: 12)' },
+    { term:'die Differenz', def:'Das Ergebnis einer Subtraktion.', ex:'10 − 4 = 6 (Differenz: 6)' },
+    { term:'der Quotient', def:'Das Ergebnis einer Division.', ex:'12 ÷ 4 = 3 (Quotient: 3)' },
+    { term:'Punkt vor Strich', def:'Multiplikation und Division vor Addition und Subtraktion rechnen.', ex:'3 + 2 · 4 = 3 + 8 = 11' },
+  ]
+};
+
+function buildVocab() {
+  Object.entries(VOCAB).forEach(([key, items]) => {
+    const el = document.getElementById('vocab' + key.charAt(0).toUpperCase() + key.slice(1));
+    if (el) el.innerHTML = items.map(v => `
+      <div class="vocab-card">
+        <div class="vocab-term">${v.term}</div>
+        <div class="vocab-def">${v.def}</div>
+        ${v.ex ? `<div class="vocab-example">📌 ${v.ex}</div>` : ''}
+      </div>`).join('');
+  });
+}
+buildVocab();
+</script>
+</body>
+</html>

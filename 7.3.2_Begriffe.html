@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prozentrechnung – Begriffe erkennen</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --card: #ffffff;
+    --grundwert: #2d7d46;
+    --grundwert-light: #e8f5ec;
+    --grundwert-glow: #2d7d4622;
+    --prozentwert: #c44536;
+    --prozentwert-light: #fce8e6;
+    --prozentwert-glow: #c4453622;
+    --prozentsatz: #2563eb;
+    --prozentsatz-light: #e8f0fe;
+    --prozentsatz-glow: #2563eb22;
+    --text: #1a1a1a;
+    --text-soft: #555;
+    --border: #e0dbd2;
+    --shadow: 0 2px 20px rgba(0,0,0,0.06);
+    --radius: 16px;
+    --gesucht: #f59e0b;
+    --gesucht-light: #fef3c7;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+  .header {
+    background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3a 50%, #1a4a3a 100%);
+    color: white; padding: 2rem 1.5rem 2.5rem; text-align: center; position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(255,255,255,0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.5rem, 4vw, 2.3rem); font-weight: 700; letter-spacing: -0.5px; position: relative; }
+  .header p { font-size: 0.92rem; opacity: 0.8; margin-top: 0.4rem; font-weight: 300; }
+
+  .nav {
+    display: flex; justify-content: center; gap: 0.35rem;
+    padding: 1rem 0.5rem 0; flex-wrap: wrap; max-width: 900px; margin: 0 auto;
+  }
+  .nav-btn {
+    padding: 0.45rem 0.75rem; border: 2px solid var(--border); border-radius: 50px;
+    background: var(--card); font-family: 'Outfit', sans-serif; font-size: 0.75rem;
+    font-weight: 500; cursor: pointer; transition: all 0.3s; color: var(--text-soft);
+  }
+  .nav-btn:hover { border-color: var(--grundwert); color: var(--grundwert); }
+  .nav-btn.active { background: var(--grundwert); color: white; border-color: var(--grundwert); }
+  .nav-btn .sn {
+    display: inline-flex; width: 18px; height: 18px; align-items: center;
+    justify-content: center; background: rgba(0,0,0,0.1); border-radius: 50%;
+    font-size: 0.65rem; font-weight: 700; margin-right: 0.25rem;
+  }
+  .nav-btn.active .sn { background: rgba(255,255,255,0.25); }
+
+  .progress-wrap { max-width: 900px; margin: 0 auto; padding: 0.8rem 1rem 0; }
+  .progress-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--grundwert), var(--prozentsatz)); border-radius: 3px; transition: width 0.5s; width: 0%; }
+  .progress-text { font-size: 0.72rem; color: var(--text-soft); margin-top: 0.25rem; text-align: right; font-weight: 500; }
+
+  .main { max-width: 860px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .section { display: none; animation: fadeIn 0.4s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card { background: var(--card); border-radius: var(--radius); padding: 1.8rem; margin-bottom: 1.2rem; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .card h2 { font-family: 'Fraunces', serif; font-size: 1.35rem; margin-bottom: 0.8rem; font-weight: 600; }
+  .card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.6rem; }
+  .card p { line-height: 1.7; color: var(--text-soft); font-size: 0.93rem; }
+
+  .def-box { border-radius: 12px; padding: 1.1rem 1.3rem; margin-bottom: 0.8rem; border-left: 5px solid; transition: transform 0.2s; }
+  .def-box:hover { transform: translateX(4px); }
+  .def-box.grundwert { background: var(--grundwert-light); border-color: var(--grundwert); }
+  .def-box.prozentwert { background: var(--prozentwert-light); border-color: var(--prozentwert); }
+  .def-box.prozentsatz { background: var(--prozentsatz-light); border-color: var(--prozentsatz); }
+  .def-box.gesucht { background: var(--gesucht-light); border-color: var(--gesucht); }
+  .def-box .label { font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; }
+  .def-box.grundwert .label { color: var(--grundwert); }
+  .def-box.prozentwert .label { color: var(--prozentwert); }
+  .def-box.prozentsatz .label { color: var(--prozentsatz); }
+  .def-box.gesucht .label { color: var(--gesucht); }
+  .def-box .sym { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; border-radius: 7px; font-weight: 800; font-size: 0.85rem; color: white; }
+  .def-box.grundwert .sym { background: var(--grundwert); }
+  .def-box.prozentwert .sym { background: var(--prozentwert); }
+  .def-box.prozentsatz .sym { background: var(--prozentsatz); }
+  .def-box.gesucht .sym { background: var(--gesucht); }
+  .def-box .desc { font-size: 0.88rem; color: var(--text-soft); line-height: 1.6; }
+  .def-box .question { font-style: italic; margin-top: 0.3rem; font-size: 0.86rem; color: var(--text); font-weight: 500; }
+
+  .hl-g { background: var(--grundwert-light); color: var(--grundwert); padding: 2px 7px; border-radius: 5px; font-weight: 600; border: 1px solid var(--grundwert); }
+  .hl-w { background: var(--prozentwert-light); color: var(--prozentwert); padding: 2px 7px; border-radius: 5px; font-weight: 600; border: 1px solid var(--prozentwert); }
+  .hl-p { background: var(--prozentsatz-light); color: var(--prozentsatz); padding: 2px 7px; border-radius: 5px; font-weight: 600; border: 1px solid var(--prozentsatz); }
+
+  .visual-diagram { display: flex; align-items: center; justify-content: center; gap: 0.6rem; margin: 1.3rem 0; flex-wrap: wrap; font-size: 1.25rem; font-weight: 600; }
+  .vd-item { padding: 0.45rem 0.9rem; border-radius: 10px; transition: transform 0.3s; }
+  .vd-item:hover { transform: scale(1.08); }
+  .vd-w { background: var(--prozentwert-light); color: var(--prozentwert); border: 2px solid var(--prozentwert); }
+  .vd-g { background: var(--grundwert-light); color: var(--grundwert); border: 2px solid var(--grundwert); }
+  .vd-p { background: var(--prozentsatz-light); color: var(--prozentsatz); border: 2px solid var(--prozentsatz); }
+  .vd-text { color: var(--text-soft); font-weight: 400; font-size: 1.05rem; }
+
+  .example-box { background: #fafaf5; border: 2px dashed var(--border); border-radius: 12px; padding: 1.3rem; margin: 1rem 0; }
+  .example-box .et { font-weight: 700; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-soft); margin-bottom: 0.6rem; }
+  .example-box .ex { font-size: 1.02rem; line-height: 1.8; }
+
+  .signal-tag { display: inline-block; padding: 2px 9px; border-radius: 5px; font-size: 0.83rem; font-weight: 600; margin: 2px; cursor: default; transition: transform 0.2s; }
+  .signal-tag:hover { transform: translateY(-2px); }
+  .signal-tag.g-tag { background: var(--grundwert-light); color: var(--grundwert); border: 1px solid var(--grundwert); }
+  .signal-tag.w-tag { background: var(--prozentwert-light); color: var(--prozentwert); border: 1px solid var(--prozentwert); }
+  .signal-tag.p-tag { background: var(--prozentsatz-light); color: var(--prozentsatz); border: 1px solid var(--prozentsatz); }
+  .signal-tag.q-tag { background: var(--gesucht-light); color: var(--gesucht); border: 1px solid var(--gesucht); }
+
+  /* Scanner */
+  .scanner-sentence { font-size: 1.05rem; line-height: 2.3; padding: 1rem; background: #fafaf5; border-radius: 12px; margin-bottom: 0.8rem; border: 2px solid var(--border); transition: border-color 0.3s; }
+  .scanner-sentence.correct { border-color: var(--grundwert); background: var(--grundwert-light); }
+  .scanner-sentence.wrong { border-color: var(--prozentwert); background: var(--prozentwert-light); }
+  .scanner-word { display: inline-block; padding: 2px 5px; border-radius: 5px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; margin: 1px; }
+  .scanner-word:hover { background: #eee; }
+  .scanner-word.sel-g { background: var(--grundwert-light); border-color: var(--grundwert); color: var(--grundwert); font-weight: 600; }
+  .scanner-word.sel-w { background: var(--prozentwert-light); border-color: var(--prozentwert); color: var(--prozentwert); font-weight: 600; }
+  .scanner-word.sel-p { background: var(--prozentsatz-light); border-color: var(--prozentsatz); color: var(--prozentsatz); font-weight: 600; }
+  .scanner-word.sel-q { background: var(--gesucht-light); border-color: var(--gesucht); color: var(--gesucht); font-weight: 600; }
+
+  .scanner-toolbar { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .scanner-tool { padding: 0.4rem 0.85rem; border-radius: 50px; font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: 2px solid; transition: all 0.2s; background: white; }
+  .scanner-tool.tool-g { border-color: var(--grundwert); color: var(--grundwert); }
+  .scanner-tool.tool-w { border-color: var(--prozentwert); color: var(--prozentwert); }
+  .scanner-tool.tool-p { border-color: var(--prozentsatz); color: var(--prozentsatz); }
+  .scanner-tool.tool-q { border-color: var(--gesucht); color: var(--gesucht); }
+  .scanner-tool.tool-x { border-color: var(--border); color: var(--text-soft); }
+  .scanner-tool.on { color: white; transform: scale(1.05); }
+  .scanner-tool.tool-g.on { background: var(--grundwert); }
+  .scanner-tool.tool-w.on { background: var(--prozentwert); }
+  .scanner-tool.tool-p.on { background: var(--prozentsatz); }
+  .scanner-tool.tool-q.on { background: var(--gesucht); }
+
+  /* ─── Blitzlesen ─── */
+  .flash-area {
+    position: relative; min-height: 240px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; border-radius: 16px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    overflow: hidden; margin-bottom: 1rem;
+  }
+  .flash-area::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .flash-word {
+    font-family: 'Fraunces', serif; font-size: clamp(2rem, 7vw, 3.5rem); font-weight: 700;
+    color: white; text-align: center; padding: 0 1rem; position: relative; z-index: 1;
+    opacity: 0; transition: opacity 0.15s;
+    text-shadow: 0 0 40px rgba(255,255,255,0.15);
+  }
+  .flash-word.visible { opacity: 1; }
+  .flash-timer {
+    position: absolute; bottom: 12px; right: 16px; font-size: 0.75rem;
+    color: rgba(255,255,255,0.4); font-weight: 500; z-index: 1;
+  }
+  .flash-counter {
+    position: absolute; top: 12px; left: 16px; font-size: 0.75rem;
+    color: rgba(255,255,255,0.4); font-weight: 500; z-index: 1;
+  }
+  .flash-streak {
+    position: absolute; top: 12px; right: 16px; font-size: 0.85rem;
+    color: var(--gesucht); font-weight: 700; z-index: 1;
+  }
+  .flash-ready {
+    color: rgba(255,255,255,0.6); font-size: 1rem; text-align: center;
+    padding: 2rem 1rem; position: relative; z-index: 1;
+  }
+  .flash-ready strong { color: white; }
+
+  .flash-buttons {
+    display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; margin-top: 0.6rem;
+  }
+  .flash-btn {
+    padding: 0.8rem 1.6rem; border: 3px solid; border-radius: 14px; background: white;
+    font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; min-width: 130px; text-align: center;
+  }
+  .flash-btn:active { transform: scale(0.95); }
+  .flash-btn.fb-g { border-color: var(--grundwert); color: var(--grundwert); }
+  .flash-btn.fb-g:hover { background: var(--grundwert); color: white; }
+  .flash-btn.fb-w { border-color: var(--prozentwert); color: var(--prozentwert); }
+  .flash-btn.fb-w:hover { background: var(--prozentwert); color: white; }
+  .flash-btn.fb-p { border-color: var(--prozentsatz); color: var(--prozentsatz); }
+  .flash-btn.fb-p:hover { background: var(--prozentsatz); color: white; }
+
+  .flash-btn.flash-correct { animation: flashGreen 0.4s; }
+  .flash-btn.flash-wrong { animation: flashRed 0.4s; }
+  @keyframes flashGreen {
+    0% { background: var(--grundwert); color: white; transform: scale(1.08); }
+    100% { background: white; transform: scale(1); }
+  }
+  @keyframes flashRed {
+    0% { background: var(--prozentwert); color: white; transform: scale(1.08); }
+    100% { background: white; transform: scale(1); }
+  }
+
+  .flash-result-bar {
+    display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin: 1rem 0;
+  }
+  .flash-result-dot {
+    width: 14px; height: 14px; border-radius: 50%; transition: all 0.3s;
+    background: var(--border);
+  }
+  .flash-result-dot.dot-ok { background: var(--grundwert); }
+  .flash-result-dot.dot-fail { background: var(--prozentwert); }
+
+  .flash-settings {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    margin-bottom: 1rem; font-size: 0.88rem;
+  }
+  .flash-settings label { font-weight: 500; color: var(--text-soft); }
+  .flash-settings select {
+    padding: 0.4rem 0.8rem; border: 2px solid var(--border); border-radius: 8px;
+    font-family: 'Outfit', sans-serif; font-size: 0.85rem; background: white;
+    cursor: pointer;
+  }
+
+  /* Quiz */
+  .quiz-task { background: #fafaf5; border-radius: 12px; padding: 1.3rem; margin-bottom: 1rem; border: 2px solid var(--border); transition: border-color 0.3s; }
+  .quiz-task.correct { border-color: var(--grundwert); background: var(--grundwert-light); }
+  .quiz-task.wrong { border-color: var(--prozentwert); background: var(--prozentwert-light); }
+  .quiz-task .task-num { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-soft); margin-bottom: 0.5rem; }
+  .quiz-task .task-text { font-size: 1.02rem; line-height: 1.8; margin-bottom: 0.8rem; }
+
+  .drop-zones { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .drop-zone { flex: 1; min-width: 100px; border: 2px dashed var(--border); border-radius: 10px; padding: 0.7rem; text-align: center; min-height: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.3s; cursor: pointer; }
+  .drop-zone .dz-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .drop-zone.grundwert { border-color: var(--grundwert); } .drop-zone.grundwert .dz-label { color: var(--grundwert); }
+  .drop-zone.prozentwert { border-color: var(--prozentwert); } .drop-zone.prozentwert .dz-label { color: var(--prozentwert); }
+  .drop-zone.prozentsatz { border-color: var(--prozentsatz); } .drop-zone.prozentsatz .dz-label { color: var(--prozentsatz); }
+  .drop-zone .dz-value { font-weight: 700; font-size: 0.95rem; min-height: 24px; }
+  .drop-zone.filled { border-style: solid; }
+  .drop-zone.grundwert.filled { background: var(--grundwert-light); }
+  .drop-zone.prozentwert.filled { background: var(--prozentwert-light); }
+  .drop-zone.prozentsatz.filled { background: var(--prozentsatz-light); }
+
+  .value-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .chip { padding: 0.45rem 0.9rem; border: 2px solid var(--border); border-radius: 50px; background: white; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.25s; font-family: 'Outfit', sans-serif; user-select: none; }
+  .chip:hover { border-color: var(--grundwert); transform: translateY(-2px); }
+  .chip.selected { background: var(--text); color: white; border-color: var(--text); }
+  .chip.used { opacity: 0.3; pointer-events: none; }
+
+  .btn { padding: 0.65rem 1.4rem; border: none; border-radius: 50px; font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+  .btn-primary { background: var(--grundwert); color: white; box-shadow: 0 4px 15px var(--grundwert-glow); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-secondary { background: transparent; color: var(--text-soft); border: 2px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--text); color: var(--text); }
+  .btn-row { display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap; }
+
+  .feedback { padding: 0.9rem 1.1rem; border-radius: 10px; margin-top: 0.8rem; font-size: 0.9rem; display: none; animation: fadeIn 0.3s; line-height: 1.6; }
+  .feedback.show { display: block; }
+  .feedback.success { background: var(--grundwert-light); color: var(--grundwert); border: 1px solid var(--grundwert); }
+  .feedback.error { background: var(--prozentwert-light); color: var(--prozentwert); border: 1px solid var(--prozentwert); }
+  .feedback.hint { background: var(--prozentsatz-light); color: var(--prozentsatz); border: 1px solid var(--prozentsatz); }
+
+  .score-display { text-align: center; padding: 2rem 1rem; }
+  .score-display .score-num { font-family: 'Fraunces', serif; font-size: 3.5rem; font-weight: 700; color: var(--grundwert); line-height: 1; }
+  .score-display .score-label { font-size: 0.88rem; color: var(--text-soft); margin-top: 0.3rem; }
+  .score-stars { font-size: 2rem; margin: 0.8rem 0; letter-spacing: 0.3rem; }
+
+  .signal-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1rem 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .signal-table th { padding: 0.7rem 0.9rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: left; }
+  .signal-table td { padding: 0.6rem 0.9rem; font-size: 0.88rem; line-height: 1.7; border-top: 1px solid var(--border); vertical-align: top; }
+  .signal-table .col-g th { background: var(--grundwert); color: white; } .signal-table .col-g td { background: var(--grundwert-light); }
+  .signal-table .col-w th { background: var(--prozentwert); color: white; } .signal-table .col-w td { background: var(--prozentwert-light); }
+  .signal-table .col-p th { background: var(--prozentsatz); color: white; } .signal-table .col-p td { background: var(--prozentsatz-light); }
+  .signal-table .col-q th { background: var(--gesucht); color: white; } .signal-table .col-q td { background: var(--gesucht-light); }
+
+  @media (max-width: 600px) {
+    .card { padding: 1.1rem; }
+    .drop-zones { flex-direction: column; } .drop-zone { min-width: 100%; }
+    .flash-btn { min-width: 90px; padding: 0.7rem 1rem; font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Grundwert · Prozentwert · Prozentsatz</h1>
+  <p>Lerne die drei Fachbegriffe erkennen und aus Textaufgaben herauslesen</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText"></div>
+</div>
+
+<nav class="nav" id="navBar"></nav>
+
+<div class="main">
+
+  <!-- ═══════ TEIL 1: Begriffe ═══════ -->
+  <div class="section active" id="section0">
+    <div class="card">
+      <h2>Die drei Fachbegriffe</h2>
+      <p>Bei jeder Prozentrechnung gibt es drei Größen:</p>
+      <div class="visual-diagram" style="margin-top:1.3rem;">
+        <span class="vd-item vd-w">W</span><span class="vd-text">von</span>
+        <span class="vd-item vd-g">G</span><span class="vd-text">sind</span>
+        <span class="vd-item vd-p">p %</span>
+      </div>
+      <div class="def-box grundwert">
+        <div class="label"><span class="sym">G</span> Grundwert (G)</div>
+        <div class="desc"><strong>Das Ganze</strong> – die Bezugsgröße, die 100 % entspricht.</div>
+        <div class="question">🔎 „Wie viel gibt es <em>insgesamt</em>?"</div>
+      </div>
+      <div class="def-box prozentwert">
+        <div class="label"><span class="sym">W</span> Prozentwert (W)</div>
+        <div class="desc"><strong>Der Teil</strong> vom Ganzen – hat die <strong>gleiche Einheit</strong> wie G.</div>
+        <div class="question">🔎 „Welcher Wert hat die gleiche Einheit wie der Grundwert?"</div>
+      </div>
+      <div class="def-box prozentsatz">
+        <div class="label"><span class="sym">p</span> Prozentsatz (p)</div>
+        <div class="desc">Das Verhältnis – erkennbar am <strong>%-Zeichen</strong>.</div>
+        <div class="question">🔎 „Welche Zahl steht mit dem %-Zeichen?"</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Beispiel</h3>
+      <div class="example-box">
+        <div class="et">📖 Textaufgabe</div>
+        <div class="ex">„In einer Schule gibt es <span class="hl-g">450 Schüler</span>. Davon sind <span class="hl-p">54 %</span> im Sportverein. Das sind <span class="hl-w">243 Schüler</span>."</div>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.6rem;">
+        <div style="flex:1;min-width:100px;text-align:center;padding:0.5rem;border-radius:8px;background:var(--grundwert-light);border:1px solid var(--grundwert);">
+          <div style="font-size:0.68rem;font-weight:700;color:var(--grundwert);text-transform:uppercase;letter-spacing:1px;">G</div>
+          <div style="font-weight:700;color:var(--grundwert);">450 Schüler</div>
+          <div style="font-size:0.73rem;color:var(--text-soft);">das Ganze</div>
+        </div>
+        <div style="flex:1;min-width:100px;text-align:center;padding:0.5rem;border-radius:8px;background:var(--prozentwert-light);border:1px solid var(--prozentwert);">
+          <div style="font-size:0.68rem;font-weight:700;color:var(--prozentwert);text-transform:uppercase;letter-spacing:1px;">W</div>
+          <div style="font-weight:700;color:var(--prozentwert);">243 Schüler</div>
+          <div style="font-size:0.73rem;color:var(--text-soft);">der Teil</div>
+        </div>
+        <div style="flex:1;min-width:100px;text-align:center;padding:0.5rem;border-radius:8px;background:var(--prozentsatz-light);border:1px solid var(--prozentsatz);">
+          <div style="font-size:0.68rem;font-weight:700;color:var(--prozentsatz);text-transform:uppercase;letter-spacing:1px;">p</div>
+          <div style="font-weight:700;color:var(--prozentsatz);">54 %</div>
+          <div style="font-size:0.73rem;color:var(--text-soft);">mit %-Zeichen</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button class="btn btn-primary" onclick="go(1)">Weiter: Signalwörter →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ TEIL 2: Signalwörter ═══════ -->
+  <div class="section" id="section1">
+    <div class="card">
+      <h2>🔍 Signalwörter erkennen</h2>
+      <p>Bestimmte Wörter in Textaufgaben verraten dir, welcher Begriff gemeint ist.</p>
+    </div>
+    <div class="card">
+      <h3>Die Signalwort-Tabelle</h3>
+      <table class="signal-table">
+        <tr class="col-p"><th style="width:28%">Prozentsatz (p)</th><th>Signalwörter</th></tr>
+        <tr class="col-p"><td><strong>Am leichtesten!</strong></td><td>
+          <span class="signal-tag p-tag">%</span><span class="signal-tag p-tag">Prozent</span><span class="signal-tag p-tag">Quote</span><span class="signal-tag p-tag">Anteil in %</span><span class="signal-tag p-tag">…prozentig</span><span class="signal-tag p-tag">um … % gestiegen</span>
+        </td></tr>
+        <tr class="col-g"><th>Grundwert (G)</th><th>Signalwörter</th></tr>
+        <tr class="col-g"><td><strong>Das Ganze</strong></td><td>
+          <span class="signal-tag g-tag">insgesamt</span><span class="signal-tag g-tag">gesamt</span><span class="signal-tag g-tag">alle / aller</span><span class="signal-tag g-tag">ursprünglich</span><span class="signal-tag g-tag">regulärer Preis</span><span class="signal-tag g-tag">vor dem Rabatt</span><span class="signal-tag g-tag">Gesamtmenge</span>
+          <br><em style="font-size:0.82rem;">Typisch: „Von den <strong>500</strong> Schülern …"</em>
+        </td></tr>
+        <tr class="col-w"><th>Prozentwert (W)</th><th>Signalwörter</th></tr>
+        <tr class="col-w"><td><strong>Der Teil</strong></td><td>
+          <span class="signal-tag w-tag">davon</span><span class="signal-tag w-tag">das sind</span><span class="signal-tag w-tag">das entspricht</span><span class="signal-tag w-tag">das waren</span><span class="signal-tag w-tag">ein Teil von</span>
+          <br><em style="font-size:0.82rem;">W hat die <strong>gleiche Einheit</strong> wie G</em>
+        </td></tr>
+        <tr class="col-q"><th>Gesucht?</th><th>Frage-Signale</th></tr>
+        <tr class="col-q"><td><strong>Die Frage verrät es</strong></td><td>
+          <span class="signal-tag q-tag">Wie viele …?</span> → W<br>
+          <span class="signal-tag q-tag">Wie viel Prozent …?</span> → p<br>
+          <span class="signal-tag q-tag">Wie hoch war … ursprünglich?</span> → G
+        </td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>🎯 4-Schritte-Strategie</h3>
+      <div style="display:flex;flex-direction:column;gap:0.7rem;margin-top:0.6rem;">
+        <div style="display:flex;align-items:flex-start;gap:0.7rem;">
+          <div style="min-width:32px;height:32px;background:var(--prozentsatz);color:white;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;">1</div>
+          <div><strong style="color:var(--prozentsatz);">Suche das %-Zeichen</strong><br><span style="font-size:0.88rem;color:var(--text-soft);">→ Prozentsatz p</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:0.7rem;">
+          <div style="min-width:32px;height:32px;background:var(--grundwert);color:white;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;">2</div>
+          <div><strong style="color:var(--grundwert);">Was ist das Ganze?</strong><br><span style="font-size:0.88rem;color:var(--text-soft);">Signalwörter: <em>insgesamt, alle, gesamt, ursprünglich</em> → Grundwert G</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:0.7rem;">
+          <div style="min-width:32px;height:32px;background:var(--prozentwert);color:white;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;">3</div>
+          <div><strong style="color:var(--prozentwert);">Der andere Wert = W</strong><br><span style="font-size:0.88rem;color:var(--text-soft);">Signalwörter: <em>davon, das sind, das entspricht</em> → Prozentwert W</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:0.7rem;">
+          <div style="min-width:32px;height:32px;background:var(--gesucht);color:white;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;">4</div>
+          <div><strong style="color:var(--gesucht);">Was wird gefragt?</strong><br><span style="font-size:0.88rem;color:var(--text-soft);"><em>Wie viele?</em> → W | <em>Wie viel %?</em> → p | <em>Wie viel insgesamt?</em> → G</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🖍️ Signalwort-Scanner</h3>
+      <p>Wähle ein Werkzeug und markiere die passenden Wörter im Text.</p>
+      <div class="scanner-toolbar" style="margin-top:0.8rem;">
+        <button class="scanner-tool tool-g" onclick="setTool('g',this)">🟢 G</button>
+        <button class="scanner-tool tool-w" onclick="setTool('w',this)">🔴 W</button>
+        <button class="scanner-tool tool-p" onclick="setTool('p',this)">🔵 p</button>
+        <button class="scanner-tool tool-q" onclick="setTool('q',this)">🟡 Gesucht</button>
+        <button class="scanner-tool tool-x" onclick="setTool('x',this)">✕ Löschen</button>
+      </div>
+      <div id="scannerBox"></div>
+      <div id="scannerFB" class="feedback"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkScanner()">Überprüfen ✓</button>
+        <button class="btn btn-primary" onclick="go(2)" id="btnToFlash" style="display:none">Weiter: Blitzlesen →</button>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="go(0)">← Zurück</button></div>
+  </div>
+
+  <!-- ═══════ TEIL 3: Blitzlesen ═══════ -->
+  <div class="section" id="section2">
+    <div class="card">
+      <h2>⚡ Blitzlesen</h2>
+      <p>Ein Signalwort blitzt kurz auf. Ordne es blitzschnell dem richtigen Begriff zu! Je schneller du reagierst, desto besser wird dein automatischer Wissensabruf.</p>
+
+      <div class="flash-settings">
+        <label>Geschwindigkeit:</label>
+        <select id="flashSpeed" onchange="updateFlashSpeed()">
+          <option value="2500">🐢 Langsam (2,5 s)</option>
+          <option value="1500" selected>🐇 Normal (1,5 s)</option>
+          <option value="800">🚀 Schnell (0,8 s)</option>
+          <option value="500">⚡ Blitz (0,5 s)</option>
+        </select>
+      </div>
+
+      <div class="flash-area" id="flashArea">
+        <div class="flash-counter" id="flashCounter"></div>
+        <div class="flash-streak" id="flashStreak"></div>
+        <div class="flash-word" id="flashWord"></div>
+        <div class="flash-ready" id="flashReady">
+          Drücke <strong>Start</strong>, um zu beginnen.<br>
+          <span style="font-size:0.88rem;">Das Signalwort erscheint – klicke schnell auf den richtigen Begriff!</span>
+        </div>
+        <div class="flash-timer" id="flashTimerBar"></div>
+      </div>
+
+      <div class="flash-buttons" id="flashBtns">
+        <button class="flash-btn fb-g" onclick="flashAnswer('G')">Grundwert (G)</button>
+        <button class="flash-btn fb-p" onclick="flashAnswer('p')">Prozentsatz (p)</button>
+        <button class="flash-btn fb-w" onclick="flashAnswer('W')">Prozentwert (W)</button>
+      </div>
+
+      <div class="flash-result-bar" id="flashDots"></div>
+
+      <div class="btn-row" style="justify-content:center; margin-top:0.8rem;">
+        <button class="btn btn-primary" onclick="startFlash()" id="flashStartBtn">▶ Start</button>
+        <button class="btn btn-secondary" onclick="startFlash()" id="flashRetryBtn" style="display:none">🔄 Nochmal</button>
+      </div>
+
+      <div id="flashFB" class="feedback"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="go(1)">← Zurück</button>
+      <button class="btn btn-primary" onclick="go(3)" id="btnToAssign" style="display:none">Weiter: Zuordnen →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ TEIL 4: Zuordnen ═══════ -->
+  <div class="section" id="section3">
+    <div class="card">
+      <h2>Begriffe zuordnen ⭐</h2>
+      <p>Klicke einen Wert an und weise ihn dem richtigen Feld zu.</p>
+    </div>
+    <div id="simpleBox"></div>
+    <div id="simpleFB" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="go(2)">← Zurück</button>
+      <button class="btn btn-primary" onclick="checkSimple()">Überprüfen ✓</button>
+      <button class="btn btn-primary" onclick="go(4)" id="btnToText" style="display:none">Weiter: Textaufgaben →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ TEIL 5: Textaufgaben ═══════ -->
+  <div class="section" id="section4">
+    <div class="card">
+      <h2>Textaufgaben ⭐⭐</h2>
+      <p>Ordne die Werte zu – das leere Feld ist gesucht. Nutze die Signalwörter!</p>
+    </div>
+    <div id="textBox"></div>
+    <div id="textFB" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="go(3)">← Zurück</button>
+      <button class="btn btn-primary" onclick="checkText()">Überprüfen ✓</button>
+      <button class="btn btn-primary" onclick="go(5)" id="btnToResult" style="display:none">Zum Ergebnis →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ TEIL 6: Ergebnis ═══════ -->
+  <div class="section" id="section5">
+    <div class="card">
+      <div class="score-display">
+        <div class="score-stars" id="scoreStars"></div>
+        <div class="score-num" id="scoreNum">0 %</div>
+        <div class="score-label">richtig beantwortet</div>
+      </div>
+      <div id="resultMsg" style="text-align:center;margin-top:0.8rem;font-size:0.93rem;color:var(--text-soft);line-height:1.7;"></div>
+      <div class="btn-row" style="justify-content:center;margin-top:1.2rem;">
+        <button class="btn btn-secondary" onclick="resetAll()">🔄 Nochmal üben</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Zusammenfassung</h3>
+      <div class="def-box grundwert" style="margin-top:0.6rem;">
+        <div class="label"><span class="sym">G</span> Grundwert = das Ganze (100 %)</div>
+        <div class="desc"><span class="signal-tag g-tag">insgesamt</span><span class="signal-tag g-tag">alle</span><span class="signal-tag g-tag">ursprünglich</span><span class="signal-tag g-tag">gesamt</span></div>
+      </div>
+      <div class="def-box prozentwert">
+        <div class="label"><span class="sym">W</span> Prozentwert = der Teil</div>
+        <div class="desc"><span class="signal-tag w-tag">davon</span><span class="signal-tag w-tag">das sind</span><span class="signal-tag w-tag">das entspricht</span></div>
+      </div>
+      <div class="def-box prozentsatz">
+        <div class="label"><span class="sym">p</span> Prozentsatz = mit %-Zeichen</div>
+        <div class="desc"><span class="signal-tag p-tag">%</span><span class="signal-tag p-tag">Prozent</span><span class="signal-tag p-tag">Quote</span></div>
+      </div>
+      <div class="def-box gesucht">
+        <div class="label"><span class="sym">?</span> Gesucht = die Frage verrät es</div>
+        <div class="desc"><span class="signal-tag q-tag">Wie viele?</span> → W &nbsp;<span class="signal-tag q-tag">Wie viel %?</span> → p &nbsp;<span class="signal-tag q-tag">Wie viel insgesamt?</span> → G</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════
+// CORE STATE
+// ══════════════════════════
+const SECTIONS = ['Begriffe','Signalwörter','Blitzlesen','Zuordnen','Textaufgaben','Ergebnis'];
+let cur = 0, scanScore = 0, flashScore = 0, simpleScore = 0, textScore = 0;
+let totalScan = 0, totalFlash = 0, totalSimple = 0, totalText = 0;
+let selectedChip = null, activeTool = null;
+
+// Nav
+(function buildNav(){
+  const nav = document.getElementById('navBar');
+  SECTIONS.forEach((s,i) => {
+    const b = document.createElement('button');
+    b.className = 'nav-btn' + (i===0?' active':'');
+    b.onclick = () => go(i);
+    b.innerHTML = `<span class="sn">${i+1}</span>${s}`;
+    nav.appendChild(b);
+  });
+})();
+
+function go(i){
+  cur=i;
+  document.querySelectorAll('.section').forEach((s,j)=>s.classList.toggle('active',j===i));
+  document.querySelectorAll('.nav-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.getElementById('progressFill').style.width = (i/(SECTIONS.length-1)*100)+'%';
+  document.getElementById('progressText').textContent = `Teil ${i+1} von ${SECTIONS.length}`;
+  if(i===5) showResults();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════
+// SCANNER DATA
+// ══════════════════════════
+const scanData = [
+  { s:'Von den insgesamt 450 Schülern einer Schule sind 54 % im Sportverein . Das sind 243 Schüler .', c:{2:'g',3:'g',8:'p',9:'p',13:'w',14:'w',15:'w'},
+    e:'„insgesamt 450" → G | „54 %" → p | „Das sind 243" → W' },
+  { s:'Ein Paar Sandalen kostet im Sonderangebot 19,50 € . Das sind 65 % des ursprünglichen Preises . Wie hoch war der ursprüngliche Preis ?', c:{6:'w',7:'w',9:'w',10:'w',11:'p',12:'p',14:'g',17:'q',18:'q',22:'g'},
+    e:'„19,50 € / Das sind" → W | „65 %" → p | „ursprünglich" → G-Signal | „Wie hoch war?" → G gesucht' },
+  { s:'Von 120 kg Äpfeln hat Herr Siebert 114 kg verkauft . Wie viel Prozent der Gesamtmenge hat er verkauft ?', c:{1:'g',2:'g',6:'w',7:'w',10:'q',11:'q',12:'q',14:'g'},
+    e:'„120 kg" → G | „114 kg" → W | „Gesamtmenge" → G-Signal | „Wie viel Prozent?" → p gesucht' }
+];
+
+function buildScanner(){
+  const box = document.getElementById('scannerBox'); box.innerHTML=''; totalScan=scanData.length;
+  scanData.forEach((item,si) => {
+    const d = document.createElement('div'); d.className='scanner-sentence'; d.id=`sc${si}`;
+    const words = item.s.split(' ');
+    d.innerHTML = `<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-soft);margin-bottom:0.4rem;">Satz ${si+1}</div>`
+      + words.map((w,wi)=>`<span class="scanner-word" data-s="${si}" data-w="${wi}" onclick="markW(this)">${w}</span> `).join('');
+    box.appendChild(d);
+  });
+}
+function setTool(t,btn){ activeTool=t; document.querySelectorAll('.scanner-tool').forEach(b=>b.classList.remove('on')); if(t!=='x') btn.classList.add('on'); }
+function markW(el){
+  if(!activeTool) return;
+  el.classList.remove('sel-g','sel-w','sel-p','sel-q');
+  if(activeTool==='x'){ delete el.dataset.m; return; }
+  el.classList.add(`sel-${activeTool}`); el.dataset.m=activeTool;
+}
+function checkScanner(){
+  scanScore=0;
+  scanData.forEach((item,si)=>{
+    const se=document.getElementById(`sc${si}`), words=se.querySelectorAll('.scanner-word');
+    let ok=0,tot=Object.keys(item.c).length,bad=0;
+    words.forEach(w=>{ const wi=+w.dataset.w, m=w.dataset.m, exp=item.c[wi]; if(exp&&m===exp)ok++; else if(m&&!exp)bad++; });
+    if(ok/tot>=0.5&&bad<=3){ scanScore++; se.classList.add('correct'); se.classList.remove('wrong'); }
+    else{
+      se.classList.add('wrong'); se.classList.remove('correct');
+      if(!se.querySelector('.feedback')){ const f=document.createElement('div'); f.className='feedback show hint'; f.style.marginTop='0.6rem'; f.innerHTML=`💡 ${item.e}`; se.appendChild(f); }
+      words.forEach(w=>{ const wi=+w.dataset.w,exp=item.c[wi]; if(exp&&!w.dataset.m) w.style.outline=`2px dashed ${exp==='g'?'var(--grundwert)':exp==='w'?'var(--prozentwert)':exp==='p'?'var(--prozentsatz)':'var(--gesucht)'}`,w.style.outlineOffset='2px'; });
+    }
+  });
+  const fb=document.getElementById('scannerFB');
+  fb.className=`feedback show ${scanScore===totalScan?'success':'hint'}`;
+  fb.innerHTML=scanScore===totalScan?`🎉 Alle ${totalScan} Sätze richtig!`:`<strong>${scanScore}/${totalScan}</strong> richtig. Schau dir die Lösungen an.`;
+  document.getElementById('btnToFlash').style.display='';
+}
+
+// ══════════════════════════
+// BLITZLESEN
+// ══════════════════════════
+const flashWords = [
+  // Grundwert signals
+  {word:'insgesamt', cat:'G'}, {word:'Gesamtmenge', cat:'G'}, {word:'alle', cat:'G'},
+  {word:'ursprünglich', cat:'G'}, {word:'gesamt', cat:'G'}, {word:'vor dem Rabatt', cat:'G'},
+  {word:'regulärer Preis', cat:'G'}, {word:'Gesamtzahl', cat:'G'},
+  // Prozentwert signals
+  {word:'davon', cat:'W'}, {word:'das sind', cat:'W'}, {word:'das entspricht', cat:'W'},
+  {word:'das waren', cat:'W'}, {word:'ein Teil von', cat:'W'},
+  // Prozentsatz signals
+  {word:'25 %', cat:'p'}, {word:'Prozent', cat:'p'}, {word:'Quote', cat:'p'},
+  {word:'10 %', cat:'p'}, {word:'60 %', cat:'p'}, {word:'prozentig', cat:'p'},
+  {word:'Anteil in %', cat:'p'},
+];
+
+let flashQueue=[], flashIdx=0, flashTimer=null, flashSpeed=1500, flashStreak=0, flashActive=false;
+let flashResults=[];
+
+function updateFlashSpeed(){ flashSpeed = +document.getElementById('flashSpeed').value; }
+
+function shuffleArray(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function startFlash(){
+  flashQueue = shuffleArray([...flashWords]).slice(0, 15);
+  totalFlash = flashQueue.length; flashIdx=0; flashScore=0; flashStreak=0; flashActive=true;
+  flashResults = [];
+
+  // Build dots
+  const dots = document.getElementById('flashDots'); dots.innerHTML='';
+  for(let i=0;i<totalFlash;i++){ const d=document.createElement('div'); d.className='flash-result-dot'; d.id=`fd${i}`; dots.appendChild(d); }
+
+  document.getElementById('flashReady').style.display='none';
+  document.getElementById('flashStartBtn').style.display='none';
+  document.getElementById('flashRetryBtn').style.display='none';
+  document.getElementById('flashFB').className='feedback';
+  document.getElementById('flashStreak').textContent='';
+  document.getElementById('btnToAssign').style.display='none';
+
+  showFlashWord();
+}
+
+function showFlashWord(){
+  if(flashIdx>=totalFlash){ endFlash(); return; }
+  const fw = document.getElementById('flashWord');
+  const counter = document.getElementById('flashCounter');
+  counter.textContent = `${flashIdx+1} / ${totalFlash}`;
+  fw.textContent = flashQueue[flashIdx].word;
+  fw.classList.add('visible');
+
+  // Auto-advance timer
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(()=>{
+    if(flashActive && flashIdx < totalFlash){
+      // Time's up = wrong
+      recordFlash(false);
+    }
+  }, flashSpeed + 1500); // show time + extra reaction time
+}
+
+function flashAnswer(cat){
+  if(!flashActive || flashIdx>=totalFlash) return;
+  clearTimeout(flashTimer);
+  const correct = flashQueue[flashIdx].cat === cat;
+  recordFlash(correct);
+
+  // Visual feedback on buttons
+  document.querySelectorAll('.flash-btn').forEach(b=>{
+    b.classList.remove('flash-correct','flash-wrong');
+    if(cat==='G' && b.classList.contains('fb-g')) b.classList.add(correct?'flash-correct':'flash-wrong');
+    if(cat==='p' && b.classList.contains('fb-p')) b.classList.add(correct?'flash-correct':'flash-wrong');
+    if(cat==='W' && b.classList.contains('fb-w')) b.classList.add(correct?'flash-correct':'flash-wrong');
+  });
+}
+
+function recordFlash(correct){
+  const dot = document.getElementById(`fd${flashIdx}`);
+  if(correct){ flashScore++; flashStreak++; dot.classList.add('dot-ok'); }
+  else{ flashStreak=0; dot.classList.add('dot-fail'); }
+  flashResults.push(correct);
+
+  document.getElementById('flashStreak').textContent = flashStreak>=3 ? `🔥 ${flashStreak}x` : '';
+
+  // Hide word briefly
+  document.getElementById('flashWord').classList.remove('visible');
+  flashIdx++;
+
+  setTimeout(()=>{
+    if(flashIdx<totalFlash) showFlashWord();
+    else endFlash();
+  }, 400);
+}
+
+function endFlash(){
+  flashActive=false;
+  clearTimeout(flashTimer);
+  document.getElementById('flashWord').classList.remove('visible');
+
+  const pct = Math.round(flashScore/totalFlash*100);
+  const fb = document.getElementById('flashFB');
+  if(pct>=80){
+    fb.className='feedback show success';
+    fb.innerHTML=`🎉 <strong>${flashScore}/${totalFlash}</strong> richtig (${pct} %)! Du erkennst die Signalwörter blitzschnell!`;
+  } else if(pct>=50){
+    fb.className='feedback show hint';
+    fb.innerHTML=`<strong>${flashScore}/${totalFlash}</strong> richtig (${pct} %). Übe nochmal, um schneller zu werden!`;
+  } else {
+    fb.className='feedback show error';
+    fb.innerHTML=`<strong>${flashScore}/${totalFlash}</strong> richtig (${pct} %). Schau dir die Signalwort-Tabelle in Teil 2 nochmal an.`;
+  }
+  document.getElementById('flashRetryBtn').style.display='';
+  document.getElementById('btnToAssign').style.display='';
+}
+
+// ══════════════════════════
+// SIMPLE QUIZ
+// ══════════════════════════
+const simpleData = [
+  { t:'<span class="hl-p">30 %</span> von <span class="hl-g">200 €</span> sind <span class="hl-w">60 €</span>.', v:['30 %','200 €','60 €'], c:{'30 %':'p','200 €':'G','60 €':'W'} },
+  { t:'<span class="hl-w">15 Schüler</span> von <span class="hl-g">50 Schülern</span> sind <span class="hl-p">30 %</span>.', v:['15 Schüler','50 Schüler','30 %'], c:{'15 Schüler':'W','50 Schüler':'G','30 %':'p'} },
+  { t:'Von <span class="hl-g">800 m</span> sind <span class="hl-w">200 m</span> geschafft = <span class="hl-p">25 %</span>.', v:['800 m','200 m','25 %'], c:{'800 m':'G','200 m':'W','25 %':'p'} },
+  { t:'<span class="hl-p">40 %</span> von <span class="hl-g">120 kg</span> sind <span class="hl-w">48 kg</span>.', v:['40 %','120 kg','48 kg'], c:{'40 %':'p','120 kg':'G','48 kg':'W'} },
+  { t:'Von <span class="hl-g">500 Plätzen</span> sind <span class="hl-w">350</span> belegt = <span class="hl-p">70 %</span>.', v:['500 Plätze','350 Plätze','70 %'], c:{'500 Plätze':'G','350 Plätze':'W','70 %':'p'} },
+];
+
+function buildSimple(){
+  const box=document.getElementById('simpleBox'); box.innerHTML=''; totalSimple=simpleData.length;
+  simpleData.forEach((q,i)=>{
+    const d=document.createElement('div'); d.className='quiz-task'; d.id=`sq${i}`;
+    d.innerHTML=`<div class="task-num">Aufgabe ${i+1}/${totalSimple}</div><div class="task-text">${q.t}</div>
+      <div class="value-chips">${q.v.map(v=>`<span class="chip" data-q="s${i}" data-v="${v}" onclick="selChip(this)">${v}</span>`).join('')}</div>
+      <div class="drop-zones">${['G','W','p'].map(t=>{const c=t==='G'?'grundwert':t==='W'?'prozentwert':'prozentsatz',l=t==='G'?'Grundwert (G)':t==='W'?'Prozentwert (W)':'Prozentsatz (p)';return`<div class="drop-zone ${c}" data-q="s${i}" data-t="${t}" onclick="assignZone(this,'s')"><div class="dz-label">${l}</div><div class="dz-value" id="sq${i}-${t}"></div></div>`;}).join('')}</div>`;
+    box.appendChild(d);
+  });
+}
+
+function selChip(el){
+  const q=el.dataset.q;
+  document.querySelectorAll(`.chip[data-q="${q}"].selected`).forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); selectedChip=el;
+}
+
+function assignZone(zone,prefix){
+  if(!selectedChip) return;
+  const q=zone.dataset.q, t=zone.dataset.t;
+  if(selectedChip.dataset.q!==q) return;
+  const qn=q.replace(prefix==='s'?'s':'t','');
+  const pre=prefix==='s'?'sq':'tq';
+  const valEl=document.getElementById(`${pre}${qn}-${t}`);
+  const old=valEl.textContent;
+  if(old){ document.querySelectorAll(`.chip[data-q="${q}"][data-v="${old}"]`).forEach(c=>c.classList.remove('used')); zone.classList.remove('filled'); }
+  ['G','W','p'].forEach(x=>{ const e=document.getElementById(`${pre}${qn}-${x}`); if(e&&e.textContent===selectedChip.dataset.v){ e.textContent=''; e.closest('.drop-zone').classList.remove('filled'); }});
+  valEl.textContent=selectedChip.dataset.v; zone.classList.add('filled');
+  selectedChip.classList.add('used'); selectedChip.classList.remove('selected'); selectedChip=null;
+}
+
+function checkSimple(){
+  simpleScore=0;
+  simpleData.forEach((q,i)=>{
+    const task=document.getElementById(`sq${i}`); let ok=true;
+    for(const[v,t]of Object.entries(q.c)) if(document.getElementById(`sq${i}-${t}`).textContent!==v) ok=false;
+    if(ok){simpleScore++;task.classList.add('correct');task.classList.remove('wrong');}else{task.classList.add('wrong');task.classList.remove('correct');}
+  });
+  const fb=document.getElementById('simpleFB');
+  fb.className=`feedback show ${simpleScore===totalSimple?'success':'hint'}`;
+  fb.innerHTML=simpleScore===totalSimple?`🎉 Alle ${totalSimple} richtig!`:`<strong>${simpleScore}/${totalSimple}</strong> richtig. Tipp: %-Zeichen → p, das Ganze → G.`;
+  document.getElementById('btnToText').style.display='';
+}
+
+// ══════════════════════════
+// TEXT QUIZ
+// ══════════════════════════
+const textData = [
+  { t:'Von den <strong>450 Schülern</strong> einer Schule sind <strong>54 %</strong> im Sportverein. Wie viele Schüler sind das?', v:['450 Schüler','54 %'], z:['G','p','W'], c:{'450 Schüler':'G','54 %':'p'}, g:'W', e:'G=450 (insgesamt), p=54 %, gesucht: W' },
+  { t:'Sandalen kosten im Angebot <strong>19,50 €</strong>. Das sind <strong>65 %</strong> des ursprünglichen Preises. Wie hoch war der Originalpreis?', v:['19,50 €','65 %'], z:['G','p','W'], c:{'19,50 €':'W','65 %':'p'}, g:'G', e:'W=19,50 € (das sind), p=65 %, gesucht: G (ursprünglich)' },
+  { t:'Von <strong>120 kg Äpfeln</strong> wurden <strong>114 kg</strong> verkauft. Wie viel Prozent der Gesamtmenge?', v:['120 kg','114 kg'], z:['G','p','W'], c:{'120 kg':'G','114 kg':'W'}, g:'p', e:'G=120 kg (Gesamtmenge), W=114 kg, gesucht: p' },
+  { t:'Eine Lieferung: <strong>2000 Umschläge</strong>. Davon <strong>60 %</strong> weiß. Wie viele weiße?', v:['2000 Stück','60 %'], z:['G','p','W'], c:{'2000 Stück':'G','60 %':'p'}, g:'W', e:'G=2000 (alle), p=60 %, gesucht: W' },
+  { t:'<strong>15 % Rabatt</strong> auf einen Schrank, das sind <strong>135 €</strong>. Wie teuer war der Schrank?', v:['15 %','135 €'], z:['G','p','W'], c:{'15 %':'p','135 €':'W'}, g:'G', e:'p=15 %, W=135 € (das sind), gesucht: G (vor Rabatt)' },
+  { t:'In einer Klasse mit <strong>25 Schülern</strong> haben <strong>21</strong> die Hausaufgaben gemacht. Wie viel Prozent?', v:['25 Schüler','21 Schüler'], z:['G','p','W'], c:{'25 Schüler':'G','21 Schüler':'W'}, g:'p', e:'G=25 (ganze Klasse), W=21 (davon), gesucht: p' },
+];
+
+function buildText(){
+  const box=document.getElementById('textBox'); box.innerHTML=''; totalText=textData.length;
+  textData.forEach((q,i)=>{
+    const d=document.createElement('div'); d.className='quiz-task'; d.id=`tq${i}`;
+    d.innerHTML=`<div class="task-num">Aufgabe ${i+1}/${totalText}</div><div class="task-text">${q.t}</div>
+      <div style="margin-bottom:0.5rem;font-size:0.82rem;color:var(--text-soft);font-weight:500;">Leeres Feld = <strong>gesucht</strong></div>
+      <div class="value-chips">${q.v.map(v=>`<span class="chip" data-q="t${i}" data-v="${v}" onclick="selChip(this)">${v}</span>`).join('')}</div>
+      <div class="drop-zones">${q.z.map(t=>{const c=t==='G'?'grundwert':t==='W'?'prozentwert':'prozentsatz',l=t==='G'?'Grundwert (G)':t==='W'?'Prozentwert (W)':'Prozentsatz (p)';return`<div class="drop-zone ${c}" data-q="t${i}" data-t="${t}" onclick="assignZone(this,'t')"><div class="dz-label">${l}</div><div class="dz-value" id="tq${i}-${t}"></div></div>`;}).join('')}</div>`;
+    box.appendChild(d);
+  });
+}
+
+function checkText(){
+  textScore=0;
+  textData.forEach((q,i)=>{
+    const task=document.getElementById(`tq${i}`); let ok=true;
+    for(const[v,t]of Object.entries(q.c)) if(document.getElementById(`tq${i}-${t}`).textContent!==v) ok=false;
+    if(document.getElementById(`tq${i}-${q.g}`).textContent!=='') ok=false;
+    if(ok){textScore++;task.classList.add('correct');task.classList.remove('wrong');}
+    else{task.classList.add('wrong');task.classList.remove('correct');
+      if(!task.querySelector('.feedback')){const f=document.createElement('div');f.className='feedback show hint';f.innerHTML=`💡 ${q.e}`;task.appendChild(f);}
+    }
+  });
+  const fb=document.getElementById('textFB');
+  fb.className=`feedback show ${textScore===totalText?'success':'hint'}`;
+  fb.innerHTML=textScore===totalText?`🎉 Alle ${totalText} richtig!`:`<strong>${textScore}/${totalText}</strong> richtig.`;
+  document.getElementById('btnToResult').style.display='';
+}
+
+// ══════════════════════════
+// RESULTS
+// ══════════════════════════
+function showResults(){
+  const total=totalScan+totalFlash+totalSimple+totalText;
+  const score=scanScore+flashScore+simpleScore+textScore;
+  const pct=total>0?Math.round(score/total*100):0;
+  document.getElementById('scoreNum').textContent=pct+' %';
+  document.getElementById('scoreStars').textContent=pct>=90?'⭐⭐⭐':pct>=60?'⭐⭐':pct>=30?'⭐':'—';
+  let msg=pct>=90?'Super! Du erkennst Signalwörter und Fachbegriffe sicher.':pct>=60?'Gut! Übe das Blitzlesen und die Textaufgaben nochmal.':'Lies dir Teil 1–2 nochmal durch und übe erneut.';
+  document.getElementById('resultMsg').innerHTML=`<p>${msg}</p><p style="margin-top:0.6rem;">
+    <strong>Scanner:</strong> ${scanScore}/${totalScan} · <strong>Blitzlesen:</strong> ${flashScore}/${totalFlash} · <strong>Zuordnung:</strong> ${simpleScore}/${totalSimple} · <strong>Textaufgaben:</strong> ${textScore}/${totalText}</p>`;
+}
+
+function resetAll(){
+  scanScore=flashScore=simpleScore=textScore=0; selectedChip=null; activeTool=null;
+  buildScanner(); buildSimple(); buildText();
+  ['scannerFB','flashFB','simpleFB','textFB'].forEach(id=>document.getElementById(id).className='feedback');
+  ['btnToFlash','btnToAssign','btnToText','btnToResult'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('flashStartBtn').style.display='';
+  document.getElementById('flashRetryBtn').style.display='none';
+  document.getElementById('flashReady').style.display='';
+  document.getElementById('flashWord').classList.remove('visible');
+  document.getElementById('flashDots').innerHTML='';
+  document.getElementById('flashStreak').textContent='';
+  document.getElementById('flashCounter').textContent='';
+  document.querySelectorAll('.scanner-tool').forEach(t=>t.classList.remove('on'));
+  go(0);
+}
+
+// INIT
+buildScanner(); buildSimple(); buildText();
+document.getElementById('progressFill').style.width='0%';
+document.getElementById('progressText').textContent=`Teil 1 von ${SECTIONS.length}`;
+</script>
+</body>
+</html>

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flächen &amp; Rauminhalt – Klasse 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#059669;--primary-light:#d1fae5;--primary-dark:#065f46;--accent:#f59e0b;--accent-light:#fef3c7;--bg:#f0fdf4;--card:#ffffff;--text:#1a2e1a;--muted:#6b7280;--border:#a7f3d0;--ok:#059669;--fail:#dc2626;--radius:14px;--shadow:0 4px 16px rgba(5,150,105,0.12);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.app-header{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 100%);color:white;padding:18px 20px 14px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+.app-header h1{font-family:'Fredoka One',cursive;font-size:1.7rem;letter-spacing:1px;margin-bottom:2px;}
+.app-header p{font-size:0.82rem;opacity:0.85;}
+.score-bar{background:var(--primary-dark);padding:6px 20px;display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap;font-size:0.82rem;color:#a7f3d0;}
+.score-num{font-family:'Fredoka One';font-size:1.1rem;color:white;}
+.xp-bar-outer{width:140px;height:8px;background:rgba(255,255,255,0.2);border-radius:10px;overflow:hidden;}
+.xp-bar-inner{height:100%;background:var(--accent);border-radius:10px;transition:width 0.4s;}
+.tab-scroll{overflow-x:auto;background:white;border-bottom:2px solid var(--border);-webkit-overflow-scrolling:touch;}
+.tabs{display:flex;min-width:max-content;padding:0 10px;}
+.tab-btn{padding:12px 16px;border:none;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-btn:hover:not(.active){color:var(--primary);background:var(--primary-light);}
+.tab-content{display:none;padding:20px;max-width:820px;margin:0 auto;}
+.tab-content.active{display:block;}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow);border:1.5px solid var(--border);}
+.card-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--primary-dark);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.level-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:800;margin-left:8px;}
+.badge-easy{background:#d1fae5;color:#065f46;}.badge-mid{background:#fef3c7;color:#92400e;}.badge-hard{background:#fee2e2;color:#991b1b;}
+.regel-card{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-left:4px solid var(--primary);border-radius:10px;padding:14px 16px;margin-bottom:12px;}
+.regel-card .formel{font-size:1.05rem;font-weight:800;color:var(--primary-dark);margin:6px 0;}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.quiz-option{padding:11px 14px;border:2px solid var(--border);border-radius:10px;background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.9rem;transition:all .18s;text-align:left;}
+.quiz-option:hover{border-color:var(--primary);background:var(--primary-light);}
+.quiz-option.correct{background:#d1fae5;border-color:var(--ok);color:#065f46;}
+.quiz-option.wrong{background:#fee2e2;border-color:var(--fail);color:#991b1b;}
+.quiz-option:disabled{cursor:default;}
+.quiz-feedback{margin-top:10px;padding:10px 14px;border-radius:10px;font-weight:700;display:none;font-size:0.9rem;}
+.quiz-feedback.show{display:block;}.quiz-feedback.ok{background:#d1fae5;color:#065f46;}.quiz-feedback.fail{background:#fee2e2;color:#991b1b;}
+.gap-input{border:2px solid var(--border);border-radius:8px;padding:4px 8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.95rem;transition:border .2s;outline:none;}
+.gap-input:focus{border-color:var(--primary);}.gap-input.correct{border-color:var(--ok);background:#d1fae5;}.gap-input.wrong{border-color:var(--fail);background:#fee2e2;}
+.btn{padding:10px 20px;background:var(--primary);color:white;border:none;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;transition:all .18s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
+.btn-accent{background:var(--accent);color:#1a1a1a;}.btn-accent:hover{background:#d97706;}
+.btn-sm{padding:7px 14px;font-size:0.82rem;}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary);}.btn-outline:hover{background:var(--primary-light);}
+.exercise-box{background:#f8fffe;border:2px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
+.exercise-num{font-family:'Fredoka One';color:var(--primary);font-size:1rem;}
+.exercise-question{font-size:0.95rem;margin:6px 0 12px;font-weight:600;line-height:1.5;}
+.blitz-display{background:var(--primary-dark);color:white;border-radius:16px;padding:28px 20px;text-align:center;min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.blitz-word{font-family:'Fredoka One',cursive;font-size:2rem;letter-spacing:1px;margin-bottom:6px;}
+.blitz-sub{font-size:0.88rem;opacity:0.75;}
+.speed-btns{display:flex;gap:8px;justify-content:center;margin:10px 0;}
+.unit-table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+.unit-table th{background:var(--primary);color:white;padding:8px 10px;text-align:left;}
+.unit-table td{padding:8px 10px;border-bottom:1px solid var(--border);}
+.unit-table tr:nth-child(even) td{background:#f0fdf4;}
+.unit-table .highlight{font-weight:800;color:var(--primary-dark);}
+.diff-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.diff-tab{padding:6px 14px;border-radius:20px;border:2px solid var(--border);background:white;cursor:pointer;font-weight:700;font-size:0.82rem;transition:all .18s;}
+.diff-tab.active-easy{background:#d1fae5;border-color:var(--primary);color:#065f46;}
+.diff-tab.active-mid{background:#fef3c7;border-color:var(--accent);color:#92400e;}
+.diff-tab.active-hard{background:#fee2e2;border-color:#dc2626;color:#991b1b;}
+.progress-outer{background:#e5e7eb;border-radius:10px;height:10px;margin:8px 0 4px;}
+.progress-inner{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--primary),#34d399);transition:width .4s;}
+.step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.step-num{min-width:28px;height:28px;background:var(--primary);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;flex-shrink:0;}
+.info-box{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:12px 14px;margin:10px 0;font-size:0.88rem;}
+.info-box strong{color:#92400e;}
+@media(max-width:500px){.quiz-options{grid-template-columns:1fr;}.app-header h1{font-size:1.3rem;}.tab-btn{padding:10px 12px;font-size:0.8rem;}}
+</style>
+</head>
+<body>
+<div class="app-header">
+  <h1>📐 Flächen &amp; Rauminhalt</h1>
+  <p>Klasse 6 · Mathe</p>
+</div>
+<div class="score-bar">
+  <span>⭐ <span class="score-num" id="xpDisplay">0</span> XP</span>
+  <span>✅ <span class="score-num" id="streakDisplay">0</span> Richtig</span>
+  <div class="xp-bar-outer"><div class="xp-bar-inner" id="xpBar" style="width:0%"></div></div>
+</div>
+<div class="tab-scroll">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('erklaerung',this)">📖 Erklärung</button>
+    <button class="tab-btn" onclick="showTab('flaechen',this)">📐 Flächen</button>
+    <button class="tab-btn" onclick="showTab('zusammen',this)">🧩 Zusammengesetzt</button>
+    <button class="tab-btn" onclick="showTab('netze',this)">🎁 Netze</button>
+    <button class="tab-btn" onclick="showTab('oberflaeche',this)">📦 Oberfläche</button>
+    <button class="tab-btn" onclick="showTab('volumen',this)">🧊 Volumen</button>
+    <button class="tab-btn" onclick="showTab('einheiten',this)">📏 Einheiten</button>
+    <button class="tab-btn" onclick="showTab('blitz',this)">⚡ Blitzlesen</button>
+    <button class="tab-btn" onclick="showTab('quiz',this)">🏆 Quiz</button>
+    <button class="tab-btn" onclick="showTab('profi',this)">🌟 Profi</button>
+  </div>
+</div>
+
+<!-- ERKLAERUNG -->
+<div id="tab-erklaerung" class="tab-content active">
+  <div class="card">
+    <div class="card-title">📐 Rechteck und Quadrat</div>
+    <div class="regel-card">
+      <p><strong>Rechteck</strong> – zwei lange, zwei kurze Seiten</p>
+      <p class="formel">A = a · b &nbsp;&nbsp; U = 2 · (a + b)</p>
+      <p style="font-size:0.83rem;color:var(--muted)">A = Fläche, U = Umfang, a = Länge, b = Breite</p>
+    </div>
+    <div class="regel-card">
+      <p><strong>Quadrat</strong> – vier gleich lange Seiten</p>
+      <p class="formel">A = a · a = a² &nbsp;&nbsp; U = 4 · a</p>
+    </div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin:12px 0;">
+      <svg width="180" height="110" viewBox="0 0 180 110"><rect x="10" y="10" width="160" height="90" fill="#d1fae5" stroke="#059669" stroke-width="2.5" rx="3"/><text x="90" y="62" text-anchor="middle" font-size="14" fill="#065f46" font-weight="800" font-family="Nunito">A = a · b</text><text x="90" y="106" text-anchor="middle" font-size="12" fill="#059669" font-family="Nunito">a (Länge)</text><text x="4" y="56" text-anchor="middle" font-size="12" fill="#059669" font-family="Nunito" transform="rotate(-90,4,56)">b</text></svg>
+      <svg width="100" height="100" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="#fef3c7" stroke="#f59e0b" stroke-width="2.5" rx="3"/><text x="50" y="56" text-anchor="middle" font-size="13" fill="#92400e" font-weight="800" font-family="Nunito">A = a²</text><text x="50" y="96" text-anchor="middle" font-size="12" fill="#f59e0b" font-family="Nunito">a</text></svg>
+    </div>
+    <div class="info-box">💡 <strong>Beispiel:</strong> Rechteck a = 5 cm, b = 3 cm<br>A = 5 · 3 = <strong>15 cm²</strong> &nbsp;|&nbsp; U = 2 · (5+3) = <strong>16 cm</strong></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🧩 Zusammengesetzte Flächen</div>
+    <p style="font-size:0.9rem;margin-bottom:10px;">Manche Flächen sind aus mehreren Rechtecken zusammengesetzt. Wir <strong>zerlegen</strong> sie in Teile.</p>
+    <div class="step"><div class="step-num">1</div><div>Erkenne, welche Rechtecke in der Fläche stecken.</div></div>
+    <div class="step"><div class="step-num">2</div><div>Beschrifte alle Seiten (fehlende Seiten ausrechnen).</div></div>
+    <div class="step"><div class="step-num">3</div><div>Berechne jeden Teil einzeln: A₁, A₂, ...</div></div>
+    <div class="step"><div class="step-num">4</div><div>Addiere: A<sub>gesamt</sub> = A₁ + A₂ <em>oder</em> A<sub>groß</sub> − A<sub>Ecke</sub></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎁 Würfel- und Quadernetze</div>
+    <p style="font-size:0.9rem;margin-bottom:10px;">Das <strong>Netz</strong> eines Körpers ist seine aufgeklappte Oberfläche – alle Flächen liegen flach nebeneinander.</p>
+    <div style="text-align:center;margin:10px 0;">
+      <svg width="240" height="155" viewBox="0 0 240 155">
+        <rect x="65" y="5" width="44" height="44" fill="#d1fae5" stroke="#059669" stroke-width="2" rx="3"/>
+        <rect x="11" y="49" width="44" height="44" fill="#a7f3d0" stroke="#059669" stroke-width="2" rx="3"/>
+        <rect x="65" y="49" width="44" height="44" fill="#d1fae5" stroke="#059669" stroke-width="2" rx="3"/>
+        <rect x="119" y="49" width="44" height="44" fill="#a7f3d0" stroke="#059669" stroke-width="2" rx="3"/>
+        <rect x="173" y="49" width="44" height="44" fill="#d1fae5" stroke="#059669" stroke-width="2" rx="3"/>
+        <rect x="65" y="93" width="44" height="44" fill="#a7f3d0" stroke="#059669" stroke-width="2" rx="3"/>
+        <text x="120" y="150" text-anchor="middle" font-size="12" fill="#059669" font-weight="700" font-family="Nunito">Würfelnetz – 6 gleiche Quadrate</text>
+      </svg>
+    </div>
+    <div class="info-box">💡 Ein Würfel hat genau <strong>6 gleich große Quadrate</strong>. Nicht jede Anordnung von 6 Quadraten ist ein gültiges Würfelnetz!</div>
+  </div>
+  <div class="card">
+    <div class="card-title">📦 Oberfläche</div>
+    <div class="regel-card">
+      <p><strong>Würfel</strong> – Kantenlänge a:</p>
+      <p class="formel">O = 6 · a²</p>
+    </div>
+    <div class="regel-card">
+      <p><strong>Quader</strong> – Länge a, Breite b, Höhe c:</p>
+      <p class="formel">O = 2 · (a·b + a·c + b·c)</p>
+      <p style="font-size:0.83rem;color:var(--muted)">= 2 × (Boden + Seite + Front)</p>
+    </div>
+    <div class="info-box">💡 <strong>Würfel</strong> a = 4 cm: O = 6 · 16 = <strong>96 cm²</strong><br>
+    <strong>Quader</strong> 2×4×8 cm: O = 2·(8+16+32) = <strong>112 cm²</strong></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🧊 Volumen (Rauminhalt)</div>
+    <div class="regel-card">
+      <p><strong>Würfel</strong> – Kantenlänge a:</p>
+      <p class="formel">V = a · a · a = a³</p>
+    </div>
+    <div class="regel-card">
+      <p><strong>Quader</strong> – Länge a, Breite b, Höhe c:</p>
+      <p class="formel">V = a · b · c</p>
+    </div>
+    <div class="info-box">💡 <strong>Würfel</strong> a = 6 m: V = 6³ = <strong>216 m³</strong><br>
+    <strong>Quader</strong> 5×10×3 m: V = 5·10·3 = <strong>150 m³</strong></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📏 Wichtige Einheiten</div>
+    <p style="font-weight:700;color:var(--primary);margin-bottom:5px;">Fläche:</p>
+    <div class="info-box" style="font-size:0.88rem;">1 m² = 100 dm² &nbsp;|&nbsp; 1 dm² = 100 cm² &nbsp;|&nbsp; 1 cm² = 100 mm²<br>1 km² = 100 ha &nbsp;|&nbsp; 1 ha = 10 000 m²</div>
+    <p style="font-weight:700;color:var(--primary);margin:10px 0 5px;">Volumen:</p>
+    <div class="info-box" style="font-size:0.88rem;">1 m³ = 1 000 dm³ &nbsp;|&nbsp; 1 dm³ = 1 Liter &nbsp;|&nbsp; 1 cm³ = 1 Milliliter<br>1 hl = 100 L &nbsp;|&nbsp; 1 L = 1 000 mL</div>
+  </div>
+</div>
+
+<!-- FLÄCHEN -->
+<div id="tab-flaechen" class="tab-content">
+  <div class="card">
+    <div class="card-title">📐 Flächen & Umfang berechnen</div>
+    <div class="diff-tabs">
+      <button class="diff-tab active-easy" onclick="setFlDiff('easy',this)">⭐ Leicht</button>
+      <button class="diff-tab" onclick="setFlDiff('mid',this)">⭐⭐ Mittel</button>
+      <button class="diff-tab" onclick="setFlDiff('hard',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div id="flExercises"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkFlaechen()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newFlaechen()">🔄 Neue Aufgaben</button>
+    </div>
+    <div id="flaechenFb" class="quiz-feedback"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎨 Figur berechnen</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Schau dir die Figur an und berechne Fläche und Umfang.</p>
+    <div id="figureDisplay" style="display:flex;justify-content:center;margin:10px 0;"></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+      <div>A = <input class="gap-input" id="figA" placeholder="?" style="width:100px;"> cm²</div>
+      <div>U = <input class="gap-input" id="figU" placeholder="?" style="width:100px;"> cm</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkFigure()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newFigure()">🔄 Neue Figur</button>
+    </div>
+    <div id="figureFb" class="quiz-feedback"></div>
+  </div>
+</div>
+
+<!-- ZUSAMMENGESETZT -->
+<div id="tab-zusammen" class="tab-content">
+  <div class="card">
+    <div class="card-title">🧩 Zusammengesetzte Flächen</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Zerlege die Fläche in Rechtecke und addiere.</p>
+    <div class="diff-tabs">
+      <button class="diff-tab active-easy" onclick="setZDiff('easy',this)">⭐ Leicht</button>
+      <button class="diff-tab" onclick="setZDiff('mid',this)">⭐⭐ Mittel</button>
+      <button class="diff-tab" onclick="setZDiff('hard',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div id="zusFigureDisplay" style="display:flex;justify-content:center;margin:10px 0;"></div>
+    <div id="zusInfo" style="font-size:0.9rem;margin-bottom:10px;line-height:1.8;"></div>
+    <div id="zusInputArea"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkZus()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newZus()">🔄 Neue Figur</button>
+    </div>
+    <div id="zusFb" class="quiz-feedback"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">💬 Lückentext</div>
+    <div id="zusLueckenText"></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkZusLuecken()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newZusLuecken()">🔄 Neu</button>
+    </div>
+    <div id="zusLueckenFb" class="quiz-feedback"></div>
+  </div>
+</div>
+
+<!-- NETZE -->
+<div id="tab-netze" class="tab-content">
+  <div class="card">
+    <div class="card-title">🎁 Würfelnetz – Ja oder Nein?</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Ist diese Anordnung von 6 Quadraten ein gültiges Würfelnetz?</p>
+    <div id="netzDisplay" style="display:flex;justify-content:center;margin:14px 0;"></div>
+    <div style="display:flex;gap:12px;justify-content:center;margin:10px 0;">
+      <button class="btn" onclick="answerNetz(true)">✅ Ja, gültig</button>
+      <button class="btn btn-outline" onclick="answerNetz(false)">❌ Nein, ungültig</button>
+    </div>
+    <div id="netzFb" class="quiz-feedback"></div>
+    <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="newNetz()">🔄 Nächstes Netz</button>
+  </div>
+  <div class="card">
+    <div class="card-title">📦 Quader-Flächen zuordnen</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Berechne die drei Flächenpaare und die Gesamtoberfläche.</p>
+    <div id="quaderNetzQuiz"></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkQuaderNetz()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newQuaderNetz()">🔄 Neuer Quader</button>
+    </div>
+    <div id="quaderNetzFb" class="quiz-feedback"></div>
+  </div>
+</div>
+
+<!-- OBERFLÄCHE -->
+<div id="tab-oberflaeche" class="tab-content">
+  <div class="card">
+    <div class="card-title">📦 Oberfläche berechnen</div>
+    <div class="diff-tabs">
+      <button class="diff-tab active-easy" onclick="setODiff('easy',this)">⭐ Würfel</button>
+      <button class="diff-tab" onclick="setODiff('mid',this)">⭐⭐ Quader</button>
+      <button class="diff-tab" onclick="setODiff('hard',this)">⭐⭐⭐ Rückwärts</button>
+    </div>
+    <div id="obExercises"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkOberf()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newOberf()">🔄 Neue Aufgaben</button>
+    </div>
+    <div id="obFb" class="quiz-feedback"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">💬 Lückentext – Oberfläche</div>
+    <div id="obLuecken"></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkObLuecken()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newObLuecken()">🔄 Neu</button>
+    </div>
+    <div id="obLueckenFb" class="quiz-feedback"></div>
+  </div>
+</div>
+
+<!-- VOLUMEN -->
+<div id="tab-volumen" class="tab-content">
+  <div class="card">
+    <div class="card-title">🧊 Volumen berechnen</div>
+    <div class="diff-tabs">
+      <button class="diff-tab active-easy" onclick="setVDiff('easy',this)">⭐ Würfel</button>
+      <button class="diff-tab" onclick="setVDiff('mid',this)">⭐⭐ Quader</button>
+      <button class="diff-tab" onclick="setVDiff('hard',this)">⭐⭐⭐ Gemischt</button>
+    </div>
+    <div id="volExercises"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkVol()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newVol()">🔄 Neue Aufgaben</button>
+    </div>
+    <div id="volFb" class="quiz-feedback"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">💬 Lückentext – Volumen</div>
+    <div id="volLuecken"></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkVolLuecken()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newVolLuecken()">🔄 Neu</button>
+    </div>
+    <div id="volLueckenFb" class="quiz-feedback"></div>
+  </div>
+</div>
+
+<!-- EINHEITEN -->
+<div id="tab-einheiten" class="tab-content">
+  <div class="card">
+    <div class="card-title">📏 Flächeneinheiten</div>
+    <table class="unit-table">
+      <tr><th>Einheit</th><th>Symbol</th><th>Umrechnung</th></tr>
+      <tr><td>Quadratkilometer</td><td class="highlight">km²</td><td>1 km² = 1 000 000 m²</td></tr>
+      <tr><td>Hektar</td><td class="highlight">ha</td><td>1 ha = 10 000 m²</td></tr>
+      <tr><td>Ar</td><td class="highlight">ar</td><td>1 ar = 100 m²</td></tr>
+      <tr><td>Quadratmeter</td><td class="highlight">m²</td><td>1 m² = 100 dm²</td></tr>
+      <tr><td>Quadratdezimeter</td><td class="highlight">dm²</td><td>1 dm² = 100 cm²</td></tr>
+      <tr><td>Quadratzentimeter</td><td class="highlight">cm²</td><td>1 cm² = 100 mm²</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">🧊 Volumeneinheiten</div>
+    <table class="unit-table">
+      <tr><th>Einheit</th><th>Symbol</th><th>Umrechnung</th></tr>
+      <tr><td>Kubikmeter</td><td class="highlight">m³</td><td>1 m³ = 1 000 dm³</td></tr>
+      <tr><td>Kubikdezimeter = Liter</td><td class="highlight">dm³ = L</td><td>1 L = 1 000 mL</td></tr>
+      <tr><td>Kubikzentimeter = Milliliter</td><td class="highlight">cm³ = mL</td><td>1 cm³ = 1 mL</td></tr>
+      <tr><td>Hektoliter</td><td class="highlight">hl</td><td>1 hl = 100 L</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">🔄 Einheiten umrechnen</div>
+    <div id="unitExercises"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkUnits()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newUnits()">🔄 Neue Aufgaben</button>
+    </div>
+    <div id="unitFb" class="quiz-feedback"></div>
+  </div>
+</div>
+
+<!-- BLITZ -->
+<div id="tab-blitz" class="tab-content">
+  <div class="card">
+    <div class="card-title">⚡ Blitz-Formeln</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Welche Beschreibung passt zur Formel?</p>
+    <div class="speed-btns">
+      <button class="btn btn-sm" onclick="startBlitz(4000)">🐢 Langsam</button>
+      <button class="btn btn-sm btn-accent" onclick="startBlitz(2500)">🚶 Normal</button>
+      <button class="btn btn-sm" style="background:#dc2626;color:white;" onclick="startBlitz(1400)">🚀 Schnell</button>
+    </div>
+    <div class="blitz-display">
+      <div class="blitz-word" id="blitzWord">–</div>
+      <div class="blitz-sub" id="blitzSub">Drücke Start!</div>
+    </div>
+    <div class="quiz-options" id="blitzOptions" style="margin-top:12px;"></div>
+    <div id="blitzFb" class="quiz-feedback"></div>
+    <div style="text-align:center;margin-top:8px;font-size:0.85rem;">Punkte: <strong id="blitzScore">0</strong> / <span id="blitzTotal">0</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">⚡ Blitz-Begriffe</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Lies die Erklärung und klicke schnell auf den richtigen Begriff!</p>
+    <div class="speed-btns">
+      <button class="btn btn-sm" onclick="startTermBlitz(3500)">🐢 Langsam</button>
+      <button class="btn btn-sm btn-accent" onclick="startTermBlitz(2000)">🚶 Normal</button>
+      <button class="btn btn-sm" style="background:#dc2626;color:white;" onclick="startTermBlitz(1200)">🚀 Schnell</button>
+    </div>
+    <div class="blitz-display" style="background:#1e3a5f;">
+      <div style="font-size:0.84rem;color:#93c5fd;margin-bottom:6px;" id="termDef">–</div>
+      <div style="font-family:'Fredoka One';font-size:1.3rem;color:white;" id="termQuestion">Drücke Start!</div>
+    </div>
+    <div class="quiz-options" id="termOptions" style="margin-top:12px;"></div>
+    <div id="termFb" class="quiz-feedback"></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="tab-quiz" class="tab-content">
+  <div class="card">
+    <div class="card-title">🏆 Quiz – Alle Themen</div>
+    <div class="progress-outer"><div class="progress-inner" id="quizProgress" style="width:0%"></div></div>
+    <p id="quizProgressTxt" style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Frage 1 von 15</p>
+    <div id="quizQuestion" style="font-size:1rem;font-weight:700;margin-bottom:4px;"></div>
+    <div id="quizHint" style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;"></div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div id="quizFb" class="quiz-feedback"></div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" id="nextQBtn" onclick="nextQuiz()" style="display:none;">Weiter ▶</button>
+      <button class="btn btn-outline btn-sm" onclick="restartQuiz()">🔄 Neu starten</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFI -->
+<div id="tab-profi" class="tab-content">
+  <div class="card">
+    <div class="card-title">🌟 Gemischte Aufgaben <span class="level-badge badge-hard">Profi</span></div>
+    <div id="profiExercises"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkProfi()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newProfi()">🔄 Neue Aufgaben</button>
+    </div>
+    <div id="profiFb" class="quiz-feedback"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📖 Textaufgaben</div>
+    <div id="textaufgabe" style="font-size:0.95rem;line-height:1.6;margin-bottom:12px;"></div>
+    <div>Antwort: <input class="gap-input" id="textAns" placeholder="?" style="width:120px;"> <span id="textUnit"></span></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="checkText()">✅ Prüfen</button>
+      <button class="btn btn-outline" onclick="newText()">🔄 Neue Aufgabe</button>
+    </div>
+    <div id="textFb" class="quiz-feedback"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">⏱️ 60-Sekunden-Blitzrechnen</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Beantworte so viele Aufgaben wie möglich in 60 Sekunden!</p>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;flex-wrap:wrap;">
+      <div style="font-family:'Fredoka One';font-size:2.2rem;color:var(--primary);" id="sixty-timer">60</div>
+      <div>Richtig: <strong id="sixty-score">0</strong></div>
+    </div>
+    <div id="sixty-q" style="font-size:1.1rem;font-weight:700;min-height:28px;margin-bottom:8px;"></div>
+    <input class="gap-input" id="sixty-inp" placeholder="Antwort" style="width:130px;" onkeydown="if(event.key==='Enter')checkSixty()">
+    <div id="sixty-fb" style="font-size:0.88rem;min-height:22px;margin-top:6px;"></div>
+    <button class="btn btn-accent" style="margin-top:8px;" onclick="startSixty()">▶ Start</button>
+  </div>
+</div>
+
+<script>
+// UTILS
+let xp=0,streak=0;
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[rnd(0,arr.length-1)];}
+function addPoints(n){xp+=n*10;streak++;document.getElementById('xpDisplay').textContent=xp;document.getElementById('streakDisplay').textContent=streak;const bar=document.getElementById('xpBar');bar.style.width=Math.min((xp%200)/2,100)+'%';}
+function showTab(name,el){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');if(el)el.classList.add('active');}
+function clearFb(id){const e=document.getElementById(id);if(e)e.className='quiz-feedback';}
+function numOk(v,ans){return Math.abs(parseFloat(String(v).replace(',','.'))-ans)<0.01;}
+
+// ===== FLÄCHEN =====
+let flDiff='easy',curFl=[];
+function setFlDiff(d,el){flDiff=d;el.parentElement.querySelectorAll('.diff-tab').forEach(b=>b.className='diff-tab');el.className='diff-tab active-'+d;newFlaechen();}
+function genFlTask(){
+  const d=flDiff;
+  if(d==='easy'){
+    const s=pick(['rect','sq']);
+    if(s==='rect'){const a=rnd(2,9),b=rnd(2,9);return{q:`Rechteck: a = ${a} cm, b = ${b} cm`,fields:[{lbl:'A',id:'A',ans:a*b,unit:'cm²'},{lbl:'U',id:'U',ans:2*(a+b),unit:'cm'}]};}
+    const a=rnd(2,9);return{q:`Quadrat: a = ${a} cm`,fields:[{lbl:'A',id:'A',ans:a*a,unit:'cm²'},{lbl:'U',id:'U',ans:4*a,unit:'cm'}]};
+  }
+  if(d==='mid'){
+    const u=pick(['dm','m']);const a=rnd(3,15),b=rnd(2,10);
+    return{q:`Rechteck: a = ${a} ${u}, b = ${b} ${u}`,fields:[{lbl:'A',id:'A',ans:a*b,unit:u+'²'},{lbl:'U',id:'U',ans:2*(a+b),unit:u}]};
+  }
+  const a=rnd(4,15),b=rnd(3,12),A=a*b;
+  return{q:`Rechteck: A = ${A} cm², a = ${a} cm. Gesucht: b und U`,fields:[{lbl:'b',id:'b',ans:b,unit:'cm'},{lbl:'U',id:'U',ans:2*(a+b),unit:'cm'}]};
+}
+function newFlaechen(){
+  curFl=[];let h='';
+  for(let i=0;i<4;i++){const t=genFlTask();curFl.push(t);
+    h+=`<div class="exercise-box"><div class="exercise-num">Aufgabe ${i+1}</div><div class="exercise-question">${t.q}</div>`;
+    t.fields.forEach((f,j)=>{ h+=`<div style="margin:4px 0;">${f.lbl} = <input class="gap-input" id="fl_${i}_${j}" data-ans="${f.ans}" placeholder="?" style="width:90px;"> ${f.unit}</div>`; });
+    h+='</div>';}
+  document.getElementById('flExercises').innerHTML=h;clearFb('flaechenFb');
+}
+function checkFlaechen(){
+  let ok=0,tot=0;
+  curFl.forEach((t,i)=>{t.fields.forEach((f,j)=>{tot++;
+    const inp=document.getElementById(`fl_${i}_${j}`);if(!inp)return;
+    const c=numOk(inp.value,f.ans);inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});});
+  const fb=document.getElementById('flaechenFb');
+  if(ok===tot){fb.textContent=`✅ Alle ${tot} richtig!`;fb.className='quiz-feedback show ok';addPoints(2);}
+  else{fb.textContent=`❌ ${ok}/${tot} richtig.`;fb.className='quiz-feedback show fail';}
+}
+
+// Figure
+let curFig=null;
+function newFigure(){
+  const s=pick(['rect','sq']);let a,b,A,U;
+  const W=260,H=150;
+  if(s==='rect'){a=rnd(3,10);b=rnd(2,7);A=a*b;U=2*(a+b);}
+  else{a=rnd(2,9);b=a;A=a*a;U=4*a;}
+  curFig={A,U};
+  const sw=Math.round(Math.min(220,a*18)),sh=Math.round(Math.min(110,b*18));
+  const x0=Math.round((W-sw)/2),y0=Math.round((H-sh)/2);
+  const fill=s==='rect'?'#d1fae5':'#fef3c7',stroke=s==='rect'?'#059669':'#f59e0b';
+  let svg=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="font-family:Nunito;">
+  <rect x="${x0}" y="${y0}" width="${sw}" height="${sh}" fill="${fill}" stroke="${stroke}" stroke-width="2.5" rx="3"/>
+  <text x="${W/2}" y="${y0+sh+18}" text-anchor="middle" font-size="13" fill="${stroke}" font-weight="700">${a} cm</text>`;
+  if(s==='rect') svg+=`<text x="${x0-14}" y="${y0+sh/2}" text-anchor="middle" font-size="13" fill="${stroke}" font-weight="700" transform="rotate(-90,${x0-14},${y0+sh/2})">${b} cm</text>`;
+  svg+='</svg>';
+  document.getElementById('figureDisplay').innerHTML=svg;
+  document.getElementById('figA').value='';document.getElementById('figU').value='';
+  ['figA','figU'].forEach(id=>document.getElementById(id).className='gap-input');
+  clearFb('figureFb');
+}
+function checkFigure(){
+  if(!curFig)return;
+  const ca=numOk(document.getElementById('figA').value,curFig.A);
+  const cu=numOk(document.getElementById('figU').value,curFig.U);
+  document.getElementById('figA').classList.toggle('correct',ca);document.getElementById('figA').classList.toggle('wrong',!ca);
+  document.getElementById('figU').classList.toggle('correct',cu);document.getElementById('figU').classList.toggle('wrong',!cu);
+  const fb=document.getElementById('figureFb');
+  if(ca&&cu){fb.textContent=`✅ A = ${curFig.A} cm², U = ${curFig.U} cm`;fb.className='quiz-feedback show ok';addPoints(1);}
+  else{fb.textContent=`❌ A = ${curFig.A} cm², U = ${curFig.U} cm`;fb.className='quiz-feedback show fail';}
+}
+
+// ===== ZUSAMMENGESETZT =====
+let zDiff='easy',curZus=null;
+function setZDiff(d,el){zDiff=d;el.parentElement.querySelectorAll('.diff-tab').forEach(b=>b.className='diff-tab');el.className='diff-tab active-'+d;newZus();}
+function newZus(){
+  const scale=zDiff==='easy'?1:zDiff==='mid'?2:3;
+  const a=rnd(4,8)*scale,b=rnd(3,6)*scale;
+  const c=rnd(1,Math.floor((a-1)/scale))*scale,d=rnd(1,Math.floor((b-1)/scale))*scale;
+  const A1=a*b,A2=c*d,Ag=A1-A2;
+  const unit=zDiff==='easy'?'cm':zDiff==='mid'?'dm':'m';
+  const W=300,H=190,px=20,py=15;
+  const pw=Math.min(200,a*12),ph=Math.min(150,b*12);
+  const cwf=Math.round(pw*c/a),chf=Math.round(ph*d/b);
+  const svg=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="font-family:Nunito;">
+  <polygon points="${px},${py} ${px+pw},${py} ${px+pw},${py+ph-chf} ${px+pw-cwf},${py+ph-chf} ${px+pw-cwf},${py+ph} ${px},${py+ph}" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
+  <rect x="${px+pw-cwf}" y="${py}" width="${cwf}" height="${chf}" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" rx="2"/>
+  <text x="${px+pw/2}" y="${py+ph+16}" text-anchor="middle" font-size="12" fill="#059669" font-weight="700">${a} ${unit}</text>
+  <text x="${px-12}" y="${py+ph/2}" text-anchor="middle" font-size="12" fill="#059669" font-weight="700" transform="rotate(-90,${px-12},${py+ph/2})">${b} ${unit}</text>
+  <text x="${px+pw-cwf/2}" y="${py+chf/2+5}" text-anchor="middle" font-size="11" fill="#dc2626">${c}×${d}</text>
+  </svg>`;
+  curZus={ids:['zas_1','zas_2','zas_3'],ans:[A1,A2,Ag]};
+  document.getElementById('zusFigureDisplay').innerHTML=svg;
+  document.getElementById('zusInfo').innerHTML=`<strong>Großes Rechteck:</strong> ${a} × ${b} = ? ${unit}²<br><strong>Rote Ecke (abziehen):</strong> ${c} × ${d} = ? ${unit}²<br><strong>L-Fläche gesamt:</strong> A<sub>groß</sub> − A<sub>Ecke</sub> = ?`;
+  document.getElementById('zusInputArea').innerHTML=`<div style="line-height:2.2;">
+    A<sub>groß</sub> = <input class="gap-input" id="zas_1" data-ans="${A1}" placeholder="?" style="width:80px;"> ${unit}²<br>
+    A<sub>Ecke</sub> = <input class="gap-input" id="zas_2" data-ans="${A2}" placeholder="?" style="width:80px;"> ${unit}²<br>
+    <strong>A<sub>gesamt</sub> = <input class="gap-input" id="zas_3" data-ans="${Ag}" placeholder="?" style="width:90px;"> ${unit}²</strong>
+  </div>`;
+  clearFb('zusFb');
+}
+function checkZus(){
+  if(!curZus)return;let ok=0;
+  curZus.ids.forEach((id,j)=>{const inp=document.getElementById(id);if(!inp)return;
+    const c=numOk(inp.value,curZus.ans[j]);inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});
+  const fb=document.getElementById('zusFb');
+  if(ok===3){fb.textContent='✅ Alle 3 richtig!';fb.className='quiz-feedback show ok';addPoints(2);}
+  else{fb.textContent=`❌ ${ok}/3 richtig.`;fb.className='quiz-feedback show fail';}
+}
+let curZL=null;
+const zusLT=[
+  ()=>{const a=rnd(4,9),b=rnd(3,7),c=rnd(1,a-2),d=rnd(1,b-2);const A1=a*b,A2=c*d,Ag=A1-A2;
+    return{html:`Eine L-Fläche: großes Rechteck <strong>${a} cm × ${b} cm</strong>, ausgeschnittene Ecke <strong>${c} cm × ${d} cm</strong>.<br><br>
+    A<sub>groß</sub> = ${a} · ${b} = <input class="gap-input" id="zl_1" data-ans="${A1}" style="width:70px;"> cm²<br>
+    A<sub>Ecke</sub> = ${c} · ${d} = <input class="gap-input" id="zl_2" data-ans="${A2}" style="width:70px;"> cm²<br>
+    A<sub>gesamt</sub> = <input class="gap-input" id="zl_3" data-ans="${A1}" style="width:70px;"> − <input class="gap-input" id="zl_4" data-ans="${A2}" style="width:70px;"> = <input class="gap-input" id="zl_5" data-ans="${Ag}" style="width:70px;"> cm²`,
+    ids:['zl_1','zl_2','zl_3','zl_4','zl_5']};},
+  ()=>{const w=rnd(4,10),h=rnd(3,8),gap=rnd(2,w-2);const A=(w-gap)*h+gap*h;const Ag=w*h;
+    const a1=(w-gap),b1=h,A1=a1*b1,a2=gap,b2=h,A2=a2*b2;
+    return{html:`Eine Fläche wird in zwei Rechtecke zerlegt:<br>Teil 1: <strong>${a1} cm × ${b1} cm</strong>, Teil 2: <strong>${a2} cm × ${b2} cm</strong>.<br><br>
+    A₁ = ${a1} · ${b1} = <input class="gap-input" id="zl_1" data-ans="${A1}" style="width:70px;"> cm²<br>
+    A₂ = ${a2} · ${b2} = <input class="gap-input" id="zl_2" data-ans="${A2}" style="width:70px;"> cm²<br>
+    A<sub>gesamt</sub> = A₁ + A₂ = <input class="gap-input" id="zl_3" data-ans="${A1+A2}" style="width:70px;"> cm²`,
+    ids:['zl_1','zl_2','zl_3']};},
+];
+function newZusLuecken(){curZL=pick(zusLT)();document.getElementById('zusLueckenText').innerHTML=curZL.html;clearFb('zusLueckenFb');}
+function checkZusLuecken(){
+  if(!curZL)return;let ok=0;
+  curZL.ids.forEach(id=>{const inp=document.getElementById(id);if(!inp)return;
+    const c=numOk(inp.value,parseFloat(inp.dataset.ans));inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});
+  const fb=document.getElementById('zusLueckenFb');
+  if(ok===curZL.ids.length){fb.textContent='✅ Richtig!';fb.className='quiz-feedback show ok';addPoints(1);}
+  else{fb.textContent=`❌ ${ok}/${curZL.ids.length} richtig.`;fb.className='quiz-feedback show fail';}
+}
+
+// ===== NETZE =====
+const cubeNets=[
+  {cells:[[1,1],[2,1],[3,1],[4,1],[2,2],[2,0]],valid:true,info:'Kreuzform – gültig!'},
+  {cells:[[0,1],[1,1],[2,1],[3,1],[1,2],[2,2]],valid:true,info:'Treppe – gültig!'},
+  {cells:[[1,0],[1,1],[1,2],[1,3],[0,2],[2,2]],valid:true,info:'T-Form – gültig!'},
+  {cells:[[0,1],[1,1],[2,1],[1,0],[1,2],[1,3]],valid:true,info:'Längliches Kreuz – gültig!'},
+  {cells:[[0,0],[1,0],[2,0],[3,0],[0,1],[1,1]],valid:false,info:'Zwei nebeneinander – ungültig!'},
+  {cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[1,0]],valid:false,info:'Zu lang – ungültig!'},
+  {cells:[[1,0],[1,1],[1,2],[0,0],[2,0],[0,2]],valid:false,info:'Ecken falsch – ungültig!'},
+];
+let curNetzIdx=null;
+function newNetz(){
+  curNetzIdx=rnd(0,cubeNets.length-1);
+  const net=cubeNets[curNetzIdx];
+  const sz=46,cols=5,rows=5;
+  let svg=`<svg width="${cols*sz}" height="${rows*sz}" viewBox="0 0 ${cols*sz} ${rows*sz}" style="font-family:Nunito;">`;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    svg+=`<rect x="${c*sz}" y="${r*sz}" width="${sz}" height="${sz}" fill="none" stroke="#e5e7eb" stroke-width="1"/>`;
+  }
+  net.cells.forEach(([c,r])=>{svg+=`<rect x="${c*sz+2}" y="${r*sz+2}" width="${sz-4}" height="${sz-4}" fill="#d1fae5" stroke="#059669" stroke-width="2" rx="4"/>`;});
+  svg+='</svg>';
+  document.getElementById('netzDisplay').innerHTML=svg;
+  clearFb('netzFb');
+}
+function answerNetz(guessValid){
+  if(curNetzIdx===null)return;
+  const net=cubeNets[curNetzIdx];
+  const correct=net.valid===guessValid;
+  const fb=document.getElementById('netzFb');
+  if(correct){fb.textContent=`✅ Richtig! ${net.info}`;fb.className='quiz-feedback show ok';addPoints(1);}
+  else{fb.textContent=`❌ Falsch! ${net.info}`;fb.className='quiz-feedback show fail';}
+}
+let curQN=null;
+function newQuaderNetz(){
+  const a=rnd(2,6),b=rnd(2,6),c=rnd(2,6);
+  const ab=a*b,ac=a*c,bc=b*c,O=2*(ab+ac+bc);
+  curQN={a,b,c,ab,ac,bc,O};
+  document.getElementById('quaderNetzQuiz').innerHTML=`<p style="font-size:0.88rem;margin-bottom:8px;">Quader: a = ${a} cm, b = ${b} cm, c = ${c} cm</p>
+  <div style="line-height:2.2;">
+  Boden/Deckel (${a}×${b}): <input class="gap-input" id="qn_0" data-ans="${ab}" placeholder="?" style="width:70px;"> cm² × 2<br>
+  Front/Rück (${a}×${c}): <input class="gap-input" id="qn_1" data-ans="${ac}" placeholder="?" style="width:70px;"> cm² × 2<br>
+  Seite (${b}×${c}): <input class="gap-input" id="qn_2" data-ans="${bc}" placeholder="?" style="width:70px;"> cm² × 2<br>
+  <strong>O gesamt = <input class="gap-input" id="qn_3" data-ans="${O}" placeholder="?" style="width:90px;"> cm²</strong>
+  </div>`;
+  clearFb('quaderNetzFb');
+}
+function checkQuaderNetz(){
+  if(!curQN)return;let ok=0;
+  [curQN.ab,curQN.ac,curQN.bc,curQN.O].forEach((ans,i)=>{
+    const inp=document.getElementById(`qn_${i}`);if(!inp)return;
+    const c=numOk(inp.value,ans);inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});
+  const fb=document.getElementById('quaderNetzFb');
+  if(ok===4){fb.textContent=`✅ Perfekt! O = ${curQN.O} cm²`;fb.className='quiz-feedback show ok';addPoints(2);}
+  else{fb.textContent=`❌ ${ok}/4 richtig. O = ${curQN.O} cm²`;fb.className='quiz-feedback show fail';}
+}
+
+// ===== OBERFLÄCHE =====
+let oDiff='easy',curOb=[];
+function setODiff(d,el){oDiff=d;el.parentElement.querySelectorAll('.diff-tab').forEach(b=>b.className='diff-tab');el.className='diff-tab active-'+d;newOberf();}
+function genObTask(){
+  if(oDiff==='easy'){const a=rnd(2,8);return{q:`Würfel: a = ${a} cm, Formel: O = 6 · a²`,fields:[{lbl:'O',ans:6*a*a,unit:'cm²'}]};}
+  if(oDiff==='mid'){const a=rnd(2,8),b=rnd(2,7),c=rnd(2,6);return{q:`Quader: a=${a}, b=${b}, c=${c} cm, Formel: O = 2·(a·b+a·c+b·c)`,fields:[{lbl:'O',ans:2*(a*b+a*c+b*c),unit:'cm²'}]};}
+  const a=rnd(2,7);return{q:`Würfel: O = ${6*a*a} cm². Wie lang ist die Kante a? (Tipp: a = √(O÷6))`,fields:[{lbl:'a',ans:a,unit:'cm'}]};
+}
+function newOberf(){
+  curOb=[];let h='';
+  for(let i=0;i<3;i++){const t=genObTask();curOb.push(t);
+    h+=`<div class="exercise-box"><div class="exercise-num">Aufgabe ${i+1}</div><div class="exercise-question">${t.q}</div>`;
+    t.fields.forEach((f,j)=>{ h+=`<div style="margin:4px 0;">${f.lbl} = <input class="gap-input" id="ob_${i}_${j}" data-ans="${f.ans}" placeholder="?" style="width:90px;"> ${f.unit}</div>`; });
+    h+='</div>';}
+  document.getElementById('obExercises').innerHTML=h;clearFb('obFb');
+}
+function checkOberf(){
+  let ok=0,tot=0;
+  curOb.forEach((t,i)=>{t.fields.forEach((f,j)=>{tot++;
+    const inp=document.getElementById(`ob_${i}_${j}`);if(!inp)return;
+    const c=numOk(inp.value,f.ans);inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});});
+  const fb=document.getElementById('obFb');
+  if(ok===tot){fb.textContent=`✅ Alle ${tot} richtig!`;fb.className='quiz-feedback show ok';addPoints(2);}
+  else{fb.textContent=`❌ ${ok}/${tot} richtig.`;fb.className='quiz-feedback show fail';}
+}
+let curOL=null;
+const obLT=[
+  ()=>{const a=rnd(2,7);const side=a*a,O=6*side;return{html:`Würfel a = <strong>${a} cm</strong>:<br>
+    Eine Fläche = ${a}² = <input class="gap-input" id="ol_1" data-ans="${side}" style="width:70px;"> cm²<br>
+    Anzahl Flächen: <input class="gap-input" id="ol_2" data-ans="6" style="width:50px;"><br>
+    O = 6 · <input class="gap-input" id="ol_3" data-ans="${side}" style="width:70px;"> = <input class="gap-input" id="ol_4" data-ans="${O}" style="width:80px;"> cm²`,ids:['ol_1','ol_2','ol_3','ol_4']};},
+  ()=>{const a=rnd(2,6),b=rnd(2,6),c=rnd(2,6);const ab=a*b,ac=a*c,bc=b*c,sum=ab+ac+bc,O=2*sum;
+    return{html:`Quader: a=${a}, b=${b}, c=${c} cm:<br>
+    Boden: ${a}·${b} = <input class="gap-input" id="ol_1" data-ans="${ab}" style="width:70px;"> cm²<br>
+    Front: ${a}·${c} = <input class="gap-input" id="ol_2" data-ans="${ac}" style="width:70px;"> cm²<br>
+    Seite: ${b}·${c} = <input class="gap-input" id="ol_3" data-ans="${bc}" style="width:70px;"> cm²<br>
+    Summe: <input class="gap-input" id="ol_4" data-ans="${sum}" style="width:70px;"> cm²<br>
+    O = 2 · <input class="gap-input" id="ol_5" data-ans="${sum}" style="width:70px;"> = <input class="gap-input" id="ol_6" data-ans="${O}" style="width:80px;"> cm²`,ids:['ol_1','ol_2','ol_3','ol_4','ol_5','ol_6']};},
+];
+function newObLuecken(){curOL=pick(obLT)();document.getElementById('obLuecken').innerHTML=curOL.html;clearFb('obLueckenFb');}
+function checkObLuecken(){
+  if(!curOL)return;let ok=0;
+  curOL.ids.forEach(id=>{const inp=document.getElementById(id);if(!inp)return;
+    const c=numOk(inp.value,parseFloat(inp.dataset.ans));inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});
+  const fb=document.getElementById('obLueckenFb');
+  if(ok===curOL.ids.length){fb.textContent='✅ Alles richtig!';fb.className='quiz-feedback show ok';addPoints(1);}
+  else{fb.textContent=`❌ ${ok}/${curOL.ids.length} richtig.`;fb.className='quiz-feedback show fail';}
+}
+
+// ===== VOLUMEN =====
+let vDiff='easy',curVol=[];
+function setVDiff(d,el){vDiff=d;el.parentElement.querySelectorAll('.diff-tab').forEach(b=>b.className='diff-tab');el.className='diff-tab active-'+d;newVol();}
+function genVolTask(){
+  if(vDiff==='easy'){const a=rnd(2,8);return{q:`Würfel: a = ${a} cm, Formel: V = a³`,fields:[{lbl:'V',ans:a*a*a,unit:'cm³'}]};}
+  if(vDiff==='mid'){const u=pick(['cm','dm','m']);const a=rnd(2,10),b=rnd(2,8),c=rnd(2,6);return{q:`Quader: a=${a}, b=${b}, c=${c} ${u}, Formel: V = a·b·c`,fields:[{lbl:'V',ans:a*b*c,unit:u+'³'}]};}
+  const type=pick(['back_w','unit']);
+  if(type==='back_w'){const a=rnd(2,5);return{q:`Würfel: V = ${a*a*a} cm³. Wie lang ist die Kante a?`,fields:[{lbl:'a',ans:a,unit:'cm'}]};}
+  const v=rnd(1,9)*100;return{q:`${v} Liter in m³ umrechnen. (1 m³ = 1 000 L)`,fields:[{lbl:'V',ans:v/1000,unit:'m³'}]};
+}
+function newVol(){
+  curVol=[];let h='';
+  for(let i=0;i<4;i++){const t=genVolTask();curVol.push(t);
+    h+=`<div class="exercise-box"><div class="exercise-num">Aufgabe ${i+1}</div><div class="exercise-question">${t.q}</div>`;
+    t.fields.forEach((f,j)=>{ h+=`<div style="margin:4px 0;">${f.lbl} = <input class="gap-input" id="vl_${i}_${j}" data-ans="${f.ans}" placeholder="?" style="width:90px;"> ${f.unit}</div>`; });
+    h+='</div>';}
+  document.getElementById('volExercises').innerHTML=h;clearFb('volFb');
+}
+function checkVol(){
+  let ok=0,tot=0;
+  curVol.forEach((t,i)=>{t.fields.forEach((f,j)=>{tot++;
+    const inp=document.getElementById(`vl_${i}_${j}`);if(!inp)return;
+    const c=numOk(inp.value,f.ans);inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});});
+  const fb=document.getElementById('volFb');
+  if(ok===tot){fb.textContent=`✅ Alle ${tot} richtig!`;fb.className='quiz-feedback show ok';addPoints(2);}
+  else{fb.textContent=`❌ ${ok}/${tot} richtig.`;fb.className='quiz-feedback show fail';}
+}
+let curVL=null;
+const volLT=[
+  ()=>{const a=rnd(2,6);const V=a*a*a;return{html:`Würfel a = <strong>${a} cm</strong>:<br>
+    V = a · a · a = ${a} · ${a} · ${a} = <input class="gap-input" id="vlt_1" data-ans="${V}" style="width:80px;"> cm³<br>
+    Das sind <input class="gap-input" id="vlt_2" data-ans="${V}" style="width:80px;"> mL.`,ids:['vlt_1','vlt_2']};},
+  ()=>{const a=rnd(2,8),b=rnd(2,6),c=rnd(2,5);const V=a*b*c;return{html:`Quader: a=<strong>${a} dm</strong>, b=<strong>${b} dm</strong>, c=<strong>${c} dm</strong>:<br>
+    V = a · b · c = ${a} · ${b} · ${c} = <input class="gap-input" id="vlt_1" data-ans="${V}" style="width:80px;"> dm³<br>
+    Das sind <input class="gap-input" id="vlt_2" data-ans="${V}" style="width:80px;"> Liter.`,ids:['vlt_1','vlt_2']};},
+];
+function newVolLuecken(){curVL=pick(volLT)();document.getElementById('volLuecken').innerHTML=curVL.html;clearFb('volLueckenFb');}
+function checkVolLuecken(){
+  if(!curVL)return;let ok=0;
+  curVL.ids.forEach(id=>{const inp=document.getElementById(id);if(!inp)return;
+    const c=numOk(inp.value,parseFloat(inp.dataset.ans));inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});
+  const fb=document.getElementById('volLueckenFb');
+  if(ok===curVL.ids.length){fb.textContent='✅ Richtig!';fb.className='quiz-feedback show ok';addPoints(1);}
+  else{fb.textContent=`❌ ${ok}/${curVL.ids.length} richtig.`;fb.className='quiz-feedback show fail';}
+}
+
+// ===== EINHEITEN =====
+let curUnits=[];
+const unitConvs=[
+  ()=>{const v=rnd(1,9);return{q:`${v} m² = ? dm²`,ans:v*100,unit:'dm²'};},
+  ()=>{const v=rnd(1,9)*100;return{q:`${v} dm² = ? m²`,ans:v/100,unit:'m²'};},
+  ()=>{const v=rnd(1,9);return{q:`${v} dm² = ? cm²`,ans:v*100,unit:'cm²'};},
+  ()=>{const v=rnd(1,5);return{q:`${v} m³ = ? Liter`,ans:v*1000,unit:'L'};},
+  ()=>{const v=rnd(1,9)*1000;return{q:`${v} L = ? m³`,ans:v/1000,unit:'m³'};},
+  ()=>{const v=rnd(1,9);return{q:`${v} L = ? mL`,ans:v*1000,unit:'mL'};},
+  ()=>{const v=rnd(1,5);return{q:`${v} ha = ? m²`,ans:v*10000,unit:'m²'};},
+  ()=>{const v=rnd(1,9)*100;return{q:`${v} cm² = ? mm²`,ans:v*100,unit:'mm²'};},
+];
+function newUnits(){
+  curUnits=[];let h='';
+  for(let i=0;i<5;i++){const t=pick(unitConvs)();curUnits.push(t);
+    h+=`<div class="exercise-box"><div class="exercise-question">${t.q}</div>
+    <input class="gap-input" id="un_${i}" data-ans="${t.ans}" placeholder="?" style="width:120px;"> ${t.unit}</div>`;}
+  document.getElementById('unitExercises').innerHTML=h;clearFb('unitFb');
+}
+function checkUnits(){
+  let ok=0;
+  curUnits.forEach((t,i)=>{const inp=document.getElementById(`un_${i}`);if(!inp)return;
+    const c=numOk(inp.value,t.ans);inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});
+  const fb=document.getElementById('unitFb');
+  if(ok===5){fb.textContent='✅ Alle 5 richtig!';fb.className='quiz-feedback show ok';addPoints(2);}
+  else{fb.textContent=`❌ ${ok}/5 richtig.`;fb.className='quiz-feedback show fail';}
+}
+
+// ===== BLITZLESEN =====
+const blitzItems=[
+  {word:'A = a · b',opts:['Fläche Rechteck','Volumen Quader','Umfang Rechteck','Oberfläche Würfel'],correct:0},
+  {word:'U = 2·(a+b)',opts:['Umfang Rechteck','Fläche Rechteck','Oberfläche Quader','Volumen Würfel'],correct:0},
+  {word:'O = 6 · a²',opts:['Oberfläche Würfel','Volumen Würfel','Oberfläche Quader','Fläche Quadrat'],correct:0},
+  {word:'V = a · b · c',opts:['Volumen Quader','Oberfläche Quader','Fläche Quader','Umfang Quader'],correct:0},
+  {word:'V = a³',opts:['Volumen Würfel','Oberfläche Würfel','Fläche Quadrat','Umfang Würfel'],correct:0},
+  {word:'O = 2·(ab+ac+bc)',opts:['Oberfläche Quader','Volumen Quader','Umfang Quader','Oberfläche Würfel'],correct:0},
+  {word:'1 dm³ = ?',opts:['1 Liter','1 Milliliter','1 m³','100 cm³'],correct:0},
+  {word:'1 cm³ = ?',opts:['1 Milliliter','1 Liter','1 dm³','10 mL'],correct:0},
+  {word:'1 ha = ?',opts:['10 000 m²','1 000 m²','100 m²','1 000 000 m²'],correct:0},
+  {word:'A = a²',opts:['Fläche Quadrat','Umfang Quadrat','Volumen Würfel','Oberfläche Würfel'],correct:0},
+];
+let blitzTO=null,blitzIdx=0,blitzS=0,blitzT=0,blitzSpeed=2500,blitzRun=false;
+function startBlitz(speed){
+  blitzSpeed=speed;blitzS=0;blitzT=0;blitzIdx=0;blitzRun=true;
+  document.getElementById('blitzScore').textContent=0;document.getElementById('blitzTotal').textContent=0;
+  clearFb('blitzFb');nextBlitzItem();
+}
+function nextBlitzItem(){
+  if(!blitzRun||blitzIdx>=blitzItems.length){blitzRun=false;document.getElementById('blitzWord').textContent='Fertig!';document.getElementById('blitzSub').textContent=`${blitzS}/${blitzT}`;document.getElementById('blitzOptions').innerHTML='';return;}
+  const item=blitzItems[blitzIdx];
+  const shuf=[...item.opts].map((o,i)=>({o,orig:i})).sort(()=>Math.random()-0.5);
+  document.getElementById('blitzWord').textContent=item.word;
+  document.getElementById('blitzSub').textContent='Welche Beschreibung passt?';
+  document.getElementById('blitzOptions').innerHTML=shuf.map(({o,orig})=>`<button class="quiz-option" onclick="answerBlitz(${orig===item.correct})">${o}</button>`).join('');
+  clearFb('blitzFb');
+  if(blitzTO)clearTimeout(blitzTO);
+  blitzTO=setTimeout(()=>{blitzIdx++;nextBlitzItem();},blitzSpeed);
+}
+function answerBlitz(correct){
+  blitzT++;if(correct){blitzS++;addPoints(1);}
+  document.getElementById('blitzScore').textContent=blitzS;document.getElementById('blitzTotal').textContent=blitzT;
+  const fb=document.getElementById('blitzFb');fb.textContent=correct?'✅':'❌';fb.className='quiz-feedback show '+(correct?'ok':'fail');
+  if(blitzTO)clearTimeout(blitzTO);blitzIdx++;
+  setTimeout(nextBlitzItem,400);
+}
+const termItems=[
+  {def:'Maßzahl für die Größe einer Fläche',terms:['Flächeninhalt','Volumen','Umfang','Oberfläche'],correct:0},
+  {def:'Maßzahl für den Rauminhalt eines Körpers',terms:['Volumen','Flächeninhalt','Umfang','Oberfläche'],correct:0},
+  {def:'Gesamtfläche aller Seiten eines Körpers',terms:['Oberfläche','Volumen','Umfang','Netz'],correct:0},
+  {def:'Aufgeklappte Außenfläche eines Körpers',terms:['Netz','Oberfläche','Querschnitt','Umfang'],correct:0},
+  {def:'Körper mit 6 gleichen Quadraten',terms:['Würfel','Quader','Pyramide','Zylinder'],correct:0},
+  {def:'Körper mit 6 Rechtecken (3 Paare)',terms:['Quader','Würfel','Prisma','Kegel'],correct:0},
+  {def:'Länge des Randes einer ebenen Figur',terms:['Umfang','Flächeninhalt','Oberfläche','Volumen'],correct:0},
+  {def:'1 __ = 10 000 m² (Flächeneinheit)',terms:['Hektar','Ar','km²','dm²'],correct:0},
+];
+let termTO=null,termIdx=0,termRun=false,termSpeed_=2000;
+function startTermBlitz(speed){termSpeed_=speed;termIdx=0;termRun=true;clearFb('termFb');showTermItem();}
+function showTermItem(){
+  if(!termRun||termIdx>=termItems.length){termRun=false;document.getElementById('termQuestion').textContent='Fertig!';document.getElementById('termOptions').innerHTML='';return;}
+  const item=termItems[termIdx];
+  document.getElementById('termDef').textContent=item.def;document.getElementById('termQuestion').textContent='Wähle den Begriff:';
+  const shuf=[...item.terms].map((t,i)=>({t,orig:i})).sort(()=>Math.random()-0.5);
+  document.getElementById('termOptions').innerHTML=shuf.map(({t,orig})=>`<button class="quiz-option" onclick="answerTerm(${orig===item.correct})">${t}</button>`).join('');
+  clearFb('termFb');
+  if(termTO)clearTimeout(termTO);termTO=setTimeout(()=>{termIdx++;showTermItem();},termSpeed_);
+}
+function answerTerm(correct){
+  const fb=document.getElementById('termFb');fb.textContent=correct?'✅ Richtig!':'❌ Falsch!';fb.className='quiz-feedback show '+(correct?'ok':'fail');
+  if(correct)addPoints(1);if(termTO)clearTimeout(termTO);termIdx++;setTimeout(showTermItem,500);
+}
+
+// ===== QUIZ =====
+const allQ=[
+  {q:'Wie berechnet man die Fläche eines Rechtecks?',hint:'A = ?',opts:['A = a · b','A = a + b','A = 2·(a+b)','A = a²'],c:0},
+  {q:'Rechteck a=6 cm, b=4 cm. Was ist A?',hint:'A = a · b',opts:['24 cm²','20 cm²','10 cm²','48 cm²'],c:0},
+  {q:'Umfang eines Quadrats mit a = 5 cm?',hint:'U = 4 · a',opts:['20 cm','25 cm','10 cm','15 cm'],c:0},
+  {q:'Oberfläche Würfel a = 3 cm?',hint:'O = 6 · a²',opts:['54 cm²','27 cm³','18 cm²','36 cm²'],c:0},
+  {q:'Wie viele Flächen hat ein Würfel?',hint:'Oben, unten, vorne, hinten...',opts:['6','4','8','12'],c:0},
+  {q:'Was ist das "Netz" eines Körpers?',hint:'Aufgeklappt...',opts:['Die aufgeklappte Oberfläche','Der Rauminhalt','Der Umfang','Die Kanten'],c:0},
+  {q:'Volumen Würfel a = 4 m?',hint:'V = a³',opts:['64 m³','48 m³','96 m³','16 m³'],c:0},
+  {q:'Oberfläche Quader: Formel?',hint:'O = 2·(...)',opts:['2·(ab+ac+bc)','2·(a+b+c)','a·b·c','6·a²'],c:0},
+  {q:'Volumen Quader 5×3×2 m?',hint:'V = a · b · c',opts:['30 m³','16 m³','60 m³','25 m³'],c:0},
+  {q:'1 dm³ = ? Liter',hint:'dm³ und Liter',opts:['1 Liter','10 Liter','0,1 Liter','100 Liter'],c:0},
+  {q:'1 cm³ = ? Milliliter',hint:'cm³ und mL',opts:['1 mL','10 mL','0,1 mL','100 mL'],c:0},
+  {q:'1 Hektar = ? Quadratmeter',hint:'1 ha = ?',opts:['10 000 m²','1 000 m²','100 m²','100 000 m²'],c:0},
+  {q:'Würfel hat O = 150 cm². Kante a = ?',hint:'O=6·a² → a²=150÷6=25 → a=?',opts:['5 cm','6 cm','4 cm','25 cm'],c:0},
+  {q:'Quader: a=2, b=3, c=4 cm. Oberfläche?',hint:'O = 2·(2·3+2·4+3·4)',opts:['52 cm²','24 cm³','48 cm²','26 cm²'],c:0},
+  {q:'L-Fläche: A groß = 30 cm², A Ecke = 6 cm². A gesamt = ?',hint:'A gesamt = A groß − A Ecke',opts:['24 cm²','36 cm²','180 cm²','5 cm²'],c:0},
+];
+let qList=[],qIdx=0,qDone=0;
+function restartQuiz(){qList=shuffle([...allQ]).slice(0,15);qIdx=0;qDone=0;showQuizQ();}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function showQuizQ(){
+  if(qIdx>=qList.length){document.getElementById('quizQuestion').textContent='🎉 Quiz beendet!';document.getElementById('quizHint').textContent=`Ergebnis: ${qDone}/${qList.length}`;document.getElementById('quizOptions').innerHTML='';document.getElementById('nextQBtn').style.display='none';return;}
+  const q=qList[qIdx];
+  document.getElementById('quizProgress').style.width=`${qIdx/qList.length*100}%`;
+  document.getElementById('quizProgressTxt').textContent=`Frage ${qIdx+1} von ${qList.length}`;
+  document.getElementById('quizQuestion').textContent=`${qIdx+1}. ${q.q}`;
+  document.getElementById('quizHint').textContent=`💡 ${q.hint}`;
+  const shuf=[...q.opts].map((o,i)=>({o,orig:i})).sort(()=>Math.random()-0.5);
+  document.getElementById('quizOptions').innerHTML=shuf.map(({o,orig})=>`<button class="quiz-option" onclick="answerQuiz(${orig===q.c})">${o}</button>`).join('');
+  clearFb('quizFb');document.getElementById('nextQBtn').style.display='none';
+}
+function answerQuiz(correct){
+  document.querySelectorAll('#quizOptions .quiz-option').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('quizFb');
+  if(correct){fb.textContent='✅ Richtig!';fb.className='quiz-feedback show ok';addPoints(1);qDone++;}
+  else{fb.textContent=`❌ Richtig: ${qList[qIdx].opts[qList[qIdx].c]}`;fb.className='quiz-feedback show fail';}
+  document.getElementById('nextQBtn').style.display='inline-flex';
+}
+function nextQuiz(){qIdx++;showQuizQ();}
+
+// ===== PROFI =====
+let curProfi=[];
+function newProfi(){
+  curProfi=[];let h='';
+  const taskGens=[
+    ()=>{const a=rnd(3,9);return{q:`Würfel a=${a} cm: Berechne O und V.`,fields:[{lbl:'O',ans:6*a*a,unit:'cm²'},{lbl:'V',ans:a*a*a,unit:'cm³'}]};},
+    ()=>{const a=rnd(2,7),b=rnd(2,6),c=rnd(2,5);return{q:`Quader ${a}×${b}×${c} cm: Berechne O und V.`,fields:[{lbl:'O',ans:2*(a*b+a*c+b*c),unit:'cm²'},{lbl:'V',ans:a*b*c,unit:'cm³'}]};},
+    ()=>{const a=rnd(3,9),b=rnd(2,7);return{q:`Rechteck ${a}×${b} cm: Berechne A und U.`,fields:[{lbl:'A',ans:a*b,unit:'cm²'},{lbl:'U',ans:2*(a+b),unit:'cm'}]};},
+    ()=>{const a=rnd(2,6);const O=6*a*a;return{q:`Würfel: O = ${O} cm². Kante a = ?`,fields:[{lbl:'a',ans:a,unit:'cm'}]};},
+  ];
+  for(let i=0;i<3;i++){const t=pick(taskGens)();curProfi.push(t);
+    h+=`<div class="exercise-box"><div class="exercise-num">Aufgabe ${i+1}</div><div class="exercise-question">${t.q}</div>`;
+    t.fields.forEach((f,j)=>{ h+=`<div style="margin:4px 0;">${f.lbl} = <input class="gap-input" id="pr_${i}_${j}" data-ans="${f.ans}" placeholder="?" style="width:90px;"> ${f.unit}</div>`; });
+    h+='</div>';}
+  document.getElementById('profiExercises').innerHTML=h;clearFb('profiFb');
+}
+function checkProfi(){
+  let ok=0,tot=0;
+  curProfi.forEach((t,i)=>{t.fields.forEach((f,j)=>{tot++;
+    const inp=document.getElementById(`pr_${i}_${j}`);if(!inp)return;
+    const c=numOk(inp.value,f.ans);inp.classList.toggle('correct',c);inp.classList.toggle('wrong',!c);if(c)ok++;});});
+  const fb=document.getElementById('profiFb');
+  if(ok===tot){fb.textContent=`✅ Alle ${tot} richtig! Profi!`;fb.className='quiz-feedback show ok';addPoints(3);}
+  else{fb.textContent=`❌ ${ok}/${tot} richtig.`;fb.className='quiz-feedback show fail';}
+}
+
+// Textaufgaben
+let curText=null;
+const textTasks=[
+  ()=>{const l=rnd(3,12),b=rnd(2,8);return{text:`Du möchtest dein Zimmer neu auslegen. Das Zimmer ist <strong>${l} m</strong> lang und <strong>${b} m</strong> breit. Wie groß ist die Bodenfläche?`,ans:l*b,unit:'m²'};},
+  ()=>{const a=rnd(4,10),b=rnd(3,8);return{text:`Ein Kaninchenstall hat die Form eines Rechtecks: <strong>${a} m × ${b} m</strong>. Wie viel Meter Draht brauchst du für den Zaun?`,ans:2*(a+b),unit:'m'};},
+  ()=>{const a=rnd(2,5);return{text:`Ein Würfel-Aquarium hat die Kantenlänge <strong>${a} dm</strong>. Wie viele Liter Wasser passen hinein? (1 dm³ = 1 L)`,ans:a*a*a,unit:'L'};},
+  ()=>{const l=rnd(3,8),b=rnd(2,5),h=rnd(2,4);return{text:`Ein Schwimmbecken: <strong>${l} m × ${b} m × ${h} m</strong>. Wie viele Kubikmeter Wasser fasst es?`,ans:l*b*h,unit:'m³'};},
+  ()=>{const a=rnd(3,7);return{text:`Ein Würfel-Geschenkkarton: Kantenlänge <strong>${a} cm</strong>. Wie viel cm² Geschenkpapier brauchst du für die ganze Oberfläche?`,ans:6*a*a,unit:'cm²'};},
+];
+function newText(){curText=pick(textTasks)();document.getElementById('textaufgabe').innerHTML=curText.text;document.getElementById('textUnit').textContent=curText.unit;document.getElementById('textAns').value='';document.getElementById('textAns').className='gap-input';clearFb('textFb');}
+function checkText(){
+  if(!curText)return;
+  const c=numOk(document.getElementById('textAns').value,curText.ans);
+  document.getElementById('textAns').classList.toggle('correct',c);document.getElementById('textAns').classList.toggle('wrong',!c);
+  const fb=document.getElementById('textFb');
+  if(c){fb.textContent=`✅ Richtig! ${curText.ans} ${curText.unit}`;fb.className='quiz-feedback show ok';addPoints(2);}
+  else{fb.textContent=`❌ Richtig: ${curText.ans} ${curText.unit}`;fb.className='quiz-feedback show fail';}
+}
+
+// 60 Sekunden
+let sixtyTO=null,sixtyTime=60,sixtyAns=0,sixtyRun=false,sixtyCur=null;
+function genSixtyQ(){
+  const t=rnd(0,4);
+  if(t===0){const a=rnd(2,8),b=rnd(2,8);return{q:`A Rechteck ${a}×${b} =?`,ans:a*b};}
+  if(t===1){const a=rnd(2,8);return{q:`A Quadrat ${a}² =?`,ans:a*a};}
+  if(t===2){const a=rnd(2,6);return{q:`O Würfel a=${a} =?`,ans:6*a*a};}
+  if(t===3){const a=rnd(2,6),b=rnd(2,5),c=rnd(2,4);return{q:`V Quader ${a}×${b}×${c} =?`,ans:a*b*c};}
+  const a=rnd(2,5);return{q:`V Würfel a=${a} =?`,ans:a*a*a};
+}
+function startSixty(){
+  if(sixtyTO)clearInterval(sixtyTO);
+  sixtyTime=60;sixtyAns=0;sixtyRun=true;
+  document.getElementById('sixty-score').textContent=0;
+  document.getElementById('sixty-timer').textContent=60;
+  sixtyCur=genSixtyQ();
+  document.getElementById('sixty-q').textContent=sixtyCur.q;
+  document.getElementById('sixty-inp').value='';
+  document.getElementById('sixty-fb').textContent='';
+  document.getElementById('sixty-inp').focus();
+  sixtyTO=setInterval(()=>{
+    sixtyTime--;document.getElementById('sixty-timer').textContent=sixtyTime;
+    if(sixtyTime<=0){clearInterval(sixtyTO);sixtyRun=false;document.getElementById('sixty-q').textContent='⏰ Zeit!';document.getElementById('sixty-fb').textContent=`Ergebnis: ${sixtyAns} richtig!`;}
+  },1000);
+}
+function checkSixty(){
+  if(!sixtyRun||!sixtyCur)return;
+  const c=numOk(document.getElementById('sixty-inp').value,sixtyCur.ans);
+  if(c){sixtyAns++;document.getElementById('sixty-score').textContent=sixtyAns;document.getElementById('sixty-fb').textContent='✅';}
+  else{document.getElementById('sixty-fb').textContent=`❌ → ${sixtyCur.ans}`;}
+  sixtyCur=genSixtyQ();
+  document.getElementById('sixty-q').textContent=sixtyCur.q;
+  document.getElementById('sixty-inp').value='';
+}
+
+// INIT
+newFlaechen();newFigure();newZus();newZusLuecken();newNetz();newQuaderNetz();newOberf();newObLuecken();newVol();newVolLuecken();newUnits();restartQuiz();newProfi();newText();
+</script>
+</body>
+</html>

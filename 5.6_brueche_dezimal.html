@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5.6 Brüche & Dezimalzahlen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f7ff;
+  --card: #ffffff;
+  --p1: #2563eb; /* blau – Basis */
+  --p2: #7c3aed; /* lila – Erweitert */
+  --p3: #dc2626; /* rot – Profi */
+  --green: #059669;
+  --orange: #ea580c;
+  --yellow: #d97706;
+  --text: #1e1b4b;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --r: 16px;
+  --sh: 0 2px 16px rgba(37,99,235,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+header{
+  background:linear-gradient(135deg,#1e3a8a 0%,#4f46e5 60%,#7c3aed 100%);
+  color:white;padding:20px 16px 14px;text-align:center;
+}
+header h1{font-family:'Baloo 2',cursive;font-size:2rem;letter-spacing:0.5px;}
+header p{font-size:0.88rem;opacity:0.85;margin-top:2px;}
+.prog-wrap{max-width:360px;margin:10px auto 0;background:rgba(255,255,255,0.2);border-radius:20px;height:7px;}
+.prog-bar{height:100%;border-radius:20px;background:#fcd34d;transition:width .5s;}
+.prog-txt{font-size:0.75rem;opacity:0.9;margin-top:3px;}
+
+/* LEVEL SELECTOR */
+.level-nav{
+  display:flex;justify-content:center;gap:8px;padding:12px 16px;
+  background:white;border-bottom:2px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.lvl-btn{
+  padding:8px 18px;border-radius:20px;border:2px solid;
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;
+}
+.lvl-btn[data-lvl="1"]{border-color:var(--p1);color:var(--p1);background:white;}
+.lvl-btn[data-lvl="2"]{border-color:var(--p2);color:var(--p2);background:white;}
+.lvl-btn[data-lvl="3"]{border-color:var(--p3);color:var(--p3);background:white;}
+.lvl-btn.active[data-lvl="1"]{background:var(--p1);color:white;}
+.lvl-btn.active[data-lvl="2"]{background:var(--p2);color:white;}
+.lvl-btn.active[data-lvl="3"]{background:var(--p3);color:white;}
+
+/* MODULE TABS */
+.tabs{
+  display:flex;overflow-x:auto;gap:0;
+  background:white;border-bottom:2px solid var(--border);
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  flex-shrink:0;padding:9px 14px;border:none;background:none;
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;
+  color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;
+  white-space:nowrap;transition:all .2s;
+}
+.tab.active{color:var(--p1);border-bottom-color:var(--p1);}
+
+/* MAIN */
+main{padding:16px 14px 80px;max-width:780px;margin:0 auto;}
+.section{display:none;}
+.section.active{display:block;animation:fi .25s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* LEVEL CONTENT */
+.level-content{display:none;}
+.level-content.active{display:block;}
+
+/* CARD */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px;margin-bottom:14px;border:1.5px solid var(--border);}
+.card-head{font-family:'Baloo 2',cursive;font-size:1.15rem;color:var(--p1);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+
+/* LEVEL BADGE */
+.lbadge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:900;
+  text-transform:uppercase;margin-bottom:10px;
+}
+.lb1{background:#dbeafe;color:#1d4ed8;}
+.lb2{background:#ede9fe;color:#5b21b6;}
+.lb3{background:#fee2e2;color:#b91c1c;}
+
+/* FRACTION DISPLAY */
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;margin:0 3px;}
+.fr .fn{color:#dc2626;font-weight:900;}
+.fr .fb{width:100%;min-width:22px;border-top:2.5px solid #1e1b4b;margin:2px 0;}
+.fr .fd{color:#2563eb;font-weight:900;}
+
+/* INPUT styled */
+.ans-input{
+  display:inline-block;width:58px;
+  border:none;border-bottom:3px solid var(--p1);
+  background:transparent;font-family:'Nunito',sans-serif;
+  font-size:1rem;font-weight:800;text-align:center;
+  color:var(--text);padding:2px 4px;outline:none;vertical-align:middle;
+}
+.ans-input:focus{border-color:var(--p2);}
+.ans-input.ok{border-color:var(--green);color:var(--green);}
+.ans-input.err{border-color:var(--p3);color:var(--p3);}
+
+/* fraction input pair */
+.finput-wrap{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;gap:1px;margin:0 4px;}
+.finput-wrap .fb{width:100%;min-width:48px;border-top:2.5px solid var(--text);margin:2px 0;}
+.finput-wrap input{width:54px;border:none;border-bottom:3px solid var(--p1);background:transparent;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;text-align:center;outline:none;}
+.finput-wrap input.ok{border-color:var(--green);color:var(--green);}
+.finput-wrap input.err{border-color:var(--p3);color:var(--p3);}
+
+/* FEEDBACK */
+.fb-box{margin-top:10px;padding:9px 13px;border-radius:10px;font-weight:700;font-size:0.9rem;display:none;}
+.fb-box.show{display:block;}
+.fb-ok{background:#d1fae5;color:#065f46;}
+.fb-err{background:#fee2e2;color:#991b1b;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 18px;border-radius:12px;border:none;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:800;cursor:pointer;transition:all .2s;}
+.btn-blue{background:var(--p1);color:white;}
+.btn-blue:hover{background:#1d4ed8;transform:translateY(-1px);}
+.btn-out{background:white;color:var(--p1);border:2px solid var(--p1);}
+.btn-out:hover{background:#eff6ff;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+
+/* QUIZ OPTIONS */
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.qopt{padding:11px 14px;border:2px solid var(--border);border-radius:11px;background:white;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
+.qopt:hover{border-color:var(--p1);background:#eff6ff;}
+.qopt.ok{border-color:var(--green);background:#d1fae5;color:#065f46;}
+.qopt.err{border-color:var(--p3);background:#fee2e2;color:#991b1b;}
+.qopt:disabled{cursor:not-allowed;}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:8px;}
+.step{display:flex;gap:10px;align-items:flex-start;background:#f0f4ff;border-radius:10px;padding:10px 12px;font-size:0.9rem;}
+.snum{min-width:26px;height:26px;border-radius:50%;background:var(--p1);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.8rem;flex-shrink:0;}
+
+/* INFO BOX */
+.info{background:linear-gradient(135deg,#eff6ff,#f5f3ff);border-left:4px solid var(--p1);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:0.92rem;line-height:1.7;}
+.info strong{color:var(--p1);}
+
+/* SCOREBAR */
+.scorebar{display:flex;align-items:center;gap:8px;font-size:0.85rem;font-weight:800;color:var(--p1);margin-bottom:10px;}
+.sdot{width:9px;height:9px;border-radius:50%;background:var(--p1);}
+
+/* PIE */
+.pie-grid{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0;}
+.pie-wrap{text-align:center;}
+.pie-wrap .plbl{font-size:0.78rem;font-weight:700;color:var(--muted);margin-top:3px;}
+
+/* STRIP */
+.strip-row{display:flex;height:34px;border-radius:8px;overflow:hidden;margin-bottom:5px;border:2px solid var(--border);}
+.scell{flex:1;border-right:1px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:rgba(255,255,255,0.85);cursor:pointer;transition:opacity .15s;}
+.scell:last-child{border-right:none;}
+.scell.on{opacity:1;}
+.scell.off{opacity:0.2;}
+
+/* FLASH */
+.flash-box{background:#f0f4ff;border-radius:14px;padding:20px;text-align:center;margin-bottom:12px;min-height:120px;display:flex;align-items:center;justify-content:center;}
+.flash-num{font-family:'Baloo 2',cursive;font-size:3rem;display:flex;flex-direction:column;align-items:center;}
+.flash-num .fn{color:#dc2626;}
+.flash-num .fb{width:70px;height:4px;background:var(--text);border-radius:2px;margin:4px 0;}
+.flash-num .fd{color:#2563eb;}
+.flash-msg{font-size:1.1rem;color:var(--muted);font-weight:700;}
+
+/* DEZIMAL TABLE */
+.sv-table{border-collapse:collapse;width:100%;font-size:0.9rem;margin:10px 0;}
+.sv-table th,.sv-table td{border:2px solid var(--border);padding:7px 10px;text-align:center;}
+.sv-table th{background:#eff6ff;color:var(--p1);font-weight:900;}
+.sv-table .comma{background:#fef3c7;font-weight:900;font-size:1.1rem;}
+.sv-table input{width:38px;border:none;border-bottom:2px solid var(--p1);background:transparent;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:800;text-align:center;outline:none;}
+.sv-table input.ok{border-color:var(--green);color:var(--green);}
+.sv-table input.err{border-color:var(--p3);color:var(--p3);}
+
+/* TASK COUNTER */
+.tcnt{font-size:0.8rem;color:var(--muted);font-weight:700;margin-bottom:8px;}
+
+/* GRID CLICK */
+.click-grid{display:flex;flex-wrap:wrap;gap:3px;margin:8px 0;}
+.cgrid-cell{width:38px;height:38px;border:2px solid var(--border);border-radius:7px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:transparent;background:white;}
+.cgrid-cell.on{background:var(--p1);border-color:var(--p1);color:white;}
+.cgrid-cell.ok{background:var(--green);border-color:var(--green);color:white;}
+.cgrid-cell.wrong{background:#fee2e2;border-color:var(--p3);}
+
+/* MIXED NUMBER display */
+.mxd{display:inline-flex;align-items:center;gap:3px;vertical-align:middle;}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  .qopts{grid-template-columns:1fr;}
+  header h1{font-size:1.6rem;}
+  .flash-num{font-size:2.2rem;}
+  .level-nav{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍕 Brüche &amp; Dezimalzahlen – 5.6</h1>
+  <p>KHS St. Benedikt · Klasse 5 · Interaktiv üben</p>
+  <div class="prog-wrap"><div class="prog-bar" id="gProg" style="width:0%"></div></div>
+  <div class="prog-txt" id="gTxt">Noch keine Aufgaben gelöst</div>
+</header>
+
+<!-- LEVEL SELECTOR -->
+<div class="level-nav">
+  <button class="lvl-btn active" data-lvl="1" onclick="setLevel(1)">⭐ Basis</button>
+  <button class="lvl-btn" data-lvl="2" onclick="setLevel(2)">⭐⭐ Erweitert</button>
+  <button class="lvl-btn" data-lvl="3" onclick="setLevel(3)">⭐⭐⭐ Profi</button>
+</div>
+
+<!-- MODULE TABS -->
+<nav class="tabs">
+  <button class="tab active" onclick="switchTab('erklärung')">📖 Erklärung</button>
+  <button class="tab" onclick="switchTab('bruchteile')">🔵 Bruchteile</button>
+  <button class="tab" onclick="switchTab('rechnen')">🧮 Rechnen</button>
+  <button class="tab" onclick="switchTab('umrechnen')">🔄 Umrechnen</button>
+  <button class="tab" onclick="switchTab('addsubtr')">➕ Add./Subtr.</button>
+  <button class="tab" onclick="switchTab('dezimal')">📊 Dezimal</button>
+  <button class="tab" onclick="switchTab('quiz')">🏆 Quiz</button>
+  <button class="tab" onclick="switchTab('ueben')">🔁 Mehr üben</button>
+</nav>
+
+<main>
+
+<!-- ====== ERKLÄRUNG ====== -->
+<section class="section active" id="sec-erklärung">
+
+  <!-- LEVEL 1 -->
+  <div class="level-content active" id="erkl-lvl1">
+    <div class="card">
+      <div class="card-head">📖 Was ist ein Bruch?</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <div class="info">
+        Ein Bruch hat <strong>Zähler</strong> (oben) und <strong>Nenner</strong> (unten).<br>
+        Der Nenner sagt: In wie viele <em>gleiche Teile</em> wird das Ganze geteilt?<br>
+        Der Zähler sagt: Wie viele dieser Teile sind gemeint?
+      </div>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="50" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <path d="M55,55 L55,5 A50,50 0 0,1 105,55 Z" fill="#2563eb" opacity="0.85"/>
+          <path d="M55,55 L105,55 A50,50 0 0,1 55,105 Z" fill="#2563eb" opacity="0.55"/>
+          <line x1="55" y1="5" x2="55" y2="105" stroke="white" stroke-width="2"/>
+          <line x1="5" y1="55" x2="105" y2="55" stroke="white" stroke-width="2"/>
+          <circle cx="55" cy="55" r="3" fill="white"/>
+        </svg>
+        <div>
+          <div style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">
+            <span class="fr"><span class="fn">2</span><span class="fb"></span><span class="fd">4</span></span> des Kreises ist blau
+          </div>
+          <div class="steps">
+            <div class="step"><div class="snum" style="background:#dc2626">Z</div><div><b>Zähler = 2</b> → 2 Teile sind blau</div></div>
+            <div class="step"><div class="snum">N</div><div><b>Nenner = 4</b> → 4 gleiche Teile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🍕 Stammbrüche</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <div class="info">Ein <strong>Stammbruch</strong> hat immer <strong>Zähler 1</strong>: <span class="fr"><span class="fn">1</span><span class="fb"></span><span class="fd">2</span></span>, <span class="fr"><span class="fn">1</span><span class="fb"></span><span class="fd">3</span></span>, <span class="fr"><span class="fn">1</span><span class="fb"></span><span class="fd">4</span></span>, <span class="fr"><span class="fn">1</span><span class="fb"></span><span class="fd">5</span></span> …</div>
+      <div class="pie-grid" id="stammbruch-pies"></div>
+    </div>
+  </div>
+
+  <!-- LEVEL 2 -->
+  <div class="level-content" id="erkl-lvl2">
+    <div class="card">
+      <div class="card-head">🔢 Bruchteile berechnen</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <div class="info">
+        <strong>Regel:</strong> <span class="fr"><span class="fn">3</span><span class="fb"></span><span class="fd">4</span></span> von 20 = ?
+      </div>
+      <div class="steps">
+        <div class="step"><div class="snum">1</div><div>Durch den <b>Nenner teilen</b>: 20 ÷ 4 = <b>5</b></div></div>
+        <div class="step"><div class="snum">2</div><div>Mit dem <b>Zähler multiplizieren</b>: 5 × 3 = <b>15</b></div></div>
+        <div class="step"><div class="snum" style="background:var(--green)">✓</div><div><span class="fr"><span class="fn">3</span><span class="fb"></span><span class="fd">4</span></span> von 20 = <b>15</b></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">🔄 Gemischte Zahlen</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <div class="steps">
+        <div class="step"><div class="snum">1</div><div><b>Unechter Bruch → Gemischt:</b> <span class="fr"><span class="fn">7</span><span class="fb"></span><span class="fd">4</span></span> = 7 ÷ 4 = 1 Rest 3 → <span class="mxd">1<span class="fr"><span class="fn">3</span><span class="fb"></span><span class="fd">4</span></span></span></div></div>
+        <div class="step"><div class="snum">2</div><div><b>Gemischt → Unechter Bruch:</b> <span class="mxd">2<span class="fr"><span class="fn">1</span><span class="fb"></span><span class="fd">3</span></span></span> = (2×3+1) ÷ 3 = <span class="fr"><span class="fn">7</span><span class="fb"></span><span class="fd">3</span></span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL 3 -->
+  <div class="level-content" id="erkl-lvl3">
+    <div class="card">
+      <div class="card-head">📊 Dezimalzahlen &amp; Brüche</div>
+      <div class="lbadge lb3">⭐⭐⭐ Profi</div>
+      <div class="info">
+        <b>Dezimalzahlen</b> sind Brüche mit Nennern 10, 100, 1000 …<br>
+        0,3 = <span class="fr"><span class="fn">3</span><span class="fb"></span><span class="fd">10</span></span> &nbsp;·&nbsp; 0,47 = <span class="fr"><span class="fn">47</span><span class="fb"></span><span class="fd">100</span></span> &nbsp;·&nbsp; 1,5 = <span class="mxd">1<span class="fr"><span class="fn">5</span><span class="fb"></span><span class="fd">10</span></span></span>
+      </div>
+      <table class="sv-table">
+        <tr><th>Einer</th><th style="background:#fef3c7;color:#92400e;">,</th><th>Zehntel</th><th>Hundertstel</th></tr>
+        <tr><td>3</td><td class="comma">,</td><td>7</td><td>5</td></tr>
+        <tr><td colspan="4" style="font-size:0.82rem;color:var(--muted);text-align:left;padding:6px 10px;">→ 3,75 = 3 + 0,7 + 0,05</td></tr>
+      </table>
+      <div class="steps" style="margin-top:8px;">
+        <div class="step"><div class="snum">1</div><div><b>Runden auf Zehntel:</b> 3,75 → 3,8 (da 5 ≥ 5 → aufrunden)</div></div>
+        <div class="step"><div class="snum">2</div><div><b>Ordnen:</b> 0,4 &gt; 0,38 &gt; 0,304</div></div>
+        <div class="step"><div class="snum">3</div><div><b>Addieren:</b> 2,3 + 1,45 = 3,75 (Komma untereinander!)</div></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== BRUCHTEILE ====== -->
+<section class="section" id="sec-bruchteile">
+
+  <!-- L1: Welcher Bruchteil ist gefärbt? -->
+  <div class="level-content active" id="brucht-lvl1">
+    <div class="card">
+      <div class="card-head">🔵 Welcher Bruchteil ist gefärbt?</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <div class="tcnt" id="bt1-cnt">Aufgabe 1 von 8</div>
+      <p style="margin-bottom:10px;font-weight:700;" id="bt1-question">Wie viel ist gefärbt?</p>
+      <svg id="bt1-svg" width="120" height="120" viewBox="0 0 120 120" style="display:block;margin-bottom:10px;"></svg>
+      <div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:6px;">
+        Antwort:
+        <span class="finput-wrap" id="bt1-finput">
+          <input type="number" id="bt1-n" class="ans-input" placeholder="?" style="width:50px;">
+          <div class="fb"></div>
+          <input type="number" id="bt1-d" class="ans-input" placeholder="?" style="width:50px;">
+        </span>
+      </div>
+      <div class="fb-box" id="bt1-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkBT1()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="nextBT1()">→ Weiter</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🎨 Bruchteil einzeichnen</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <p id="draw1-task" style="font-weight:700;margin-bottom:8px;font-size:1rem;"></p>
+      <div class="click-grid" id="draw1-grid"></div>
+      <div class="fb-box" id="draw1-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkDraw1()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="newDraw1()">→ Neu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- L2 -->
+  <div class="level-content" id="brucht-lvl2">
+    <div class="card">
+      <div class="card-head">🔵 Bruchteile beim Dividieren</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <div class="info"><b>Wenn du teilst, entstehen Brüche!</b><br>
+        4 Kinder teilen 3 Pizzen: jede/r bekommt <span class="fr"><span class="fn">3</span><span class="fb"></span><span class="fd">4</span></span> Pizza.</div>
+      <p id="divfrac-task" style="font-weight:700;font-size:1rem;margin-bottom:10px;"></p>
+      <div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        Jede Person bekommt:
+        <span class="finput-wrap">
+          <input type="number" id="df-n" class="ans-input" placeholder="?" style="width:50px;">
+          <div class="fb"></div>
+          <input type="number" id="df-d" class="ans-input" placeholder="?" style="width:50px;">
+        </span>
+      </div>
+      <div class="fb-box" id="df-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkDivFrac()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="newDivFrac()">→ Neu</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🎨 Bruchteil auf Gitter einzeichnen</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <p id="draw2-task" style="font-weight:700;margin-bottom:8px;"></p>
+      <div class="click-grid" id="draw2-grid"></div>
+      <div class="fb-box" id="draw2-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkDraw2()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="newDraw2()">→ Neu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- L3 -->
+  <div class="level-content" id="brucht-lvl3">
+    <div class="card">
+      <div class="card-head">🔵 Vom Bruchteil zum Ganzen</div>
+      <div class="lbadge lb3">⭐⭐⭐ Profi</div>
+      <div class="info"><b>Rückwärts denken!</b><br>
+        <span class="fr"><span class="fn">2</span><span class="fb"></span><span class="fd">3</span></span> von ? = 8 → Erst: 8 ÷ 2 = 4 → Dann: 4 × 3 = <b>12</b></div>
+      <p id="rev-task" style="font-weight:700;font-size:1rem;margin-bottom:10px;"></p>
+      <div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        Das Ganze ist: <input type="number" class="ans-input" id="rev-ans" placeholder="?" style="width:68px;border-bottom-color:var(--p3);">
+      </div>
+      <div class="fb-box" id="rev-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkRev()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="newRev()">→ Neu</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== RECHNEN ====== -->
+<section class="section" id="sec-rechnen">
+
+  <div class="level-content active" id="rechn-lvl1">
+    <div class="card">
+      <div class="card-head">🧮 Bruchteil von Zahl – Basis</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <div class="info"><b>Tipp:</b> Erst ÷ Nenner, dann × Zähler</div>
+      <div class="scorebar"><div class="sdot"></div><span>Richtig: <b id="rc1-score">0</b> / <b id="rc1-tot">0</b></span></div>
+      <div id="rc1-tasks"></div>
+      <div class="fb-box" id="rc1-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkRC1()">✓ Alle prüfen</button>
+        <button class="btn btn-out" onclick="genRC1()">↺ Neue Aufgaben</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-content" id="rechn-lvl2">
+    <div class="card">
+      <div class="card-head">🧮 Bruchteil von Zahl – Erweitert</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <div class="scorebar"><div class="sdot" style="background:var(--p2)"></div><span>Richtig: <b id="rc2-score">0</b> / <b id="rc2-tot">0</b></span></div>
+      <div id="rc2-tasks"></div>
+      <div class="fb-box" id="rc2-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkRC2()">✓ Alle prüfen</button>
+        <button class="btn btn-out" onclick="genRC2()">↺ Neue Aufgaben</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-content" id="rechn-lvl3">
+    <div class="card">
+      <div class="card-head">🧮 Bruchteil – Profi-Mix</div>
+      <div class="lbadge lb3">⭐⭐⭐ Profi</div>
+      <div class="scorebar"><div class="sdot" style="background:var(--p3)"></div><span>Richtig: <b id="rc3-score">0</b> / <b id="rc3-tot">0</b></span></div>
+      <div id="rc3-tasks"></div>
+      <div class="fb-box" id="rc3-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkRC3()">✓ Alle prüfen</button>
+        <button class="btn btn-out" onclick="genRC3()">↺ Neue Aufgaben</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== UMRECHNEN ====== -->
+<section class="section" id="sec-umrechnen">
+
+  <div class="level-content active" id="umr-lvl1">
+    <div class="card">
+      <div class="card-head">🔄 Unechter Bruch → Gemischte Zahl</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <div class="info">Teile den Zähler durch den Nenner. Der Rest wird zum neuen Zähler.</div>
+      <div id="um1-tasks"></div>
+      <div class="fb-box" id="um1-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkUM1()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genUM1()">↺ Neu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-content" id="umr-lvl2">
+    <div class="card">
+      <div class="card-head">🔄 Gemischte Zahl → Unechter Bruch</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <div class="info">Ganzes × Nenner + Zähler = neuer Zähler.</div>
+      <div id="um2-tasks"></div>
+      <div class="fb-box" id="um2-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkUM2()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genUM2()">↺ Neu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-content" id="umr-lvl3">
+    <div class="card">
+      <div class="card-head">🔄 Gemischt – Beide Richtungen</div>
+      <div class="lbadge lb3">⭐⭐⭐ Profi</div>
+      <div id="um3-tasks"></div>
+      <div class="fb-box" id="um3-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkUM3()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genUM3()">↺ Neu</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== ADD/SUBTR ====== -->
+<section class="section" id="sec-addsubtr">
+
+  <div class="level-content active" id="as-lvl1">
+    <div class="card">
+      <div class="card-head">➕ Addieren &amp; Subtrahieren – Basis</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <div class="info">Gleicher Nenner? Nur die <b>Zähler</b> addieren/subtrahieren!</div>
+      <div id="as1-tasks"></div>
+      <div class="fb-box" id="as1-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkAS1()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genAS1()">↺ Neue Aufgaben</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-content" id="as-lvl2">
+    <div class="card">
+      <div class="card-head">➕ Addieren → Gemischte Zahl</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <div class="info">Wenn der Zähler größer als der Nenner wird → in gemischte Zahl umschreiben!</div>
+      <div id="as2-tasks"></div>
+      <div class="fb-box" id="as2-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkAS2()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genAS2()">↺ Neu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-content" id="as-lvl3">
+    <div class="card">
+      <div class="card-head">➕ Gemischte Rechenaufgaben</div>
+      <div class="lbadge lb3">⭐⭐⭐ Profi</div>
+      <div id="as3-tasks"></div>
+      <div class="fb-box" id="as3-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkAS3()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genAS3()">↺ Neu</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== DEZIMAL ====== -->
+<section class="section" id="sec-dezimal">
+
+  <div class="level-content active" id="dez-lvl1">
+    <div class="card">
+      <div class="card-head">📊 Dezimalzahlen lesen – Stellenwerttafel</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <div class="info">Das <b>Komma</b> trennt Ganze von den Zehntel, Hundertstel usw.</div>
+      <p id="dez1-task" style="font-weight:700;margin-bottom:10px;"></p>
+      <table class="sv-table" id="dez1-table"></table>
+      <div class="fb-box" id="dez1-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkDez1()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genDez1()">↺ Neu</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">📊 Dezimalzahlen ordnen</div>
+      <div class="lbadge lb1">⭐ Basis</div>
+      <p style="margin-bottom:10px;font-size:0.9rem;">Welche Zahl ist <b>größer</b>?</p>
+      <div id="dez-ord-tasks"></div>
+      <div class="fb-box" id="dez-ord-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkDezOrd()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genDezOrd()">↺ Neu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-content" id="dez-lvl2">
+    <div class="card">
+      <div class="card-head">📊 Dezimalzahlen runden</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <div class="info">Schau auf die nächste Stelle: ≥ 5 → aufrunden, &lt; 5 → abrunden</div>
+      <div id="round-tasks"></div>
+      <div class="fb-box" id="round-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkRound()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genRound()">↺ Neu</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">📊 Dezimalzahlen addieren &amp; subtrahieren</div>
+      <div class="lbadge lb2">⭐⭐ Erweitert</div>
+      <div class="info">Komma unter Komma schreiben!</div>
+      <div id="dezas-tasks"></div>
+      <div class="fb-box" id="dezas-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkDezAS()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genDezAS()">↺ Neu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-content" id="dez-lvl3">
+    <div class="card">
+      <div class="card-head">📊 Bruch ↔ Dezimalzahl</div>
+      <div class="lbadge lb3">⭐⭐⭐ Profi</div>
+      <div class="info"><span class="fr"><span class="fn">3</span><span class="fb"></span><span class="fd">10</span></span> = 0,3 · <span class="fr"><span class="fn">47</span><span class="fb"></span><span class="fd">100</span></span> = 0,47 · <span class="mxd">2<span class="fr"><span class="fn">5</span><span class="fb"></span><span class="fd">10</span></span></span> = 2,5</div>
+      <div id="brdez-tasks"></div>
+      <div class="fb-box" id="brdez-fb"></div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="checkBrDez()">✓ Prüfen</button>
+        <button class="btn btn-out" onclick="genBrDez()">↺ Neu</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== MEHR ÜBEN ====== -->
+<section class="section" id="sec-ueben">
+
+  <div class="card">
+    <div class="card-head">🔄 Bruch ↔ Dezimalzahl umrechnen</div>
+    <div class="lbadge lb1">⭐ Basis</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Wandle den Bruch in eine Dezimalzahl um oder umgekehrt.</p>
+    <div id="ub-umrechnen"></div>
+    <div class="fb-box" id="ub-umr-fb"></div>
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="checkUbUmr()">✓ Prüfen</button>
+      <button class="btn btn-out" onclick="newUbUmr()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">➕ Dezimalzahlen addieren &amp; subtrahieren</div>
+    <div class="lbadge lb2">⭐⭐ Erweitert</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Berechne. Komma unter Komma!</p>
+    <div id="ub-dezas"></div>
+    <div class="fb-box" id="ub-dezas-fb"></div>
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="checkUbDezAS()">✓ Prüfen</button>
+      <button class="btn btn-out" onclick="newUbDezAS()">→ Neue Aufgaben</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">⚖️ Brüche vergleichen</div>
+    <div class="lbadge lb2">⭐⭐ Erweitert</div>
+    <p style="font-size:0.88rem;margin-bottom:10px;">Setze &lt;, &gt; oder = ein.</p>
+    <div id="ub-vgl"></div>
+    <div class="fb-box" id="ub-vgl-fb"></div>
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="checkUbVgl()">✓ Prüfen</button>
+      <button class="btn btn-out" onclick="newUbVgl()">→ Neue Aufgaben</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== QUIZ ====== -->
+<section class="section" id="sec-quiz">
+
+  <div class="level-content active" id="quiz-lvl1">
+    <div class="card">
+      <div class="card-head">🏆 Quiz – Basis (⭐)</div>
+      <div id="q1-box"></div>
+      <div class="btn-row"><button class="btn btn-blue" onclick="nextQ(1)">→ Nächste Frage</button></div>
+    </div>
+  </div>
+
+  <div class="level-content" id="quiz-lvl2">
+    <div class="card">
+      <div class="card-head">🏆 Quiz – Erweitert (⭐⭐)</div>
+      <div id="q2-box"></div>
+      <div class="btn-row"><button class="btn btn-blue" onclick="nextQ(2)">→ Nächste Frage</button></div>
+    </div>
+  </div>
+
+  <div class="level-content" id="quiz-lvl3">
+    <div class="card">
+      <div class="card-head">🏆 Quiz – Profi (⭐⭐⭐)</div>
+      <div id="q3-box"></div>
+      <div class="btn-row"><button class="btn btn-blue" onclick="nextQ(3)">→ Nächste Frage</button></div>
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<script>
+// ===== GLOBAL =====
+let totalPts=0, maxPts=0, currentLevel=1;
+
+function pts(ok){
+  if(ok) totalPts++;
+  maxPts++;
+  const pct=maxPts?Math.round(totalPts/maxPts*100):0;
+  document.getElementById('gProg').style.width=pct+'%';
+  document.getElementById('gTxt').textContent=`${totalPts} von ${maxPts} richtig (${pct}%)`;
+}
+
+function fr(n,d,cls=''){
+  return `<span class="fr ${cls}"><span class="fn">${n}</span><span class="fb"></span><span class="fd">${d}</span></span>`;
+}
+function mxd(g,n,d){
+  return `<span class="mxd">${g}${fr(n,d)}</span>`;
+}
+function finput(idN,idD,small=''){
+  return `<span class="finput-wrap"><input type="number" id="${idN}" placeholder="?" style="width:50px${small}"><div class="fb"></div><input type="number" id="${idD}" placeholder="?" style="width:50px${small}"></span>`;
+}
+
+// ===== TABS & LEVELS =====
+function switchTab(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  event.target.closest('.tab').classList.add('active');
+  updateLevelContent(id);
+}
+function setLevel(lvl){
+  currentLevel=lvl;
+  document.querySelectorAll('.lvl-btn').forEach(b=>b.classList.toggle('active',+b.dataset.lvl===lvl));
+  const activeSection=document.querySelector('.section.active');
+  if(activeSection) updateLevelContent(activeSection.id.replace('sec-',''));
+}
+function updateLevelContent(sectionId){
+  const prefixes={
+    'erklärung':'erkl','bruchteile':'brucht','rechnen':'rechn','umrechnen':'umr',
+    'addsubtr':'as','dezimal':'dez','flash':'fl','quiz':'quiz'
+  };
+  const pfx=prefixes[sectionId];
+  if(!pfx) return;
+  for(let l=1;l<=3;l++){
+    const el=document.getElementById(pfx+'-lvl'+l);
+    if(el) el.classList.toggle('active',l===currentLevel);
+  }
+}
+
+// ===== STAMMBRÜCHE PIES =====
+function drawPie(n,d,size=70){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width',size);svg.setAttribute('height',size);svg.setAttribute('viewBox',`0 0 ${size} ${size}`);
+  const cx=size/2,cy=size/2,r=size/2-3;
+  const cols=['#2563eb','#7c3aed','#059669','#ea580c','#dc2626','#d97706','#0891b2','#db2777'];
+  for(let i=0;i<d;i++){
+    const a1=(i/d)*2*Math.PI-Math.PI/2,a2=((i+1)/d)*2*Math.PI-Math.PI/2;
+    const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+    const lf=d===1?1:0;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${lf},1 ${x2},${y2} Z`);
+    p.setAttribute('fill',i<n?cols[i%cols.length]:'#e5e7eb');
+    p.setAttribute('stroke','white');p.setAttribute('stroke-width','2');
+    svg.appendChild(p);
+  }
+  return svg;
+}
+function buildStammBruche(){
+  const cont=document.getElementById('stammbruch-pies');
+  if(!cont) return;
+  cont.innerHTML='';
+  [2,3,4,5,6,8].forEach(d=>{
+    const w=document.createElement('div');w.className='pie-wrap';
+    w.appendChild(drawPie(1,d,72));
+    const l=document.createElement('div');l.className='plbl';
+    l.innerHTML=`${fr(1,d)}`;
+    w.appendChild(l);cont.appendChild(w);
+  });
+}
+buildStammBruche();
+
+// ===== BT1: Welcher Bruchteil =====
+const bt1Pool=[
+  {n:1,d:2},{n:1,d:3},{n:2,d:3},{n:1,d:4},{n:3,d:4},{n:1,d:5},{n:2,d:5},{n:3,d:5},{n:4,d:5},
+  {n:1,d:6},{n:5,d:6},{n:3,d:8},{n:5,d:8},{n:1,d:8},{n:2,d:4}
+];
+let bt1Idx=0,bt1Current=null;
+function bt1Draw(){
+  const svg=document.getElementById('bt1-svg');
+  if(!svg||!bt1Current) return;
+  svg.innerHTML='';
+  const {n,d}=bt1Current;
+  const pieEl=drawPie(n,d,120);
+  svg.innerHTML=pieEl.outerHTML;
+}
+function nextBT1(){
+  bt1Current=bt1Pool[Math.floor(Math.random()*bt1Pool.length)];
+  bt1Idx=(bt1Idx+1)%8;
+  document.getElementById('bt1-cnt').textContent=`Aufgabe ${bt1Idx+1} von 8`;
+  document.getElementById('bt1-n').value='';document.getElementById('bt1-d').value='';
+  document.getElementById('bt1-n').className='ans-input';document.getElementById('bt1-d').className='ans-input';
+  const fb=document.getElementById('bt1-fb');fb.className='fb-box';
+  bt1Draw();
+}
+function checkBT1(){
+  const n=+document.getElementById('bt1-n').value,d=+document.getElementById('bt1-d').value;
+  const ok=n===bt1Current.n&&d===bt1Current.d;
+  document.getElementById('bt1-n').className='ans-input '+(ok?'ok':'err');
+  document.getElementById('bt1-d').className='ans-input '+(ok?'ok':'err');
+  const fb=document.getElementById('bt1-fb');
+  fb.textContent=ok?'✅ Richtig! '+bt1Current.n+'/'+bt1Current.d+' des Kreises ist gefärbt.':'💡 Tipp: Zähle die gefärbten Teile (= Zähler) und alle Teile insgesamt (= Nenner).';
+  fb.className='fb-box show '+(ok?'fb-ok':'fb-err');
+  pts(ok);
+}
+nextBT1();
+
+// ===== DRAW GRIDS =====
+let draw1Data=null,draw2Data=null;
+const drawPool1=[
+  {n:1,d:2,t:6},{n:2,d:3,t:9},{n:1,d:4,t:8},{n:3,d:4,t:12},{n:3,d:5,t:10},{n:2,d:5,t:10},{n:1,d:3,t:9}
+];
+const drawPool2=[
+  {n:3,d:4,t:12},{n:5,d:6,t:12},{n:2,d:3,t:9},{n:5,d:8,t:16},{n:3,d:8,t:16},{n:4,d:5,t:20}
+];
+function buildDrawGrid(containerId,taskId,data){
+  const c=document.getElementById(containerId);
+  c.innerHTML='';
+  const perRow=Math.ceil(Math.sqrt(data.t));
+  c.style.maxWidth=(perRow*44)+'px';
+  for(let i=0;i<data.t;i++){
+    const cell=document.createElement('div');
+    cell.className='cgrid-cell';
+    cell.dataset.on='0';
+    const num=Math.floor(i/(data.t/data.d))+1;
+    cell.textContent=num;
+    cell.onclick=function(){
+      this.dataset.on=this.dataset.on==='0'?'1':'0';
+      this.classList.toggle('on',this.dataset.on==='1');
+    };
+    c.appendChild(cell);
+  }
+  const expected=Math.round(data.n*data.t/data.d);
+  document.getElementById(taskId).innerHTML=`Klicke genau <b>${expected}</b> Felder an (= ${fr(data.n,data.d)} von ${data.t} Feldern):`;
+}
+function newDraw1(){
+  draw1Data=drawPool1[Math.floor(Math.random()*drawPool1.length)];
+  buildDrawGrid('draw1-grid','draw1-task',draw1Data);
+  document.getElementById('draw1-fb').className='fb-box';
+}
+function checkDraw1(){
+  const cells=document.querySelectorAll('#draw1-grid .cgrid-cell');
+  const sel=[...cells].filter(c=>c.dataset.on==='1').length;
+  const exp=Math.round(draw1Data.n*draw1Data.t/draw1Data.d);
+  const ok=sel===exp;
+  if(ok) cells.forEach(c=>{if(c.dataset.on==='1')c.classList.add('ok');});
+  else cells.forEach(c=>{if(c.dataset.on==='1')c.classList.add('wrong');});
+  const fb=document.getElementById('draw1-fb');
+  fb.textContent=ok?'✅ Super! Genau '+exp+' Felder richtig markiert.':'💡 Tipp: '+draw1Data.n+' von '+draw1Data.d+' Teilen bedeutet: '+draw1Data.t+' ÷ '+draw1Data.d+' × '+draw1Data.n+' = '+exp+' Felder.';
+  fb.className='fb-box show '+(ok?'fb-ok':'fb-err');
+  pts(ok);
+}
+function newDraw2(){
+  draw2Data=drawPool2[Math.floor(Math.random()*drawPool2.length)];
+  buildDrawGrid('draw2-grid','draw2-task',draw2Data);
+  document.getElementById('draw2-fb').className='fb-box';
+}
+function checkDraw2(){
+  const cells=document.querySelectorAll('#draw2-grid .cgrid-cell');
+  const sel=[...cells].filter(c=>c.dataset.on==='1').length;
+  const exp=Math.round(draw2Data.n*draw2Data.t/draw2Data.d);
+  const ok=sel===exp;
+  if(ok) cells.forEach(c=>{if(c.dataset.on==='1')c.classList.add('ok');});
+  else cells.forEach(c=>{if(c.dataset.on==='1')c.classList.add('wrong');});
+  const fb=document.getElementById('draw2-fb');
+  fb.textContent=ok?'✅ Richtig! '+exp+' Felder korrekt markiert.':'💡 Tipp: Rechne '+draw2Data.t+' ÷ '+draw2Data.d+' × '+draw2Data.n+' = '+exp+' Felder.';
+  fb.className='fb-box show '+(ok?'fb-ok':'fb-err');
+  pts(ok);
+}
+newDraw1(); newDraw2();
+
+// ===== DIVFRAC =====
+const divPool=[
+  {ganzes:3,pers:4,ans:[3,4],'text':'3 Pizzen auf 4 Kinder'},
+  {ganzes:5,pers:6,ans:[5,6],'text':'5 Tafeln Schokolade auf 6 Freunde'},
+  {ganzes:2,pers:3,ans:[2,3],'text':'2 Liter Saft auf 3 Personen'},
+  {ganzes:4,pers:5,ans:[4,5],'text':'4 Kuchen auf 5 Familien'},
+  {ganzes:7,pers:8,ans:[7,8],'text':'7 Meter Stoff auf 8 Schüler:innen'},
+];
+let dfCur=null;
+function newDivFrac(){
+  dfCur=divPool[Math.floor(Math.random()*divPool.length)];
+  document.getElementById('divfrac-task').innerHTML=`<b>${dfCur.text}</b> – wie viel bekommt jede Person?`;
+  document.getElementById('df-n').value='';document.getElementById('df-d').value='';
+  document.getElementById('df-fb').className='fb-box';
+}
+function checkDivFrac(){
+  const n=+document.getElementById('df-n').value,d=+document.getElementById('df-d').value;
+  const ok=n===dfCur.ans[0]&&d===dfCur.ans[1];
+  const fb=document.getElementById('df-fb');
+  fb.textContent=ok?'✅ Richtig! '+dfCur.ganzes+' ÷ '+dfCur.pers+' = '+dfCur.ans[0]+'/'+dfCur.ans[1]:'💡 Tipp: Beim Teilen wird das Ergebnis zu einem Bruch – die Anzahl der Teile ist der Zähler, die Anzahl der Personen der Nenner.';
+  fb.className='fb-box show '+(ok?'fb-ok':'fb-err');
+  pts(ok);
+}
+newDivFrac();
+
+// ===== REV (Vom Bruchteil zum Ganzen) =====
+const revPool=[
+  {n:2,d:3,bt:8,whole:12},{n:3,d:4,bt:9,whole:12},{n:2,d:5,bt:6,whole:15},
+  {n:3,d:5,bt:12,whole:20},{n:4,d:5,bt:16,whole:20},{n:5,d:8,bt:15,whole:24},
+  {n:3,d:8,bt:6,whole:16},{n:2,d:7,bt:8,whole:28}
+];
+let revCur=null;
+function newRev(){
+  revCur=revPool[Math.floor(Math.random()*revPool.length)];
+  document.getElementById('rev-task').innerHTML=
+    `${fr(revCur.n,revCur.d)} von ? = <b>${revCur.bt}</b>`;
+  document.getElementById('rev-ans').value='';
+  document.getElementById('rev-fb').className='fb-box';
+}
+function checkRev(){
+  const v=+document.getElementById('rev-ans').value;
+  const ok=v===revCur.whole;
+  const fb=document.getElementById('rev-fb');
+  fb.textContent=ok?'✅ Richtig! '+revCur.bt+' ÷ '+revCur.n+' × '+revCur.d+' = '+revCur.whole
+                  :'💡 Tipp: Rückwärts rechnen: Erst durch den Zähler teilen, dann mit dem Nenner multiplizieren. ('+revCur.bt+' ÷ '+revCur.n+' × '+revCur.d+')';
+  fb.className='fb-box show '+(ok?'fb-ok':'fb-err');
+  pts(ok);
+}
+newRev();
+
+// ===== RECHNEN L1/L2/L3 =====
+const rcPool1=[
+  {n:1,d:2,whole:8,ans:4},{n:1,d:3,whole:9,ans:3},{n:1,d:4,whole:8,ans:2},{n:2,d:3,whole:9,ans:6},
+  {n:1,d:5,whole:10,ans:2},{n:3,d:4,whole:8,ans:6},{n:2,d:5,whole:10,ans:4},{n:1,d:4,whole:12,ans:3}
+];
+const rcPool2=[
+  {n:5,d:6,whole:24,ans:20},{n:3,d:8,whole:24,ans:9},{n:2,d:5,whole:45,ans:18},
+  {n:3,d:10,whole:80,ans:24},{n:4,d:7,whole:56,ans:32},{n:7,d:20,whole:100,ans:35},
+  {n:5,d:8,whole:400,ans:250},{n:3,d:4,whole:100,ans:75}
+];
+const rcPool3=[
+  {n:5,d:8,whole:8000,ans:5000},{n:3,d:100,whole:500,ans:15},{n:7,d:20,whole:200,ans:70},
+  {n:9,d:10,whole:1000,ans:900},{n:3,d:25,whole:100,ans:12},{n:7,d:8,whole:64,ans:56}
+];
+
+function genRCTasks(pool,containerId,level,count=6){
+  const cont=document.getElementById(containerId);
+  cont.innerHTML='';
+  const tasks=[];
+  while(tasks.length<count){
+    const t=pool[Math.floor(Math.random()*pool.length)];
+    if(!tasks.find(x=>x.n===t.n&&x.d===t.d&&x.whole===t.whole)) tasks.push(t);
+  }
+  cont._tasks=tasks;
+  tasks.forEach((t,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;font-size:1rem;font-weight:700;';
+    row.innerHTML=`<span>${fr(t.n,t.d)} von ${t.whole} = <input type="number" id="rc${level}_${i}" class="ans-input" placeholder="?" style="width:70px;"></span>`;
+    cont.appendChild(row);
+  });
+}
+function checkRCLevel(pool,containerId,fbId,scoreId,totId,level){
+  const cont=document.getElementById(containerId);
+  const tasks=cont._tasks||[];
+  let ok=0;
+  tasks.forEach((t,i)=>{
+    const inp=document.getElementById('rc'+level+'_'+i);
+    const v=+inp.value;
+    const correct=v===t.ans;
+    inp.className='ans-input '+(correct?'ok':'err');
+    if(correct) ok++;
+  });
+  const prev=+document.getElementById(scoreId).textContent;
+  document.getElementById(scoreId).textContent=prev+ok;
+  document.getElementById(totId).textContent=+document.getElementById(totId).textContent+tasks.length;
+  const fb=document.getElementById(fbId);
+  fb.textContent=ok===tasks.length?'✅ Alle '+ok+' richtig!':''+ok+' von '+tasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===tasks.length?'fb-ok':'fb-err');
+  for(let i=0;i<tasks.length;i++) pts(+document.getElementById('rc'+level+'_'+i).className.includes('ok'));
+}
+function genRC1(){document.getElementById('rc1-fb').className='fb-box';genRCTasks(rcPool1,'rc1-tasks',1,6);}
+function genRC2(){document.getElementById('rc2-fb').className='fb-box';genRCTasks(rcPool2,'rc2-tasks',2,6);}
+function genRC3(){document.getElementById('rc3-fb').className='fb-box';genRCTasks(rcPool3,'rc3-tasks',3,6);}
+function checkRC1(){checkRCLevel(rcPool1,'rc1-tasks','rc1-fb','rc1-score','rc1-tot',1);}
+function checkRC2(){checkRCLevel(rcPool2,'rc2-tasks','rc2-fb','rc2-score','rc2-tot',2);}
+function checkRC3(){checkRCLevel(rcPool3,'rc3-tasks','rc3-fb','rc3-score','rc3-tot',3);}
+genRC1(); genRC2(); genRC3();
+
+// ===== UMRECHNEN =====
+const um1Pool=[
+  {n:4,d:3,whole:1,rem:1},{n:7,d:4,whole:1,rem:3},{n:13,d:5,whole:2,rem:3},
+  {n:11,d:4,whole:2,rem:3},{n:9,d:4,whole:2,rem:1},{n:14,d:5,whole:2,rem:4},
+  {n:17,d:6,whole:2,rem:5},{n:25,d:8,whole:3,rem:1},{n:43,d:10,whole:4,rem:3},
+  {n:22,d:7,whole:3,rem:1},{n:19,d:8,whole:2,rem:3}
+];
+const um2Pool=[
+  {g:2,n:2,d:3,ans:8},{g:4,n:1,d:5,ans:21},{g:5,n:1,d:8,ans:41},
+  {g:6,n:2,d:7,ans:44},{g:3,n:3,d:4,ans:15},{g:4,n:7,d:9,ans:43},
+  {g:10,n:1,d:6,ans:61},{g:2,n:5,d:6,ans:17},{g:3,n:2,d:5,ans:17}
+];
+let um1Tasks=[],um2Tasks=[],um3Tasks=[];
+
+function genUM1(){
+  const cont=document.getElementById('um1-tasks');cont.innerHTML='';
+  document.getElementById('um1-fb').className='fb-box';
+  um1Tasks=[];
+  for(let i=0;i<4;i++){
+    const t=um1Pool[Math.floor(Math.random()*um1Pool.length)];
+    um1Tasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:1.05rem;font-weight:700;flex-wrap:wrap;';
+    row.innerHTML=`${fr(t.n,t.d)} = 
+      <input type="number" id="um1w_${i}" class="ans-input" placeholder="?" style="width:50px;"> 
+      ${fr(`<input type="number" id="um1r_${i}" class="ans-input" placeholder="?" style="width:44px;font-size:0.9rem;">`,t.d)}`;
+    cont.appendChild(row);
+  }
+}
+function checkUM1(){
+  let ok=0;
+  um1Tasks.forEach((t,i)=>{
+    const w=+document.getElementById('um1w_'+i).value,r=+document.getElementById('um1r_'+i).value;
+    const c=w===t.whole&&r===t.rem;
+    document.getElementById('um1w_'+i).className='ans-input '+(c?'ok':'err');
+    document.getElementById('um1r_'+i).className='ans-input '+(c?'ok':'err');
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('um1-fb');
+  fb.textContent=ok===um1Tasks.length?'✅ Alle richtig!':''+ok+' von '+um1Tasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===um1Tasks.length?'fb-ok':'fb-err');
+}
+
+function genUM2(){
+  const cont=document.getElementById('um2-tasks');cont.innerHTML='';
+  document.getElementById('um2-fb').className='fb-box';
+  um2Tasks=[];
+  for(let i=0;i<4;i++){
+    const t=um2Pool[Math.floor(Math.random()*um2Pool.length)];
+    um2Tasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:1.05rem;font-weight:700;flex-wrap:wrap;';
+    row.innerHTML=`${mxd(t.g,t.n,t.d)} = ${fr(`<input type="number" id="um2a_${i}" class="ans-input" placeholder="?" style="width:50px;font-size:0.9rem;">`,t.d)}`;
+    cont.appendChild(row);
+  }
+}
+function checkUM2(){
+  let ok=0;
+  um2Tasks.forEach((t,i)=>{
+    const a=+document.getElementById('um2a_'+i).value;
+    const c=a===t.ans;
+    document.getElementById('um2a_'+i).className='ans-input '+(c?'ok':'err');
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('um2-fb');
+  fb.textContent=ok===um2Tasks.length?'✅ Alle richtig!':''+ok+' von '+um2Tasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===um2Tasks.length?'fb-ok':'fb-err');
+}
+
+function genUM3(){
+  const cont=document.getElementById('um3-tasks');cont.innerHTML='';
+  document.getElementById('um3-fb').className='fb-box';
+  um3Tasks=[];
+  const pool3=[...um1Pool.map(t=>({type:'toMixed',...t})),...um2Pool.map(t=>({type:'toBruch',...t}))];
+  for(let i=0;i<4;i++){
+    const t=pool3[Math.floor(Math.random()*pool3.length)];
+    um3Tasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:1.05rem;font-weight:700;flex-wrap:wrap;';
+    if(t.type==='toMixed'){
+      row.innerHTML=`${fr(t.n,t.d)} = 
+        <input type="number" id="um3a_${i}" class="ans-input" placeholder="?" style="width:50px;">
+        ${fr(`<input type="number" id="um3b_${i}" class="ans-input" placeholder="?" style="width:44px;font-size:0.9rem;">`,t.d)}`;
+    } else {
+      row.innerHTML=`${mxd(t.g,t.n,t.d)} = ${fr(`<input type="number" id="um3a_${i}" class="ans-input" placeholder="?" style="width:50px;font-size:0.9rem;">`,t.d)}`;
+    }
+    cont.appendChild(row);
+  }
+}
+function checkUM3(){
+  let ok=0;
+  um3Tasks.forEach((t,i)=>{
+    let c=false;
+    if(t.type==='toMixed'){
+      const a=+document.getElementById('um3a_'+i).value,b=+document.getElementById('um3b_'+i).value;
+      c=a===t.whole&&b===t.rem;
+      document.getElementById('um3a_'+i).className='ans-input '+(c?'ok':'err');
+      document.getElementById('um3b_'+i).className='ans-input '+(c?'ok':'err');
+    } else {
+      const a=+document.getElementById('um3a_'+i).value;
+      c=a===t.ans;
+      document.getElementById('um3a_'+i).className='ans-input '+(c?'ok':'err');
+    }
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('um3-fb');
+  fb.textContent=ok===um3Tasks.length?'✅ Alle richtig!':''+ok+' von '+um3Tasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===um3Tasks.length?'fb-ok':'fb-err');
+}
+genUM1();genUM2();genUM3();
+
+// ===== ADD/SUBTR =====
+const as1Pool=[
+  {a:[2,5],b:[1,5],op:'+',ans:[3,5]},{a:[4,9],b:[2,9],op:'-',ans:[2,9]},
+  {a:[3,10],b:[4,10],op:'+',ans:[7,10]},{a:[17,20],b:[6,20],op:'-',ans:[11,20]},
+  {a:[83,100],b:[8,100],op:'+',ans:[91,100]},{a:[13,25],b:[7,25],op:'-',ans:[6,25]},
+  {a:[1,4],b:[2,4],op:'+',ans:[3,4]},{a:[5,8],b:[3,8],op:'-',ans:[2,8]},
+  {a:[3,7],b:[2,7],op:'+',ans:[5,7]},{a:[9,10],b:[3,10],op:'-',ans:[6,10]}
+];
+const as2Pool=[
+  {a:[7,8],b:[6,8],op:'+',asNum:[13,8],mixed:{g:1,n:5,d:8}},
+  {a:[2,5],b:[9,5],op:'+',asNum:[11,5],mixed:{g:2,n:1,d:5}},
+  {a:[21,10],b:[6,10],op:'+',asNum:[27,10],mixed:{g:2,n:7,d:10}},
+  {a:[5,6],b:[4,6],op:'+',asNum:[9,6],mixed:{g:1,n:3,d:6}},
+  {a:[4,3],b:[2,3],op:'+',asNum:[6,3],mixed:{g:2,n:0,d:3}},
+];
+let as1Tasks=[],as2Tasks=[],as3Tasks=[];
+
+function genAS1(){
+  const cont=document.getElementById('as1-tasks');cont.innerHTML='';
+  document.getElementById('as1-fb').className='fb-box';
+  as1Tasks=[];
+  for(let i=0;i<5;i++){
+    const t=as1Pool[Math.floor(Math.random()*as1Pool.length)];
+    as1Tasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:12px;font-size:1.05rem;font-weight:700;flex-wrap:wrap;';
+    row.innerHTML=`${fr(t.a[0],t.a[1])} ${t.op} ${fr(t.b[0],t.b[1])} = 
+      <span class="finput-wrap"><input type="number" id="as1n_${i}" placeholder="?" style="width:50px;"><div class="fb"></div><input type="number" id="as1d_${i}" placeholder="?" style="width:50px;"></span>`;
+    cont.appendChild(row);
+  }
+}
+function checkAS1(){
+  let ok=0;
+  as1Tasks.forEach((t,i)=>{
+    const n=+document.getElementById('as1n_'+i).value,d=+document.getElementById('as1d_'+i).value;
+    const c=n===t.ans[0]&&d===t.ans[1];
+    document.getElementById('as1n_'+i).className=(c?'ok':'err');
+    document.getElementById('as1d_'+i).className=(c?'ok':'err');
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('as1-fb');
+  fb.textContent=ok===as1Tasks.length?'✅ Alle richtig!':''+ok+' von '+as1Tasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===as1Tasks.length?'fb-ok':'fb-err');
+}
+
+function genAS2(){
+  const cont=document.getElementById('as2-tasks');cont.innerHTML='';
+  document.getElementById('as2-fb').className='fb-box';
+  as2Tasks=[];
+  for(let i=0;i<3;i++){
+    const t=as2Pool[Math.floor(Math.random()*as2Pool.length)];
+    as2Tasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:14px;font-size:1.05rem;font-weight:700;flex-wrap:wrap;';
+    row.innerHTML=`${fr(t.a[0],t.a[1])} + ${fr(t.b[0],t.b[1])} = 
+      <span class="finput-wrap"><input type="number" id="as2n_${i}" placeholder="?" style="width:50px;"><div class="fb"></div><input type="number" id="as2d_${i}" placeholder="?" style="width:50px;"></span>
+      = <input type="number" id="as2g_${i}" class="ans-input" placeholder="?" style="width:44px;">
+        ${fr(`<input type="number" id="as2r_${i}" class="ans-input" placeholder="?" style="width:44px;font-size:0.9rem;">`,t.mixed.d)}`;
+    cont.appendChild(row);
+  }
+}
+function checkAS2(){
+  let ok=0;
+  as2Tasks.forEach((t,i)=>{
+    const n=+document.getElementById('as2n_'+i).value,d=+document.getElementById('as2d_'+i).value;
+    const g=+document.getElementById('as2g_'+i).value,r=+document.getElementById('as2r_'+i).value;
+    const c1=n===t.asNum[0]&&d===t.asNum[1];
+    const c2=g===t.mixed.g&&r===t.mixed.n;
+    const c=c1&&c2;
+    ['as2n_'+i,'as2d_'+i,'as2g_'+i,'as2r_'+i].forEach((id,j)=>{
+      document.getElementById(id).className='ans-input '+([c1,c1,c2,c2][j]?'ok':'err');
+    });
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('as2-fb');
+  fb.textContent=ok===as2Tasks.length?'✅ Alles richtig!':''+ok+' von '+as2Tasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===as2Tasks.length?'fb-ok':'fb-err');
+}
+
+function genAS3(){
+  const cont=document.getElementById('as3-tasks');cont.innerHTML='';
+  document.getElementById('as3-fb').className='fb-box';
+  as3Tasks=[];
+  const pool=[...as1Pool,...as2Pool.map(t=>({...t,ans:t.asNum}))];
+  for(let i=0;i<4;i++){
+    const t=pool[Math.floor(Math.random()*pool.length)];
+    as3Tasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:12px;font-size:1.05rem;font-weight:700;flex-wrap:wrap;';
+    const op=t.op||'+';
+    row.innerHTML=`${fr(t.a[0],t.a[1])} ${op} ${fr(t.b[0],t.b[1])} = 
+      <span class="finput-wrap"><input type="number" id="as3n_${i}" placeholder="?" style="width:50px;"><div class="fb"></div><input type="number" id="as3d_${i}" placeholder="?" style="width:50px;"></span>`;
+    cont.appendChild(row);
+  }
+}
+function checkAS3(){
+  let ok=0;
+  as3Tasks.forEach((t,i)=>{
+    const n=+document.getElementById('as3n_'+i).value,d=+document.getElementById('as3d_'+i).value;
+    const ans=t.ans||t.asNum;
+    const c=n===ans[0]&&d===ans[1];
+    document.getElementById('as3n_'+i).className=(c?'ok':'err');
+    document.getElementById('as3d_'+i).className=(c?'ok':'err');
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('as3-fb');
+  fb.textContent=ok===as3Tasks.length?'✅ Alle richtig!':''+ok+' von '+as3Tasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===as3Tasks.length?'fb-ok':'fb-err');
+}
+genAS1();genAS2();genAS3();
+
+// ===== DEZIMAL =====
+let dez1Cur=null;
+const dez1Pool=[
+  {num:'3,75',ones:3,tenth:7,hund:5},{num:'1,4',ones:1,tenth:4,hund:0},
+  {num:'0,83',ones:0,tenth:8,hund:3},{num:'5,06',ones:5,tenth:0,hund:6},
+  {num:'12,5',ones:2,tenth:5,hund:0,tens:1},{num:'2,30',ones:2,tenth:3,hund:0}
+];
+function genDez1(){
+  dez1Cur=dez1Pool[Math.floor(Math.random()*dez1Pool.length)];
+  document.getElementById('dez1-task').innerHTML=`Trage die Zahl <b>${dez1Cur.num}</b> in die Stellenwerttafel ein:`;
+  const tbl=document.getElementById('dez1-table');
+  const hasTens=dez1Cur.tens!==undefined;
+  tbl.innerHTML=`
+    <tr>${hasTens?'<th>Zehner</th>':''}<th>Einer</th><th class="comma">,</th><th>Zehntel</th><th>Hundertstel</th></tr>
+    <tr>
+      ${hasTens?`<td><input id="dez1-z" type="number" style="width:38px;border:none;border-bottom:2px solid var(--p1);background:transparent;font-family:Nunito;font-size:0.9rem;font-weight:800;text-align:center;outline:none;" placeholder="?"></td>`:''}
+      <td><input id="dez1-o" type="number" style="width:38px;border:none;border-bottom:2px solid var(--p1);background:transparent;font-family:Nunito;font-size:0.9rem;font-weight:800;text-align:center;outline:none;" placeholder="?"></td>
+      <td class="comma">,</td>
+      <td><input id="dez1-t" type="number" style="width:38px;border:none;border-bottom:2px solid var(--p1);background:transparent;font-family:Nunito;font-size:0.9rem;font-weight:800;text-align:center;outline:none;" placeholder="?"></td>
+      <td><input id="dez1-h" type="number" style="width:38px;border:none;border-bottom:2px solid var(--p1);background:transparent;font-family:Nunito;font-size:0.9rem;font-weight:800;text-align:center;outline:none;" placeholder="?"></td>
+    </tr>`;
+  document.getElementById('dez1-fb').className='fb-box';
+}
+function checkDez1(){
+  const d=dez1Cur;
+  const hasTens=d.tens!==undefined;
+  let ok=true;
+  const check=(id,expected)=>{
+    const inp=document.getElementById(id);
+    if(!inp) return;
+    const c=+inp.value===expected;
+    inp.className=c?'ok':'err';
+    if(!c) ok=false;
+  };
+  if(hasTens) check('dez1-z',d.tens);
+  check('dez1-o',d.ones);check('dez1-t',d.tenth);check('dez1-h',d.hund);
+  const fb=document.getElementById('dez1-fb');
+  fb.textContent=ok?'✅ Richtig!':'❌ Schau nochmal genau hin.';
+  fb.className='fb-box show '+(ok?'fb-ok':'fb-err');
+  pts(ok);
+}
+genDez1();
+
+// ordnen
+const dezOrdPool=[
+  {a:'0,4',b:'0,38',gt:'a'},{a:'1,5',b:'1,49',gt:'a'},{a:'0,304',b:'0,34',gt:'b'},
+  {a:'2,7',b:'2,70',gt:'eq'},{a:'0,9',b:'0,09',gt:'a'},{a:'3,14',b:'3,15',gt:'b'},
+  {a:'0,6',b:'0,60',gt:'eq'},{a:'5,08',b:'5,8',gt:'b'}
+];
+let dezOrdTasks=[];
+function genDezOrd(){
+  const cont=document.getElementById('dez-ord-tasks');cont.innerHTML='';
+  document.getElementById('dez-ord-fb').className='fb-box';
+  dezOrdTasks=[];
+  for(let i=0;i<4;i++){
+    const t=dezOrdPool[Math.floor(Math.random()*dezOrdPool.length)];
+    dezOrdTasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='margin-bottom:10px;';
+    const eqOpt=t.gt==='eq'?`<option value="eq">=</option>`:'';
+    row.innerHTML=`<b>${t.a}</b> 
+      <select id="ord_${i}" style="margin:0 6px;padding:4px 8px;border:2px solid var(--border);border-radius:8px;font-weight:800;font-size:0.95rem;cursor:pointer;">
+        <option value="">?</option>
+        <option value="a">&gt;</option>
+        <option value="b">&lt;</option>
+        ${eqOpt}
+      </select> 
+      <b>${t.b}</b>`;
+    cont.appendChild(row);
+  }
+}
+function checkDezOrd(){
+  let ok=0;
+  dezOrdTasks.forEach((t,i)=>{
+    const v=document.getElementById('ord_'+i).value;
+    const c=v===t.gt;
+    document.getElementById('ord_'+i).style.borderColor=c?'var(--green)':'var(--p3)';
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('dez-ord-fb');
+  fb.textContent=ok===dezOrdTasks.length?'✅ Alle richtig!':''+ok+' von '+dezOrdTasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===dezOrdTasks.length?'fb-ok':'fb-err');
+}
+genDezOrd();
+
+// runden
+const roundPool=[
+  {num:3.75,to:'Zehntel',ans:3.8},{num:2.34,to:'Zehntel',ans:2.3},{num:5.678,to:'Hundertstel',ans:5.68},
+  {num:0.456,to:'Zehntel',ans:0.5},{num:1.245,to:'Hundertstel',ans:1.25},{num:9.95,to:'Zehntel',ans:10.0},
+  {num:3.14159,to:'Hundertstel',ans:3.14},{num:7.777,to:'Zehntel',ans:7.8}
+];
+let roundTasks=[];
+function genRound(){
+  const cont=document.getElementById('round-tasks');cont.innerHTML='';
+  document.getElementById('round-fb').className='fb-box';
+  roundTasks=[];
+  for(let i=0;i<4;i++){
+    const t=roundPool[Math.floor(Math.random()*roundPool.length)];
+    roundTasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:1rem;font-weight:700;flex-wrap:wrap;';
+    row.innerHTML=`Runde <b>${t.num}</b> auf ${t.to}: <input type="number" step="0.01" id="rnd_${i}" class="ans-input" placeholder="?" style="width:80px;">`;
+    cont.appendChild(row);
+  }
+}
+function checkRound(){
+  let ok=0;
+  roundTasks.forEach((t,i)=>{
+    const v=parseFloat(document.getElementById('rnd_'+i).value);
+    const c=Math.abs(v-t.ans)<0.001;
+    document.getElementById('rnd_'+i).className='ans-input '+(c?'ok':'err');
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('round-fb');
+  fb.textContent=ok===roundTasks.length?'✅ Alle richtig!':''+ok+' von '+roundTasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===roundTasks.length?'fb-ok':'fb-err');
+}
+genRound();
+
+// dezimal add/subtr
+const dezAsPool=[
+  {a:2.3,b:1.45,op:'+',ans:3.75},{a:5.6,b:2.3,op:'-',ans:3.3},{a:0.8,b:0.45,op:'+',ans:1.25},
+  {a:3.7,b:1.25,op:'-',ans:2.45},{a:4.5,b:3.75,op:'+',ans:8.25},{a:10.0,b:3.4,op:'-',ans:6.6},
+  {a:0.35,b:0.25,op:'+',ans:0.6},{a:7.5,b:2.75,op:'-',ans:4.75}
+];
+let dezAsTasks=[];
+function genDezAS(){
+  const cont=document.getElementById('dezas-tasks');cont.innerHTML='';
+  document.getElementById('dezas-fb').className='fb-box';
+  dezAsTasks=[];
+  for(let i=0;i<4;i++){
+    const t=dezAsPool[Math.floor(Math.random()*dezAsPool.length)];
+    dezAsTasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:1rem;font-weight:700;flex-wrap:wrap;';
+    row.innerHTML=`${t.a} ${t.op} ${t.b} = <input type="number" step="0.01" id="dza_${i}" class="ans-input" placeholder="?" style="width:90px;">`;
+    cont.appendChild(row);
+  }
+}
+function checkDezAS(){
+  let ok=0;
+  dezAsTasks.forEach((t,i)=>{
+    const v=parseFloat(document.getElementById('dza_'+i).value);
+    const c=Math.abs(v-t.ans)<0.001;
+    document.getElementById('dza_'+i).className='ans-input '+(c?'ok':'err');
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('dezas-fb');
+  fb.textContent=ok===dezAsTasks.length?'✅ Alle richtig!':''+ok+' von '+dezAsTasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===dezAsTasks.length?'fb-ok':'fb-err');
+}
+genDezAS();
+
+// bruch <-> dezimal
+const brDezPool=[
+  {type:'toDez',n:3,d:10,ans:'0,3'},{type:'toDez',n:7,d:10,ans:'0,7'},
+  {type:'toDez',n:47,d:100,ans:'0,47'},{type:'toDez',n:25,d:100,ans:'0,25'},
+  {type:'toBruch',dez:'0,6',n:6,d:10},{type:'toBruch',dez:'0,4',n:4,d:10},
+  {type:'toDez',n:3,d:100,ans:'0,03'},{type:'toBruch',dez:'0,75',n:75,d:100},
+  {type:'toDez',n:15,d:100,ans:'0,15'},{type:'toBruch',dez:'0,3',n:3,d:10}
+];
+let brDezTasks=[];
+function genBrDez(){
+  const cont=document.getElementById('brdez-tasks');cont.innerHTML='';
+  document.getElementById('brdez-fb').className='fb-box';
+  brDezTasks=[];
+  for(let i=0;i<4;i++){
+    const t=brDezPool[Math.floor(Math.random()*brDezPool.length)];
+    brDezTasks.push(t);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:1rem;font-weight:700;flex-wrap:wrap;';
+    if(t.type==='toDez'){
+      row.innerHTML=`${fr(t.n,t.d)} = <input id="brd_${i}" class="ans-input" placeholder="z.B. 0,7" style="width:90px;">`;
+    } else {
+      row.innerHTML=`${t.dez} = <span class="finput-wrap"><input type="number" id="brdn_${i}" placeholder="?" style="width:50px;"><div class="fb"></div><input type="number" id="brdd_${i}" placeholder="?" style="width:60px;"></span>`;
+    }
+    cont.appendChild(row);
+  }
+}
+function checkBrDez(){
+  let ok=0;
+  brDezTasks.forEach((t,i)=>{
+    let c=false;
+    if(t.type==='toDez'){
+      const v=document.getElementById('brd_'+i).value.trim().replace('.',',');
+      c=v===t.ans;
+      document.getElementById('brd_'+i).className='ans-input '+(c?'ok':'err');
+    } else {
+      const n=+document.getElementById('brdn_'+i).value,d=+document.getElementById('brdd_'+i).value;
+      c=n===t.n&&d===t.d;
+      document.getElementById('brdn_'+i).className=(c?'ok':'err');
+      document.getElementById('brdd_'+i).className=(c?'ok':'err');
+    }
+    if(c) ok++;
+    pts(c);
+  });
+  const fb=document.getElementById('brdez-fb');
+  fb.textContent=ok===brDezTasks.length?'✅ Alle richtig!':''+ok+' von '+brDezTasks.length+' richtig.';
+  fb.className='fb-box show '+(ok===brDezTasks.length?'fb-ok':'fb-err');
+}
+genBrDez();
+
+// ===== MEHR ÜBEN: Bruch ↔ Dezimalzahl =====
+const ubUmrPool=[
+  {dir:'toDez',n:1,d:10,ans:'0,1'},{dir:'toDez',n:3,d:10,ans:'0,3'},{dir:'toDez',n:7,d:10,ans:'0,7'},
+  {dir:'toDez',n:25,d:100,ans:'0,25'},{dir:'toDez',n:75,d:100,ans:'0,75'},{dir:'toDez',n:5,d:10,ans:'0,5'},
+  {dir:'toDez',n:3,d:100,ans:'0,03'},{dir:'toDez',n:15,d:100,ans:'0,15'},{dir:'toDez',n:9,d:10,ans:'0,9'},
+  {dir:'toBruch',dez:'0,4',ans:'4/10'},{dir:'toBruch',dez:'0,08',ans:'8/100'},{dir:'toBruch',dez:'1,5',ans:'15/10'},
+  {dir:'toBruch',dez:'2,3',ans:'23/10'},{dir:'toBruch',dez:'0,25',ans:'25/100'},{dir:'toBruch',dez:'0,007',ans:'7/1000'},
+];
+let ubUmrCur=null;
+function newUbUmr(){
+  ubUmrCur=ubUmrPool[Math.floor(Math.random()*ubUmrPool.length)];
+  const t=ubUmrCur;
+  let html='';
+  if(t.dir==='toDez'){
+    html=`<div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      ${fr(t.n,t.d)} als Dezimalzahl =
+      <input id="ubumr-ans" style="width:100px;border:none;border-bottom:3px solid var(--p1);background:transparent;font-family:Nunito;font-size:1rem;font-weight:800;text-align:center;outline:none;" placeholder="z.B. 0,3">
+    </div>`;
+  } else {
+    html=`<div style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="color:var(--p1);font-size:1.3rem;">${t.dez}</span> als Bruch =
+      <input id="ubumr-ans" style="width:110px;border:none;border-bottom:3px solid var(--p1);background:transparent;font-family:Nunito;font-size:1rem;font-weight:800;text-align:center;outline:none;" placeholder="z.B. 3/10">
+    </div>`;
+  }
+  document.getElementById('ub-umrechnen').innerHTML=html;
+  document.getElementById('ub-umr-fb').className='fb-box';
+}
+function checkUbUmr(){
+  const t=ubUmrCur;
+  const val=document.getElementById('ubumr-ans').value.trim().replace(' ','');
+  const ok=val===t.ans;
+  const fb=document.getElementById('ub-umr-fb');
+  if(ok){
+    if(t.dir==='toDez') fb.textContent=`✅ Richtig! ${t.n}/${t.d} = ${t.ans} (Zähler durch Nenner = Nachkommastellen)`;
+    else fb.textContent=`✅ Richtig! ${t.dez} = ${t.ans}`;
+    fb.className='fb-box show fb-ok'; pts(true);
+  } else {
+    if(t.dir==='toDez') fb.textContent=`💡 Tipp: Zähle die Nullen im Nenner – das sind die Nachkommastellen. ${t.n}/${t.d}: Nenner hat ${t.d.toString().length-1} Null(en).`;
+    else fb.textContent=`💡 Tipp: Zähle die Nachkommastellen – so viele Nullen hat der Nenner (10, 100, 1000 …). Schreibe z.B. 0,3 als 3/10.`;
+    fb.className='fb-box show fb-err'; pts(false);
+  }
+}
+newUbUmr();
+
+// ===== MEHR ÜBEN: Dezimalzahlen Add/Sub =====
+let ubDezASTasks=[];
+function newUbDezAS(){
+  ubDezASTasks=[];
+  let html='';
+  for(let i=0;i<4;i++){
+    const dec=[1,1,2,2][i];
+    const a=parseFloat((Math.floor(Math.random()*50+10)/Math.pow(10,dec-1)).toFixed(dec));
+    const b=parseFloat((Math.floor(Math.random()*9+1)/Math.pow(10,dec)).toFixed(dec));
+    const op=Math.random()<0.5?'+':'-';
+    const res=op==='+'?parseFloat((a+b).toFixed(dec)):parseFloat((a-b).toFixed(dec));
+    ubDezASTasks.push({a,b,op,res,dec});
+    const fmt=v=>v.toFixed(dec).replace('.',',');
+    html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:1rem;font-weight:700;flex-wrap:wrap;">
+      <span style="color:var(--p1);">${fmt(a)}</span> ${op} <span style="color:var(--p1);">${fmt(b)}</span> =
+      <input id="ubdas_${i}" type="number" step="${Math.pow(10,-dec)}" style="width:90px;border:none;border-bottom:3px solid var(--p1);background:transparent;font-family:Nunito;font-size:1rem;font-weight:800;text-align:center;outline:none;" placeholder="?">
+    </div>`;
+  }
+  document.getElementById('ub-dezas').innerHTML=html;
+  document.getElementById('ub-dezas-fb').className='fb-box';
+}
+function checkUbDezAS(){
+  let ok=0;
+  ubDezASTasks.forEach((t,i)=>{
+    const val=parseFloat(document.getElementById('ubdas_'+i).value.replace(',','.'));
+    const c=Math.abs(val-t.res)<0.0001;
+    const inp=document.getElementById('ubdas_'+i);
+    inp.style.borderBottomColor=c?'var(--green)':'var(--p3)';
+    if(c) ok++;
+  });
+  const fb=document.getElementById('ub-dezas-fb');
+  if(ok===ubDezASTasks.length){
+    const results=ubDezASTasks.map(t=>`${t.a.toFixed(t.dec).replace('.',',')} ${t.op} ${t.b.toFixed(t.dec).replace('.',',')} = ${t.res.toFixed(t.dec).replace('.',',')}`).join(' | ');
+    fb.textContent=`✅ Alle ${ok} richtig! ${results}`;fb.className='fb-box show fb-ok';pts(true);
+  } else {
+    fb.textContent=`💡 Tipp: Schreibe die Kommas untereinander! ${ok}/${ubDezASTasks.length} richtig.`;
+    fb.className='fb-box show fb-err';pts(false);
+  }
+}
+newUbDezAS();
+
+// ===== MEHR ÜBEN: Brüche vergleichen =====
+const ubFracs=[
+  {n:1,d:2},{n:1,d:3},{n:2,d:3},{n:1,d:4},{n:3,d:4},{n:2,d:5},{n:3,d:5},{n:4,d:5},
+  {n:1,d:6},{n:5,d:6},{n:3,d:8},{n:5,d:8},{n:3,d:10},{n:7,d:10}
+];
+let ubVglPairs=[];
+function newUbVgl(){
+  ubVglPairs=[];
+  let html='';
+  for(let i=0;i<4;i++){
+    let a=ubFracs[Math.floor(Math.random()*ubFracs.length)];
+    let b=ubFracs[Math.floor(Math.random()*ubFracs.length)];
+    while(a.n===b.n&&a.d===b.d) b=ubFracs[Math.floor(Math.random()*ubFracs.length)];
+    const ans=a.n/a.d>b.n/b.d?'>':a.n/a.d<b.n/b.d?'<':'=';
+    ubVglPairs.push({a,b,ans});
+    html+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;font-size:1.05rem;font-weight:700;">
+      <span>${fr(a.n,a.d)}</span>
+      <select id="ubvgl_${i}" style="font-size:1.1rem;font-weight:800;padding:5px 8px;border:2px solid var(--border);border-radius:8px;cursor:pointer;outline:none;font-family:Nunito;">
+        <option value="">?</option><option>&lt;</option><option>&gt;</option><option>=</option>
+      </select>
+      <span>${fr(b.n,b.d)}</span>
+    </div>`;
+  }
+  document.getElementById('ub-vgl').innerHTML=html;
+  document.getElementById('ub-vgl-fb').className='fb-box';
+}
+function checkUbVgl(){
+  let ok=0;
+  ubVglPairs.forEach((p,i)=>{
+    const sel=document.getElementById('ubvgl_'+i);
+    const c=sel.value.trim()===p.ans;
+    sel.style.borderColor=c?'var(--green)':'var(--p3)';
+    sel.style.background=c?'#d1fae5':'#fee2e2';
+    if(c) ok++;
+  });
+  const fb=document.getElementById('ub-vgl-fb');
+  if(ok===ubVglPairs.length){fb.textContent=`✅ Alle ${ok} richtig! Tipp: Gleicher Nenner → Zähler vergleichen. Verschiedene Nenner → gemeinsamen Nenner finden.`;fb.className='fb-box show fb-ok';pts(true);}
+  else{fb.textContent=`💡 Tipp: Wandle beide Brüche auf den gleichen Nenner um, dann vergleiche die Zähler. ${ok}/${ubVglPairs.length} richtig.`;fb.className='fb-box show fb-err';pts(false);}
+}
+newUbVgl();
+
+// ===== QUIZ =====
+const quizQ1=[
+  {q:'Was ist der <b>Nenner</b> von '+fr(5,7)+'?',opts:['5','7','12','2'],ans:1},
+  {q:'Wie viel ist '+fr(1,4)+' von 8?',opts:['4','2','1','8'],ans:1},
+  {q:'Ein Stammbruch hat Zähler …',opts:['0','1','2','beliebig'],ans:1},
+  {q:fr(2,5)+' + '+fr(1,5)+' = ?',opts:['3/10','3/5','1/5','2/25'],ans:1},
+  {q:'Welcher Bruch entspricht 1 von 3 gleichen Teilen?',opts:['1/3','3/1','1/2','2/3'],ans:0},
+  {q:'0,5 ist gleichbedeutend mit …',opts:['5/10','5/100','1/5','5'],ans:0},
+  {q:'Welche Zahl ist größer?',opts:['0,4','0,38','beide gleich','0,04'],ans:0},
+];
+const quizQ2=[
+  {q:fr(3,4)+' von 20 = ?',opts:['15','10','12','5'],ans:0},
+  {q:fr(7,4)+' als gemischte Zahl?',opts:['1¾','2¼','1½','3¼'],ans:0},
+  {q:'2'+fr(1,3)+' als unechter Bruch?',opts:['7/3','5/3','8/3','6/3'],ans:0},
+  {q:fr(7,8)+' + '+fr(6,8)+' = ? (als gemischte Zahl)',opts:['1 5/8','13/8','2 1/8','1 3/8'],ans:0},
+  {q:'3,14 gerundet auf Zehntel?',opts:['3,1','3,2','3,0','3,14'],ans:0},
+  {q:fr(5,6)+' von 24 = ?',opts:['20','18','15','4'],ans:0},
+  {q:'5 ÷ 6 = ? als Bruch',opts:['5/6','6/5','1/6','5'],ans:0},
+];
+const quizQ3=[
+  {q:fr(3,100)+' von 500 = ?',opts:['15','5','30','150'],ans:0},
+  {q:'2<b>,</b>3 + 1,45 = ?',opts:['3,75','3,7','3,85','4,0'],ans:0},
+  {q:fr(7,8)+' von 8000 = ?',opts:['7000','1000','875','6000'],ans:0},
+  {q:fr(47,100)+' als Dezimalzahl?',opts:['0,47','4,7','0,047','47'],ans:0},
+  {q:'Vom Bruchteil zum Ganzen: '+fr(2,3)+' von ? = 8',opts:['12','6','4','9'],ans:0},
+  {q:'10'+fr(1,6)+' als unechter Bruch?',opts:['61/6','11/6','62/6','10/6'],ans:0},
+];
+
+const quizStates={1:{idx:0,sc:0,tot:0},2:{idx:0,sc:0,tot:0},3:{idx:0,sc:0,tot:0}};
+const quizPools={1:quizQ1,2:quizQ2,3:quizQ3};
+
+function renderQuiz(lvl){
+  const s=quizStates[lvl];
+  const pool=quizPools[lvl];
+  const q=pool[s.idx%pool.length];
+  const box=document.getElementById('q'+lvl+'-box');
+  box.innerHTML=`<div style="font-size:1rem;font-weight:700;margin-bottom:12px;line-height:1.5;">${q.q}</div>
+    <div class="qopts">${q.opts.map((o,i)=>`<button class="qopt" onclick="answerQuiz(${lvl},${i})">${o}</button>`).join('')}</div>
+    <div class="fb-box" id="qfb${lvl}"></div>`;
+}
+function answerQuiz(lvl,i){
+  const pool=quizPools[lvl];
+  const s=quizStates[lvl];
+  const q=pool[s.idx%pool.length];
+  const btns=document.querySelectorAll(`#q${lvl}-box .qopt`);
+  btns.forEach(b=>b.disabled=true);
+  btns[q.ans].classList.add('ok');
+  s.tot++;document.getElementById('q'+lvl+'-tot').textContent=s.tot;
+  const ok=i===q.ans;
+  if(ok){s.sc++;document.getElementById('q'+lvl+'-sc').textContent=s.sc;}
+  else btns[i].classList.add('err');
+  const fb=document.getElementById('qfb'+lvl);
+  fb.textContent=ok?'✅ Richtig!':'❌ Falsch – richtige Antwort ist markiert.';
+  fb.className='fb-box show '+(ok?'fb-ok':'fb-err');
+  pts(ok);
+}
+function nextQ(lvl){
+  quizStates[lvl].idx++;
+  renderQuiz(lvl);
+}
+renderQuiz(1);renderQuiz(2);renderQuiz(3);
+
+</script>
+</body>
+</html>

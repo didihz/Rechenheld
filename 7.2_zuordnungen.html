@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7.2 Zuordnungen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #166534;
+    --primary-light: #22c55e;
+    --primary-bg: #dcfce7;
+    --accent: #d97706;
+    --accent-light: #fef3c7;
+    --accent2: #7c3aed;
+    --accent2-light: #ede9fe;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --bg: #f0fdf4;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #bbf7d0;
+    --radius: 14px;
+    --shadow: 0 4px 18px rgba(22,101,52,0.10);
+    --prop: #166534;
+    --antiprop: #7c3aed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  header {
+    background: linear-gradient(135deg, #052e16 0%, #166534 55%, #22c55e 100%);
+    color: white; padding: 20px 24px 16px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+  }
+  header h1 { font-family: 'Baloo 2', cursive; font-size: 1.5rem; font-weight: 700; }
+  header p { font-size: 0.83rem; opacity: 0.88; margin-top: 2px; }
+  nav {
+    display: flex; gap: 6px; padding: 14px 16px 0;
+    overflow-x: auto; flex-wrap: nowrap; background: var(--card);
+    border-bottom: 2px solid var(--border); scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0; background: var(--bg); border: none;
+    border-radius: 10px 10px 0 0; padding: 9px 15px;
+    font-family: 'Nunito', sans-serif; font-size: 0.84rem; font-weight: 700;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px; white-space: nowrap;
+  }
+  .tab-btn:hover { background: var(--primary-bg); color: var(--primary); }
+  .tab-btn.active { background: var(--primary); color: white; }
+  main { max-width: 920px; margin: 0 auto; padding: 22px 16px 80px; }
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 22px; margin-bottom: 18px;
+    box-shadow: var(--shadow); border: 1.5px solid var(--border);
+  }
+  .card h2 {
+    font-family: 'Baloo 2', cursive; font-size: 1.2rem;
+    color: var(--primary); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card p, .card li { color: var(--muted); font-size: 0.93rem; line-height: 1.7; }
+  .card ul { padding-left: 1.2rem; margin: 8px 0; }
+  .info-box {
+    border-left: 4px solid; border-radius: 0 10px 10px 0;
+    padding: 12px 15px; margin: 12px 0; font-size: 0.91rem; line-height: 1.65;
+  }
+  .info-box.green { background: var(--primary-bg); border-color: var(--primary); }
+  .info-box.green strong { color: var(--primary); }
+  .info-box.purple { background: var(--accent2-light); border-color: var(--accent2); }
+  .info-box.purple strong { color: var(--accent2); }
+  .info-box.orange { background: var(--accent-light); border-color: var(--accent); }
+  .info-box.orange strong { color: #92400e; }
+  .section-intro {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    border-radius: var(--radius); padding: 18px 20px; margin-bottom: 20px;
+    border-left: 5px solid var(--primary);
+  }
+  .section-intro h2 { font-family: 'Baloo 2', cursive; font-size: 1.25rem; color: var(--primary); margin-bottom: 4px; }
+  .section-intro p { color: var(--muted); font-size: 0.91rem; line-height: 1.6; }
+  .beispiel-box {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #86efac; border-radius: 12px;
+    padding: 16px 18px; margin: 14px 0;
+  }
+  .beispiel-box .bsp-title { font-size: 0.78rem; font-weight: 900; color: #16a34a; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .beispiel-box .bsp-content { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.8; }
+  .beispiel-box.purple { background: linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%); border-color: #c4b5fd; }
+  .beispiel-box.purple .bsp-title { color: var(--accent2); }
+  .btn {
+    background: var(--primary); color: white; border: none;
+    border-radius: 10px; padding: 10px 20px;
+    font-family: 'Nunito', sans-serif; font-size: 0.92rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s; display: inline-flex;
+    align-items: center; gap: 6px;
+  }
+  .btn:hover { background: #052e16; transform: translateY(-1px); }
+  .btn.purple { background: var(--accent2); }
+  .btn.purple:hover { background: #5b21b6; }
+  .btn.orange { background: var(--accent); }
+  .btn.orange:hover { background: #b45309; }
+  .btn.outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+  .btn.outline:hover { background: var(--primary-bg); }
+  .btn.small { padding: 7px 14px; font-size: 0.83rem; }
+  input[type="text"], input[type="number"] {
+    border: 2px solid #d1fae5; border-radius: 9px;
+    padding: 8px 12px; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700; color: var(--text);
+    outline: none; transition: border-color 0.2s; background: #fafcff;
+    text-align: center;
+  }
+  input:focus { border-color: var(--primary); background: var(--primary-bg); }
+  input.correct { border-color: var(--success) !important; background: var(--success-light) !important; }
+  input.wrong { border-color: var(--danger) !important; background: var(--danger-light) !important; }
+  .feedback {
+    border-radius: 10px; padding: 12px 16px;
+    font-weight: 700; font-size: 0.93rem; margin-top: 12px; display: none;
+  }
+  .feedback.correct { background: var(--success-light); color: #065f46; display: block; }
+  .feedback.wrong { background: var(--danger-light); color: #7f1d1d; display: block; }
+  .feedback.info { background: var(--primary-bg); color: var(--primary); display: block; }
+  .level-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .level-btn { border: none; border-radius: 50px; padding: 7px 16px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; opacity: 0.5; }
+  .level-btn.active { opacity: 1; box-shadow: 0 3px 10px rgba(0,0,0,0.18); }
+  .level-btn.easy { background: #bbf7d0; color: #065f46; }
+  .level-btn.medium { background: #fde68a; color: #78350f; }
+  .level-btn.hard { background: #fecaca; color: #7f1d1d; }
+  .quiz-progress { background: #d1fae5; border-radius: 50px; height: 9px; margin-bottom: 18px; overflow: hidden; }
+  .quiz-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 50px; transition: width 0.5s; }
+  .quiz-q { font-weight: 800; font-size: 1rem; margin-bottom: 14px; line-height: 1.55; }
+  .quiz-options { display: grid; gap: 9px; }
+  .quiz-opt { background: #f0fdf4; border: 2px solid var(--border); border-radius: 11px; padding: 11px 15px; text-align: left; font-family: 'Nunito', sans-serif; font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: all 0.2s; color: var(--text); }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: var(--primary-bg); }
+  .quiz-opt.selected-correct { background: var(--success-light) !important; border-color: var(--success) !important; color: #065f46 !important; font-weight: 800; }
+  .quiz-opt.selected-wrong { background: var(--danger-light) !important; border-color: var(--danger) !important; color: #7f1d1d !important; font-weight: 800; }
+  .quiz-opt.show-correct { background: var(--success-light); border-color: var(--success); color: #065f46; font-weight: 800; }
+  .quiz-score { font-family: 'Baloo 2', cursive; font-size: 2.2rem; font-weight: 700; color: var(--primary); text-align: center; }
+  .result-screen { text-align: center; padding: 30px 10px; }
+  .result-emoji { font-size: 4rem; margin-bottom: 12px; }
+  .result-screen h3 { font-family: 'Baloo 2', cursive; font-size: 1.8rem; color: var(--primary); margin-bottom: 8px; }
+  .result-screen p { color: var(--muted); font-size: 1rem; margin-bottom: 20px; }
+  .sticky-progress {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--card); border-top: 2px solid var(--border);
+    padding: 10px 20px; display: flex; align-items: center; gap: 14px;
+    z-index: 50; box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  }
+  .sticky-progress .prog-label { font-size: 0.82rem; font-weight: 800; color: var(--muted); white-space: nowrap; }
+  .sticky-progress .prog-bar-wrap { flex: 1; background: #d1fae5; border-radius: 50px; height: 8px; overflow: hidden; }
+  .sticky-progress .prog-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 50px; transition: width 0.5s; }
+  .styled-table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  .styled-table th { background: var(--primary); color: white; padding: 10px 12px; font-size: 0.87rem; font-weight: 800; text-align: center; }
+  .styled-table td { padding: 10px 12px; border: 1.5px solid #bbf7d0; text-align: center; font-size: 0.95rem; font-weight: 700; }
+  .styled-table tr:nth-child(even) td { background: #f0fdf4; }
+  .styled-table.purple th { background: var(--accent2); }
+  .styled-table.purple td { border-color: #c4b5fd; }
+  .styled-table.purple tr:nth-child(even) td { background: #faf5ff; }
+  .aufgabe-box { border: 2px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; background: #fafcff; }
+  .aufgabe-box .aufgabe-nr { font-size: 0.78rem; font-weight: 900; color: #16a34a; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .aufgabe-text { font-size: 0.97rem; font-weight: 700; line-height: 1.65; margin-bottom: 12px; }
+  .type-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 900;
+    margin-bottom: 10px;
+  }
+  .type-tag.prop { background: var(--primary-bg); color: var(--primary); }
+  .type-tag.antiprop { background: var(--accent2-light); color: var(--accent2); }
+  .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+  /* DREISATZ TABLE */
+  .dreisatz-table { border-collapse: collapse; margin: 14px 0; }
+  .dreisatz-table th { background: #166534; color: white; padding: 8px 16px; font-size: 0.85rem; font-weight: 800; }
+  .dreisatz-table td { padding: 8px 16px; border: 2px solid #bbf7d0; text-align: center; font-weight: 700; font-size: 1rem; }
+  .dreisatz-table .known { background: #f0fdf4; }
+  .dreisatz-table .unknown { background: #fff9c4; }
+  /* GRAPH */
+  .graph-wrap { border: 2px solid var(--border); border-radius: 12px; overflow: hidden; margin: 14px 0; background: white; }
+  /* BLITZ */
+  .blitz-box {
+    background: linear-gradient(135deg, #052e16, #166534);
+    border-radius: 16px; padding: 28px 24px; text-align: center; color: white;
+  }
+  .blitz-situation { font-size: 1.15rem; font-weight: 700; line-height: 1.6; margin-bottom: 24px; min-height: 70px; display: flex; align-items: center; justify-content: center; }
+  .blitz-options { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .blitz-opt {
+    background: white; color: var(--primary); border: none; border-radius: 12px;
+    padding: 12px 22px; font-family: 'Baloo 2', cursive; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .blitz-opt:hover { transform: scale(1.06); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .blitz-opt.correct { background: #dcfce7; color: #065f46; }
+  .blitz-opt.wrong { background: #fee2e2; color: #7f1d1d; }
+  .blitz-score { font-size: 1rem; font-weight: 700; margin-bottom: 14px; opacity: 0.9; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📊 7.2 Zuordnungen</h1>
+  <p>Proportionale & antiproportionale Zuordnungen · Dreisatz · Grafiken</p>
+</header>
+<nav>
+  <button class="tab-btn active" onclick="showSection('s-lernen',this)">📖 Lernen</button>
+  <button class="tab-btn" onclick="showSection('s-erkennen',this)">🔍 Erkennen</button>
+  <button class="tab-btn" onclick="showSection('s-prop',this)">📈 Proportional</button>
+  <button class="tab-btn" onclick="showSection('s-antiprop',this)">📉 Antiproportional</button>
+  <button class="tab-btn" onclick="showSection('s-tabellen',this)">📋 Tabellen</button>
+  <button class="tab-btn" onclick="showSection('s-quiz',this)">🏆 Quiz</button>
+</nav>
+<main>
+
+<!-- LERNEN -->
+<div class="section active" id="s-lernen">
+  <div class="section-intro">
+    <h2>📊 Was sind Zuordnungen?</h2>
+    <p>Eine Zuordnung beschreibt, wie zwei Größen zusammenhängen. Wenn eine Größe wächst – was passiert dann mit der anderen?</p>
+  </div>
+  <div class="card">
+    <h2>📈 Proportionale Zuordnung</h2>
+    <p>Zwei Größen sind <strong>proportional</strong>, wenn sie immer im gleichen Verhältnis zueinander stehen.</p>
+    <div class="info-box green">
+      <strong>Erkennungsmerkmale:</strong><br>
+      ✅ Wenn eine Größe doppelt so groß wird → auch die andere wird doppelt so groß<br>
+      ✅ Der <strong>Quotient</strong> (Teilen der Werte) ist immer gleich → das ist der <strong>Proportionalitätsfaktor k</strong><br>
+      ✅ Der Graph ist eine <strong>Gerade durch den Ursprung (0, 0)</strong>
+    </div>
+    <div class="beispiel-box">
+      <div class="bsp-title">Beispiel: Einkaufen</div>
+      <div class="bsp-content">
+        1 kg Äpfel kostet 2,50 €<br>
+        2 kg Äpfel kosten 5,00 €<br>
+        3 kg Äpfel kosten 7,50 €<br><br>
+        Preis ÷ Menge = 5,00 ÷ 2 = 2,50 → immer gleich!<br>
+        <strong>k = 2,50 €/kg</strong> (Preis pro Kilogramm)
+      </div>
+    </div>
+    <div class="info-box orange">
+      <strong>Formel:</strong> y = k · x &nbsp;&nbsp; (y = zweite Größe, x = erste Größe, k = Faktor)
+    </div>
+  </div>
+  <div class="card">
+    <h2>📉 Antiproportionale Zuordnung</h2>
+    <p>Zwei Größen sind <strong>antiproportional</strong> (umgekehrt proportional), wenn das Produkt beider Größen immer gleich bleibt.</p>
+    <div class="info-box purple">
+      <strong>Erkennungsmerkmale:</strong><br>
+      ✅ Wenn eine Größe doppelt so groß wird → die andere wird halb so groß<br>
+      ✅ Das <strong>Produkt</strong> (Multiplizieren der Werte) ist immer gleich<br>
+      ✅ Der Graph ist eine <strong>Hyperbel</strong> (geschwungene Kurve, nicht durch den Ursprung)
+    </div>
+    <div class="beispiel-box purple">
+      <div class="bsp-title">Beispiel: Arbeiter und Zeit</div>
+      <div class="bsp-content">
+        1 Arbeiter braucht 12 Stunden<br>
+        2 Arbeiter brauchen 6 Stunden<br>
+        3 Arbeiter brauchen 4 Stunden<br>
+        4 Arbeiter brauchen 3 Stunden<br><br>
+        Arbeiter × Stunden = 1 × 12 = 2 × 6 = 12 → immer gleich!
+      </div>
+    </div>
+    <div class="info-box purple">
+      <strong>Formel:</strong> x · y = k &nbsp;&nbsp; oder &nbsp;&nbsp; y = k ÷ x
+    </div>
+  </div>
+  <div class="card">
+    <h2>🔍 Wie erkenne ich den Typ?</h2>
+    <table class="styled-table">
+      <thead><tr><th></th><th>Proportional 📈</th><th>Antiproportional 📉</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:800;text-align:left;padding-left:12px">Wenn x größer wird…</td><td>y wird auch größer</td><td>y wird kleiner</td></tr>
+        <tr><td style="font-weight:800;text-align:left;padding-left:12px">Test</td><td>y ÷ x = gleich (k)</td><td>y · x = gleich (k)</td></tr>
+        <tr><td style="font-weight:800;text-align:left;padding-left:12px">Graph</td><td>Gerade durch (0,0)</td><td>Hyperbel (Kurve)</td></tr>
+        <tr><td style="font-weight:800;text-align:left;padding-left:12px">Beispiel</td><td>Preis & Menge</td><td>Arbeiter & Zeit</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>🧮 Der Dreisatz</h2>
+    <p>Mit dem Dreisatz kannst du bei bekanntem Zusammenhang einen fehlenden Wert berechnen.</p>
+    <div class="info-box green">
+      <strong>Dreisatz bei proportionaler Zuordnung:</strong><br>
+      Schritt 1: Berechne den Wert für 1 (gehe auf 1 zurück)<br>
+      Schritt 2: Multipliziere mit der gesuchten Menge
+    </div>
+    <div class="beispiel-box">
+      <div class="bsp-title">Beispiel proportional</div>
+      <div class="bsp-content">
+        3 Hefte kosten 4,50 €. Was kosten 7 Hefte?<br>
+        3 Hefte → 4,50 €<br>
+        1 Heft → 4,50 ÷ 3 = 1,50 €<br>
+        7 Hefte → 1,50 · 7 = <strong>10,50 €</strong>
+      </div>
+    </div>
+    <div class="info-box purple">
+      <strong>Dreisatz bei antiproportionaler Zuordnung:</strong><br>
+      Schritt 1: Berechne den Wert für 1 (multipliziere: x · y)<br>
+      Schritt 2: Dividiere durch die gesuchte Größe
+    </div>
+    <div class="beispiel-box purple">
+      <div class="bsp-title">Beispiel antiproportional</div>
+      <div class="bsp-content">
+        4 Maschinen brauchen 6 Stunden. Wie lange brauchen 8 Maschinen?<br>
+        4 Maschinen → 6 Stunden<br>
+        1 Maschine → 4 · 6 = 24 Stunden<br>
+        8 Maschinen → 24 ÷ 8 = <strong>3 Stunden</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ERKENNEN -->
+<div class="section" id="s-erkennen">
+  <div class="section-intro">
+    <h2>🔍 Zuordnungstyp erkennen</h2>
+    <p>Übe, den Typ einer Zuordnung sicher zu erkennen – aus einer Beschreibung, Tabelle oder dem Graphen.</p>
+  </div>
+  <div class="card">
+    <h2>🎮 Blitz-Spiel: Proportional oder Antiproportional?</h2>
+    <p style="margin-bottom:14px">Lies die Situation und wähle den richtigen Typ!</p>
+    <div class="blitz-box" id="blitz-box">
+      <div class="blitz-score" id="blitz-score">⭐ 0 richtig</div>
+      <div class="blitz-situation" id="blitz-situation">Klicke auf Start!</div>
+      <div class="blitz-options">
+        <button class="blitz-opt" onclick="blitzAnswer('prop')">📈 Proportional</button>
+        <button class="blitz-opt" onclick="blitzAnswer('anti')">📉 Antiproportional</button>
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" onclick="startBlitz()">▶ Start</button>
+      <button class="btn outline" onclick="resetBlitz()">↺ Neustart</button>
+    </div>
+    <div class="feedback" id="blitz-fb"></div>
+  </div>
+  <div class="card">
+    <h2>📋 Tabellen erkennen</h2>
+    <p style="margin-bottom:14px">Untersuche die Tabelle: Ist die Zuordnung proportional oder antiproportional? (Test: Prüfe Quotient oder Produkt)</p>
+    <div id="tabellen-erkennen-container"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn outline" onclick="initTabellenErkennen()">🔄 Neue Aufgaben</button>
+    </div>
+    <div class="feedback" id="tabellen-erkennen-fb"></div>
+  </div>
+  <div class="card">
+    <h2>📐 Graphen erkennen</h2>
+    <p style="margin-bottom:14px">Welcher Graph gehört zu welchem Typ?</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0">
+      <div style="border:2px solid #bbf7d0;border-radius:12px;padding:16px;text-align:center">
+        <svg viewBox="0 0 200 180" width="180" style="display:block;margin:0 auto">
+          <line x1="20" y1="160" x2="190" y2="160" stroke="#94a3b8" stroke-width="2"/>
+          <line x1="20" y1="160" x2="20" y2="10" stroke="#94a3b8" stroke-width="2"/>
+          <line x1="20" y1="160" x2="185" y2="20" stroke="#166534" stroke-width="3"/>
+          <circle cx="20" cy="160" r="5" fill="#166534"/>
+          <text x="100" y="178" font-family="Nunito" font-size="11" fill="#64748b" text-anchor="middle">x</text>
+          <text x="8" y="16" font-family="Nunito" font-size="11" fill="#64748b">y</text>
+          <text x="100" y="195" font-family="Nunito" font-size="12" font-weight="800" fill="#166534" text-anchor="middle">Graph A</text>
+        </svg>
+        <div style="margin-top:10px">
+          <div style="font-weight:800;color:#166534;margin-bottom:6px">Gerade durch den Ursprung</div>
+          <div class="type-tag prop">📈 Proportional</div>
+        </div>
+      </div>
+      <div style="border:2px solid #c4b5fd;border-radius:12px;padding:16px;text-align:center">
+        <svg viewBox="0 0 200 180" width="180" style="display:block;margin:0 auto">
+          <line x1="20" y1="160" x2="190" y2="160" stroke="#94a3b8" stroke-width="2"/>
+          <line x1="20" y1="160" x2="20" y2="10" stroke="#94a3b8" stroke-width="2"/>
+          <path d="M 30 20 Q 60 30 80 60 Q 100 90 120 120 Q 150 145 180 155" stroke="#7c3aed" stroke-width="3" fill="none"/>
+          <text x="100" y="178" font-family="Nunito" font-size="11" fill="#64748b" text-anchor="middle">x</text>
+          <text x="8" y="16" font-family="Nunito" font-size="11" fill="#64748b">y</text>
+          <text x="100" y="195" font-family="Nunito" font-size="12" font-weight="800" fill="#7c3aed" text-anchor="middle">Graph B</text>
+        </svg>
+        <div style="margin-top:10px">
+          <div style="font-weight:800;color:#7c3aed;margin-bottom:6px">Hyperbel (Kurve)</div>
+          <div class="type-tag antiprop">📉 Antiproportional</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROPORTIONAL -->
+<div class="section" id="s-prop">
+  <div class="section-intro">
+    <h2>📈 Proportionale Zuordnungen üben</h2>
+    <p>Berechne fehlende Werte mit dem Dreisatz. Prüfe: y ÷ x = k (immer gleich!)</p>
+  </div>
+  <div class="card">
+    <h2>📋 Tabelle vervollständigen</h2>
+    <p style="margin-bottom:14px">Trage die fehlenden Werte ein. Nutze den Dreisatz!</p>
+    <div id="prop-tabelle-container"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn" onclick="checkPropTabelle()">✔ Prüfen</button>
+      <button class="btn outline" onclick="initPropTabelle()">🔄 Neue Aufgaben</button>
+    </div>
+    <div class="feedback" id="prop-tabelle-fb"></div>
+  </div>
+  <div class="card">
+    <h2>🧮 Dreisatz-Aufgaben</h2>
+    <div class="level-tabs">
+      <button class="level-btn easy active" onclick="setPropLevel('easy',this)">⭐ Grundlegendes</button>
+      <button class="level-btn medium" onclick="setPropLevel('medium',this)">⭐⭐ Regelstandard</button>
+      <button class="level-btn hard" onclick="setPropLevel('hard',this)">⭐⭐⭐ Expertenaufgaben</button>
+    </div>
+    <div id="prop-aufgaben-container"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn" onclick="checkPropAufgaben()">✔ Prüfen</button>
+      <button class="btn outline" onclick="initPropAufgaben()">🔄 Neue Aufgaben</button>
+    </div>
+    <div class="feedback" id="prop-aufgaben-fb"></div>
+  </div>
+</div>
+
+<!-- ANTIPROPORTIONAL -->
+<div class="section" id="s-antiprop">
+  <div class="section-intro">
+    <h2>📉 Antiproportionale Zuordnungen üben</h2>
+    <p>Berechne fehlende Werte. Prüfe: x · y = k (immer gleich!)</p>
+  </div>
+  <div class="card">
+    <h2>📋 Tabelle vervollständigen</h2>
+    <p style="margin-bottom:14px">Finde die fehlenden Werte der antiproportionalen Zuordnung.</p>
+    <div id="anti-tabelle-container"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn purple" onclick="checkAntiTabelle()">✔ Prüfen</button>
+      <button class="btn outline" style="color:var(--accent2);border-color:var(--accent2)" onclick="initAntiTabelle()">🔄 Neue Aufgaben</button>
+    </div>
+    <div class="feedback" id="anti-tabelle-fb"></div>
+  </div>
+  <div class="card">
+    <h2>🧮 Dreisatz-Aufgaben (antiproportional)</h2>
+    <div class="level-tabs">
+      <button class="level-btn easy active" onclick="setAntiLevel('easy',this)">⭐ Grundlegendes</button>
+      <button class="level-btn medium" onclick="setAntiLevel('medium',this)">⭐⭐ Regelstandard</button>
+      <button class="level-btn hard" onclick="setAntiLevel('hard',this)">⭐⭐⭐ Expertenaufgaben</button>
+    </div>
+    <div id="anti-aufgaben-container"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn purple" onclick="checkAntiAufgaben()">✔ Prüfen</button>
+      <button class="btn outline" style="color:var(--accent2);border-color:var(--accent2)" onclick="initAntiAufgaben()">🔄 Neue Aufgaben</button>
+    </div>
+    <div class="feedback" id="anti-aufgaben-fb"></div>
+  </div>
+</div>
+
+<!-- TABELLEN -->
+<div class="section" id="s-tabellen">
+  <div class="section-intro">
+    <h2>📋 Gemischte Tabellenaufgaben</h2>
+    <p>Erkenne den Typ und berechne die fehlenden Werte – beides kombiniert!</p>
+  </div>
+  <div class="card">
+    <h2>🔀 Gemischte Aufgaben</h2>
+    <p style="margin-bottom:14px">Bestimme zuerst den Typ der Zuordnung, dann vervollständige die Tabelle.</p>
+    <div id="gemischt-container"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn" onclick="checkGemischt()">✔ Prüfen</button>
+      <button class="btn outline" onclick="initGemischt()">🔄 Neue Aufgaben</button>
+    </div>
+    <div class="feedback" id="gemischt-fb"></div>
+  </div>
+  <div class="card">
+    <h2>📝 Lückentext: Fachbegriffe</h2>
+    <div id="luecken-container"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn" onclick="checkLuecken()">✔ Prüfen</button>
+      <button class="btn outline" onclick="initLuecken()">🔄 Neuer Text</button>
+    </div>
+    <div class="feedback" id="luecken-fb"></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="s-quiz">
+  <div class="section-intro">
+    <h2>🏆 Quiz – Zuordnungen</h2>
+    <p>Teste dein Wissen über proportionale und antiproportionale Zuordnungen!</p>
+  </div>
+  <div class="card">
+    <div class="level-tabs">
+      <button class="level-btn easy active" onclick="setQuizLevel('easy',this)">⭐ Grundlegendes</button>
+      <button class="level-btn medium" onclick="setQuizLevel('medium',this)">⭐⭐ Regelstandard</button>
+      <button class="level-btn hard" onclick="setQuizLevel('hard',this)">⭐⭐⭐ Expertenaufgaben</button>
+    </div>
+    <div id="quiz-main">
+      <div class="quiz-progress"><div class="quiz-progress-bar" id="quiz-prog-bar" style="width:0%"></div></div>
+      <div class="quiz-q" id="quiz-q">Klicke auf „Quiz starten".</div>
+      <div class="quiz-options" id="quiz-opts"></div>
+      <div class="feedback" id="quiz-fb"></div>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn" id="quiz-start-btn" onclick="startQuiz()">▶ Quiz starten</button>
+        <button class="btn outline" id="quiz-next-btn" onclick="nextQuestion()" style="display:none">Weiter →</button>
+      </div>
+    </div>
+    <div id="quiz-result" style="display:none">
+      <div class="result-screen">
+        <div class="result-emoji" id="quiz-emoji">🎉</div>
+        <div class="quiz-score" id="quiz-score-display"></div>
+        <h3 id="quiz-title"></h3>
+        <p id="quiz-msg"></p>
+        <button class="btn" onclick="startQuiz()">🔄 Nochmal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+<div class="sticky-progress">
+  <span class="prog-label">Mein Fortschritt</span>
+  <div class="prog-bar-wrap"><div class="prog-bar" id="main-prog-bar" style="width:0%"></div></div>
+  <span id="main-stars">⭐ 0</span>
+</div>
+
+<script>
+let totalPoints=0;
+function addPoints(n){ totalPoints=Math.min(totalPoints+n,100); document.getElementById('main-prog-bar').style.width=(totalPoints)+'%'; document.getElementById('main-stars').textContent='⭐ '+totalPoints; }
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function showSection(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active'); btn.classList.add('active');
+}
+
+// ══ BLITZ-SPIEL ══
+const blitzPool=[
+  {t:'🛍️ Je mehr Äpfel man kauft, desto mehr zahlt man.',ans:'prop'},
+  {t:'👷 Je mehr Arbeiter, desto weniger Zeit wird benötigt.',ans:'anti'},
+  {t:'🚗 Je schneller man fährt, desto weniger Zeit braucht man.',ans:'anti'},
+  {t:'⛽ Je mehr Liter Benzin, desto mehr kostet es.',ans:'prop'},
+  {t:'🏗️ Je mehr Maschinen, desto kürzer die Bauzeit.',ans:'anti'},
+  {t:'📏 Je mehr Meter Stoff, desto teurer.',ans:'prop'},
+  {t:'🍕 Je mehr Personen, desto kleiner das Stück Pizza.',ans:'anti'},
+  {t:'🎬 Je mehr Filme, desto höher die Gesamtspielzeit.',ans:'prop'},
+  {t:'🏊 Je mehr Schwimmer teilen sich eine Bahn, desto weniger Platz hat jeder.',ans:'anti'},
+  {t:'📦 Je mehr Pakete, desto mehr Liefergebühr (gleicher Preis pro Paket).',ans:'prop'},
+  {t:'🔧 Je mehr Mechaniker, desto kürzer die Reparaturzeit.',ans:'anti'},
+  {t:'📐 Je größer der Maßstab, desto mehr cm entsprechen 1 km.',ans:'prop'},
+];
+let blitzIdx=0,blitzScore=0,blitzRunning=false,blitzCurrent=null;
+function startBlitz(){ blitzRunning=true; blitzScore=0; blitzIdx=0; updateBlitz(); }
+function resetBlitz(){ blitzRunning=false; blitzScore=0; document.getElementById('blitz-situation').textContent='Klicke auf Start!'; document.getElementById('blitz-score').textContent='⭐ 0 richtig'; document.getElementById('blitz-fb').style.display='none'; }
+function updateBlitz(){
+  const sh=[...blitzPool].sort(()=>Math.random()-0.5);
+  blitzCurrent=sh[blitzIdx%sh.length];
+  document.getElementById('blitz-situation').textContent=blitzCurrent.t;
+  document.querySelectorAll('.blitz-opt').forEach(b=>{b.style.background='white';b.disabled=false;b.style.color='var(--primary)';});
+  document.getElementById('blitz-fb').style.display='none';
+}
+function blitzAnswer(choice){
+  if(!blitzRunning||!blitzCurrent) return;
+  document.querySelectorAll('.blitz-opt').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('blitz-fb');
+  if(choice===blitzCurrent.ans){
+    blitzScore++; addPoints(1);
+    document.getElementById('blitz-score').textContent='⭐ '+blitzScore+' richtig';
+    fb.className='feedback correct'; fb.textContent='✅ Richtig!'; fb.style.display='block';
+    blitzIdx++; setTimeout(updateBlitz,800);
+  } else {
+    fb.className='feedback wrong'; fb.textContent='❌ Falsch! '+(blitzCurrent.ans==='prop'?'Diese Zuordnung ist PROPORTIONAL – beide Größen wachsen zusammen.':'Diese Zuordnung ist ANTIPROPORTIONAL – eine wächst, die andere schrumpft.'); fb.style.display='block';
+    blitzIdx++; setTimeout(updateBlitz,2000);
+  }
+}
+
+// ══ TABELLEN ERKENNEN ══
+let tabErkData=[];
+function initTabellenErkennen(){
+  tabErkData=[];
+  for(let i=0;i<3;i++){
+    const isProp=Math.random()<0.5;
+    const k=rnd(2,12);
+    if(isProp){
+      const xs=[1,2,3,4,5];
+      const ys=xs.map(x=>x*k);
+      tabErkData.push({xs,ys,type:'prop',k});
+    } else {
+      const xs=[1,2,3,4,6];
+      const total=k*12;
+      const ys=xs.map(x=>total/x);
+      tabErkData.push({xs,ys,type:'anti',k:total});
+    }
+  }
+  const c=document.getElementById('tabellen-erkennen-container');
+  c.innerHTML=tabErkData.map((d,i)=>`
+    <div class="aufgabe-box" style="margin-bottom:14px">
+      <div class="aufgabe-nr">Tabelle ${i+1}</div>
+      <div style="overflow-x:auto"><table class="styled-table" style="margin-bottom:12px">
+        <thead><tr><th>x</th>${d.xs.map(x=>`<th>${x}</th>`).join('')}</tr></thead>
+        <tbody><tr><td style="font-weight:800">y</td>${d.ys.map(y=>`<td>${y}</td>`).join('')}</tr></tbody>
+      </table></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn small" id="te-prop-${i}" onclick="answerTabelleErk(${i},'prop',this)">📈 Proportional</button>
+        <button class="btn small outline" id="te-anti-${i}" onclick="answerTabelleErk(${i},'anti',this)" style="color:var(--accent2);border-color:var(--accent2)">📉 Antiproportional</button>
+      </div>
+      <div id="te-tip-${i}" style="margin-top:8px;font-size:0.88rem;font-weight:700;display:none"></div>
+    </div>`).join('');
+  document.getElementById('tabellen-erkennen-fb').style.display='none';
+}
+function answerTabelleErk(i,choice,btn){
+  const d=tabErkData[i];
+  document.getElementById('te-prop-'+i).disabled=true; document.getElementById('te-anti-'+i).disabled=true;
+  const tip=document.getElementById('te-tip-'+i); tip.style.display='block';
+  if(choice===d.type){
+    btn.style.background='var(--success)'; btn.style.color='white';
+    tip.style.color='#065f46'; addPoints(2);
+    tip.textContent=d.type==='prop'?`✅ Richtig! Prüfe: y÷x = ${d.ys[0]}÷${d.xs[0]} = ${d.k} → immer gleich. Proportionalitätsfaktor k = ${d.k}.`:`✅ Richtig! Prüfe: x·y = ${d.xs[0]}·${d.ys[0]} = ${d.k} → immer gleich.`;
+  } else {
+    btn.style.background='var(--danger)'; btn.style.color='white';
+    tip.style.color='#7f1d1d';
+    tip.textContent=d.type==='prop'?`❌ Es ist PROPORTIONAL: y÷x = ${d.k} (immer gleich).`:`❌ Es ist ANTIPROPORTIONAL: x·y = ${d.k} (immer gleich).`;
+  }
+}
+
+// ══ PROP TABELLE ══
+let propTabelleData=[];
+function initPropTabelle(){
+  propTabelleData=[];
+  for(let i=0;i<2;i++){
+    const k=rnd(2,15)+(Math.random()<0.3?0.5:0);
+    const xs=[1,2,3,4,5,6];
+    const hideIdx=[rnd(1,3),rnd(3,5)];
+    const ys=xs.map(x=>parseFloat((x*k).toFixed(2)));
+    propTabelleData.push({xs,ys,k,hideIdx});
+  }
+  const c=document.getElementById('prop-tabelle-container');
+  c.innerHTML=propTabelleData.map((d,i)=>`
+    <div class="aufgabe-box" style="margin-bottom:14px">
+      <div class="aufgabe-nr">Aufgabe ${i+1} <span class="type-tag prop">📈 Proportional | k = ?</span></div>
+      <div style="overflow-x:auto"><table class="styled-table">
+        <thead><tr><th>x</th>${d.xs.map(x=>`<th>${x}</th>`).join('')}</tr></thead>
+        <tbody><tr><td style="font-weight:800">y</td>${d.ys.map((y,j)=>d.hideIdx.includes(j)?`<td><input type="number" id="pt-${i}-${j}" step="0.01" style="width:70px"></td>`:`<td>${y}</td>`).join('')}</tr></tbody>
+      </table></div>
+      <div class="row" style="margin-top:10px"><label>Proportionalitätsfaktor k =</label><input type="number" id="pt-k-${i}" step="0.01" style="width:80px"></div>
+    </div>`).join('');
+  document.getElementById('prop-tabelle-fb').style.display='none';
+}
+function checkPropTabelle(){
+  let correct=0,total=0;
+  propTabelleData.forEach((d,i)=>{
+    d.hideIdx.forEach(j=>{
+      const inp=document.getElementById('pt-'+i+'-'+j);
+      if(inp){ total++; if(parseFloat(inp.value)===d.ys[j]){inp.className='correct';correct++;}else inp.className='wrong'; }
+    });
+    const kInp=document.getElementById('pt-k-'+i); total++;
+    if(parseFloat(kInp.value)===d.k){kInp.className='correct';correct++;}else kInp.className='wrong';
+  });
+  const fb=document.getElementById('prop-tabelle-fb');
+  if(correct===total){fb.className='feedback correct';fb.textContent='✅ Alle Werte stimmen!';addPoints(6);}
+  else{fb.className='feedback wrong';fb.textContent=`❌ ${correct}/${total} richtig. Tipp: Berechne k = y÷x, dann fehlende Werte = k · x.`;}
+}
+
+// ══ PROP AUFGABEN ══
+let propLevel='easy', propAufgData=[];
+function setPropLevel(l,btn){ propLevel=l; document.querySelectorAll('#s-prop .level-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); initPropAufgaben(); }
+const propContexts={
+  easy:[
+    {unit1:'Hefte',unit2:'€',k:1.5},{unit1:'kg Äpfel',unit2:'€',k:2.2},{unit1:'l Benzin',unit2:'€',k:1.8},
+    {unit1:'Brötchen',unit2:'€',k:0.6},{unit1:'km',unit2:'€ Fahrtkosten',k:0.3},
+  ],
+  medium:[
+    {unit1:'m Stoff',unit2:'€',k:4.5},{unit1:'kg Mehl',unit2:'€',k:0.85},{unit1:'Stunden',unit2:'€ Lohn',k:13.5},
+    {unit1:'Seiten',unit2:'Minuten Lesezeit',k:2.5},{unit1:'Liter',unit2:'g CO₂',k:2650},
+  ],
+  hard:[
+    {unit1:'cm auf der Karte',unit2:'km in der Realität',k:5},{unit1:'Tage',unit2:'€ Miete',k:32.5},
+    {unit1:'m²',unit2:'€ Fliesen',k:23.8},{unit1:'kWh',unit2:'€ Stromkosten',k:0.38},
+  ]
+};
+function initPropAufgaben(){
+  const ctxPool=propContexts[propLevel];
+  propAufgData=[];
+  for(let i=0;i<4;i++){
+    const ctx=ctxPool[rnd(0,ctxPool.length-1)];
+    const k=ctx.k*(0.8+Math.random()*0.6);
+    const given=rnd(2,8), ask=rnd(2,12);
+    const givenY=parseFloat((given*k).toFixed(2));
+    const askY=parseFloat((ask*k).toFixed(2));
+    propAufgData.push({unit1:ctx.unit1,unit2:ctx.unit2,given,givenY,ask,askY,k:parseFloat(k.toFixed(2))});
+  }
+  const c=document.getElementById('prop-aufgaben-container');
+  c.innerHTML=propAufgData.map((d,i)=>`
+    <div class="aufgabe-box">
+      <div class="aufgabe-nr">Aufgabe ${i+1}</div>
+      <div class="aufgabe-text">${d.given} ${d.unit1} entsprechen ${d.givenY} ${d.unit2}.<br>Wie viel ${d.unit2} entsprechen ${d.ask} ${d.unit1}?</div>
+      <div class="row"><label>Antwort:</label><input type="number" id="pa-${i}" step="0.01" style="width:100px"> ${d.unit2}</div>
+    </div>`).join('');
+  document.getElementById('prop-aufgaben-fb').style.display='none';
+}
+function checkPropAufgaben(){
+  let correct=0;
+  propAufgData.forEach((d,i)=>{
+    const inp=document.getElementById('pa-'+i);
+    if(Math.abs(parseFloat(inp.value)-d.askY)<0.05){inp.className='correct';correct++;}else inp.className='wrong';
+  });
+  const fb=document.getElementById('prop-aufgaben-fb');
+  if(correct===propAufgData.length){fb.className='feedback correct';fb.textContent=`✅ Alle ${correct} Dreisatz-Aufgaben richtig!`;addPoints(6);}
+  else{
+    const sol=propAufgData.map((d,i)=>Math.abs(parseFloat(document.getElementById('pa-'+i).value)-d.askY)>=0.05?`A${i+1}: ${d.given}→${d.givenY}; 1→${d.k}; ${d.ask}→${d.askY}`:null).filter(Boolean);
+    fb.className='feedback wrong';fb.innerHTML=`❌ ${correct}/${propAufgData.length} richtig.<br>${sol.join('<br>')}`;
+  }
+}
+
+// ══ ANTI TABELLE ══
+let antiTabelleData=[];
+function initAntiTabelle(){
+  antiTabelleData=[];
+  const totals=[12,24,36,48,60];
+  for(let i=0;i<2;i++){
+    const total=totals[rnd(0,totals.length-1)];
+    const xs=[1,2,3,4,6];
+    const hideIdx=[rnd(1,2),rnd(3,4)];
+    const ys=xs.map(x=>total/x);
+    antiTabelleData.push({xs,ys,total,hideIdx});
+  }
+  const c=document.getElementById('anti-tabelle-container');
+  c.innerHTML=antiTabelleData.map((d,i)=>`
+    <div class="aufgabe-box" style="margin-bottom:14px;border-color:#c4b5fd">
+      <div class="aufgabe-nr" style="color:var(--accent2)">Aufgabe ${i+1} <span class="type-tag antiprop">📉 Antiproportional | x · y = ?</span></div>
+      <div style="overflow-x:auto"><table class="styled-table purple">
+        <thead><tr><th>x</th>${d.xs.map(x=>`<th>${x}</th>`).join('')}</tr></thead>
+        <tbody><tr><td style="font-weight:800">y</td>${d.ys.map((y,j)=>d.hideIdx.includes(j)?`<td><input type="number" id="at-${i}-${j}" step="0.01" style="width:70px"></td>`:`<td>${y}</td>`).join('')}</tr></tbody>
+      </table></div>
+      <div class="row" style="margin-top:10px"><label style="color:var(--accent2)">Konstante k = x · y =</label><input type="number" id="at-k-${i}" style="width:80px"></div>
+    </div>`).join('');
+  document.getElementById('anti-tabelle-fb').style.display='none';
+}
+function checkAntiTabelle(){
+  let correct=0,total=0;
+  antiTabelleData.forEach((d,i)=>{
+    d.hideIdx.forEach(j=>{
+      const inp=document.getElementById('at-'+i+'-'+j);
+      if(inp){ total++; if(parseFloat(inp.value)===d.ys[j]){inp.className='correct';correct++;}else inp.className='wrong'; }
+    });
+    const kInp=document.getElementById('at-k-'+i); total++;
+    if(parseFloat(kInp.value)===d.total){kInp.className='correct';correct++;}else kInp.className='wrong';
+  });
+  const fb=document.getElementById('anti-tabelle-fb');
+  if(correct===total){fb.className='feedback correct';fb.textContent='✅ Alle Werte korrekt!';addPoints(6);}
+  else{fb.className='feedback wrong';fb.textContent=`❌ ${correct}/${total} richtig. Tipp: Berechne k = x·y, dann fehlende Werte = k÷x.`;}
+}
+
+// ══ ANTI AUFGABEN ══
+let antiLevel='easy',antiAufgData=[];
+function setAntiLevel(l,btn){ antiLevel=l; document.querySelectorAll('#s-antiprop .level-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); initAntiAufgaben(); }
+const antiContexts={
+  easy:[
+    {ctx:'👷 {x1} Arbeiter brauchen {y1} Stunden.',unit1:'Arbeiter',unit2:'Stunden'},
+    {ctx:'🚗 Bei {y1} km/h dauert die Fahrt {x1} Stunden.',unit1:'Stunden',unit2:'km/h'},
+    {ctx:'🍕 {x1} Personen bekommen je {y1} Stück Pizza.',unit1:'Personen',unit2:'Stück'},
+  ],
+  medium:[
+    {ctx:'🏗️ {x1} Maschinen brauchen {y1} Tage.',unit1:'Maschinen',unit2:'Tage'},
+    {ctx:'🔧 {x1} Mechaniker reparieren das Auto in {y1} Stunden.',unit1:'Mechaniker',unit2:'Stunden'},
+    {ctx:'🚜 {x1} Traktoren bearbeiten das Feld in {y1} Tagen.',unit1:'Traktoren',unit2:'Tagen'},
+  ],
+  hard:[
+    {ctx:'📦 {x1} Lieferanten brauchen {y1} Stunden für die gesamte Lieferung.',unit1:'Lieferanten',unit2:'Stunden'},
+    {ctx:'🏊 {x1} Pumpen leeren das Becken in {y1} Minuten.',unit1:'Pumpen',unit2:'Minuten'},
+  ]
+};
+function initAntiAufgaben(){
+  const ctxPool=antiContexts[antiLevel];
+  antiAufgData=[];
+  for(let i=0;i<4;i++){
+    const ctx=ctxPool[rnd(0,ctxPool.length-1)];
+    const x1=rnd(2,6); const y1=rnd(3,12); const total=x1*y1; const x2=rnd(2,12);
+    const y2=total/x2;
+    if(!Number.isInteger(y2)){ i--; continue; }
+    antiAufgData.push({ctx:ctx.ctx.replace('{x1}',x1).replace('{y1}',y1),unit1:ctx.unit1,unit2:ctx.unit2,x1,y1,x2,y2,total});
+  }
+  const c=document.getElementById('anti-aufgaben-container');
+  c.innerHTML=antiAufgData.map((d,i)=>`
+    <div class="aufgabe-box" style="border-color:#c4b5fd">
+      <div class="aufgabe-nr" style="color:var(--accent2)">Aufgabe ${i+1}</div>
+      <div class="aufgabe-text">${d.ctx}<br>Wie viele ${d.unit2} brauchen <strong>${d.x2} ${d.unit1}</strong>?</div>
+      <div class="row"><label>Antwort:</label><input type="number" id="aa-${i}" style="width:100px"> ${d.unit2}</div>
+    </div>`).join('');
+  document.getElementById('anti-aufgaben-fb').style.display='none';
+}
+function checkAntiAufgaben(){
+  let correct=0;
+  antiAufgData.forEach((d,i)=>{
+    const inp=document.getElementById('aa-'+i);
+    if(parseFloat(inp.value)===d.y2){inp.className='correct';correct++;}else inp.className='wrong';
+  });
+  const fb=document.getElementById('anti-aufgaben-fb');
+  if(correct===antiAufgData.length){fb.className='feedback correct';fb.textContent=`✅ Alle ${correct} Aufgaben richtig!`;addPoints(6);}
+  else{
+    const sol=antiAufgData.map((d,i)=>parseFloat(document.getElementById('aa-'+i).value)!==d.y2?`A${i+1}: ${d.x1}×${d.y1}=${d.total}; ${d.total}÷${d.x2}=${d.y2}`:null).filter(Boolean);
+    fb.className='feedback wrong';fb.innerHTML=`❌ ${correct}/${antiAufgData.length} richtig.<br>${sol.join('<br>')}`;
+  }
+}
+
+// ══ GEMISCHT ══
+let gemischtData=[];
+function initGemischt(){
+  gemischtData=[];
+  for(let i=0;i<4;i++){
+    const isProp=Math.random()<0.5;
+    if(isProp){
+      const k=rnd(2,10); const xs=[2,4,6,8]; const hideIdx=rnd(1,3);
+      const ys=xs.map(x=>x*k);
+      gemischtData.push({type:'prop',xs,ys,k,hideIdx,shown:ys[0]});
+    } else {
+      const total=rnd(2,6)*rnd(2,6); const xs=[1,2,3,6]; const hideIdx=rnd(1,3);
+      const ys=xs.map(x=>total/x);
+      if(!Number.isInteger(ys[hideIdx])){gemischtData.push({type:'prop',xs:[1,2,3,4],ys:[3,6,9,12],k:3,hideIdx:2}); continue;}
+      gemischtData.push({type:'anti',xs,ys,total,hideIdx});
+    }
+  }
+  const c=document.getElementById('gemischt-container');
+  c.innerHTML=gemischtData.map((d,i)=>`
+    <div class="aufgabe-box" style="margin-bottom:14px">
+      <div class="aufgabe-nr">Aufgabe ${i+1}</div>
+      <div style="overflow-x:auto;margin-bottom:10px"><table class="styled-table">
+        <thead><tr><th>x</th>${d.xs.map(x=>`<th>${x}</th>`).join('')}</tr></thead>
+        <tbody><tr><td style="font-weight:800">y</td>${d.ys.map((y,j)=>j===d.hideIdx?`<td><input type="number" id="gm-${i}-val" step="0.01" style="width:70px"></td>`:`<td>${y}</td>`).join('')}</tr></tbody>
+      </table></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn small" id="gm-${i}-prop" onclick="answerGemischt(${i},'prop',this)">📈 Proportional</button>
+        <button class="btn small outline" id="gm-${i}-anti" onclick="answerGemischt(${i},'anti',this)" style="color:var(--accent2);border-color:var(--accent2)">📉 Antiproportional</button>
+      </div>
+      <div id="gm-${i}-tip" style="margin-top:8px;font-size:0.88rem;font-weight:700;display:none"></div>
+    </div>`).join('');
+  document.getElementById('gemischt-fb').style.display='none';
+}
+function answerGemischt(i,choice,btn){
+  const d=gemischtData[i];
+  document.getElementById('gm-'+i+'-prop').disabled=true; document.getElementById('gm-'+i+'-anti').disabled=true;
+  const inp=document.getElementById('gm-'+i+'-val'); const tip=document.getElementById('gm-'+i+'-tip');
+  tip.style.display='block';
+  const typeOk=choice===d.type;
+  const userVal=parseFloat(inp.value); const correct=d.ys[d.hideIdx];
+  const valOk=Math.abs(userVal-correct)<0.01;
+  if(typeOk&&valOk){btn.style.background='var(--success)';btn.style.color='white';inp.className='correct';tip.style.color='#065f46';tip.textContent='✅ Typ und Wert stimmen!';addPoints(3);}
+  else{
+    if(typeOk){btn.style.background='var(--success)';btn.style.color='white';}else{btn.style.background='var(--danger)';btn.style.color='white';}
+    if(valOk){inp.className='correct';}else{inp.className='wrong';}
+    tip.style.color='#7f1d1d';tip.textContent=`→ Typ: ${d.type==='prop'?'Proportional':'Antiproportional'} | fehlender Wert: ${correct}`;
+  }
+}
+function checkGemischt(){ const fb=document.getElementById('gemischt-fb'); fb.className='feedback info'; fb.textContent='Tipp: Klicke auf den Typ, um deine Antwort zu prüfen!'; }
+
+// ══ LÜCKENTEXT ══
+const lueckenTexte=[
+  { text:'Bei einer BLANK Zuordnung gilt: Je mehr von x, desto mehr von y. Der Graph ist eine BLANK durch den BLANK.', blanks:['proportionalen','Gerade','Ursprung'], opts:['proportionalen','antiproportionalen','Parabel','Gerade','Hyperbel','Nullpunkt','Ursprung'] },
+  { text:'Bei einer BLANK Zuordnung bleibt das BLANK der beiden Größen immer gleich. Der Graph ist eine BLANK.', blanks:['antiproportionalen','Produkt','Hyperbel'], opts:['proportionalen','antiproportionalen','Quotient','Produkt','Hyperbel','Gerade','Kurve'] },
+  { text:'Der BLANK gibt an, wie viel y pro x beträgt. Er bleibt bei proportionalen Zuordnungen immer BLANK. Man berechnet ihn durch y BLANK x.', blanks:['Proportionalitätsfaktor','gleich','÷'], opts:['Faktor','Proportionalitätsfaktor','verschieden','gleich','·','÷','+'] },
+];
+let lueckenData=null;
+function initLuecken(){
+  lueckenData=lueckenTexte[rnd(0,lueckenTexte.length-1)];
+  const d=lueckenData; let blankIdx=0;
+  const html=d.text.replace(/BLANK/g,()=>{
+    const sel=`<select id="lk-${blankIdx++}" style="padding:4px 8px;border-radius:6px;border:2px solid #bbf7d0;font-family:Nunito;font-weight:700"><option value="">-- wählen --</option>${d.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
+    return sel;
+  });
+  document.getElementById('luecken-container').innerHTML=`<div style="font-size:1rem;line-height:2.4">${html}</div>`;
+  document.getElementById('luecken-fb').style.display='none';
+}
+function checkLuecken(){
+  let correct=0;
+  lueckenData.blanks.forEach((ans,i)=>{
+    const sel=document.getElementById('lk-'+i);
+    if(sel.value===ans){sel.style.borderColor='var(--success)';sel.style.background='var(--success-light)';correct++;}
+    else{sel.style.borderColor='var(--danger)';sel.style.background='var(--danger-light)';}
+  });
+  const fb=document.getElementById('luecken-fb');
+  if(correct===lueckenData.blanks.length){fb.className='feedback correct';fb.textContent='✅ Alles richtig!';addPoints(4);}
+  else{fb.className='feedback wrong';fb.textContent=`❌ ${correct}/${lueckenData.blanks.length} richtig. Lösungen: ${lueckenData.blanks.join(' | ')}`;}
+}
+
+// ══ QUIZ ══
+let quizLevel='easy',quizData=[],quizIdx=0,quizScore=0,quizAnswered=false;
+function setQuizLevel(l,btn){ quizLevel=l; document.querySelectorAll('#s-quiz .level-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('quiz-start-btn').style.display='inline-flex'; document.getElementById('quiz-opts').innerHTML=''; document.getElementById('quiz-q').textContent='Klicke auf „Quiz starten".'; document.getElementById('quiz-fb').style.display='none'; document.getElementById('quiz-next-btn').style.display='none'; }
+const quizPool={
+  easy:[
+    {q:'Was gilt bei einer proportionalen Zuordnung?',opts:['Wenn x größer wird, wird y kleiner','Wenn x größer wird, wird y auch größer','Das Produkt x·y ist immer gleich','Der Graph ist eine Hyperbel'],ans:1,tip:'Proportional: beide Größen wachsen zusammen!'},
+    {q:'Welcher Graph zeigt eine proportionale Zuordnung?',opts:['Eine Hyperbel','Eine Kurve, die abfällt','Eine Gerade durch den Ursprung','Ein Kreis'],ans:2,tip:'Proportional = Gerade durch den Nullpunkt (0,0)'},
+    {q:'3 Hefte kosten 4,50 €. Was kostet 1 Heft?',opts:['1,50 €','3,00 €','1,20 €','2,25 €'],ans:0,tip:'4,50 ÷ 3 = 1,50 €'},
+    {q:'5 Liter Benzin kosten 9 €. Was kosten 8 Liter?',opts:['14 €','14,40 €','13,50 €','16 €'],ans:1,tip:'1 L = 1,80 €; 8 × 1,80 = 14,40 €'},
+    {q:'Was ist der Proportionalitätsfaktor k bei: 4 kg = 12 €?',opts:['4','3','12','1,5'],ans:1,tip:'k = y ÷ x = 12 ÷ 4 = 3'},
+    {q:'Welche Zuordnung ist ANTIPROPORTIONAL?',opts:['Preis pro kg Äpfel','Arbeiter und benötigte Zeit','Strecke und Fahrkosten','Seiten und Lesezeit'],ans:1,tip:'Mehr Arbeiter → weniger Zeit → antiproportional!'},
+  ],
+  medium:[
+    {q:'4 Arbeiter brauchen 6 Stunden. Wie lange brauchen 8 Arbeiter?',opts:['12 Stunden','3 Stunden','4 Stunden','24 Stunden'],ans:1,tip:'4×6=24; 24÷8=3 Stunden. Mehr Arbeiter → weniger Zeit.'},
+    {q:'Was ist das Kennzeichen einer antiproportionalen Zuordnung?',opts:['y÷x ist immer gleich','x+y ist immer gleich','x·y ist immer gleich','x−y ist immer gleich'],ans:2,tip:'Das Produkt x·y bleibt konstant bei antiproportionalen Zuordnungen.'},
+    {q:'x | 2 | 4 | 6 | 8. y | 24 | 12 | 8 | ? Was ist der fehlende Wert?',opts:['4','6','16','3'],ans:1,tip:'k = 2·24 = 48; y = 48÷8 = 6'},
+    {q:'Bei welcher Zuordnung ist der Graph eine Hyperbel?',opts:['Proportional','Antiproportional','Linear','Quadratisch'],ans:1,tip:'Antiproportionale Zuordnungen haben einen hyperbolischen Graphen.'},
+    {q:'6 Pumpen leeren ein Becken in 4 Stunden. Wie lange dauert es mit 3 Pumpen?',opts:['2 Stunden','8 Stunden','12 Stunden','6 Stunden'],ans:1,tip:'6×4=24; 24÷3=8 Stunden'},
+    {q:'Wann gilt: y = k · x?',opts:['Immer','Nur bei proportionalen Zuordnungen','Nur bei antiproportionalen Zuordnungen','Nie'],ans:1,tip:'y = k·x ist die Formel für proportionale Zuordnungen.'},
+  ],
+  hard:[
+    {q:'Bei einer antiproportionalen Zuordnung gilt x·y = 36. Was ist y, wenn x = 9?',opts:['4','324','27','45'],ans:0,tip:'y = 36 ÷ 9 = 4'},
+    {q:'Ein Pkw fährt mit 100 km/h 3 Stunden. Wie lange bei 150 km/h?',opts:['4,5 h','2 h','3,5 h','1,5 h'],ans:1,tip:'100·3=300 km; 300÷150=2 h'},
+    {q:'Tabelle: x: 3, 6, 9. y: 8, 4, ?. Welcher Wert fehlt und welcher Typ?',opts:['8/3 – antiproportional','2,66... – proportional','3 – antiproportional','2 – antiproportional'],ans:0,tip:'k = 3·8=24; y=24÷9=8/3 ≈ 2,67 – antiproportional!'},
+    {q:'Ein Maßstab ist 1:50000. Wie weit sind 4 cm auf der Karte in der Realität?',opts:['200 m','2 km','50 km','4 km'],ans:1,tip:'4 cm × 50000 = 200000 cm = 2 km – proportional!'},
+    {q:'Was passiert bei einer proportionalen Zuordnung, wenn x mit 3 multipliziert wird?',opts:['y wird 9-mal größer','y wird halbiert','y wird 3-mal größer','y bleibt gleich'],ans:2,tip:'Proportional: y = k·x → wenn x·3, dann y·3.'},
+    {q:'Welche Aussage ist FALSCH?',opts:['Proportionale Zuordnungen haben k = y÷x','Bei Antiproportional ist der Graph eine Gerade','Das Produkt x·y bleibt bei Antiproportional konstant','Proportionale Graphen gehen durch (0,0)'],ans:1,tip:'Antiproportionale Zuordnungen haben einen hyperbolischen Graphen, keine Gerade!'},
+  ]
+};
+function startQuiz(){
+  quizData=[...quizPool[quizLevel]].sort(()=>Math.random()-0.5).slice(0,6);
+  quizIdx=0;quizScore=0;quizAnswered=false;
+  document.getElementById('quiz-main').style.display='block';
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-start-btn').style.display='none';
+  document.getElementById('quiz-next-btn').style.display='none';
+  showQuestion();
+}
+function showQuestion(){
+  const d=quizData[quizIdx];
+  document.getElementById('quiz-prog-bar').style.width=((quizIdx/quizData.length)*100)+'%';
+  document.getElementById('quiz-q').innerHTML=`<span style="color:var(--muted);font-size:0.82rem">Frage ${quizIdx+1}/${quizData.length}</span><br>${d.q}`;
+  document.getElementById('quiz-opts').innerHTML=d.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('');
+  document.getElementById('quiz-fb').style.display='none';
+  document.getElementById('quiz-next-btn').style.display='none';
+  quizAnswered=false;
+}
+function answerQuiz(i){
+  if(quizAnswered) return; quizAnswered=true;
+  const d=quizData[quizIdx];
+  document.querySelectorAll('.quiz-opt').forEach((o,j)=>{o.disabled=true;if(j===d.ans)o.classList.add(i===d.ans?'selected-correct':'show-correct');});
+  if(i===d.ans){document.querySelectorAll('.quiz-opt')[i].classList.add('selected-correct');quizScore++;addPoints(2);
+    const fb=document.getElementById('quiz-fb');fb.className='feedback correct';fb.textContent='✅ Richtig!';fb.style.display='block';
+  } else {
+    document.querySelectorAll('.quiz-opt')[i].classList.add('selected-wrong');
+    const fb=document.getElementById('quiz-fb');fb.className='feedback wrong';fb.innerHTML=`❌ Nicht ganz! <strong>Tipp:</strong> ${d.tip}`;fb.style.display='block';
+  }
+  if(quizIdx<quizData.length-1){document.getElementById('quiz-next-btn').style.display='inline-flex';}
+  else{setTimeout(()=>{
+    document.getElementById('quiz-main').style.display='none';document.getElementById('quiz-result').style.display='block';
+    const pct=Math.round(quizScore/quizData.length*100);
+    document.getElementById('quiz-emoji').textContent=pct>=80?'🎉':pct>=60?'😊':'💪';
+    document.getElementById('quiz-score-display').textContent=quizScore+'/'+quizData.length;
+    document.getElementById('quiz-title').textContent=pct>=80?'Hervorragend!':pct>=60?'Gut gemacht!':'Weiter üben!';
+    document.getElementById('quiz-msg').textContent=`Du hast ${pct}% richtig.`;
+  },1200);}
+}
+function nextQuestion(){ quizIdx++; showQuestion(); }
+
+window.onload=function(){
+  initTabellenErkennen(); initPropTabelle(); initPropAufgaben(); initAntiTabelle(); initAntiAufgaben(); initGemischt(); initLuecken();
+};
+</script>
+</body>
+</html>

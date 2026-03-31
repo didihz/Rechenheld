@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daten & Zufall – Klasse 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface2: #263347;
+  --border: #334155;
+  --accent: #06b6d4;
+  --accent2: #0ea5e9;
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --purple: #a855f7;
+  --pink: #ec4899;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* NAV */
+.top-bar { background: var(--surface); border-bottom: 2px solid var(--border); padding: 14px 20px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; }
+.top-bar .logo { font-family: 'Fredoka One', sans-serif; font-size: 1.5rem; color: var(--accent); letter-spacing: 1px; }
+.score-bar { margin-left: auto; display: flex; gap: 16px; align-items: center; }
+.score-pill { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; font-weight: 700; }
+.score-pill span { color: var(--yellow); }
+
+/* TABS */
+.tabs { display: flex; gap: 6px; padding: 14px 20px 0; flex-wrap: wrap; }
+.tab { padding: 8px 18px; border-radius: 10px 10px 0 0; border: 2px solid transparent; background: var(--surface); color: var(--muted); font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: all .2s; }
+.tab.active { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
+.tab:hover:not(.active) { color: var(--text); }
+
+/* SECTIONS */
+.section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+.section.active { display: block; }
+
+/* CARDS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 18px; }
+.card-title { font-family: 'Fredoka One', sans-serif; font-size: 1.2rem; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.badge { background: var(--accent); color: #000; border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; font-weight: 800; font-family: 'Nunito', sans-serif; }
+.badge.green { background: var(--green); }
+.badge.yellow { background: var(--yellow); }
+.badge.red { background: var(--red); }
+
+/* LEVEL SELECTOR */
+.level-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.level-btn { padding: 6px 16px; border-radius: 8px; border: 2px solid var(--border); background: var(--surface2); color: var(--muted); font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: all .15s; }
+.level-btn.active { border-color: var(--accent); color: var(--accent); }
+.level-btn.l1.active { border-color: var(--green); color: var(--green); }
+.level-btn.l2.active { border-color: var(--yellow); color: var(--yellow); }
+.level-btn.l3.active { border-color: var(--red); color: var(--red); }
+
+/* EXPLANATION BOX */
+.explain-box { background: #1a2744; border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0; padding: 14px 18px; margin-bottom: 16px; line-height: 1.7; }
+.explain-box .formula { background: var(--surface2); border-radius: 8px; padding: 8px 14px; display: inline-block; margin: 6px 0; font-size: 1.05rem; font-weight: 700; color: var(--yellow); }
+.example-tag { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--purple); margin-bottom: 6px; }
+
+/* RANGLISTE VISUAL */
+.rangliste { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.rgl-num { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; border: 2px solid var(--border); transition: all .3s; }
+.rgl-num.min { background: #1e3a5f; border-color: var(--accent2); color: var(--accent2); }
+.rgl-num.max { background: #3b1a1a; border-color: var(--red); color: var(--red); }
+.rgl-num.med { background: #2d1a4a; border-color: var(--purple); color: var(--purple); }
+.rgl-num.normal { background: var(--surface2); }
+
+/* QUIZ */
+.quiz-question { font-size: 1.05rem; font-weight: 700; margin-bottom: 14px; line-height: 1.5; }
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.quiz-option { background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; padding: 12px 16px; cursor: pointer; font-weight: 600; transition: all .15s; text-align: left; }
+.quiz-option:hover { border-color: var(--accent); }
+.quiz-option.correct { border-color: var(--green); background: #14532d33; color: var(--green); }
+.quiz-option.wrong { border-color: var(--red); background: #7f1d1d33; color: var(--red); }
+.quiz-option:disabled, .quiz-option.disabled { pointer-events: none; }
+
+/* LÜCKENTEXT */
+.luecke-text { line-height: 2.2; font-size: 1.05rem; }
+.luecke { display: inline-block; min-width: 80px; border-bottom: 2px solid var(--accent); margin: 0 4px; text-align: center; padding: 0 6px; }
+.luecke input { background: transparent; border: none; outline: none; color: var(--yellow); font-weight: 700; font-family: 'Nunito', sans-serif; font-size: 1rem; width: 100%; text-align: center; }
+
+/* ZUORDNUNG */
+.zuordnung-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.zuord-col { display: flex; flex-direction: column; gap: 8px; }
+.zuord-item { padding: 10px 14px; background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all .15s; }
+.zuord-item.selected { border-color: var(--accent); background: #0e3a4a; }
+.zuord-item.matched { border-color: var(--green); background: #14532d33; pointer-events: none; }
+.zuord-item.wrong-match { border-color: var(--red); background: #7f1d1d33; }
+
+/* INPUT / BUTTONS */
+.input-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+.num-input { background: var(--surface2); border: 2px solid var(--border); border-radius: 8px; padding: 8px 14px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; width: 90px; text-align: center; }
+.num-input:focus { outline: none; border-color: var(--accent); }
+.btn { padding: 10px 22px; border-radius: 10px; border: none; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: all .15s; }
+.btn-primary { background: var(--accent); color: #000; }
+.btn-primary:hover { background: var(--accent2); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 2px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); }
+.btn-new { background: var(--purple); color: #fff; }
+
+/* FEEDBACK */
+.feedback { margin-top: 10px; padding: 10px 16px; border-radius: 10px; font-weight: 700; display: none; }
+.feedback.show { display: block; }
+.feedback.ok { background: #14532d33; border: 1px solid var(--green); color: var(--green); }
+.feedback.err { background: #7f1d1d33; border: 1px solid var(--red); color: var(--red); }
+
+/* DIAGRAMM CANVAS */
+.chart-area { background: var(--surface2); border-radius: 10px; padding: 16px; margin: 10px 0; }
+canvas { max-width: 100%; }
+
+/* BLITZ */
+.blitz-container { text-align: center; }
+.blitz-display { font-family: 'Fredoka One', sans-serif; font-size: 2.5rem; color: var(--yellow); min-height: 80px; display: flex; align-items: center; justify-content: center; background: var(--surface2); border-radius: 14px; padding: 20px; margin: 16px 0; }
+.blitz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 420px; margin: 0 auto; }
+.blitz-opt { padding: 14px; border-radius: 12px; font-weight: 800; font-size: 1.1rem; cursor: pointer; border: 2px solid var(--border); background: var(--surface2); transition: all .15s; }
+.blitz-opt:hover { border-color: var(--accent); transform: scale(1.02); }
+.blitz-opt.correct { border-color: var(--green); background: #14532d55; color: var(--green); }
+.blitz-opt.wrong { border-color: var(--red); background: #7f1d1d55; color: var(--red); }
+
+/* PROGRESS */
+.progress-bar { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; margin: 8px 0; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--purple)); border-radius: 4px; transition: width .4s; }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.data-table th { background: var(--surface2); padding: 10px 14px; text-align: left; color: var(--accent); border-bottom: 2px solid var(--border); }
+.data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.data-table tr:hover td { background: #ffffff08; }
+.data-table .editable { background: #1a2030; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; color: var(--yellow); font-family: 'Nunito', sans-serif; font-weight: 700; width: 100px; }
+.data-table .editable:focus { outline: none; border-color: var(--accent); }
+
+/* HÄUFIGKEITS STRICHLISTE */
+.strich { font-size: 1.1rem; letter-spacing: 2px; color: var(--purple); font-family: monospace; }
+
+/* GAME - SORTIER */
+.sort-pool { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; min-height: 50px; padding: 10px; background: var(--surface2); border-radius: 10px; border: 2px dashed var(--border); }
+.sort-target { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; min-height: 50px; padding: 10px; background: #0f1e35; border-radius: 10px; border: 2px dashed var(--accent); }
+.sortable-num { padding: 8px 14px; background: var(--surface); border: 2px solid var(--border); border-radius: 8px; cursor: grab; font-weight: 800; font-size: 1.05rem; transition: all .15s; user-select: none; }
+.sortable-num:hover { border-color: var(--accent); transform: translateY(-2px); }
+.sortable-num.dragging { opacity: 0.5; }
+
+/* STAT DISPLAY */
+.stat-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+.stat-chip { padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; }
+.stat-chip.min-c { background: #1e3a5f; color: var(--accent2); border: 1px solid var(--accent2); }
+.stat-chip.max-c { background: #3b1a1a; color: var(--red); border: 1px solid var(--red); }
+.stat-chip.span-c { background: #2a1f0a; color: var(--yellow); border: 1px solid var(--yellow); }
+.stat-chip.med-c { background: #2d1a4a; color: var(--purple); border: 1px solid var(--purple); }
+.stat-chip.avg-c { background: #0a2a1f; color: var(--green); border: 1px solid var(--green); }
+
+/* RESPONSIVE */
+@media(max-width: 600px) {
+  .quiz-options { grid-template-columns: 1fr; }
+  .zuordnung-grid { grid-template-columns: 1fr; }
+  .blitz-options { grid-template-columns: 1fr 1fr; }
+}
+
+.emoji-big { font-size: 2rem; }
+.highlight { color: var(--yellow); font-weight: 800; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">📊 Daten &amp; Zufall</div>
+  <div style="color:var(--muted); font-size:0.85rem;">Klasse 6</div>
+  <div class="score-bar">
+    <div class="score-pill">⭐ XP: <span id="xp">0</span></div>
+    <div class="score-pill">✅ <span id="correct-count">0</span> richtig</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showSection('lernen')">📖 Lernen</div>
+  <div class="tab" onclick="showSection('zuordnung')">🔗 Zuordnung</div>
+  <div class="tab" onclick="showSection('rechnen')">🔢 Rechnen</div>
+  <div class="tab" onclick="showSection('haeufigkeit')">📋 Häufigkeit</div>
+  <div class="tab" onclick="showSection('diagramm')">📊 Diagramm</div>
+  <div class="tab" onclick="showSection('blitz')">⚡ Blitzlesen</div>
+  <div class="tab" onclick="showSection('sortierspiel')">🎮 Sortier-Spiel</div>
+</div>
+
+<!-- ===== LERNEN ===== -->
+<div class="section active" id="sec-lernen">
+
+  <div class="card">
+    <div class="card-title">📖 Was du hier lernst</div>
+    <p style="color:var(--muted); line-height:1.7;">Daten sammeln, sortieren und auswerten – das ist Statistik! Du lernst, wie man aus Zahlen wichtige Informationen abliest.</p>
+  </div>
+
+  <!-- RANGLISTE -->
+  <div class="card">
+    <div class="card-title">📋 Rangliste <span class="badge">Schritt 1</span></div>
+    <div class="explain-box">
+      <div class="example-tag">Was ist eine Rangliste?</div>
+      Eine Rangliste ordnet Zahlen <strong>vom kleinsten zum größten Wert</strong>.
+      <br><br>
+      <div class="example-tag">Beispiel</div>
+      Zahlen: <span class="highlight">8, 22, 15, 41, 60</span><br>
+      → Rangliste: <span class="highlight">8, 15, 22, 41, 60</span>
+    </div>
+    <div style="margin-bottom:8px; font-weight:700;">Klicke auf „Neu", um eigene Zahlen zu sortieren:</div>
+    <div id="rl-demo-nums" class="rangliste"></div>
+    <div style="margin:10px 0; font-weight:600; color:var(--muted);">→ Rangliste:</div>
+    <div id="rl-demo-sorted" class="rangliste"></div>
+    <button class="btn btn-secondary" onclick="newRanglisteDemo()">🔄 Neue Zahlen</button>
+  </div>
+
+  <!-- MINIMUM & MAXIMUM -->
+  <div class="card">
+    <div class="card-title">⬇️⬆️ Minimum &amp; Maximum</div>
+    <div class="explain-box">
+      <div class="example-tag">Definitionen</div>
+      <div class="formula">Minimum = kleinster Wert</div><br>
+      <div class="formula">Maximum = größter Wert</div><br>
+      <div class="formula">Spannweite = Maximum − Minimum</div>
+      <br>
+      <div class="example-tag">Beispiel</div>
+      Rangliste: <span class="highlight">8, 15, 22, 41, 60</span><br>
+      → Minimum = <span style="color:var(--accent2)">8</span>&nbsp;&nbsp; Maximum = <span style="color:var(--red)">60</span>&nbsp;&nbsp; Spannweite = 60 − 8 = <span style="color:var(--yellow)">52</span>
+    </div>
+    <div id="rl-farben" class="rangliste"></div>
+    <div class="stat-chips" id="minmax-chips"></div>
+    <button class="btn btn-secondary" onclick="newMinMaxDemo()">🔄 Neue Zahlen</button>
+  </div>
+
+  <!-- MEDIAN -->
+  <div class="card">
+    <div class="card-title">🎯 Median (Zentralwert)</div>
+    <div class="explain-box">
+      Der Median ist der <strong>mittlere Wert</strong> in einer Rangliste.<br><br>
+      <div class="example-tag">Ungerade Anzahl</div>
+      Rangliste (5 Werte): <span class="highlight">8, 15, <span style="color:var(--purple)">22</span>, 41, 60</span><br>
+      → 3. Wert = Median = <span class="formula" style="display:inline;padding:2px 8px">22</span>
+      <br><br>
+      <div class="example-tag">Gerade Anzahl</div>
+      Rangliste (6 Werte): <span class="highlight">3, 7, <span style="color:var(--purple)">14, 16</span>, 25, 42</span><br>
+      → Die zwei mittleren: 14 und 16 → Median = (14 + 16) ÷ 2 = <span class="formula" style="display:inline;padding:2px 8px">15</span>
+    </div>
+    <div id="median-demo" class="rangliste"></div>
+    <div class="stat-chips" id="median-chips"></div>
+    <button class="btn btn-secondary" onclick="newMedianDemo()">🔄 Neue Zahlen</button>
+  </div>
+
+  <!-- MITTELWERT -->
+  <div class="card">
+    <div class="card-title">➕ Mittelwert (Durchschnitt)</div>
+    <div class="explain-box">
+      <div class="formula">Mittelwert = Summe aller Werte ÷ Anzahl der Werte</div>
+      <br>
+      <div class="example-tag">Beispiel</div>
+      Zahlen: <span class="highlight">6, 3, 12, 6, 4, 5</span><br>
+      Summe: 6 + 3 + 12 + 6 + 4 + 5 = <span style="color:var(--yellow)">36</span><br>
+      Anzahl: <span style="color:var(--yellow)">6</span><br>
+      → Mittelwert = 36 ÷ 6 = <span class="formula" style="display:inline;padding:2px 8px">6</span>
+    </div>
+    <div id="avg-demo-nums" style="margin-bottom:8px; font-weight:700;"></div>
+    <div class="stat-chips" id="avg-chips"></div>
+    <button class="btn btn-secondary" onclick="newAvgDemo()">🔄 Neue Zahlen</button>
+  </div>
+
+  <!-- HÄUFIGKEIT -->
+  <div class="card">
+    <div class="card-title">📊 Absolute &amp; Relative Häufigkeit</div>
+    <div class="explain-box">
+      <div class="example-tag">Absolute Häufigkeit</div>
+      → <strong>Wie oft</strong> kommt ein Wert vor? (Zahl)<br><br>
+      <div class="example-tag">Relative Häufigkeit</div>
+      → <strong>Welcher Anteil</strong> aller Daten? (als Bruch oder Dezimalzahl)<br>
+      <div class="formula">Rel. Häufigkeit = absolute Häufigkeit ÷ Gesamtanzahl</div>
+      <br>
+      <div class="example-tag">Beispiel: Lieblingsfächer (18 Schüler)</div>
+      Sport kommt 7× vor → absolute Häufigkeit = 7<br>
+      → relative Häufigkeit = 7 ÷ 18 = <span style="color:var(--yellow)">7/18</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== ZUORDNUNG ===== -->
+<div class="section" id="sec-zuordnung">
+  <div class="card">
+    <div class="card-title">🔗 Begriffe zuordnen</div>
+    <p style="color:var(--muted); margin-bottom:16px;">Klicke einen Begriff links an, dann die passende Erklärung rechts.</p>
+    <div class="zuordnung-grid">
+      <div class="zuord-col" id="begriffe-col"></div>
+      <div class="zuord-col" id="erklaerungen-col"></div>
+    </div>
+    <div class="feedback" id="zuord-feedback"></div>
+    <div style="margin-top:14px;">
+      <button class="btn btn-secondary" onclick="resetZuordnung()">🔄 Neu mischen</button>
+    </div>
+    <div id="zuord-score" style="margin-top:10px; font-weight:700; color:var(--green);"></div>
+  </div>
+</div>
+
+<!-- ===== RECHNEN ===== -->
+<div class="section" id="sec-rechnen">
+  <div class="card">
+    <div class="card-title">🔢 Übungsaufgaben</div>
+    <div class="level-row">
+      <button class="level-btn l1 active" onclick="setLevel(1)">⭐ Leicht</button>
+      <button class="level-btn l2" onclick="setLevel(2)">⭐⭐ Mittel</button>
+      <button class="level-btn l3" onclick="setLevel(3)">⭐⭐⭐ Schwer</button>
+    </div>
+  </div>
+
+  <!-- AUFGABE: Rangliste + Min/Max/Median -->
+  <div class="card" id="rechnen-card">
+    <div class="card-title">📋 Aufgabe <span class="badge" id="rech-badge">Leicht</span></div>
+    <div id="rech-question" style="font-size:1.05rem; font-weight:700; margin-bottom:14px; line-height:1.7;"></div>
+    <div id="rech-inputs" class="input-row" style="flex-direction:column; gap:10px;"></div>
+    <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="checkRechnen()">✅ Prüfen</button>
+      <button class="btn btn-new" onclick="newRechnenTask()">🎲 Neue Zahlen</button>
+    </div>
+    <div class="feedback" id="rech-feedback"></div>
+  </div>
+
+  <!-- LÜCKENTEXT -->
+  <div class="card">
+    <div class="card-title">✏️ Lückentext</div>
+    <div id="luecke-container" class="luecke-text"></div>
+    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="checkLuecken()">✅ Prüfen</button>
+      <button class="btn btn-new" onclick="newLueckentext()">🎲 Neuer Text</button>
+    </div>
+    <div class="feedback" id="luecke-feedback"></div>
+  </div>
+</div>
+
+<!-- ===== HÄUFIGKEIT ===== -->
+<div class="section" id="sec-haeufigkeit">
+  <div class="card">
+    <div class="card-title">📋 Häufigkeitstabelle ausfüllen</div>
+    <p style="color:var(--muted); margin-bottom:14px;">Schau dir die Daten an und fülle die Tabelle aus.</p>
+    <div id="haeu-data-display" style="margin-bottom:14px;"></div>
+    <table class="data-table" id="haeu-table">
+      <thead><tr><th>Wert / Kategorie</th><th>Strichliste</th><th>Abs. Häufigkeit</th><th>Rel. Häufigkeit (Bruch)</th></tr></thead>
+      <tbody id="haeu-tbody"></tbody>
+    </table>
+    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="checkHaeufigkeit()">✅ Prüfen</button>
+      <button class="btn btn-new" onclick="newHaeufigkeit()">🎲 Neue Daten</button>
+    </div>
+    <div class="feedback" id="haeu-feedback"></div>
+  </div>
+</div>
+
+<!-- ===== DIAGRAMM ===== -->
+<div class="section" id="sec-diagramm">
+  <div class="card">
+    <div class="card-title">📊 Säulendiagramm</div>
+    <p style="color:var(--muted); margin-bottom:14px;">Hier siehst du ein Säulendiagramm für die Häufigkeiten. Verändere die Werte und sieh, wie sich das Diagramm ändert!</p>
+    <div id="diag-categories" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px;"></div>
+    <div class="chart-area">
+      <canvas id="barChart" height="280"></canvas>
+    </div>
+    <button class="btn btn-new" onclick="randomDiagramm()">🎲 Neue Zufallsdaten</button>
+  </div>
+
+  <!-- MC Quiz Diagramm lesen -->
+  <div class="card">
+    <div class="card-title">❓ Diagramm lesen – Quiz</div>
+    <div id="diag-quiz-content"></div>
+    <div class="quiz-options" id="diag-quiz-options"></div>
+    <button class="btn btn-new" style="margin-top:10px" onclick="newDiagQuiz()">🎲 Neue Frage</button>
+    <div class="feedback" id="diag-quiz-feedback"></div>
+  </div>
+</div>
+
+<!-- ===== BLITZ ===== -->
+<div class="section" id="sec-blitz">
+  <div class="card blitz-container">
+    <div class="card-title">⚡ Blitzlesen – Begriffe</div>
+    <p style="color:var(--muted); margin-bottom:10px;">Lies den Begriff und wähle die richtige Erklärung!</p>
+    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:14px; flex-wrap:wrap;">
+      <button class="level-btn active" id="blitz-slow" onclick="setBlitzSpeed('slow')">🐢 Langsam</button>
+      <button class="level-btn" id="blitz-fast" onclick="setBlitzSpeed('fast')">🐇 Schnell</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="blitz-progress" style="width:0%"></div></div>
+    <div style="font-size:0.85rem; color:var(--muted); margin-bottom:6px;"><span id="blitz-count">0</span>/10 Fragen</div>
+    <div class="blitz-display" id="blitz-word">Starte das Blitzlesen!</div>
+    <div class="blitz-options" id="blitz-options"></div>
+    <div style="margin-top:14px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn btn-primary" id="blitz-start-btn" onclick="startBlitz()">▶ Starten</button>
+    </div>
+    <div id="blitz-result" style="margin-top:12px; font-weight:700; font-size:1.1rem;"></div>
+  </div>
+</div>
+
+<!-- ===== SORTIER-SPIEL ===== -->
+<div class="section" id="sec-sortierspiel">
+  <div class="card">
+    <div class="card-title">🎮 Rangliste erstellen – Drag &amp; Drop</div>
+    <p style="color:var(--muted); margin-bottom:12px;">Ziehe die Zahlen in der richtigen Reihenfolge (kleinste zuerst) in das blaue Feld.</p>
+    <div style="font-weight:700; margin-bottom:6px;">📦 Zahlen zum Sortieren:</div>
+    <div class="sort-pool" id="sort-pool"></div>
+    <div style="font-weight:700; margin-bottom:6px; margin-top:14px;">📋 Deine Rangliste (kleinste zuerst):</div>
+    <div class="sort-target" id="sort-target"></div>
+    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="checkSortierung()">✅ Prüfen</button>
+      <button class="btn btn-secondary" onclick="resetSort()">↩ Zurücksetzen</button>
+      <button class="btn btn-new" onclick="newSortGame()">🎲 Neue Zahlen</button>
+    </div>
+    <div class="feedback" id="sort-feedback"></div>
+  </div>
+</div>
+
+<script>
+// ===================== GLOBALS =====================
+let xp = 0, correct = 0;
+let currentLevel = 1;
+let currentRechTask = {};
+let currentLueckeTask = {};
+let haeuData = {};
+let diagData = {};
+let diagQuizData = {};
+let blitzSpeed = 'slow';
+let blitzIdx = 0, blitzScore = 0, blitzActive = false;
+let blitzTimeout;
+let sortNums = [];
+let zuordSelected = {left: null, right: null};
+let zuordMatched = 0;
+
+function addXP(n){ xp += n; correct += 1; document.getElementById('xp').textContent = xp; document.getElementById('correct-count').textContent = correct; }
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+function showFeedback(id, ok, msg) {
+  const el = document.getElementById(id);
+  el.className = 'feedback show ' + (ok ? 'ok' : 'err');
+  el.textContent = msg;
+}
+
+// ===================== RANDOMS =====================
+function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function shuffle(arr){ let a=[...arr]; for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a; }
+function randNums(count, min, max) {
+  let s = new Set();
+  while(s.size < count) s.add(randInt(min,max));
+  return [...s];
+}
+function median(arr) {
+  let s = [...arr].sort((a,b)=>a-b);
+  let m = Math.floor(s.length/2);
+  return s.length%2===0 ? (s[m-1]+s[m])/2 : s[m];
+}
+function average(arr) { return arr.reduce((a,b)=>a+b,0)/arr.length; }
+
+// ===================== LERNEN DEMOS =====================
+function newRanglisteDemo() {
+  let nums = randNums(5, 1, 50);
+  let sorted = [...nums].sort((a,b)=>a-b);
+  let d1 = document.getElementById('rl-demo-nums');
+  let d2 = document.getElementById('rl-demo-sorted');
+  d1.innerHTML = nums.map(n=>`<div class="rgl-num normal">${n}</div>`).join('');
+  d2.innerHTML = sorted.map(n=>`<div class="rgl-num normal">${n}</div>`).join('');
+}
+
+function newMinMaxDemo() {
+  let nums = randNums(5, 1, 80);
+  let sorted = [...nums].sort((a,b)=>a-b);
+  let min = sorted[0], max = sorted[sorted.length-1], span = max-min;
+  document.getElementById('rl-farben').innerHTML = sorted.map((n,i)=>{
+    let cls = n===min?'min':n===max?'max':'normal';
+    return `<div class="rgl-num ${cls}">${n}</div>`;
+  }).join('');
+  document.getElementById('minmax-chips').innerHTML = `
+    <div class="stat-chip min-c">Minimum: ${min}</div>
+    <div class="stat-chip max-c">Maximum: ${max}</div>
+    <div class="stat-chip span-c">Spannweite: ${max} − ${min} = ${span}</div>`;
+}
+
+function newMedianDemo() {
+  let count = Math.random()<0.5?5:6;
+  let nums = randNums(count, 1, 60);
+  let sorted = [...nums].sort((a,b)=>a-b);
+  let med = median(sorted);
+  let m = Math.floor(sorted.length/2);
+  document.getElementById('median-demo').innerHTML = sorted.map((n,i)=>{
+    let cls = 'normal';
+    if(sorted.length%2===1 && i===m) cls='med';
+    if(sorted.length%2===0 && (i===m-1||i===m)) cls='med';
+    return `<div class="rgl-num ${cls}">${n}</div>`;
+  }).join('');
+  let medText = sorted.length%2===0?`(${sorted[m-1]} + ${sorted[m]}) ÷ 2 = ${med}`:String(med);
+  document.getElementById('median-chips').innerHTML = `<div class="stat-chip med-c">Median: ${medText}</div>`;
+}
+
+function newAvgDemo() {
+  let nums = randNums(randInt(4,6), 1, 30);
+  let sum = nums.reduce((a,b)=>a+b,0);
+  let avg = (sum/nums.length).toFixed(1);
+  document.getElementById('avg-demo-nums').innerHTML = `Zahlen: <span class="highlight">${nums.join(', ')}</span>`;
+  document.getElementById('avg-chips').innerHTML = `
+    <div class="stat-chip span-c">Summe: ${nums.join(' + ')} = ${sum}</div>
+    <div class="stat-chip avg-c">Mittelwert: ${sum} ÷ ${nums.length} = ${avg}</div>`;
+}
+
+// ===================== ZUORDNUNG =====================
+const zuordPairs = [
+  { begriff: 'Minimum', erklaerung: '… ist der kleinste Wert einer Rangliste.' },
+  { begriff: 'Maximum', erklaerung: '… ist der größte Wert einer Rangliste.' },
+  { begriff: 'Spannweite', erklaerung: '… berechnet man: Maximum − Minimum.' },
+  { begriff: 'Median', erklaerung: '… ist der mittlere Wert einer Rangliste.' },
+  { begriff: 'Mittelwert', erklaerung: '… = Summe aller Werte ÷ Anzahl der Werte.' },
+  { begriff: 'Rangliste', erklaerung: '… ordnet Zahlen vom kleinsten zum größten Wert.' },
+  { begriff: 'Abs. Häufigkeit', erklaerung: '… sagt, wie oft ein Wert vorkommt.' },
+  { begriff: 'Rel. Häufigkeit', erklaerung: '… = absolute Häufigkeit ÷ Gesamtanzahl.' },
+];
+let zuordState = [];
+let zuordLeftSel = null;
+
+function resetZuordnung() {
+  zuordState = shuffle(zuordPairs).slice(0,5);
+  zuordLeftSel = null; zuordMatched = 0;
+  document.getElementById('zuord-score').textContent = '';
+  document.getElementById('zuord-feedback').className = 'feedback';
+  renderZuordnung();
+}
+
+function renderZuordnung() {
+  const begriffe = zuordState.map(p=>p.begriff);
+  const erkl = shuffle(zuordState.map(p=>p.erklaerung));
+  let lc = document.getElementById('begriffe-col');
+  let rc = document.getElementById('erklaerungen-col');
+  lc.innerHTML = begriffe.map((b,i)=>`<div class="zuord-item" id="bl-${i}" onclick="selectZuordLeft(${i},'${b.replace(/'/g,"&#39;")}')">${b}</div>`).join('');
+  rc.innerHTML = erkl.map((e,i)=>`<div class="zuord-item" id="br-${i}" data-erkl="${e.replace(/"/g,'&quot;')}" onclick="selectZuordRight(${i})">${e}</div>`).join('');
+}
+
+function selectZuordLeft(i, begriff) {
+  document.querySelectorAll('#begriffe-col .zuord-item').forEach(el=>el.classList.remove('selected'));
+  let el = document.getElementById('bl-'+i);
+  if(!el.classList.contains('matched')) { el.classList.add('selected'); zuordLeftSel = {i, begriff}; }
+}
+
+function selectZuordRight(i) {
+  if(!zuordLeftSel) return;
+  let rel = document.getElementById('br-'+i);
+  if(rel.classList.contains('matched')) return;
+  let erkl = rel.getAttribute('data-erkl');
+  let pair = zuordState.find(p=>p.begriff===zuordLeftSel.begriff);
+  let lel = document.getElementById('bl-'+zuordLeftSel.i);
+  if(pair && pair.erklaerung === erkl) {
+    rel.classList.add('matched'); lel.classList.add('matched'); lel.classList.remove('selected');
+    zuordMatched++;
+    if(zuordMatched===zuordState.length){ document.getElementById('zuord-score').textContent = `🎉 Alle ${zuordMatched} Paare richtig! +${zuordMatched*10} XP`; addXP(zuordMatched*10); }
+  } else {
+    rel.classList.add('wrong-match'); lel.classList.add('wrong-match');
+    setTimeout(()=>{ rel.classList.remove('wrong-match'); lel.classList.remove('wrong-match','selected'); },600);
+  }
+  zuordLeftSel = null;
+}
+
+// ===================== RECHNEN =====================
+function setLevel(l) {
+  currentLevel = l;
+  document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const badges = {1:'Leicht',2:'Mittel',3:'Schwer'};
+  document.getElementById('rech-badge').textContent = badges[l];
+  document.getElementById('rech-badge').className = 'badge' + (l===1?' green':l===2?' yellow':' red');
+  newRechnenTask();
+}
+
+function newRechnenTask() {
+  let nums, count;
+  if(currentLevel===1){ count=5; nums=randNums(count,1,30); }
+  else if(currentLevel===2){ count=6; nums=randNums(count,1,60); }
+  else { count=7; nums=randNums(count,5,120); }
+  let sorted = [...nums].sort((a,b)=>a-b);
+  let min=sorted[0], max=sorted[sorted.length-1], span=max-min, med=median(sorted);
+  let avg=(nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(1);
+  let task = Math.random()<0.5?'stats':'avg';
+  currentRechTask = {nums,sorted,min,max,span,med,avg,task};
+  let inp = document.getElementById('rech-inputs');
+  let q = document.getElementById('rech-question');
+  if(task==='stats') {
+    q.innerHTML = `Gegeben sind diese Zahlen:<br><span class="highlight">${nums.join(' , ')}</span><br><br>Erstelle zuerst die Rangliste. Berechne dann: Minimum, Maximum, Spannweite und Median.`;
+    inp.innerHTML = `
+      <div><label style="font-weight:700;color:var(--muted)">Rangliste (Komma-getrennt):</label><br><input class="num-input" id="inp-rank" style="width:300px;margin-top:4px" placeholder="z.B. 3, 7, 15, ..."></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div><label style="font-weight:700;color:var(--accent2)">Minimum:</label><br><input class="num-input" id="inp-min" style="margin-top:4px"></div>
+        <div><label style="font-weight:700;color:var(--red)">Maximum:</label><br><input class="num-input" id="inp-max" style="margin-top:4px"></div>
+        <div><label style="font-weight:700;color:var(--yellow)">Spannweite:</label><br><input class="num-input" id="inp-span" style="margin-top:4px"></div>
+        <div><label style="font-weight:700;color:var(--purple)">Median:</label><br><input class="num-input" id="inp-med" style="margin-top:4px"></div>
+      </div>`;
+  } else {
+    q.innerHTML = `Berechne den Mittelwert (Durchschnitt) dieser Zahlen:<br><span class="highlight">${nums.join(' , ')}</span>`;
+    inp.innerHTML = `<div><label style="font-weight:700;color:var(--green)">Mittelwert:</label><br><input class="num-input" id="inp-avg" style="margin-top:4px" placeholder="z.B. 12.5"></div>`;
+  }
+  document.getElementById('rech-feedback').className = 'feedback';
+}
+
+function checkRechnen() {
+  const t = currentRechTask;
+  if(t.task==='stats') {
+    let rankStr = (document.getElementById('inp-rank').value||'').replace(/\s/g,'');
+    let rankNums = rankStr.split(',').map(Number);
+    let rankOk = rankNums.length===t.sorted.length && rankNums.every((n,i)=>n===t.sorted[i]);
+    let minOk = Number(document.getElementById('inp-min').value)===t.min;
+    let maxOk = Number(document.getElementById('inp-max').value)===t.max;
+    let spanOk = Number(document.getElementById('inp-span').value)===t.span;
+    let medOk = Number(document.getElementById('inp-med').value)===t.med;
+    let all = rankOk&&minOk&&maxOk&&spanOk&&medOk;
+    let errors = [];
+    if(!rankOk) errors.push(`Rangliste: ${t.sorted.join(', ')}`);
+    if(!minOk) errors.push(`Minimum: ${t.min}`);
+    if(!maxOk) errors.push(`Maximum: ${t.max}`);
+    if(!spanOk) errors.push(`Spannweite: ${t.span}`);
+    if(!medOk) errors.push(`Median: ${t.med}`);
+    if(all){ showFeedback('rech-feedback',true,'🎉 Alles richtig! +20 XP'); addXP(20); }
+    else showFeedback('rech-feedback',false,'❌ Lösung: '+errors.join(' | '));
+  } else {
+    let val = parseFloat((document.getElementById('inp-avg').value||'').replace(',','.'));
+    let ok = Math.abs(val - parseFloat(t.avg)) < 0.15;
+    if(ok){ showFeedback('rech-feedback',true,`🎉 Richtig! Mittelwert = ${t.avg} +15 XP`); addXP(15); }
+    else showFeedback('rech-feedback',false,`❌ Lösung: ${t.avg}`);
+  }
+}
+
+// ===================== LÜCKENTEXT =====================
+const lueckeTemplates = [
+  () => {
+    let nums = randNums(5,1,50); let s=[...nums].sort((a,b)=>a-b);
+    return { text: `Die Zahlen ${nums.join(', ')} werden in einer <span class="luecke"><input class="luecke" id="l0" style="width:90px;border:none;outline:none;background:transparent;color:var(--yellow);font-weight:700;font-family:Nunito,sans-serif;font-size:1rem;text-align:center"></span> geordnet. Das Minimum ist <span class="luecke"><input class="luecke" id="l1" style="width:60px;border:none;outline:none;background:transparent;color:var(--yellow);font-weight:700;font-family:Nunito,sans-serif;font-size:1rem;text-align:center"></span>, das Maximum ist <span class="luecke"><input class="luecke" id="l2" style="width:60px;border:none;outline:none;background:transparent;color:var(--yellow);font-weight:700;font-family:Nunito,sans-serif;font-size:1rem;text-align:center"></span>. Die Spannweite beträgt <span class="luecke"><input class="luecke" id="l3" style="width:60px;border:none;outline:none;background:transparent;color:var(--yellow);font-weight:700;font-family:Nunito,sans-serif;font-size:1rem;text-align:center"></span>.`,
+      answers: ['rangliste', String(s[0]), String(s[s.length-1]), String(s[s.length-1]-s[0])],
+      ids: ['l0','l1','l2','l3'],
+      checks: [v=>v.toLowerCase().includes('rang'), v=>v===String(s[0]), v=>v===String(s[s.length-1]), v=>v===String(s[s.length-1]-s[0])]
+    };
+  },
+  () => {
+    let nums = randNums(5,2,40); let s=[...nums].sort((a,b)=>a-b); let med=median(s);
+    return { text: `Der Median ist der <span class="luecke"><input id="l0" style="width:90px;border:none;outline:none;background:transparent;color:var(--yellow);font-weight:700;font-family:Nunito,sans-serif;font-size:1rem;text-align:center"></span> Wert in einer Rangliste. Bei den Zahlen ${nums.join(', ')} lautet die Rangliste: ${s.join(', ')}. Der Median ist <span class="luecke"><input id="l1" style="width:60px;border:none;outline:none;background:transparent;color:var(--yellow);font-weight:700;font-family:Nunito,sans-serif;font-size:1rem;text-align:center"></span>.`,
+      answers: ['mittlere', String(med)],
+      ids: ['l0','l1'],
+      checks: [v=>v.toLowerCase().includes('mittle'), v=>v===String(med)]
+    };
+  }
+];
+
+function newLueckentext() {
+  let t = lueckeTemplates[Math.floor(Math.random()*lueckeTemplates.length)]();
+  currentLueckeTask = t;
+  document.getElementById('luecke-container').innerHTML = t.text;
+  document.getElementById('luecke-feedback').className = 'feedback';
+}
+
+function checkLuecken() {
+  let t = currentLueckeTask;
+  let allOk = true;
+  t.ids.forEach((id,i)=>{
+    let el = document.getElementById(id);
+    if(!el) return;
+    let ok = t.checks[i](el.value.trim());
+    el.style.color = ok ? 'var(--green)' : 'var(--red)';
+    if(!ok) allOk=false;
+  });
+  if(allOk){ showFeedback('luecke-feedback',true,'🎉 Alles richtig! +10 XP'); addXP(10); }
+  else showFeedback('luecke-feedback',false,'❌ Schau dir die rot markierten Felder an.');
+}
+
+// ===================== HÄUFIGKEIT =====================
+const fachThemen = [
+  { name: 'Lieblingsfächer', items: ['Sport','Kunst','Mathe','Musik','Informatik'] },
+  { name: 'Haustiere', items: ['Hund','Katze','Hamster','Fisch','Kein Tier'] },
+  { name: 'Lieblingssport', items: ['Fußball','Basketball','Schwimmen','Turnen','Radfahren'] },
+];
+
+function newHaeufigkeit() {
+  let thema = fachThemen[Math.floor(Math.random()*fachThemen.length)];
+  let total = randInt(16, 24);
+  let items = shuffle(thema.items).slice(0, randInt(3,5));
+  // Generate frequencies that sum to total
+  let freqs = items.map(()=>0);
+  for(let i=0;i<total;i++) freqs[Math.floor(Math.random()*items.length)]++;
+  while(freqs.some(f=>f===0)) {
+    let zi=freqs.findIndex(f=>f===0), from=freqs.findIndex(f=>f>2);
+    if(from===-1)break;
+    freqs[from]--; freqs[zi]++;
+  }
+  haeuData = {thema: thema.name, items, freqs, total};
+  let raw = [];
+  items.forEach((item,i)=>{ for(let j=0;j<freqs[i];j++) raw.push(item); });
+  raw = shuffle(raw);
+  document.getElementById('haeu-data-display').innerHTML = `<strong>Thema: ${thema.name}</strong><br><div style="background:var(--surface2);border-radius:8px;padding:10px 14px;margin-top:8px;line-height:2;font-size:0.92rem;">${raw.join(' &nbsp;·&nbsp; ')}</div><div style="margin-top:6px;color:var(--muted);font-size:0.85rem">Gesamt: ${total} Antworten</div>`;
+  let tbody = document.getElementById('haeu-tbody');
+  tbody.innerHTML = items.map((item,i)=>`<tr>
+    <td style="font-weight:700">${item}</td>
+    <td><span class="strich" id="strich-${i}">${strichStr(freqs[i])}</span></td>
+    <td><input class="editable" id="abs-${i}" placeholder="?"></td>
+    <td><input class="editable" id="rel-${i}" placeholder="z.B. 3/20"></td>
+  </tr>`).join('');
+  document.getElementById('haeu-feedback').className = 'feedback';
+}
+
+function strichStr(n) {
+  let s='';
+  for(let i=0;i<n;i++){
+    if(i>0&&i%5===4) s+=' ';
+    if(i%5===4) s='<span style="text-decoration:line-through">'+s.slice(-3);
+    s+='|';
+    if(i%5===4) s+='</span>';
+  }
+  return s.replace(/\|+/g,m=>m.split('').join(''));
+}
+
+function checkHaeufigkeit() {
+  let {items,freqs,total} = haeuData;
+  let allOk=true;
+  items.forEach((item,i)=>{
+    let abs=parseInt(document.getElementById('abs-'+i).value);
+    let rel=document.getElementById('rel-'+i).value.trim();
+    let absOk=abs===freqs[i];
+    let relOk=checkFraction(rel,freqs[i],total);
+    document.getElementById('abs-'+i).style.borderColor=absOk?'var(--green)':'var(--red)';
+    document.getElementById('rel-'+i).style.borderColor=relOk?'var(--green)':'var(--red)';
+    if(!absOk||!relOk) allOk=false;
+  });
+  if(allOk){ showFeedback('haeu-feedback',true,'🎉 Perfekt! +20 XP'); addXP(20); }
+  else {
+    let hints = items.map((it,i)=>`${it}: ${freqs[i]}/${total}`).join(' | ');
+    showFeedback('haeu-feedback',false,'❌ Lösung: '+hints);
+  }
+}
+
+function checkFraction(str, num, denom) {
+  str = str.replace(/\s/g,'');
+  if(str===`${num}/${denom}`) return true;
+  let m = str.match(/^(\d+)\/(\d+)$/);
+  if(!m) return false;
+  let a=parseInt(m[1]),b=parseInt(m[2]);
+  return a/b === num/denom;
+}
+
+// ===================== DIAGRAMM =====================
+let chartInstance = null;
+
+function randomDiagramm() {
+  let thema = fachThemen[Math.floor(Math.random()*fachThemen.length)];
+  let cats = shuffle(thema.items).slice(0,randInt(3,5));
+  let vals = cats.map(()=>randInt(1,12));
+  diagData = {label: thema.name, cats, vals};
+  renderDiagramInputs();
+  drawChart();
+  newDiagQuiz();
+}
+
+function renderDiagramInputs() {
+  let c = document.getElementById('diag-categories');
+  c.innerHTML = diagData.cats.map((cat,i)=>`
+    <div style="display:flex;align-items:center;gap:6px;background:var(--surface2);padding:6px 12px;border-radius:8px">
+      <span style="font-weight:700;font-size:0.9rem">${cat}:</span>
+      <input type="number" min="0" max="20" value="${diagData.vals[i]}" id="dval-${i}" style="background:transparent;border:none;border-bottom:2px solid var(--accent);color:var(--yellow);font-weight:800;font-size:1rem;font-family:Nunito,sans-serif;width:50px;text-align:center;outline:none" onchange="updateChart()">
+    </div>`).join('');
+}
+
+function updateChart() {
+  diagData.vals = diagData.cats.map((_,i)=>{
+    let v=parseInt(document.getElementById('dval-'+i).value)||0;
+    return v;
+  });
+  drawChart();
+}
+
+const COLORS = ['#06b6d4','#a855f7','#22c55e','#f59e0b','#ef4444','#ec4899'];
+
+function drawChart() {
+  let canvas = document.getElementById('barChart');
+  let ctx = canvas.getContext('2d');
+  let W = canvas.parentElement.offsetWidth - 32;
+  canvas.width = W; canvas.height = 280;
+  ctx.clearRect(0,0,W,280);
+  let {cats,vals} = diagData;
+  let max = Math.max(...vals,1);
+  let padL=50,padB=50,padT=20,padR=20;
+  let cW=W-padL-padR, cH=280-padB-padT;
+  let barW = cW/cats.length*0.6, gap = cW/cats.length;
+  // axes
+  ctx.strokeStyle='#334155'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,280-padB); ctx.lineTo(W-padR,280-padB); ctx.stroke();
+  // y grid
+  let steps=5;
+  for(let i=0;i<=steps;i++){
+    let y=padT+cH*(1-i/steps);
+    ctx.strokeStyle='#1e293b'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.fillStyle='#94a3b8'; ctx.font='11px Nunito'; ctx.textAlign='right';
+    ctx.fillText(Math.round(max*i/steps),padL-6,y+4);
+  }
+  // bars
+  cats.forEach((cat,i)=>{
+    let x=padL+gap*i+(gap-barW)/2;
+    let h=vals[i]/max*cH;
+    let y=padT+cH-h;
+    ctx.fillStyle=COLORS[i%COLORS.length]+'cc';
+    ctx.beginPath();
+    ctx.roundRect(x,y,barW,h,4);
+    ctx.fill();
+    ctx.fillStyle=COLORS[i%COLORS.length];
+    ctx.font='bold 13px Nunito'; ctx.textAlign='center';
+    ctx.fillText(vals[i],x+barW/2,y-6);
+    ctx.fillStyle='#94a3b8'; ctx.font='11px Nunito';
+    ctx.fillText(cat,x+barW/2,280-padB+16);
+  });
+  // title
+  ctx.fillStyle='#e2e8f0'; ctx.font='bold 13px Nunito'; ctx.textAlign='center';
+  ctx.fillText(diagData.label, W/2, 14);
+}
+
+function newDiagQuiz() {
+  if(!diagData.cats) return;
+  let {cats,vals} = diagData;
+  let total = vals.reduce((a,b)=>a+b,0);
+  let type = Math.random();
+  let q,correct,options;
+  if(type<0.33) {
+    let i = Math.floor(Math.random()*cats.length);
+    q=`Wie oft wurde „${cats[i]}" genannt?`; correct=vals[i];
+    let wrong=[...new Set([correct+randInt(1,4),correct-randInt(1,3),correct+randInt(2,6)])].filter(v=>v>0&&v!==correct).slice(0,3);
+    options=shuffle([correct,...wrong]);
+  } else if(type<0.66) {
+    let maxV=Math.max(...vals), idx=vals.indexOf(maxV);
+    q=`Welche Kategorie wurde am häufigsten genannt?`; correct=cats[idx];
+    options=shuffle(cats.slice());
+    if(options.length>4) options=options.slice(0,4);
+  } else {
+    q=`Wie viele Antworten wurden insgesamt gegeben?`; correct=total;
+    let wrong=[total+randInt(2,5),total-randInt(1,4),total+randInt(5,10)].filter(v=>v>0&&v!==total).slice(0,3);
+    options=shuffle([correct,...wrong]);
+  }
+  diagQuizData={q,correct,options};
+  document.getElementById('diag-quiz-content').innerHTML=`<div class="quiz-question">${q}</div>`;
+  document.getElementById('diag-quiz-options').innerHTML=options.map((o,i)=>
+    `<button class="quiz-option" onclick="answerDiagQuiz(this,'${o}','${correct}')">${o}</button>`).join('');
+  document.getElementById('diag-quiz-feedback').className='feedback';
+}
+
+function answerDiagQuiz(el,chosen,correct){
+  document.querySelectorAll('#diag-quiz-options .quiz-option').forEach(b=>b.classList.add('disabled'));
+  if(String(chosen)===String(correct)){ el.classList.add('correct'); showFeedback('diag-quiz-feedback',true,'🎉 Richtig! +10 XP'); addXP(10); }
+  else { el.classList.add('wrong'); document.querySelectorAll('#diag-quiz-options .quiz-option').forEach(b=>{ if(String(b.textContent)===String(correct)) b.classList.add('correct'); }); showFeedback('diag-quiz-feedback',false,`❌ Richtig wäre: ${correct}`); }
+}
+
+// ===================== BLITZ =====================
+const blitzItems = [
+  {word:'Minimum',options:['Kleinster Wert','Größter Wert','Mittlerer Wert','Differenz'],correct:'Kleinster Wert'},
+  {word:'Maximum',options:['Kleinster Wert','Größter Wert','Mittlerer Wert','Summe ÷ Anzahl'],correct:'Größter Wert'},
+  {word:'Median',options:['Kleinster Wert','Größter Wert','Mittlerer Wert in Rangliste','Maximum − Minimum'],correct:'Mittlerer Wert in Rangliste'},
+  {word:'Spannweite',options:['Maximum − Minimum','Summe ÷ Anzahl','Größter Wert','Mittlerer Wert'],correct:'Maximum − Minimum'},
+  {word:'Mittelwert',options:['Max − Min','Kleinster Wert','Summe ÷ Anzahl','Mittlerer Wert'],correct:'Summe ÷ Anzahl'},
+  {word:'Rangliste',options:['Zahlen vom kleinsten zum größten','Summe ÷ Anzahl','Max − Min','Zufällige Reihenfolge'],correct:'Zahlen vom kleinsten zum größten'},
+  {word:'Abs. Häufigkeit',options:['Wie oft ein Wert vorkommt','Anteil an allen Werten','Summe ÷ Anzahl','Max − Min'],correct:'Wie oft ein Wert vorkommt'},
+  {word:'Rel. Häufigkeit',options:['Anzahl eines Wertes','Anteil: abs. Häufigkeit ÷ Gesamt','Max − Min','Summe ÷ Anzahl'],correct:'Anteil: abs. Häufigkeit ÷ Gesamt'},
+  {word:'Säulendiagramm',options:['Zeigt Häufigkeiten als Balken','Zeigt Kreisanteile','Liste mit Strichen','Summe ÷ Anzahl'],correct:'Zeigt Häufigkeiten als Balken'},
+  {word:'Strichliste',options:['Zahlen sortiert','Striche zum Zählen','Max − Min','Durchschnitt'],correct:'Striche zum Zählen'},
+];
+
+let blitzQueue = [];
+function setBlitzSpeed(s) {
+  blitzSpeed=s;
+  document.getElementById('blitz-slow').classList.toggle('active',s==='slow');
+  document.getElementById('blitz-fast').classList.toggle('active',s==='fast');
+}
+function startBlitz() {
+  blitzQueue=shuffle([...blitzItems]);
+  blitzIdx=0; blitzScore=0; blitzActive=true;
+  document.getElementById('blitz-result').textContent='';
+  document.getElementById('blitz-start-btn').textContent='⏹ Stopp';
+  document.getElementById('blitz-start-btn').onclick=stopBlitz;
+  showBlitzItem();
+}
+function stopBlitz() {
+  blitzActive=false; clearTimeout(blitzTimeout);
+  document.getElementById('blitz-options').innerHTML='';
+  document.getElementById('blitz-word').textContent='Gestoppt!';
+  document.getElementById('blitz-start-btn').textContent='▶ Starten';
+  document.getElementById('blitz-start-btn').onclick=startBlitz;
+}
+function showBlitzItem() {
+  if(!blitzActive||blitzIdx>=blitzQueue.length){ endBlitz(); return; }
+  let item=blitzQueue[blitzIdx];
+  document.getElementById('blitz-count').textContent=blitzIdx+1;
+  document.getElementById('blitz-progress').style.width=((blitzIdx/blitzQueue.length)*100)+'%';
+  document.getElementById('blitz-word').textContent=item.word;
+  document.getElementById('blitz-options').innerHTML=item.options.map(o=>
+    `<button class="blitz-opt" onclick="answerBlitz(this,'${o.replace(/'/g,"&#39;")}','${item.correct.replace(/'/g,"&#39;")}')">${o}</button>`).join('');
+  if(blitzSpeed==='slow') blitzTimeout=setTimeout(()=>nextBlitz(false),8000);
+  else blitzTimeout=setTimeout(()=>nextBlitz(false),4000);
+}
+function answerBlitz(el,chosen,correct) {
+  clearTimeout(blitzTimeout);
+  document.querySelectorAll('.blitz-opt').forEach(b=>b.disabled=true);
+  if(chosen===correct){ el.classList.add('correct'); blitzScore++; addXP(5); }
+  else { el.classList.add('wrong'); document.querySelectorAll('.blitz-opt').forEach(b=>{ if(b.textContent===correct) b.classList.add('correct'); }); }
+  blitzTimeout=setTimeout(()=>nextBlitz(true),900);
+}
+function nextBlitz(answered) { blitzIdx++; showBlitzItem(); }
+function endBlitz() {
+  blitzActive=false;
+  document.getElementById('blitz-options').innerHTML='';
+  document.getElementById('blitz-word').textContent='Fertig!';
+  document.getElementById('blitz-progress').style.width='100%';
+  document.getElementById('blitz-result').textContent=`✅ ${blitzScore}/${blitzQueue.length} richtig!`;
+  document.getElementById('blitz-start-btn').textContent='▶ Nochmal';
+  document.getElementById('blitz-start-btn').onclick=startBlitz;
+}
+
+// ===================== SORTIER-SPIEL =====================
+let sortDragging = null;
+function newSortGame() {
+  sortNums = randNums(randInt(5,7),1,99);
+  renderSortGame();
+  document.getElementById('sort-feedback').className='feedback';
+}
+function resetSort() {
+  renderSortGame();
+  document.getElementById('sort-feedback').className='feedback';
+}
+function renderSortGame() {
+  let pool = document.getElementById('sort-pool');
+  let tgt = document.getElementById('sort-target');
+  pool.innerHTML = shuffle([...sortNums]).map(n=>`<div class="sortable-num" draggable="true" data-val="${n}">${n}</div>`).join('');
+  tgt.innerHTML='';
+  setupDnD();
+}
+function setupDnD() {
+  let allNums = ()=>document.querySelectorAll('.sortable-num');
+  allNums().forEach(el=>{
+    el.addEventListener('dragstart',()=>{ sortDragging=el; el.classList.add('dragging'); });
+    el.addEventListener('dragend',()=>{ el.classList.remove('dragging'); sortDragging=null; });
+  });
+  [document.getElementById('sort-pool'),document.getElementById('sort-target')].forEach(zone=>{
+    zone.addEventListener('dragover',e=>{e.preventDefault();});
+    zone.addEventListener('drop',e=>{
+      e.preventDefault();
+      if(sortDragging) zone.appendChild(sortDragging);
+    });
+  });
+}
+function checkSortierung() {
+  let tgtNums = [...document.getElementById('sort-target').querySelectorAll('.sortable-num')].map(el=>parseInt(el.getAttribute('data-val')));
+  let sorted=[...sortNums].sort((a,b)=>a-b);
+  if(tgtNums.length!==sortNums.length){ showFeedback('sort-feedback',false,'❌ Alle Zahlen müssen ins Zielfeld!'); return; }
+  let ok = tgtNums.every((n,i)=>n===sorted[i]);
+  if(ok){ showFeedback('sort-feedback',true,'🎉 Perfekt! Die Rangliste ist richtig! +15 XP'); addXP(15); }
+  else showFeedback('sort-feedback',false,`❌ Richtige Rangliste: ${sorted.join(', ')}`);
+}
+
+// ===================== INIT =====================
+newRanglisteDemo();
+newMinMaxDemo();
+newMedianDemo();
+newAvgDemo();
+resetZuordnung();
+newRechnenTask();
+newLueckentext();
+newHaeufigkeit();
+newSortGame();
+// Init diagramm with default data
+diagData = {label:'Lieblingsfächer', cats:['Sport','Kunst','Mathe','Musik','Informatik'], vals:[7,4,3,5,2]};
+renderDiagramInputs();
+setTimeout(()=>{ drawChart(); newDiagQuiz(); },100);
+
+window.addEventListener('resize',()=>{ if(diagData.cats) drawChart(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathe 5.4 – Größen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+  --accent: #f59e0b;
+  --accent-light: #fef3c7;
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --error: #ef4444;
+  --error-light: #fee2e2;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 4px 24px rgba(0,0,0,0.07);
+  --radius: 16px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.nav {
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(37,99,235,0.3);
+}
+.nav h1 { font-family: 'Baloo 2', cursive; color: #fff; font-size: 1.5rem; font-weight: 800; }
+.nav .badge { background: var(--accent); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.diff-label { color: rgba(255,255,255,0.7); font-size: 0.8rem; font-weight: 600; margin-right: 4px; align-self: center; }
+.diff-selector { margin-left: auto; display: flex; gap: 6px; }
+.diff-btn { border: 2px solid rgba(255,255,255,0.4); background: transparent; color: #fff; padding: 6px 14px; border-radius: 20px; font-family: 'Nunito'; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+.diff-btn.active { background: #fff; color: var(--primary); border-color: #fff; }
+.diff-btn:hover:not(.active) { background: rgba(255,255,255,0.15); }
+.container { max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 10px; margin-bottom: 24px; }
+.topic-card { background: var(--card); border-radius: var(--radius); padding: 18px 12px; text-align: center; cursor: pointer; border: 2px solid var(--border); transition: all 0.25s; box-shadow: var(--shadow); }
+.topic-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(37,99,235,0.15); }
+.topic-card.active { border-color: var(--primary); background: var(--primary-light); }
+.topic-icon { font-size: 1.8rem; margin-bottom: 6px; }
+.topic-label { font-weight: 700; font-size: 0.85rem; }
+.section { display: none; animation: fadeIn 0.4s ease; }
+.section.visible { display: block; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+.card { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.card h2 { font-family: 'Baloo 2', cursive; font-size: 1.3rem; margin-bottom: 12px; color: var(--primary); }
+.card h3 { font-size: 1rem; margin: 16px 0 8px; color: var(--text); }
+.card p { line-height: 1.7; color: var(--text-muted); font-size: 0.95rem; }
+.diff-hidden { display: none !important; }
+.word-box { background: var(--accent-light); border: 2px dashed var(--accent); border-radius: 12px; padding: 12px 16px; margin: 12px 0; font-weight: 700; color: var(--text); display: flex; flex-wrap: wrap; gap: 8px; }
+.word-box span { background: #fff; padding: 4px 12px; border-radius: 8px; font-size: 0.9rem; }
+.conv-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
+.conv-table th { background: var(--primary); color: #fff; padding: 10px; font-weight: 700; }
+.conv-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
+.conv-table tr:nth-child(even) td { background: #f8fafc; }
+.quiz-item { margin: 12px 0; padding: 14px 16px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); }
+.quiz-item .question { font-weight: 700; margin-bottom: 10px; font-size: 1rem; color: var(--text); line-height: 1.6; }
+.quiz-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.quiz-option { padding: 10px 18px; border: 2px solid var(--border); border-radius: 10px; background: #fff; cursor: pointer; font-family: 'Nunito'; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; min-width: 70px; text-align: center; }
+.quiz-option:hover { border-color: var(--primary); background: var(--primary-light); }
+.quiz-option.correct { border-color: var(--success) !important; background: var(--success-light) !important; color: #065f46 !important; }
+.quiz-option.wrong { border-color: var(--error) !important; background: var(--error-light) !important; color: #991b1b !important; }
+.quiz-option.disabled { pointer-events: none; opacity: 0.6; }
+.feedback { margin-top: 8px; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: none; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--success-light); color: #065f46; }
+.feedback.nope { background: var(--error-light); color: #991b1b; }
+.gap-input { border: 2px solid var(--border); border-radius: 8px; padding: 6px 10px; font-family: 'Nunito'; font-size: 0.95rem; font-weight: 600; width: 100px; text-align: center; transition: border-color 0.2s; }
+.gap-input:focus { outline: none; border-color: var(--primary); }
+.gap-input.correct { border-color: var(--success); background: var(--success-light); }
+.gap-input.wrong { border-color: var(--error); background: var(--error-light); }
+.check-btn { background: var(--primary); color: #fff; border: none; padding: 10px 24px; border-radius: 10px; font-family: 'Nunito'; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 12px; transition: background 0.2s; }
+.check-btn:hover { background: #1d4ed8; }
+.check-btn:disabled { opacity: 0.5; cursor: default; }
+.est-img-area { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ede9fe, #dbeafe); border-radius: 12px; padding: 20px; margin: 12px 0; font-size: 3.5rem; min-height: 100px; }
+.slider-area { margin: 12px 0; }
+.slider-area input[type=range] { width: 100%; accent-color: var(--primary); height: 8px; }
+.slider-val { text-align: center; font-weight: 800; font-size: 1.3rem; color: var(--primary); margin: 6px 0; }
+.flash-area { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.flash-display { background: linear-gradient(135deg, #1e293b, #334155); color: #fff; font-family: 'Baloo 2', cursive; font-size: 2.5rem; font-weight: 800; padding: 30px 50px; border-radius: 16px; min-width: 260px; text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+.flash-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.hint-box { background: #f0fdf4; border-left: 4px solid var(--success); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 0.88rem; color: #065f46; line-height: 1.5; }
+.score-bar { background: var(--primary-light); border-radius: 12px; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-weight: 700; }
+.score-bar .score-num { font-size: 1.3rem; color: var(--primary); }
+.reset-btn { background: var(--error-light); color: var(--error); border: 2px solid var(--error); padding: 6px 16px; border-radius: 8px; font-family: 'Nunito'; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+.reset-btn:hover { background: var(--error); color: #fff; }
+.diff-tag { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
+.diff-tag-2 { background: #fef3c7; color: #92400e; }
+.diff-tag-3 { background: #fee2e2; color: #991b1b; }
+@media(max-width:600px) {
+  .nav { padding: 12px 16px; }
+  .nav h1 { font-size: 1.2rem; }
+  .topic-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .topic-card { padding: 12px 6px; }
+  .topic-icon { font-size: 1.4rem; }
+  .topic-label { font-size: 0.75rem; }
+  .card { padding: 16px; }
+  .flash-display { font-size: 1.8rem; padding: 20px 30px; min-width: 200px; }
+  .diff-selector { margin-left: 0; margin-top: 4px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <h1>📐 Größen 5.4</h1>
+  <span class="badge">Klasse 5</span>
+  <span class="diff-label">Stufe:</span>
+  <div class="diff-selector">
+    <button class="diff-btn" data-level="1" onclick="setDiff(1)">⭐ Basis</button>
+    <button class="diff-btn active" data-level="2" onclick="setDiff(2)">⭐⭐ Mittel</button>
+    <button class="diff-btn" data-level="3" onclick="setDiff(3)">⭐⭐⭐ Profi</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="topic-grid" id="topic-grid">
+    <div class="topic-card active" data-section="schaetzen"><div class="topic-icon">🧠</div><div class="topic-label">Schätzen</div></div>
+    <div class="topic-card" data-section="laengen"><div class="topic-icon">📏</div><div class="topic-label">Längen</div></div>
+    <div class="topic-card" data-section="massen"><div class="topic-icon">⚖️</div><div class="topic-label">Masse</div></div>
+    <div class="topic-card" data-section="zeit"><div class="topic-icon">⏱️</div><div class="topic-label">Zeit</div></div>
+    <div class="topic-card" data-section="geld"><div class="topic-icon">💶</div><div class="topic-label">Geld</div></div>
+    <div class="topic-card" data-section="blitz"><div class="topic-icon">⚡</div><div class="topic-label">Blitzlesen</div></div>
+  </div>
+
+  <!-- ========== SCHÄTZEN ========== -->
+  <div class="section visible" id="sec-schaetzen">
+    <div style="text-align:right;margin-bottom:12px;">
+      <button class="reset-btn" onclick="resetAll('est')">↺ Neustart</button>
+    </div>
+    <div class="card">
+      <h2>🧠 Schätze die Größe!</h2>
+      <p>Wie groß, schwer oder lang sind diese Dinge? Schiebe den Regler auf deine Schätzung und klicke „Prüfen".</p>
+    </div>
+
+    <div class="card" data-diff="1" id="est-1">
+      <h3>Wie lang ist ein Schulbus?</h3>
+      <div class="est-img-area">🚌</div>
+      <div class="slider-area">
+        <div class="slider-val">6 m</div>
+        <input type="range" min="2" max="20" value="6" step="1" oninput="this.previousElementSibling.textContent=this.value+' m'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,10,2,'m')">Prüfen</button>
+      <div class="feedback"></div>
+      <div class="hint-box">💡 Ein Auto ist ungefähr 4 m lang. Ein Bus ist deutlich länger!</div>
+    </div>
+
+    <div class="card" data-diff="1" id="est-2">
+      <h3>Wie hoch ist eine Zimmertür?</h3>
+      <div class="est-img-area">🚪</div>
+      <div class="slider-area">
+        <div class="slider-val">150 cm</div>
+        <input type="range" min="100" max="300" value="150" step="5" oninput="this.previousElementSibling.textContent=this.value+' cm'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,200,20,'cm')">Prüfen</button>
+      <div class="feedback"></div>
+      <div class="hint-box">💡 Du bist vermutlich 140–170 cm groß. Eine Tür ist größer als die meisten Erwachsenen.</div>
+    </div>
+
+    <div class="card" data-diff="1" id="est-3">
+      <h3>Wie schwer ist eine Tafel Schokolade?</h3>
+      <div class="est-img-area">🍫</div>
+      <div class="slider-area">
+        <div class="slider-val">50 g</div>
+        <input type="range" min="10" max="500" value="50" step="10" oninput="this.previousElementSibling.textContent=this.value+' g'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,100,20,'g')">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="2" id="est-4">
+      <h3>Wie weit ist es von Köln nach Berlin? <span class="diff-tag diff-tag-2">⭐⭐</span></h3>
+      <div class="est-img-area">🗺️</div>
+      <div class="slider-area">
+        <div class="slider-val">300 km</div>
+        <input type="range" min="100" max="1000" value="300" step="10" oninput="this.previousElementSibling.textContent=this.value+' km'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,575,75,'km')">Prüfen</button>
+      <div class="feedback"></div>
+      <div class="hint-box">💡 Deutschland ist von Nord nach Süd ungefähr 900 km lang.</div>
+    </div>
+
+    <div class="card" data-diff="2" id="est-5">
+      <h3>Wie schwer ist ein erwachsener Mensch? <span class="diff-tag diff-tag-2">⭐⭐</span></h3>
+      <div class="est-img-area">🧑</div>
+      <div class="slider-area">
+        <div class="slider-val">40 kg</div>
+        <input type="range" min="10" max="150" value="40" step="5" oninput="this.previousElementSibling.textContent=this.value+' kg'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,75,15,'kg')">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="2" id="est-6">
+      <h3>Wie breit ist ein Daumen? <span class="diff-tag diff-tag-2">⭐⭐</span></h3>
+      <div class="est-img-area">👍</div>
+      <div class="slider-area">
+        <div class="slider-val">10 mm</div>
+        <input type="range" min="5" max="40" value="10" step="1" oninput="this.previousElementSibling.textContent=this.value+' mm'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,20,5,'mm')">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="3" id="est-7">
+      <h3>Wie schwer ist ein Nilpferd? <span class="diff-tag diff-tag-3">⭐⭐⭐</span></h3>
+      <div class="est-img-area">🦛</div>
+      <div class="slider-area">
+        <div class="slider-val">500 kg</div>
+        <input type="range" min="100" max="6000" value="500" step="100" oninput="this.previousElementSibling.textContent=this.value+' kg'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,3000,500,'kg')">Prüfen</button>
+      <div class="feedback"></div>
+      <div class="hint-box">💡 Ein Auto wiegt ungefähr 1 500 kg (= 1,5 t).</div>
+    </div>
+
+    <div class="card" data-diff="3" id="est-8">
+      <h3>Wie lang ist eine Ameise? <span class="diff-tag diff-tag-3">⭐⭐⭐</span></h3>
+      <div class="est-img-area">🐜</div>
+      <div class="slider-area">
+        <div class="slider-val">5 mm</div>
+        <input type="range" min="1" max="30" value="5" step="1" oninput="this.previousElementSibling.textContent=this.value+' mm'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,4,2,'mm')">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="3" id="est-9">
+      <h3>Wie hoch fliegt ein Passagierflugzeug? <span class="diff-tag diff-tag-3">⭐⭐⭐</span></h3>
+      <div class="est-img-area">✈️</div>
+      <div class="slider-area">
+        <div class="slider-val">5 km</div>
+        <input type="range" min="1" max="20" value="5" step="1" oninput="this.previousElementSibling.textContent=this.value+' km'">
+      </div>
+      <button class="check-btn" onclick="checkEst(this,10,2,'km')">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+  </div>
+
+  <!-- ========== LÄNGEN ========== -->
+  <div class="section" id="sec-laengen">
+    <div style="text-align:right;margin-bottom:12px;">
+      <button class="reset-btn" onclick="resetAll('len')">↺ Neustart</button>
+    </div>
+    <div class="card">
+      <h2>📏 Längeneinheiten – Wortschatz</h2>
+      <div class="word-box"><span>mm = Millimeter</span><span>cm = Zentimeter</span><span>dm = Dezimeter</span><span>m = Meter</span><span>km = Kilometer</span></div>
+      <table class="conv-table">
+        <tr><th>Einheit</th><th>Umrechnung</th><th>Beispiel</th></tr>
+        <tr><td>1 km</td><td>= 1 000 m</td><td>Schulweg</td></tr>
+        <tr><td>1 m</td><td>= 10 dm = 100 cm</td><td>Schreibtisch</td></tr>
+        <tr><td>1 dm</td><td>= 10 cm</td><td>Handfläche</td></tr>
+        <tr><td>1 cm</td><td>= 10 mm</td><td>Fingernagel</td></tr>
+      </table>
+      <div class="hint-box">💡 Bei Längen: immer ×10 zur nächsten kleineren Einheit – außer km → m = ×1 000</div>
+    </div>
+
+    <div class="card" data-diff="1">
+      <h2>Welche Einheit passt?</h2>
+      <div class="quiz-item"><div class="question">Eine Schlange ist 4,5 ___ lang.</div><div class="quiz-options"><button class="quiz-option" data-correct="false">cm</button><button class="quiz-option" data-correct="true">m</button><button class="quiz-option" data-correct="false">km</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><div class="question">Ein Clownfisch ist 8 ___ groß.</div><div class="quiz-options"><button class="quiz-option" data-correct="false">mm</button><button class="quiz-option" data-correct="true">cm</button><button class="quiz-option" data-correct="false">dm</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><div class="question">Der Rhein ist etwa 1 230 ___ lang.</div><div class="quiz-options"><button class="quiz-option" data-correct="false">m</button><button class="quiz-option" data-correct="true">km</button><button class="quiz-option" data-correct="false">cm</button></div><div class="feedback"></div></div>
+    </div>
+
+    <div class="card" data-diff="1">
+      <h2>Umwandeln – Basis</h2>
+      <div class="quiz-item"><div class="question">500 cm = <input class="gap-input" data-answer="5" placeholder="?"> m</div></div>
+      <div class="quiz-item"><div class="question">70 mm = <input class="gap-input" data-answer="7" placeholder="?"> cm</div></div>
+      <div class="quiz-item"><div class="question">9 km = <input class="gap-input" data-answer="9000" placeholder="?"> m</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="2">
+      <h2>Umwandeln <span class="diff-tag diff-tag-2">⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">8,20 m = <input class="gap-input" data-answer="820" placeholder="?"> cm</div></div>
+      <div class="quiz-item"><div class="question">3 200 m = <input class="gap-input" data-answer="3.2|3,2" placeholder="?"> km</div></div>
+      <div class="quiz-item"><div class="question">45 cm = <input class="gap-input" data-answer="450" placeholder="?"> mm</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="2">
+      <h2>Vergleiche: &lt; , &gt; oder = ? <span class="diff-tag diff-tag-2">⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">900 mm ___ 900 cm</div><div class="quiz-options"><button class="quiz-option" data-correct="true">&lt;</button><button class="quiz-option" data-correct="false">=</button><button class="quiz-option" data-correct="false">&gt;</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><div class="question">81 mm ___ 8,3 cm</div><div class="quiz-options"><button class="quiz-option" data-correct="true">&lt;</button><button class="quiz-option" data-correct="false">=</button><button class="quiz-option" data-correct="false">&gt;</button></div><div class="feedback"></div></div>
+    </div>
+
+    <div class="card" data-diff="3">
+      <h2>Komma-Umwandlung <span class="diff-tag diff-tag-3">⭐⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">4 cm = <input class="gap-input" data-answer="0.04|0,04" placeholder="?"> m</div></div>
+      <div class="quiz-item"><div class="question">87 m = <input class="gap-input" data-answer="0.087|0,087" placeholder="?"> km</div></div>
+      <div class="quiz-item"><div class="question">350 m ___ 0,035 km → Zeichen: <input class="gap-input" data-answer=">" placeholder="?"></div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+  </div>
+
+  <!-- ========== MASSEN ========== -->
+  <div class="section" id="sec-massen">
+    <div style="text-align:right;margin-bottom:12px;">
+      <button class="reset-btn" onclick="resetAll('mass')">↺ Neustart</button>
+    </div>
+    <div class="card">
+      <h2>⚖️ Masse – Wortschatz</h2>
+      <div class="word-box"><span>mg = Milligramm</span><span>g = Gramm</span><span>kg = Kilogramm</span><span>t = Tonne</span></div>
+      <table class="conv-table">
+        <tr><th>Einheit</th><th>Umrechnung</th><th>Beispiel</th></tr>
+        <tr><td>1 t</td><td>= 1 000 kg</td><td>Kleinwagen</td></tr>
+        <tr><td>1 kg</td><td>= 1 000 g</td><td>Packung Zucker</td></tr>
+        <tr><td>1 g</td><td>= 1 000 mg</td><td>Büroklammer</td></tr>
+      </table>
+      <div class="hint-box">💡 Bei Masse: immer ×1 000 → mg → g → kg → t</div>
+    </div>
+
+    <div class="card" data-diff="1">
+      <h2>Welche Einheit passt?</h2>
+      <div class="quiz-item"><div class="question">Ein Nilpferd wiegt 4,5 ___.</div><div class="quiz-options"><button class="quiz-option" data-correct="false">kg</button><button class="quiz-option" data-correct="true">t</button><button class="quiz-option" data-correct="false">g</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><div class="question">Eine Biene wiegt etwa 11 ___.</div><div class="quiz-options"><button class="quiz-option" data-correct="true">mg</button><button class="quiz-option" data-correct="false">g</button><button class="quiz-option" data-correct="false">kg</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><div class="question">Ein Schulranzen wiegt ca. 5 ___.</div><div class="quiz-options"><button class="quiz-option" data-correct="false">g</button><button class="quiz-option" data-correct="true">kg</button><button class="quiz-option" data-correct="false">t</button></div><div class="feedback"></div></div>
+    </div>
+
+    <div class="card" data-diff="1">
+      <h2>Umwandeln</h2>
+      <div class="quiz-item"><div class="question">3 kg = <input class="gap-input" data-answer="3000" placeholder="?"> g</div></div>
+      <div class="quiz-item"><div class="question">5 000 g = <input class="gap-input" data-answer="5" placeholder="?"> kg</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="2">
+      <h2>Umwandeln <span class="diff-tag diff-tag-2">⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">2 t = <input class="gap-input" data-answer="2000" placeholder="?"> kg</div></div>
+      <div class="quiz-item"><div class="question">0,3 kg + <input class="gap-input" data-answer="700" placeholder="?"> g = 1 kg</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="3">
+      <h2>Knifflige Umwandlung <span class="diff-tag diff-tag-3">⭐⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">5 kg = <input class="gap-input" data-answer="0.005|0,005" placeholder="?"> t</div></div>
+      <div class="quiz-item"><div class="question">250 mg = <input class="gap-input" data-answer="0.25|0,25" placeholder="?"> g</div></div>
+      <div class="quiz-item"><div class="question">53 g + <input class="gap-input" data-answer="0.947|0,947" placeholder="?"> kg = 1 kg</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+  </div>
+
+  <!-- ========== ZEIT ========== -->
+  <div class="section" id="sec-zeit">
+    <div style="text-align:right;margin-bottom:12px;">
+      <button class="reset-btn" onclick="resetAll('time')">↺ Neustart</button>
+    </div>
+    <div class="card">
+      <h2>⏱️ Zeiteinheiten – Wortschatz</h2>
+      <div class="word-box"><span>s = Sekunde</span><span>min = Minute</span><span>h = Stunde</span><span>Tag / Woche</span></div>
+      <table class="conv-table">
+        <tr><th>Umrechnung</th><th>Faktor</th></tr>
+        <tr><td>1 min = 60 s</td><td>× 60</td></tr>
+        <tr><td>1 h = 60 min</td><td>× 60</td></tr>
+        <tr><td>1 Tag = 24 h</td><td>× 24</td></tr>
+      </table>
+      <div class="hint-box">💡 Achtung: Bei Zeit gilt NICHT ×10 oder ×1 000 – sondern ×60 und ×24!</div>
+    </div>
+
+    <div class="card" data-diff="1">
+      <h2>Umwandeln – Basis</h2>
+      <div class="quiz-item"><div class="question">2 Tage = <input class="gap-input" data-answer="48" placeholder="?"> h</div></div>
+      <div class="quiz-item"><div class="question">3 h = <input class="gap-input" data-answer="180" placeholder="?"> min</div></div>
+      <div class="quiz-item"><div class="question">5 min = <input class="gap-input" data-answer="300" placeholder="?"> s</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="2">
+      <h2>Umwandeln <span class="diff-tag diff-tag-2">⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">3 h 20 min = <input class="gap-input" data-answer="200" placeholder="?"> min</div></div>
+      <div class="quiz-item"><div class="question">96 h = <input class="gap-input" data-answer="4" placeholder="?"> Tage</div></div>
+      <div class="quiz-item"><div class="question">300 min = <input class="gap-input" data-answer="5" placeholder="?"> h</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="2">
+      <h2>Schätze die Zeit! <span class="diff-tag diff-tag-2">⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">Wie lange dauert eine Schulstunde?</div><div class="quiz-options"><button class="quiz-option" data-correct="false">30 min</button><button class="quiz-option" data-correct="true">45 min</button><button class="quiz-option" data-correct="false">60 min</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><div class="question">Wie viele Stunden hat ein Wochenende (Sa + So)?</div><div class="quiz-options"><button class="quiz-option" data-correct="false">24 h</button><button class="quiz-option" data-correct="true">48 h</button><button class="quiz-option" data-correct="false">72 h</button></div><div class="feedback"></div></div>
+    </div>
+
+    <div class="card" data-diff="3">
+      <h2>Knobel-Aufgaben <span class="diff-tag diff-tag-3">⭐⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">1 Woche 3 Tage = <input class="gap-input" data-answer="240" placeholder="?"> h</div></div>
+      <div class="quiz-item"><div class="question">2,5 h = <input class="gap-input" data-answer="150" placeholder="?"> min</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+  </div>
+
+  <!-- ========== GELD ========== -->
+  <div class="section" id="sec-geld">
+    <div style="text-align:right;margin-bottom:12px;">
+      <button class="reset-btn" onclick="resetAll('money')">↺ Neustart</button>
+    </div>
+    <div class="card">
+      <h2>💶 Geld – Wortschatz</h2>
+      <div class="word-box"><span>ct = Cent</span><span>€ = Euro</span><span>1 € = 100 ct</span></div>
+      <div class="hint-box">💡 Nach dem Komma stehen bei Geld immer genau <strong>zwei Stellen</strong> (z. B. 3,50 €).</div>
+    </div>
+
+    <div class="card" data-diff="1">
+      <h2>Umwandeln</h2>
+      <div class="quiz-item"><div class="question">3,50 € = <input class="gap-input" data-answer="350" placeholder="?"> ct</div></div>
+      <div class="quiz-item"><div class="question">725 ct = <input class="gap-input" data-answer="7.25|7,25" placeholder="?"> €</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="2">
+      <h2>Rückgeld <span class="diff-tag diff-tag-2">⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">Eis für 2,30 €, du zahlst mit 5 €. Rückgeld?</div><div class="quiz-options"><button class="quiz-option" data-correct="false">2,30 €</button><button class="quiz-option" data-correct="true">2,70 €</button><button class="quiz-option" data-correct="false">3,70 €</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><div class="question">0,05 € = <input class="gap-input" data-answer="5" placeholder="?"> ct</div></div>
+      <div class="quiz-item"><div class="question">12,80 € + <input class="gap-input" data-answer="7.20|7,20|7.2|7,2" placeholder="?"> € = 20 €</div></div>
+      <button class="check-btn gap-check">Prüfen</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="card" data-diff="3">
+      <h2>Sachaufgaben <span class="diff-tag diff-tag-3">⭐⭐⭐</span></h2>
+      <div class="quiz-item"><div class="question">Heft (1,99 €) + Stift (0,89 €), du zahlst mit 10 €. Rückgeld?</div><div class="quiz-options"><button class="quiz-option" data-correct="false">7,02 €</button><button class="quiz-option" data-correct="true">7,12 €</button><button class="quiz-option" data-correct="false">8,12 €</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><div class="question">3 Brötchen à 0,45 €, du zahlst mit 2 €. Rückgeld?</div><div class="quiz-options"><button class="quiz-option" data-correct="false">0,55 €</button><button class="quiz-option" data-correct="true">0,65 €</button><button class="quiz-option" data-correct="false">1,55 €</button></div><div class="feedback"></div></div>
+    </div>
+  </div>
+
+  <!-- ========== BLITZLESEN ========== -->
+  <div class="section" id="sec-blitz">
+    <div style="text-align:right;margin-bottom:12px;">
+      <button class="reset-btn" onclick="resetFlash()">↺ Neustart</button>
+    </div>
+    <div class="card">
+      <h2>⚡ Blitzlesen – Größen schnell erkennen</h2>
+      <p>Eine Größe erscheint kurz. Merke sie dir und wähle dann die richtige Umwandlung!</p>
+      <div class="flash-area">
+        <div class="flash-display" id="flash-display">Bereit?</div>
+        <button class="check-btn" id="flash-start-btn" onclick="startFlash()">Start!</button>
+        <div class="flash-options" id="flash-options"></div>
+        <div class="feedback" id="flash-fb"></div>
+      </div>
+      <div class="hint-box" style="margin-top:16px">💡 ⭐ Basis = 3 s &nbsp;|&nbsp; ⭐⭐ Mittel = 2 s &nbsp;|&nbsp; ⭐⭐⭐ Profi = 1,2 s</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===== DIFFICULTY ===== */
+let currentDiff = 2;
+
+function setDiff(level) {
+  currentDiff = level;
+  document.querySelectorAll('.diff-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.level) === level);
+  });
+  applyDifficulty();
+}
+
+function applyDifficulty() {
+  document.querySelectorAll('[data-diff]').forEach(el => {
+    const d = parseInt(el.dataset.diff);
+    if (d <= currentDiff) {
+      el.classList.remove('diff-hidden');
+    } else {
+      el.classList.add('diff-hidden');
+    }
+  });
+}
+
+/* ===== NAVIGATION ===== */
+document.querySelectorAll('.topic-card').forEach(card => {
+  card.addEventListener('click', function() {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    document.getElementById('sec-' + this.dataset.section).classList.add('visible');
+    document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+});
+
+/* ===== SCORES ===== */
+const scores = { est:0, len:0, mass:0, time:0, money:0, flash:0 };
+const scoreMap = { est:'score-est', len:'score-len', mass:'score-mass', time:'score-time', money:'score-money', flash:'score-flash' };
+const secCatMap = { schaetzen:'est', laengen:'len', massen:'mass', zeit:'time', geld:'money', blitz:'flash' };
+
+function addScore(cat, pts) {
+  scores[cat] += pts;
+  document.getElementById(scoreMap[cat]).textContent = scores[cat];
+}
+
+function getCat(el) {
+  const sec = el.closest('.section');
+  if (!sec) return 'est';
+  const key = sec.id.replace('sec-','');
+  return secCatMap[key] || 'est';
+}
+
+function resetAll(cat) {
+  scores[cat] = 0;
+  document.getElementById(scoreMap[cat]).textContent = 0;
+  const secKey = Object.keys(secCatMap).find(k => secCatMap[k] === cat);
+  const sec = document.getElementById('sec-' + secKey);
+  if (!sec) return;
+  sec.querySelectorAll('.quiz-option').forEach(o => { o.classList.remove('correct','wrong','disabled'); o.style.pointerEvents = ''; });
+  sec.querySelectorAll('.gap-input').forEach(i => { i.classList.remove('correct','wrong'); i.value = ''; i.disabled = false; });
+  sec.querySelectorAll('.feedback').forEach(f => { f.className = 'feedback'; f.textContent = ''; });
+  sec.querySelectorAll('.check-btn').forEach(b => { b.disabled = false; b.style.opacity = ''; });
+  sec.querySelectorAll('input[type=range]').forEach(r => {
+    r.value = r.defaultValue;
+    const valEl = r.previousElementSibling;
+    if (valEl && valEl.classList.contains('slider-val')) {
+      // reconstruct display from initial value
+      const card = r.closest('.card');
+      const oninputStr = r.getAttribute('oninput');
+      if (oninputStr) {
+        const unit = oninputStr.match(/'([^']+)'/);
+        valEl.textContent = r.value + (unit ? ' ' + unit[1] : '');
+      }
+    }
+  });
+}
+
+/* ===== ESTIMATION ===== */
+function checkEst(btn, target, tolerance, unit) {
+  const card = btn.closest('.card');
+  const slider = card.querySelector('input[type=range]');
+  const val = parseInt(slider.value);
+  const fb = card.querySelector('.feedback');
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+  const diff = Math.abs(val - target);
+
+  if (diff <= tolerance * 0.5) {
+    fb.textContent = '🎯 Perfekt! Antwort: ' + target + ' ' + unit + '. (+3)';
+    fb.className = 'feedback show ok';
+    addScore('est', 3);
+  } else if (diff <= tolerance) {
+    fb.textContent = '👍 Gut! Antwort: ' + target + ' ' + unit + '. (+2)';
+    fb.className = 'feedback show ok';
+    addScore('est', 2);
+  } else if (diff <= tolerance * 2) {
+    fb.textContent = '🤏 Knapp! Antwort: ' + target + ' ' + unit + '. (+1)';
+    fb.className = 'feedback show nope';
+    addScore('est', 1);
+  } else {
+    fb.textContent = '❌ Antwort: ' + target + ' ' + unit + '.';
+    fb.className = 'feedback show nope';
+  }
+}
+
+/* ===== QUIZ OPTIONS ===== */
+document.querySelectorAll('.quiz-item').forEach(item => {
+  const opts = item.querySelectorAll('.quiz-option');
+  if (!opts.length) return;
+  opts.forEach(opt => {
+    opt.addEventListener('click', function() {
+      if (this.classList.contains('disabled')) return;
+      const isCorrect = this.dataset.correct === 'true';
+      const fb = item.querySelector('.feedback');
+      const cat = getCat(this);
+      opts.forEach(o => { o.classList.add('disabled'); o.style.pointerEvents = 'none'; });
+      if (isCorrect) {
+        this.classList.add('correct');
+        fb.textContent = '✅ Richtig! (+1)';
+        fb.className = 'feedback show ok';
+        addScore(cat, 1);
+      } else {
+        this.classList.add('wrong');
+        opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); });
+        fb.textContent = '❌ Leider falsch.';
+        fb.className = 'feedback show nope';
+      }
+    });
+  });
+});
+
+/* ===== GAP CHECK ===== */
+document.querySelectorAll('.gap-check').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const card = this.closest('.card');
+    const inputs = Array.from(card.querySelectorAll('.gap-input'));
+    const fb = card.querySelector(':scope > .feedback');
+    const cat = getCat(this);
+    let correct = 0, total = 0;
+
+    inputs.forEach(inp => {
+      if (inp.closest('.diff-hidden')) return;
+      total++;
+      const userVal = inp.value.trim().replace(/\s/g, '').replace(',','.');
+      const answers = inp.dataset.answer.split('|').map(a => a.replace(',','.'));
+      const ok = answers.includes(userVal);
+      inp.classList.remove('correct','wrong');
+      inp.classList.add(ok ? 'correct' : 'wrong');
+      inp.disabled = true;
+      if (ok) correct++;
+    });
+    this.disabled = true;
+    this.style.opacity = '0.5';
+    if (total === 0) return;
+    if (correct === total) {
+      fb.textContent = '🎉 Alles richtig! (+' + total + ')';
+      fb.className = 'feedback show ok';
+    } else {
+      fb.textContent = correct + ' von ' + total + ' richtig (+' + correct + ')';
+      fb.className = 'feedback show ' + (correct > 0 ? 'ok' : 'nope');
+    }
+    addScore(cat, correct);
+  });
+});
+
+/* ===== BLITZLESEN ===== */
+const flashData = [
+  ['3 km','Wie viel m?','3 000 m','300 m','30 000 m'],
+  ['250 cm','Wie viel m?','2,5 m','25 m','0,25 m'],
+  ['2 kg','Wie viel g?','2 000 g','200 g','20 g'],
+  ['5 min','Wie viel s?','300 s','50 s','500 s'],
+  ['1,5 m','Wie viel cm?','150 cm','15 cm','1 500 cm'],
+  ['4 500 g','Wie viel kg?','4,5 kg','45 kg','0,45 kg'],
+  ['180 min','Wie viel h?','3 h','18 h','1,8 h'],
+  ['7,25 €','Wie viel ct?','725 ct','72 ct','7 250 ct'],
+  ['0,5 km','Wie viel m?','500 m','50 m','5 000 m'],
+  ['3 600 s','Wie viel h?','1 h','6 h','36 h'],
+];
+let flashIdx = 0;
+
+function startFlash() {
+  const btn = document.getElementById('flash-start-btn');
+  btn.style.display = 'none';
+  document.getElementById('flash-options').innerHTML = '';
+  document.getElementById('flash-fb').className = 'feedback';
+  if (flashIdx >= flashData.length) flashIdx = 0;
+  const item = flashData[flashIdx];
+  const display = document.getElementById('flash-display');
+  display.textContent = item[0];
+  display.style.fontSize = '2.5rem';
+  display.style.color = '#fff';
+  const t = currentDiff === 3 ? 1200 : currentDiff === 1 ? 3000 : 2000;
+  setTimeout(() => {
+    display.textContent = item[1];
+    display.style.fontSize = '1.1rem';
+    display.style.color = '#94a3b8';
+    const answers = [item[2],item[3],item[4]].sort(() => Math.random()-0.5);
+    const div = document.getElementById('flash-options');
+    answers.forEach(a => {
+      const b = document.createElement('button');
+      b.className = 'quiz-option';
+      b.textContent = a;
+      b.addEventListener('click', () => flashAnswer(b, a===item[2], item[2]));
+      div.appendChild(b);
+    });
+  }, t);
+}
+
+function flashAnswer(btn, ok, ans) {
+  document.querySelectorAll('#flash-options .quiz-option').forEach(o => { o.classList.add('disabled'); o.style.pointerEvents='none'; });
+  btn.classList.add(ok?'correct':'wrong');
+  if (!ok) document.querySelectorAll('#flash-options .quiz-option').forEach(o => { if(o.textContent===ans)o.classList.add('correct'); });
+  const fb = document.getElementById('flash-fb');
+  fb.textContent = ok ? '✅ Richtig! (+1)' : '❌ Richtig wäre: '+ans;
+  fb.className = 'feedback show '+(ok?'ok':'nope');
+  if (ok) addScore('flash',1);
+  flashIdx++;
+  setTimeout(() => {
+    const b = document.getElementById('flash-start-btn');
+    b.style.display='inline-block';
+    b.textContent = flashIdx>=flashData.length ? 'Nochmal!' : 'Nächste →';
+  }, 800);
+}
+
+function resetFlash() {
+  flashIdx=0; scores.flash=0;
+  document.getElementById('score-flash').textContent=0;
+  const d=document.getElementById('flash-display');
+  d.textContent='Bereit?'; d.style.fontSize='2.5rem'; d.style.color='#fff';
+  document.getElementById('flash-options').innerHTML='';
+  document.getElementById('flash-fb').className='feedback';
+  const b=document.getElementById('flash-start-btn');
+  b.style.display='inline-block'; b.textContent='Start!';
+}
+
+/* ===== INIT ===== */
+applyDifficulty();
+</script>
+</body>
+</html>

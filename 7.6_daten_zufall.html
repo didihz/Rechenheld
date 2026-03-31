@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daten &amp; Zufall 7.5</title>
+<style>
+:root{--p:#16a34a;--g:#16a34a;--r:#dc2626;--o:#ea580c;--y:#ca8a04;--pu:#7c3aed}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0fdf4;color:#1e293b;min-height:100vh}
+header{background:var(--p);color:white;padding:14px 18px;display:flex;align-items:center;gap:10px}
+header h1{font-size:1.25rem;font-weight:700}
+header p{font-size:.78rem;opacity:.85;margin-top:2px}
+nav{display:flex;flex-wrap:wrap;gap:5px;padding:10px 14px;background:white;border-bottom:2px solid #bbf7d0;position:sticky;top:0;z-index:10;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+nav button{padding:6px 13px;border-radius:20px;border:2px solid #bbf7d0;background:white;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .18s}
+nav button.on,nav button:hover{background:var(--p);color:white;border-color:var(--p)}
+.sec{display:none;padding:14px;max-width:860px;margin:0 auto}
+.sec.on{display:block}
+.card{background:white;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h2{font-size:1rem;color:var(--p);margin-bottom:9px;font-weight:700}
+h3{font-size:.9rem;color:#475569;margin:11px 0 5px;font-weight:600}
+.info{background:#f0fdf4;border-left:4px solid var(--p);padding:9px 13px;border-radius:7px;margin:7px 0;font-size:.88rem;line-height:1.55}
+.tip{background:#fef9c3;border-left:4px solid var(--y);padding:9px 13px;border-radius:7px;margin:7px 0;font-size:.85rem;line-height:1.5}
+.eg{background:#f0fdf4;border-left:4px solid var(--g);padding:9px 13px;border-radius:7px;margin:7px 0;font-size:.88rem;line-height:1.55}
+.info-o{background:#fff7ed;border-left:4px solid var(--o);padding:9px 13px;border-radius:7px;margin:7px 0;font-size:.88rem;line-height:1.55}
+table{width:100%;border-collapse:collapse;margin:8px 0}
+th{background:var(--p);color:white;padding:6px 9px;text-align:left;font-size:.83rem}
+td{padding:6px 9px;border-bottom:1px solid #e2e8f0;font-size:.85rem}
+tr:nth-child(even) td{background:#f8fafc}
+.btn{padding:8px 18px;border-radius:8px;border:none;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .18s;display:inline-block}
+.bp{background:var(--p);color:white}.bg{background:var(--g);color:white}.bo{background:var(--o);color:white}.bpu{background:var(--pu);color:white}.br{background:var(--r);color:white}
+.lv{display:inline-block;padding:2px 7px;border-radius:10px;font-size:.72rem;font-weight:700;margin-left:5px}
+.l1{background:#dcfce7;color:var(--g)}.l2{background:#fef9c3;color:var(--y)}.l3{background:#fee2e2;color:var(--r)}.lpu{background:#ede9fe;color:var(--pu)}
+.sb{background:#f0fdf4;border-radius:7px;padding:7px 12px;display:inline-flex;align-items:center;gap:7px;font-size:.85rem;margin-bottom:9px}
+.sb strong{font-size:1rem;color:var(--p)}
+.row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:9px 0}
+input[type=number],input[type=text]{padding:6px 9px;border-radius:7px;border:2px solid #bbf7d0;font-size:.88rem}
+select{padding:6px 8px;border-radius:7px;border:2px solid #bbf7d0;font-size:.88rem;background:white}
+.rr{background:#f0fdf4;padding:6px 11px;border-radius:7px;font-weight:700;color:var(--p);min-width:110px;font-size:.88rem}
+.flash-box{background:#1e293b;color:#fbbf24;border-radius:11px;padding:30px;text-align:center;font-size:1.75rem;font-weight:800;min-height:100px;display:flex;align-items:center;justify-content:center;letter-spacing:1px;margin:9px 0}
+.pb{height:6px;background:#e2e8f0;border-radius:4px;margin:5px 0;overflow:hidden}
+.pf{height:100%;border-radius:4px;background:var(--p);transition:width .3s}
+hr{border:none;border-top:1px solid #e2e8f0;margin:13px 0}
+.qopt{padding:8px 15px;border-radius:8px;border:2px solid #bbf7d0;background:white;cursor:pointer;font-size:.9rem;margin:3px;font-weight:500;transition:all .15s}
+.qopt:hover:not(:disabled){border-color:var(--p);background:#f0fdf4}
+.qopt:disabled{cursor:default}
+.badge-ok{background:#dcfce7;border-color:#16a34a !important;color:#15803d !important}
+.badge-err{background:#fee2e2;border-color:#dc2626 !important;color:#b91c1c !important}
+.fb{padding:7px 11px;border-radius:7px;font-size:.85rem;margin:6px 0}
+.fb-ok{background:#dcfce7;color:var(--g)}.fb-err{background:#fee2e2;color:var(--r)}
+.mini-box{display:inline-block;background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:6px 12px;margin:4px 3px;font-size:.86rem;font-weight:600}
+.hb-row{display:flex;align-items:center;gap:8px;margin:4px 0}
+.hb-label{width:20px;font-weight:800;font-size:.9rem}
+.hb-outer{flex:1;background:#dcfce7;border-radius:4px;height:18px;overflow:hidden}
+.hb-inner{height:100%;background:var(--p);border-radius:4px;transition:width 0.4s;width:0%}
+.hb-count{width:45px;font-size:.82rem;color:#475569;text-align:right}
+@media(max-width:560px){header h1{font-size:1.05rem}.flash-box{font-size:1.3rem;padding:20px}}
+.ue-block{margin:8px 0}.ue-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0;font-size:.9rem;line-height:1.6}.ue-tipp{display:none;margin-top:4px}.ue-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <span style="font-size:1.8rem">🎲</span>
+  <div>
+    <h1>Daten &amp; Zufall – Klasse 7.5</h1>
+    <p>Statistik · Häufigkeit · Wahrscheinlichkeit</p>
+  </div>
+</header>
+
+<nav>
+  <button class="on" onclick="show('lernen',this)">📖 Lernen</button>
+  <button onclick="show('simulation',this)">🎲 Simulation</button>
+  <button onclick="show('luecken',this)">✏️ Lückentext</button>
+  <button onclick="show('quiz',this)">❓ Quiz</button>
+  <button onclick="show('blitz',this)">⚡ Blitz</button>
+  <button onclick="show('aufgaben',this)">🧮 Aufgaben</button>
+</nav>
+
+<!-- ═══════════════════════════ LERNEN ═══════════════════════════ -->
+<div id="lernen" class="sec on">
+
+  <div class="card">
+    <h2>📊 Statistische Kenngrößen</h2>
+    <div class="info">
+      <b>Arithmetisches Mittel (Durchschnitt):</b><br>
+      x̄ = (x₁ + x₂ + … + xₙ) / n<br>
+      <span style="font-size:.82rem;color:#475569">Alle Werte addieren, dann durch die Anzahl der Werte teilen.</span>
+    </div>
+    <div class="info-o">
+      <b>Median:</b> Werte sortieren → mittlerer Wert.<br>
+      Bei gerader Anzahl: Durchschnitt der beiden mittleren Werte.
+    </div>
+    <div class="eg">
+      <b>Beispiel:</b> Daten: 2, 5, 5, 7, 9, 12<br>
+      · Mittelwert = (2+5+5+7+9+12) / 6 = 40 / 6 ≈ <b>6,67</b><br>
+      · Median = (5+7) / 2 = <b>6</b> &nbsp;&nbsp;(mittlere zwei Werte bei 6 Werten)
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📈 Häufigkeit</h2>
+    <div class="info">
+      <b>Absolute Häufigkeit nᵢ:</b> Wie oft kommt Wert i vor?<br>
+      <b>Relative Häufigkeit hᵢ = nᵢ / n</b> (als Dezimalzahl oder %)<br>
+      <span style="font-size:.82rem;color:#475569">n = Gesamtzahl aller Werte</span>
+    </div>
+    <h3>Notenbeispiel einer Klasse (n = 30)</h3>
+    <table>
+      <tr><th>Note</th><th>Abs. Häufigkeit nᵢ</th><th>Rel. Häufigkeit hᵢ</th></tr>
+      <tr><td>1</td><td>3</td><td>10,0 %</td></tr>
+      <tr><td>2</td><td>7</td><td>23,3 %</td></tr>
+      <tr><td>3</td><td>10</td><td>33,3 %</td></tr>
+      <tr><td>4</td><td>5</td><td>16,7 %</td></tr>
+      <tr><td>5</td><td>3</td><td>10,0 %</td></tr>
+      <tr><td>6</td><td>2</td><td>6,7 %</td></tr>
+      <tr><td><b>Gesamt</b></td><td><b>30</b></td><td><b>100 %</b></td></tr>
+    </table>
+    <div class="tip">💡 Die Summe aller relativen Häufigkeiten ergibt immer <b>1</b> (= 100 %).</div>
+  </div>
+
+  <div class="card">
+    <h2>🎰 Laplace-Experiment &amp; Wahrscheinlichkeit</h2>
+    <div class="info">
+      <b>Laplace-Experiment:</b> Alle Ergebnisse sind gleich wahrscheinlich.<br>
+      <b>P(A) = Anzahl günstige Ergebnisse / Anzahl mögliche Ergebnisse</b>
+    </div>
+    <div class="eg">
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px">
+        <span class="mini-box">🎲 Würfel: P(gerade) = 3/6 = 1/2</span>
+        <span class="mini-box">🃏 Karten (32): P(Ass) = 4/32 = 1/8</span>
+        <span class="mini-box">🎡 Glücksrad (4 Felder): P(Rot) = 1/4</span>
+      </div>
+    </div>
+    <div class="info-o">
+      <b>Sicheres Ereignis:</b> P = 1 &nbsp;&nbsp; · &nbsp;&nbsp;
+      <b>Unmögliches Ereignis:</b> P = 0<br>
+      <b>Gegenereignis Ā:</b> P(Ā) = 1 − P(A)
+    </div>
+    <div class="tip">📐 <b>Gesetz der großen Zahlen:</b> Je mehr Versuche, desto näher nähert sich die relative Häufigkeit der theoretischen Wahrscheinlichkeit.</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ SIMULATION ═══════════════════════════ -->
+<div id="simulation" class="sec">
+  <div class="card">
+    <h2>🎲 Würfelsimulation</h2>
+    <p style="color:#64748b;font-size:.85rem;margin-bottom:12px">Wirf den Würfel und beobachte, wie sich die relativen Häufigkeiten der theoretischen Wahrscheinlichkeit von 1/6 ≈ 16,7 % annähern.</p>
+    <div class="row">
+      <button class="btn bp" onclick="wN(1)">🎲 1×</button>
+      <button class="btn bg" onclick="wN(10)">10× Würfeln</button>
+      <button class="btn bo" onclick="wN(100)">100× Würfeln</button>
+      <button class="btn br" onclick="wReset()">🔄 Reset</button>
+    </div>
+    <div class="sb" id="wges">Würfe gesamt: 0</div>
+    <div style="margin:10px 0">
+      <div class="hb-row"><span class="hb-label">1</span><div class="hb-outer"><div class="hb-inner" id="wb1"></div></div><span class="hb-count" id="wc1">0,0 %</span></div>
+      <div class="hb-row"><span class="hb-label">2</span><div class="hb-outer"><div class="hb-inner" id="wb2"></div></div><span class="hb-count" id="wc2">0,0 %</span></div>
+      <div class="hb-row"><span class="hb-label">3</span><div class="hb-outer"><div class="hb-inner" id="wb3"></div></div><span class="hb-count" id="wc3">0,0 %</span></div>
+      <div class="hb-row"><span class="hb-label">4</span><div class="hb-outer"><div class="hb-inner" id="wb4"></div></div><span class="hb-count" id="wc4">0,0 %</span></div>
+      <div class="hb-row"><span class="hb-label">5</span><div class="hb-outer"><div class="hb-inner" id="wb5"></div></div><span class="hb-count" id="wc5">0,0 %</span></div>
+      <div class="hb-row"><span class="hb-label">6</span><div class="hb-outer"><div class="hb-inner" id="wb6"></div></div><span class="hb-count" id="wc6">0,0 %</span></div>
+    </div>
+    <div class="eg">📐 Theoretische Wahrscheinlichkeit jeder Zahl: <b>1/6 ≈ 16,7 %</b> — Je mehr Würfe, desto näher kommen die Balken diesem Wert (Gesetz der großen Zahlen).</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ LÜCKENTEXT ═══════════════════════════ -->
+<div id="luecken" class="sec">
+  <div class="card">
+    <h2>✏️ Begriffe ergänzen <span class="lv l1">★ Einfach</span></h2>
+    <div class="sb">Richtig: <strong id="ls">0</strong> / <span id="lt2">8</span></div>
+    <div id="lc"></div>
+    <div style="display:flex;gap:8px;margin-top:11px;flex-wrap:wrap">
+      <button class="btn bp" onclick="chkLT()">✅ Überprüfen</button>
+      <button class="btn bo" onclick="initLT()">🔄 Neu</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🔢 Berechnungen ergänzen <span class="lv l2">★★ Mittel</span></h2>
+    <div id="uc"></div>
+    <div style="display:flex;gap:8px;margin-top:11px;flex-wrap:wrap">
+      <button class="btn bp" onclick="chkUT()">✅ Überprüfen</button>
+      <button class="btn bo" onclick="initUT()">🔄 Neue Aufgaben</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ QUIZ ═══════════════════════════ -->
+<div id="quiz" class="sec">
+  <div class="card">
+    <h2>❓ Quiz – Daten &amp; Zufall</h2>
+    <div class="sb">Frage <span id="qn">1</span>/<span id="qm">6</span> &nbsp;|&nbsp; Punkte: <strong id="qs">0</strong></div>
+    <div class="pb"><div class="pf" id="qp" style="width:10%"></div></div>
+    <div id="qlvl" style="margin-bottom:13px">
+      <div style="font-size:.88rem;font-weight:600;margin-bottom:6px">Schwierigkeit wählen:</div>
+      <button class="btn bg" onclick="startQ(1)" style="margin:3px">⭐ Einfach</button>
+      <button class="btn bp" onclick="startQ(2)" style="margin:3px">⭐⭐ Mittel</button>
+      <button class="btn bo" onclick="startQ(3)" style="margin:3px">⭐⭐⭐ Schwer</button>
+    </div>
+    <div id="qc"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ BLITZ ═══════════════════════════ -->
+<div id="blitz" class="sec">
+  <div class="card">
+    <h2>⚡ Blitz – Begriffe &amp; Formeln</h2>
+    <p style="color:#64748b;font-size:.85rem;margin-bottom:9px">Ein Begriff blitzt auf – merke ihn dir und tippe ihn ein!</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
+      <span style="font-size:.85rem;color:#475569">⏱ Zeit:</span>
+      <select id="fsp">
+        <option value="2000">2 s</option>
+        <option value="1200" selected>1,2 s</option>
+        <option value="700">0,7 s</option>
+        <option value="400">0,4 s</option>
+      </select>
+    </div>
+    <div class="flash-box" id="fdis">Drücke START ▶</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0">
+      <button class="btn bp" onclick="fStart()">▶ START</button>
+      <input type="text" id="fa" placeholder="Eingabe..." disabled
+        onkeydown="if(event.key==='Enter')fChk()"
+        style="width:200px">
+      <button class="btn bg" id="fck" onclick="fChk()" disabled>OK ✅</button>
+    </div>
+    <div id="ffb" style="font-size:.85rem;margin-top:4px"></div>
+    <div class="sb" style="margin-top:9px">Richtig: <strong id="fsc">0</strong> / <span id="ftc">0</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ AUFGABEN ═══════════════════════════ -->
+<div id="aufgaben" class="sec">
+  <div class="card">
+    <h2>🧮 Differenzierte Aufgaben</h2>
+
+    <h3><span class="lv l1">★ Einfach</span> – Mittelwert &amp; Median</h3>
+    <div id="ue1"></div>
+    <div id="ue1tipp" class="tip" style="display:none">💡 Tipp: Sortiere die Zahlen zuerst. Mittelwert = Summe ÷ Anzahl. Median = mittlere Zahl der sortierten Liste.</div>
+    <div id="ue1fb"></div>
+    <div class="ue-actions">
+      <button class="btn bg" onclick="checkUE1()">✓ Prüfen</button>
+      <button class="btn" style="background:var(--y);color:white" onclick="toggleTipp('ue1tipp')">💡 Tipp</button>
+      <button class="btn bp" onclick="genUE1()">🔄 Neue Aufgaben</button>
+    </div>
+
+    <hr>
+
+    <h3><span class="lv l2">★★ Mittel</span> – Laplace &amp; Wahrscheinlichkeit</h3>
+    <div id="ue2"></div>
+    <div id="ue2tipp" class="tip" style="display:none">💡 Tipp: P(Ereignis) = günstige Ergebnisse ÷ alle möglichen Ergebnisse. Gegenereignis: P(Ā) = 1 − P(A).</div>
+    <div id="ue2fb"></div>
+    <div class="ue-actions">
+      <button class="btn bg" onclick="checkUE2()">✓ Prüfen</button>
+      <button class="btn" style="background:var(--y);color:white" onclick="toggleTipp('ue2tipp')">💡 Tipp</button>
+      <button class="btn bp" onclick="genUE2()">🔄 Neue Aufgaben</button>
+    </div>
+
+    <hr>
+
+    <h3><span class="lv l3">★★★ Schwer</span> – Relative Häufigkeit &amp; Erwartungswert</h3>
+    <div id="ue3"></div>
+    <div id="ue3tipp" class="tip" style="display:none">💡 Tipp: Rel. Häufigkeit h = Anzahl ÷ Gesamtzahl. Erwartete Häufigkeit = n · P(A). Ergebnis als Dezimalzahl (z.B. 0,40).</div>
+    <div id="ue3fb"></div>
+    <div class="ue-actions">
+      <button class="btn bg" onclick="checkUE3()">✓ Prüfen</button>
+      <button class="btn" style="background:var(--y);color:white" onclick="toggleTipp('ue3tipp')">💡 Tipp</button>
+      <button class="btn bp" onclick="genUE3()">🔄 Neue Aufgaben</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── HILFSFUNKTIONEN ──────────────────────────────────────────────────
+function show(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  btn.classList.add('on');
+}
+function tog(id){const e=document.getElementById(id);e.style.display=e.style.display==='none'?'block':'none'}
+function $(id){return document.getElementById(id)}
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
+// ── SIMULATION ───────────────────────────────────────────────────────
+let wZ={1:0,2:0,3:0,4:0,5:0,6:0},wG=0;
+function wN(n){for(let i=0;i<n;i++){const w=Math.floor(Math.random()*6)+1;wZ[w]++;}wG+=n;updW();}
+function wReset(){wZ={1:0,2:0,3:0,4:0,5:0,6:0};wG=0;updW();}
+function updW(){
+  $('wges').textContent='Würfe gesamt: '+wG;
+  for(let i=1;i<=6;i++){
+    const h=wG>0?wZ[i]/wG:0;
+    $('wb'+i).style.width=(h*100)+'%';
+    $('wc'+i).textContent=(h*100).toFixed(1)+'%';
+  }
+}
+
+// ── LÜCKENTEXT 1 (Dropdowns) ─────────────────────────────────────────
+const LT_DATA=[
+  {t:'Die absolute ___ gibt an, wie oft ein Wert vorkommt.',o:['Häufigkeit','Wahrscheinlichkeit','Median'],c:'Häufigkeit'},
+  {t:'Der ___ ist der Durchschnitt aller Werte.',o:['Mittelwert','Median','Modus'],c:'Mittelwert'},
+  {t:'Der ___ ist der mittlere Wert nach Sortierung.',o:['Median','Mittelwert','Modus'],c:'Median'},
+  {t:'Beim ___-Experiment sind alle Ergebnisse gleich wahrscheinlich.',o:['Laplace','Zufalls','Würfel'],c:'Laplace'},
+  {t:'P(sicheres Ereignis) = ___.',o:['0','1','0,5'],c:'1'},
+  {t:'P(unmögliches Ereignis) = ___.',o:['0','1','0,5'],c:'0'},
+  {t:'Die rel. Häufigkeit hᵢ = nᵢ / ___.',o:['n','x̄','P'],c:'n'},
+  {t:'P(Ā) = 1 − ___.',o:['P(A)','P(Ā)','n'],c:'P(A)'},
+];
+function initLT(){
+  const c=$('lc');c.innerHTML='';
+  LT_DATA.forEach((it,i)=>{
+    const parts=it.t.split('___');
+    const opts=it.o.map(o=>`<option>${o}</option>`).join('');
+    const div=document.createElement('div');
+    div.style.cssText='margin:9px 0;font-size:.9rem';
+    div.innerHTML=`<b>${i+1}.</b> ${parts[0]}<select id="lts-${i}" style="padding:3px 6px;border-radius:6px;border:2px solid #bbf7d0;font-size:.88rem"><option value="">– wählen –</option>${opts}</select>${parts[1]||''}<span id="ltf-${i}"></span>`;
+    c.appendChild(div);
+  });
+  $('ls').textContent=0;
+}
+function chkLT(){
+  let s=0;
+  LT_DATA.forEach((it,i)=>{
+    const sel=$('lts-'+i),fb=$('ltf-'+i);
+    if(sel.value===it.c){s++;fb.innerHTML=' <span style="color:green">✓</span>';sel.style.borderColor='green';}
+    else{fb.innerHTML=` <span style="color:red">✗ (${it.c})</span>`;sel.style.borderColor='red';}
+  });
+  $('ls').textContent=s;
+}
+
+// ── LÜCKENTEXT 2 (Texteingaben) ──────────────────────────────────────
+const UT_T=[
+  {
+    q:a=>`Daten: ${a.vals.join(', ')}. Mittelwert = ?`,
+    a:a=>{const s=a.vals.reduce((x,y)=>x+y,0);return Math.round(s/a.vals.length*100)/100},
+    g:()=>{const v=[rnd(1,5),rnd(2,6),rnd(3,7),rnd(4,8),rnd(5,9)];return{vals:v.sort((a,b)=>a-b)}},
+    hint:a=>{const s=a.vals.reduce((x,y)=>x+y,0);return`(${a.vals.join('+')})/5 = ${s}/5`}
+  },
+  {
+    q:a=>`${a.k} von ${a.n} SuS wählen Fußball. Rel. Häufigkeit in % = ?`,
+    a:a=>Math.round(a.k/a.n*100),
+    g:()=>{const n=rnd(3,6)*5;const k=rnd(1,n-1);return{n,k}},
+    hint:a=>`${a.k}/${a.n} × 100 = ${Math.round(a.k/a.n*100)} %`
+  },
+  {
+    q:a=>`P(A) = ${a.p}/6. P(Ā) = ? (als Bruch: schreibe Zähler)`,
+    a:a=>6-a.p,
+    g:()=>{return{p:rnd(1,5)}},
+    hint:a=>`P(Ā) = 1 − ${a.p}/6 = ${6-a.p}/6`
+  },
+  {
+    q:a=>`Würfel ${a.n}× geworfen. Erwartete Häufigkeit der ${a.s}? (ganze Zahl)`,
+    a:a=>Math.round(a.n/6),
+    g:()=>{return{n:rnd(2,10)*60,s:rnd(1,6)}},
+    hint:a=>`${a.n} × 1/6 = ${Math.round(a.n/6)}`
+  },
+  {
+    q:a=>`Daten sortiert: ${a.vals.join(', ')}. Median = ?`,
+    a:a=>{const v=a.vals;const m=Math.floor(v.length/2);return v.length%2===1?v[m]:(v[m-1]+v[m])/2},
+    g:()=>{const v=[rnd(1,4),rnd(3,6),rnd(5,8),rnd(7,10),rnd(9,12),rnd(11,14)];return{vals:v.sort((a,b)=>a-b)}},
+    hint:a=>{const v=a.vals;return`6 Werte → Mittel der 3. und 4. Werte: (${v[2]}+${v[3]})/2 = ${(v[2]+v[3])/2}`}
+  },
+];
+let utV=[],utHints=[];
+function initUT(){
+  const c=$('uc');c.innerHTML='';utV=[];utHints=[];
+  [...UT_T].sort(()=>0.5-Math.random()).slice(0,5).forEach((tmpl,i)=>{
+    const val=tmpl.g();
+    utV.push(tmpl.a(val));
+    utHints.push(tmpl.hint?tmpl.hint(val):'');
+    const div=document.createElement('div');div.style.cssText='margin:9px 0;font-size:.9rem';
+    div.innerHTML=`<b>${i+1}.</b> ${tmpl.q(val).replace('?',`<input type="number" id="uri-${i}" style="width:80px;padding:3px 6px;border-radius:6px;border:2px solid #bbf7d0;font-size:.88rem">`)}<span id="urf-${i}"></span>`;
+    c.appendChild(div);
+  });
+}
+function chkUT(){
+  utV.forEach((ans,i)=>{
+    const inp=$('uri-'+i),fb=$('urf-'+i);
+    const userVal=parseFloat(inp.value);
+    if(Math.abs(userVal-ans)<0.01){fb.innerHTML=' <span style="color:green">✓</span>';inp.style.borderColor='green';}
+    else{fb.innerHTML=` <span style="color:red">✗ (${ans}${utHints[i]?' · '+utHints[i]:''})</span>`;inp.style.borderColor='red';}
+  });
+}
+
+// ── QUIZ ─────────────────────────────────────────────────────────────
+const QB={
+  1:[
+    {q:'Was ist die absolute Häufigkeit?',o:['Anteil in %','Wie oft ein Wert vorkommt','Durchschnitt','Mittlerer Wert'],a:1},
+    {q:'Was ist ein Laplace-Experiment?',o:['Experiment mit sicheren Ergebnissen','Alle Ergebnisse gleich wahrscheinlich','Nur 2 Ergebnisse möglich','Experiment mit Ausreißern'],a:1},
+    {q:'P(A) beim Laplace-Experiment = ?',o:['günstige + mögliche','günstige × mögliche','günstige ÷ mögliche','mögliche ÷ günstige'],a:2},
+    {q:'P(gerade Zahl beim Würfel) = ?',o:['1/6','1/3','1/2','2/3'],a:2},
+    {q:'Median von: 2, 5, 7, 9, 12?',o:['5','7','9','6'],a:1},
+    {q:'Summe aller relativen Häufigkeiten = ?',o:['0','1','100','unbekannt'],a:1},
+  ],
+  2:[
+    {q:'Daten: 3, 5, 5, 7, 10. Mittelwert?',o:['5','6','5,5','7'],a:1},
+    {q:'Daten: 2, 4, 6, 8. Median?',o:['4','5','6','4,5'],a:1},
+    {q:'Warum ist Median bei Ausreißern besser?',o:['Er ist größer','Wird von Extremwerten weniger beeinflusst','Ist immer kleiner','Leichter zu berechnen'],a:1},
+    {q:'P(Ass) aus Skatspiel (32 Karten) = ?',o:['1/32','1/8','1/4','4'],a:1},
+    {q:'Welches ist KEIN Laplace-Experiment?',o:['Fairer Münzwurf','Karte aus 32 ziehen','Regen oder nicht morgen','Fairer Würfelwurf'],a:2},
+    {q:'P(Ā) wenn P(A) = 0,3?',o:['0,3','0,7','1,3','3'],a:1},
+  ],
+  3:[
+    {q:'30 SuS, 12 haben Note 2. Rel. Häufigkeit?',o:['12 %','30 %','40 %','25 %'],a:2},
+    {q:'Würfel 300×. Erwartete Häufigkeit der 1?',o:['1','50','100','300'],a:1},
+    {q:'Daten: 1,3,5,5,5,7,9,11. Mittelwert und Median?',o:['MW=5; Med=5,75','MW=5,75; Med=5','MW=5; Med=5','MW=5,75; Med=5,75'],a:1},
+    {q:'Zwei Würfel: P(Augensumme = 2)?',o:['1/6','1/12','1/36','1/18'],a:2},
+    {q:'Gesetz der großen Zahlen?',o:['Je mehr Versuche → rel. Häufigkeit → P(A)','Je mehr Versuche, sicherer das Ergebnis','Häufigkeit bleibt konstant','Gilt nur bei Laplace'],a:0},
+    {q:'P(sicheres Ereignis) = ?',o:['0','0,5','1','unbekannt'],a:2},
+  ]
+};
+let qlvl=1,qi=0,qsc=0,qans=false;
+function startQ(l){
+  qlvl=l;qi=0;qsc=0;
+  $('qs').textContent=0;
+  $('qn').textContent=1;
+  $('qm').textContent=QB[l].length;
+  $('qp').style.width='10%';
+  $('qlvl').style.display='none';
+  renderQ();
+}
+function renderQ(){
+  const b=QB[qlvl];
+  if(qi>=b.length){
+    $('qc').innerHTML=`<div class="eg" style="text-align:center;padding:18px">
+      <div style="font-size:1.05rem;margin-bottom:8px">🎉 Fertig! ${qsc} von ${b.length} richtig!</div>
+      <button class="btn bp" onclick="startQ(${qlvl})" style="margin-right:6px">Nochmal 🔄</button>
+      <button class="btn bo" onclick="$('qlvl').style.display='block';$('qc').innerHTML=''">Andere Stufe</button>
+    </div>`;
+    return;
+  }
+  const it=b[qi];qans=false;
+  const opts=it.o.map((o,i)=>`<button class="qopt" id="qo-${i}" onclick="ansQ(${i})">${o}</button>`).join('');
+  $('qc').innerHTML=`<p style="font-weight:700;margin-bottom:9px;font-size:.92rem">${qi+1}. ${it.q}</p><div style="display:flex;flex-wrap:wrap">${opts}</div><div id="qfb"></div><button class="btn bp" id="qnxt" onclick="nxtQ()" style="margin-top:9px;display:none">Weiter →</button>`;
+}
+function ansQ(i){
+  if(qans)return;qans=true;
+  const it=QB[qlvl][qi];
+  document.querySelectorAll('.qopt').forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===it.a)b.classList.add('badge-ok');
+    else if(idx===i)b.classList.add('badge-err');
+  });
+  if(i===it.a){qsc++;$('qfb').innerHTML='<div class="fb fb-ok">✓ Richtig!</div>';}
+  else{$('qfb').innerHTML=`<div class="fb fb-err">✗ Falsch – Richtig: ${it.o[it.a]}</div>`;}
+  $('qs').textContent=qsc;
+  $('qnxt').style.display='inline-block';
+}
+function nxtQ(){
+  qi++;
+  $('qn').textContent=Math.min(qi+1,QB[qlvl].length);
+  $('qp').style.width=Math.round(qi/QB[qlvl].length*100)+'%';
+  renderQ();
+}
+
+// ── BLITZ ────────────────────────────────────────────────────────────
+const FP=[
+  'P(A) = günstig/möglich',
+  'Abs. Häufigkeit nᵢ',
+  'Rel. Häufigkeit hᵢ = nᵢ/n',
+  'Σhᵢ = 1',
+  'Median = mittlerer Wert',
+  'Mittelwert x̄',
+  'P(Ā) = 1 − P(A)',
+  'Sicheres Ereignis: P=1',
+  'Unmögliches Ereignis: P=0',
+  'Gesetz der großen Zahlen',
+  'Laplace: alle gleich wahrsch.',
+  'P(6 beim Würfel) = 1/6',
+  'P(Kopf beim Münzwurf) = 1/2',
+];
+let fItem='',fAct=false,fS=0,fT=0;
+function fStart(){
+  fItem=FP[Math.floor(Math.random()*FP.length)];
+  const sp=+$('fsp').value;
+  $('fdis').textContent=fItem;
+  $('fa').value='';$('fa').disabled=true;$('fck').disabled=true;$('ffb').textContent='';fAct=false;
+  setTimeout(()=>{
+    $('fdis').textContent='???';
+    $('fa').disabled=false;$('fck').disabled=false;$('fa').focus();fAct=true;
+  },sp);
+}
+function fChk(){
+  if(!fAct)return;
+  const ans=$('fa').value.trim();
+  const ok=ans.toLowerCase()===fItem.toLowerCase();
+  fT++;$('ftc').textContent=fT;
+  if(ok){fS++;$('ffb').innerHTML=`<span style="color:green">✓ Richtig! "${fItem}"</span>`;}
+  else{$('ffb').innerHTML=`<span style="color:red">✗ Es war: "${fItem}"</span>`;}
+  $('fsc').textContent=fS;
+  $('fa').disabled=true;$('fck').disabled=true;fAct=false;
+  $('fdis').textContent='Drücke START ▶';
+}
+
+// ──── INTERACTIVE AUFGABEN ────────────────────────────────────────────
+function toggleTipp(id){const el=$(id);el.style.display=el.style.display==='block'?'none':'block';}
+// Level 1: Mittelwert & Median
+const ans1=[];
+function genUE1(){
+  const box=$('ue1');box.innerHTML='';ans1.length=0;
+  for(let i=0;i<5;i++){
+    const n=(i<3)?5:7;
+    const vals=Array.from({length:n},()=>rnd(1,15));
+    const sorted=[...vals].sort((a,b)=>a-b);
+    const sum=sorted.reduce((a,b)=>a+b,0);
+    const mw=sum/n;
+    const med=sorted[Math.floor(n/2)];
+    const disp=[...vals];
+    ans1.push({mw,med});
+    const mwStr=mw%1===0?String(mw):mw.toFixed(1);
+    box.innerHTML+=`<div class="ue-block"><div class="ue-row"><b>${i+1}.</b>&nbsp;Zahlen:&nbsp;<b>${disp.join(', ')}</b>&nbsp;→&nbsp;MW =&nbsp;<input id="u1a_${i}" type="number" step="0.1" style="width:58px">&nbsp;Median =&nbsp;<input id="u1b_${i}" type="number" style="width:50px"><span id="u1s_${i}" class="eg" style="display:none;margin-left:8px;padding:3px 8px">MW=${mwStr}, Med=${med}</span></div></div>`;
+  }
+}
+function checkUE1(){
+  let sc=0;
+  ans1.forEach((a,i)=>{
+    const ia=$('u1a_'+i),ib=$('u1b_'+i),sol=$('u1s_'+i);
+    const va=parseFloat((ia.value||'').replace(',','.')),vb=parseFloat((ib.value||'').replace(',','.'));
+    let tok=true;
+    if(!isNaN(va)&&Math.abs(va-a.mw)<0.06){ia.style.borderColor='var(--g)';sc++;}else{ia.style.borderColor='var(--r)';tok=false;}
+    if(!isNaN(vb)&&vb===a.med){ib.style.borderColor='var(--g)';sc++;}else{ib.style.borderColor='var(--r)';tok=false;}
+    if(tok&&sol)sol.style.display='inline-block';
+  });
+  $('ue1fb').innerHTML=sc===10?'<div class="fb fb-ok">✓ Alle 10 richtig! Super!</div>':'<div class="fb fb-err">'+sc+' von 10 richtig. Überprüfe die roten Felder.</div>';
+}
+// Level 2: Laplace & Wahrscheinlichkeiten
+const ans2=[];
+function genUE2(){
+  const box=$('ue2');box.innerHTML='';ans2.length=0;
+  const t2=[
+    ()=>{const n=rnd(2,5);ans2.push({type:'frac',z:n,d:6});return`<div class="ue-block"><div class="ue-row"><b>1.</b>&nbsp;Würfelwurf: P(Augenzahl ≤ ${n}) =&nbsp;<input id="u2z_0" type="number" style="width:42px">&nbsp;/&nbsp;<input id="u2n_0" type="number" style="width:42px"><span id="u2s_0" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ ${n}/6</span></div></div>`;},
+    ()=>{const p=rnd(1,9)*10;ans2.push({type:'dec',v:(100-p)/100});return`<div class="ue-block"><div class="ue-row"><b>2.</b>&nbsp;P(A) = ${p/100} → P(Ā) =&nbsp;<input id="u2d_1" type="number" step="0.01" style="width:65px"><span id="u2s_1" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ ${(100-p)/100}</span></div></div>`;},
+    ()=>{const cols=[{c:'rot',n:3},{c:'blau',n:2},{c:'grün',n:2},{c:'gelb',n:1}];const pick=cols[rnd(0,3)];ans2.push({type:'frac',z:pick.n,d:8});return`<div class="ue-block"><div class="ue-row"><b>3.</b>&nbsp;Glücksrad (8 Felder: 3×rot, 2×blau, 2×grün, 1×gelb). P(${pick.c}) =&nbsp;<input id="u2z_2" type="number" style="width:42px">&nbsp;/&nbsp;<input id="u2n_2" type="number" style="width:42px"><span id="u2s_2" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ ${pick.n}/8</span></div></div>`;},
+    ()=>{const tot=rnd(3,8)*10;const k=rnd(1,Math.floor(tot/10));ans2.push({type:'frac',z:k,d:tot});return`<div class="ue-block"><div class="ue-row"><b>4.</b>&nbsp;Urne: ${tot} Kugeln, ${k} gelb. P(gelb) =&nbsp;<input id="u2z_3" type="number" style="width:42px">&nbsp;/&nbsp;<input id="u2n_3" type="number" style="width:42px"><span id="u2s_3" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ ${k}/${tot}</span></div></div>`;},
+    ()=>{ans2.push({type:'frac',z:13,d:52});return`<div class="ue-block"><div class="ue-row"><b>5.</b>&nbsp;Kartenspiel (52 Karten, 13 Herz). P(Herz) =&nbsp;<input id="u2z_4" type="number" style="width:42px">&nbsp;/&nbsp;<input id="u2n_4" type="number" style="width:42px"><span id="u2s_4" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ 13/52 = 1/4</span></div></div>`;}
+  ];
+  box.innerHTML=t2.map(t=>t()).join('');
+}
+function checkUE2(){
+  let sc=0,tot=0;
+  ans2.forEach((a,i)=>{
+    const sol=$('u2s_'+i);tot++;
+    if(a.type==='frac'){
+      const iz=$('u2z_'+i),in_=$('u2n_'+i);if(!iz||!in_)return;
+      const vz=parseInt(iz.value),vn=parseInt(in_.value);
+      if(!isNaN(vz)&&!isNaN(vn)&&vn!==0&&vz*a.d===a.z*vn){iz.style.borderColor='var(--g)';in_.style.borderColor='var(--g)';sc++;if(sol)sol.style.display='inline-block';}
+      else{iz.style.borderColor='var(--r)';in_.style.borderColor='var(--r)';}
+    }else{
+      const el=$('u2d_'+i);if(!el)return;
+      const v=parseFloat((el.value||'').replace(',','.'));
+      if(!isNaN(v)&&Math.abs(v-a.v)<0.02){el.style.borderColor='var(--g)';sc++;if(sol)sol.style.display='inline-block';}
+      else{el.style.borderColor='var(--r)';}
+    }
+  });
+  $('ue2fb').innerHTML=sc===tot?'<div class="fb fb-ok">✓ Alle richtig! Klasse!</div>':'<div class="fb fb-err">'+sc+' von '+tot+' richtig.</div>';
+}
+// Level 3: Relative Häufigkeit & Erwartungswert
+const ans3=[];
+function genUE3(){
+  const box=$('ue3');box.innerHTML='';ans3.length=0;
+  const t3=[
+    ()=>{const n=rnd(3,8)*10;const k=rnd(1,Math.floor(n/10))*10;const h=k/n;ans3.push({v:parseFloat(h.toFixed(2)),tol:0.02});return`<div class="ue-block"><div class="ue-row"><b>1.</b>&nbsp;Von ${n} Schülern wählen ${k} Sport. Rel. Häufigkeit =&nbsp;<input id="u3_0" type="number" step="0.01" style="width:65px"><span id="u3s_0" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ h = ${k}/${n} = ${h.toFixed(2)}</span></div></div>`;},
+    ()=>{const n=rnd(2,6)*100;const exp=Math.round(n/6);ans3.push({v:exp,tol:1});return`<div class="ue-block"><div class="ue-row"><b>2.</b>&nbsp;Würfel wird ${n}× geworfen. Erw. Häufigkeit für Zahl 1:&nbsp;<input id="u3_1" type="number" style="width:65px"><span id="u3s_1" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ E ≈ ${exp}</span></div></div>`;},
+    ()=>{const total=rnd(20,50);const abs=rnd(5,total-5);const h=abs/total;ans3.push({v:parseFloat(h.toFixed(2)),tol:0.02});return`<div class="ue-block"><div class="ue-row"><b>3.</b>&nbsp;Abs. Häufigkeit: ${abs} von ${total} → rel. Häufigkeit =&nbsp;<input id="u3_2" type="number" step="0.01" style="width:65px"><span id="u3s_2" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ h ≈ ${h.toFixed(2)}</span></div></div>`;},
+    ()=>{const n=rnd(2,6)*100;const exp=n/2;ans3.push({v:exp,tol:0.5});return`<div class="ue-block"><div class="ue-row"><b>4.</b>&nbsp;Münzwurf: ${n} Würfe. Erw. Häufigkeit "Kopf":&nbsp;<input id="u3_3" type="number" style="width:65px"><span id="u3s_3" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ E = ${n} · ½ = ${exp}</span></div></div>`;},
+    ()=>{const n=rnd(3,8)*100;const fav=rnd(1,3);const exp=Math.round(n*fav/8);ans3.push({v:exp,tol:1});return`<div class="ue-block"><div class="ue-row"><b>5.</b>&nbsp;Glücksrad (8 Felder, ${fav} rot): ${n} Drehungen. Erw. Anzahl rot:&nbsp;<input id="u3_4" type="number" style="width:65px"><span id="u3s_4" class="eg" style="display:none;margin-left:8px;padding:3px 8px">✓ E = ${n} · ${fav}/8 = ${exp}</span></div></div>`;}
+  ];
+  box.innerHTML=t3.map(t=>t()).join('');
+}
+function checkUE3(){
+  let sc=0;
+  ans3.forEach((a,i)=>{
+    const el=$('u3_'+i),sol=$('u3s_'+i);if(!el)return;
+    const v=parseFloat((el.value||'').replace(',','.'));
+    if(!isNaN(v)&&Math.abs(v-a.v)<=a.tol){el.style.borderColor='var(--g)';sc++;if(sol)sol.style.display='inline-block';}
+    else{el.style.borderColor='var(--r)';}
+  });
+  $('ue3fb').innerHTML=sc===5?'<div class="fb fb-ok">✓ Alle 5 richtig! Excellent!</div>':'<div class="fb fb-err">'+sc+' von 5 richtig. Weiterüben!</div>';
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+genUE1();genUE2();genUE3();
+initLT();
+initUT();
+updW();
+</script>
+</body>
+</html>

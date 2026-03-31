@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7.5 Dreiecke</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #b45309;
+    --primary-light: #f59e0b;
+    --primary-bg: #fef3c7;
+    --accent: #1d4ed8;
+    --accent-light: #dbeafe;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --bg: #fffbeb;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #fde68a;
+    --radius: 14px;
+    --shadow: 0 4px 18px rgba(180,83,9,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #78350f 0%, #b45309 55%, #f59e0b 100%);
+    color: white; padding: 20px 24px 16px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+  }
+  header h1 { font-family: 'Baloo 2', cursive; font-size: 1.5rem; font-weight: 700; }
+  header p { font-size: 0.83rem; opacity: 0.88; margin-top: 2px; }
+
+  nav {
+    display: flex; gap: 6px; padding: 14px 16px 0;
+    overflow-x: auto; flex-wrap: nowrap; background: var(--card);
+    border-bottom: 2px solid var(--border); scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0; background: var(--bg); border: none;
+    border-radius: 10px 10px 0 0; padding: 9px 15px;
+    font-family: 'Nunito', sans-serif; font-size: 0.84rem; font-weight: 700;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px; white-space: nowrap;
+  }
+  .tab-btn:hover { background: var(--primary-bg); color: var(--primary); }
+  .tab-btn.active { background: var(--primary); color: white; }
+
+  main { max-width: 920px; margin: 0 auto; padding: 22px 16px 80px; }
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 22px; margin-bottom: 18px;
+    box-shadow: var(--shadow); border: 1.5px solid var(--border);
+  }
+  .card h2 {
+    font-family: 'Baloo 2', cursive; font-size: 1.2rem;
+    color: var(--primary); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card p, .card li { color: var(--muted); font-size: 0.93rem; line-height: 1.7; }
+  .card ul { padding-left: 1.2rem; margin: 8px 0; }
+
+  .info-box {
+    border-left: 4px solid; border-radius: 0 10px 10px 0;
+    padding: 12px 15px; margin: 12px 0; font-size: 0.91rem; line-height: 1.65;
+  }
+  .info-box.yellow { background: var(--primary-bg); border-color: var(--primary); }
+  .info-box.yellow strong { color: var(--primary); }
+  .info-box.blue { background: var(--accent-light); border-color: var(--accent); }
+  .info-box.blue strong { color: var(--accent); }
+  .info-box.green { background: var(--success-light); border-color: var(--success); }
+  .info-box.green strong { color: #065f46; }
+
+  .section-intro {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: var(--radius); padding: 18px 20px; margin-bottom: 20px;
+    border-left: 5px solid var(--primary);
+  }
+  .section-intro h2 { font-family: 'Baloo 2', cursive; font-size: 1.25rem; color: var(--primary); margin-bottom: 4px; }
+  .section-intro p { color: var(--muted); font-size: 0.91rem; line-height: 1.6; }
+
+  .beispiel-box {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 2px solid var(--border); border-radius: 12px;
+    padding: 16px 18px; margin: 14px 0;
+  }
+  .beispiel-box .bsp-title { font-size: 0.78rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .beispiel-box .bsp-content { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.9; }
+
+  .btn {
+    background: var(--primary); color: white; border: none;
+    border-radius: 10px; padding: 10px 20px;
+    font-family: 'Nunito', sans-serif; font-size: 0.92rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s; display: inline-flex;
+    align-items: center; gap: 6px;
+  }
+  .btn:hover { background: #78350f; transform: translateY(-1px); }
+  .btn.outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+  .btn.outline:hover { background: var(--primary-bg); }
+  .btn.small { padding: 7px 14px; font-size: 0.83rem; }
+  .btn.green-btn { background: var(--success); }
+  .btn.green-btn:hover { background: #15803d; }
+
+  input[type="number"] {
+    border: 2px solid var(--border); border-radius: 9px;
+    padding: 8px 12px; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700; color: var(--text);
+    outline: none; transition: border-color 0.2s; background: #fafcff;
+    text-align: center; width: 80px;
+  }
+  input[type="number"]:focus { border-color: var(--primary); background: var(--primary-bg); }
+  input.correct { border-color: var(--success) !important; background: var(--success-light) !important; }
+  input.wrong { border-color: var(--danger) !important; background: var(--danger-light) !important; }
+
+  .feedback {
+    border-radius: 10px; padding: 12px 16px;
+    font-weight: 700; font-size: 0.93rem; margin-top: 12px; display: none;
+  }
+  .feedback.correct { background: var(--success-light); color: #065f46; display: block; }
+  .feedback.wrong { background: var(--danger-light); color: #7f1d1d; display: block; }
+
+  .level-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .level-btn { border: none; border-radius: 50px; padding: 7px 16px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; opacity: 0.5; }
+  .level-btn.active { opacity: 1; box-shadow: 0 3px 10px rgba(0,0,0,0.18); }
+  .level-btn.easy { background: #bbf7d0; color: #065f46; }
+  .level-btn.medium { background: #fde68a; color: #78350f; }
+  .level-btn.hard { background: #fecaca; color: #7f1d1d; }
+
+  .quiz-progress { background: var(--primary-bg); border-radius: 50px; height: 9px; margin-bottom: 18px; overflow: hidden; }
+  .quiz-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 50px; transition: width 0.5s; }
+  .quiz-q { font-weight: 800; font-size: 1rem; margin-bottom: 14px; line-height: 1.55; }
+  .quiz-options { display: grid; gap: 9px; }
+  .quiz-opt {
+    background: #fffbeb; border: 2px solid var(--border); border-radius: 11px;
+    padding: 11px 15px; text-align: left; font-family: 'Nunito', sans-serif;
+    font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: all 0.2s; color: var(--text);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: var(--primary-bg); }
+  .quiz-opt.sel-correct { background: var(--success-light) !important; border-color: var(--success) !important; color: #065f46 !important; font-weight: 800; }
+  .quiz-opt.sel-wrong { background: var(--danger-light) !important; border-color: var(--danger) !important; color: #7f1d1d !important; font-weight: 800; }
+  .quiz-opt.show-correct { background: var(--success-light); border-color: var(--success); color: #065f46; font-weight: 800; }
+
+  .result-screen { text-align: center; padding: 30px 10px; }
+  .result-emoji { font-size: 4rem; margin-bottom: 12px; }
+  .result-screen h3 { font-family: 'Baloo 2', cursive; font-size: 1.8rem; color: var(--primary); margin-bottom: 8px; }
+  .result-screen p { color: var(--muted); font-size: 1rem; margin-bottom: 20px; }
+  .quiz-score-big { font-family: 'Baloo 2', cursive; font-size: 2.2rem; font-weight: 700; color: var(--primary); text-align: center; }
+
+  .sticky-progress {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--card); border-top: 2px solid var(--border);
+    padding: 10px 20px; display: flex; align-items: center; gap: 14px;
+    z-index: 50; box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  }
+  .prog-label { font-size: 0.82rem; font-weight: 800; color: var(--muted); white-space: nowrap; }
+  .prog-bar-wrap { flex: 1; background: var(--primary-bg); border-radius: 50px; height: 8px; overflow: hidden; }
+  .prog-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 50px; transition: width 0.5s; }
+
+  .aufgabe-box { border: 2px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; background: #fffdf5; }
+  .aufgabe-nr { font-size: 0.78rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .aufgabe-text { font-size: 0.97rem; font-weight: 700; line-height: 1.65; margin-bottom: 12px; }
+  .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+
+  /* DREIECK TYPEN */
+  .dreieck-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 14px; margin: 14px 0; }
+  .dreieck-karte { border: 2px solid var(--border); border-radius: 14px; padding: 16px 12px; text-align: center; background: white; }
+  .dreieck-karte svg { display: block; margin: 0 auto 10px; }
+  .dk-name { font-family: 'Baloo 2', cursive; font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+  .dk-info { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* ZUORDNUNG */
+  .zu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  @media(max-width:500px) { .zu-grid { grid-template-columns: 1fr; } }
+  .zu-col-label { font-weight: 900; color: var(--primary); margin-bottom: 8px; font-size: 0.85rem; }
+  .zu-item {
+    border: 2px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; cursor: pointer; transition: all 0.2s;
+    background: #fffbeb; font-weight: 600; font-size: 0.9rem;
+    margin-bottom: 6px; user-select: none;
+  }
+  .zu-item:hover { border-color: var(--primary); background: var(--primary-bg); }
+  .zu-item.selected { border-color: var(--primary); background: var(--primary-bg); font-weight: 800; }
+  .zu-item.correct { border-color: var(--success); background: var(--success-light); color: #065f46; font-weight: 800; cursor: default; }
+  .zu-item.wrong-flash { border-color: var(--danger); background: var(--danger-light); }
+
+  /* FORMULA BOX */
+  .formula-box {
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    color: white; border-radius: 12px; padding: 16px 20px;
+    margin: 12px 0; text-align: center;
+  }
+  .formula-box.green { background: linear-gradient(135deg, #166534, #22c55e); }
+  .f-label { font-size: 0.82rem; opacity: 0.85; margin-bottom: 6px; }
+  .f-formula { font-family: 'Baloo 2', cursive; font-size: 1.6rem; font-weight: 700; }
+
+  /* TABLE */
+  .styled-table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  .styled-table th { background: var(--primary); color: white; padding: 10px 12px; font-size: 0.87rem; font-weight: 800; text-align: center; }
+  .styled-table td { padding: 10px 12px; border: 1.5px solid var(--border); text-align: center; font-size: 0.95rem; font-weight: 700; }
+  .styled-table tr:nth-child(even) td { background: #fffbeb; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:500px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📐 7.5 Dreiecke</h1>
+  <p>Dreieckarten · Winkel · Fläche &amp; Umfang · Konstruktion</p>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showSection('s-lernen',this)">📖 Lernen</button>
+  <button class="tab-btn" onclick="showSection('s-arten',this)">🔺 Dreieckarten</button>
+  <button class="tab-btn" onclick="showSection('s-winkel',this)">📐 Winkel</button>
+  <button class="tab-btn" onclick="showSection('s-flaeche',this)">📏 Fläche &amp; Umfang</button>
+  <button class="tab-btn" onclick="showSection('s-konstruktion',this)">✏️ Konstruktion</button>
+  <button class="tab-btn" onclick="showSection('s-quiz',this)">🏆 Quiz</button>
+</nav>
+
+<main>
+
+<!-- ══════════════ LERNEN ══════════════ -->
+<div class="section active" id="s-lernen">
+  <div class="section-intro">
+    <h2>📐 Alles über Dreiecke</h2>
+    <p>Ein Dreieck hat drei Seiten, drei Ecken und drei Winkel. Die Summe aller Innenwinkel beträgt immer 180°!</p>
+  </div>
+
+  <div class="card">
+    <h2>🔢 Grundbegriffe</h2>
+    <div class="info-box yellow">
+      <strong>Bezeichnungen:</strong><br>
+      🔤 Seiten: a, b, c (Kleinbuchstaben)<br>
+      📍 Ecken: A, B, C (Großbuchstaben) – Ecke A liegt gegenüber Seite a<br>
+      📐 Winkel: α (Alpha) an Ecke A, β (Beta) an Ecke B, γ (Gamma) an Ecke C<br>
+      📏 Höhe h<sub>a</sub> = senkrechter Abstand von Ecke A zur Grundseite a
+    </div>
+    <div style="display:flex;justify-content:center;margin:18px 0">
+      <svg viewBox="0 0 300 210" width="280" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="150,18 28,188 272,188" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+        <line x1="150" y1="18" x2="150" y2="188" stroke="#1d4ed8" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <rect x="143" y="181" width="12" height="12" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+        <text x="156" y="155" font-family="Nunito,sans-serif" font-size="13" fill="#1d4ed8" font-weight="800">h</text>
+        <text x="78" y="112" font-family="Nunito,sans-serif" font-size="15" fill="#b45309" font-weight="900">b</text>
+        <text x="213" y="112" font-family="Nunito,sans-serif" font-size="15" fill="#b45309" font-weight="900">a</text>
+        <text x="146" y="206" font-family="Nunito,sans-serif" font-size="15" fill="#b45309" font-weight="900">c</text>
+        <text x="141" y="14" font-family="Nunito,sans-serif" font-size="14" fill="#1e293b" font-weight="900">C</text>
+        <text x="12" y="196" font-family="Nunito,sans-serif" font-size="14" fill="#1e293b" font-weight="900">A</text>
+        <text x="268" y="196" font-family="Nunito,sans-serif" font-size="14" fill="#1e293b" font-weight="900">B</text>
+        <text x="36" y="182" font-family="Nunito,sans-serif" font-size="13" fill="#7c3aed" font-weight="800">α</text>
+        <text x="253" y="182" font-family="Nunito,sans-serif" font-size="13" fill="#7c3aed" font-weight="800">β</text>
+        <text x="146" y="40" font-family="Nunito,sans-serif" font-size="13" fill="#7c3aed" font-weight="800">γ</text>
+      </svg>
+    </div>
+    <div class="info-box green">
+      <strong>Innenwinkelsumme:</strong> α + β + γ = 180° &nbsp;– das gilt bei JEDEM Dreieck!
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📐 Formeln auf einen Blick</h2>
+    <div class="formula-box">
+      <div class="f-label">Flächeninhalt</div>
+      <div class="f-formula">A = ½ · g · h</div>
+    </div>
+    <div class="formula-box green">
+      <div class="f-label">Umfang</div>
+      <div class="f-formula">U = a + b + c</div>
+    </div>
+    <div class="info-box yellow">
+      <strong>g</strong> = eine Grundseite &nbsp;|&nbsp; <strong>h</strong> = die dazu gehörende Höhe (steht senkrecht auf g)
+    </div>
+    <div class="beispiel-box">
+      <div class="bsp-title">Beispiel</div>
+      <div class="bsp-content">
+        a = 6 cm, b = 5 cm, c = 4 cm, h<sub>a</sub> = 3 cm<br>
+        Umfang: U = 6 + 5 + 4 = <strong>15 cm</strong><br>
+        Fläche: A = ½ · 6 · 3 = <strong>9 cm²</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DREIECKARTEN ══════════════ -->
+<div class="section" id="s-arten">
+  <div class="section-intro">
+    <h2>🔺 Dreieckarten kennen</h2>
+    <p>Dreiecke werden nach ihren Seiten und ihren Winkeln eingeteilt.</p>
+  </div>
+
+  <div class="card">
+    <h2>📏 Einteilung nach Seiten</h2>
+    <div class="dreieck-grid">
+      <div class="dreieck-karte">
+        <svg viewBox="0 0 110 90" width="90">
+          <polygon points="55,8 8,82 102,82" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+          <!-- 3 gleichlange Markierungen -->
+          <line x1="27" y1="48" x2="33" y2="44" stroke="#b45309" stroke-width="2"/>
+          <line x1="30" y1="51" x2="36" y2="47" stroke="#b45309" stroke-width="2"/>
+          <line x1="74" y1="48" x2="80" y2="44" stroke="#b45309" stroke-width="2"/>
+          <line x1="77" y1="51" x2="83" y2="47" stroke="#b45309" stroke-width="2"/>
+          <line x1="52" y1="82" x2="52" y2="74" stroke="#b45309" stroke-width="2"/>
+          <line x1="58" y1="82" x2="58" y2="74" stroke="#b45309" stroke-width="2"/>
+          <line x1="29" y1="51" x2="35" y2="47" stroke="#b45309" stroke-width="2"/>
+          <line x1="75" y1="51" x2="81" y2="47" stroke="#b45309" stroke-width="2"/>
+        </svg>
+        <div class="dk-name">Gleichseitiges △</div>
+        <div class="dk-info">Alle 3 Seiten gleich lang<br>Alle Winkel = 60°</div>
+      </div>
+      <div class="dreieck-karte">
+        <svg viewBox="0 0 110 90" width="90">
+          <polygon points="55,8 8,82 102,82" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+          <!-- 2 gleiche Seiten -->
+          <line x1="26" y1="48" x2="32" y2="44" stroke="#1d4ed8" stroke-width="2"/>
+          <line x1="74" y1="48" x2="80" y2="44" stroke="#1d4ed8" stroke-width="2"/>
+        </svg>
+        <div class="dk-name">Gleichschenkliges △</div>
+        <div class="dk-info">Genau 2 Seiten gleich lang<br>2 Winkel gleich groß</div>
+      </div>
+      <div class="dreieck-karte">
+        <svg viewBox="0 0 110 90" width="90">
+          <polygon points="20,82 100,82 75,12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        </svg>
+        <div class="dk-name">Ungleichseitiges △</div>
+        <div class="dk-info">Alle 3 Seiten verschieden<br>Alle Winkel verschieden</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📐 Einteilung nach Winkeln</h2>
+    <div class="dreieck-grid">
+      <div class="dreieck-karte">
+        <svg viewBox="0 0 110 90" width="90">
+          <polygon points="55,10 8,82 102,82" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+          <text x="44" y="68" font-family="Nunito,sans-serif" font-size="10" fill="#b45309" font-weight="800">&lt;90°</text>
+        </svg>
+        <div class="dk-name">Spitzwinkliges △</div>
+        <div class="dk-info">Alle Winkel kleiner als 90°</div>
+      </div>
+      <div class="dreieck-karte">
+        <svg viewBox="0 0 110 90" width="90">
+          <polygon points="8,82 102,82 8,14" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+          <rect x="8" y="70" width="12" height="12" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+        </svg>
+        <div class="dk-name">Rechtwinkliges △</div>
+        <div class="dk-info">Ein Winkel = 90°<br>Längste Seite = Hypotenuse</div>
+      </div>
+      <div class="dreieck-karte">
+        <svg viewBox="0 0 110 90" width="90">
+          <polygon points="4,82 106,82 18,28" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+          <text x="12" y="74" font-family="Nunito,sans-serif" font-size="10" fill="#dc2626" font-weight="800">&gt;90°</text>
+        </svg>
+        <div class="dk-name">Stumpfwinkliges △</div>
+        <div class="dk-info">Ein Winkel größer als 90°</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔀 Zuordnen: Name → Merkmal</h2>
+    <p style="margin-bottom:14px">Klicke zuerst auf einen <strong>Dreiecksnamen</strong> links, dann auf das passende <strong>Merkmal</strong> rechts.</p>
+    <div id="zuordnung-wrap"></div>
+    <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn outline" onclick="initZuordnung()">🔄 Neu mischen</button>
+    </div>
+    <div class="feedback" id="zu-fb"></div>
+  </div>
+
+  <div class="card">
+    <h2>❓ Welcher Typ ist das?</h2>
+    <p style="margin-bottom:12px">Erkenne die Dreiecksart an den Angaben.</p>
+    <div id="arten-quiz-wrap"></div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn outline" onclick="initArtenQuiz()">🔄 Neue Aufgaben</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ WINKEL ══════════════ -->
+<div class="section" id="s-winkel">
+  <div class="section-intro">
+    <h2>📐 Winkel im Dreieck berechnen</h2>
+    <p>α + β + γ = 180° – nutze diese Regel, um den fehlenden Winkel zu finden.</p>
+  </div>
+
+  <div class="card">
+    <h2>📖 Die Regel</h2>
+    <div class="info-box yellow">
+      <strong>Innenwinkelsumme:</strong> α + β + γ = 180°<br><br>
+      Fehlender Winkel: z.B. γ = 180° − α − β
+    </div>
+    <div class="beispiel-box">
+      <div class="bsp-title">Beispiel</div>
+      <div class="bsp-content">
+        α = 50°, β = 70°, γ = ?<br>
+        γ = 180° − 50° − 70° = <strong>60°</strong>
+      </div>
+    </div>
+    <div class="info-box blue">
+      <strong>Besondere Fälle:</strong><br>
+      🔵 Gleichseitiges Dreieck: alle Winkel = 60°<br>
+      🔵 Rechtwinkliges Dreieck: 90° + α + β = 180° → α + β = 90°<br>
+      🔵 Gleichschenkliges Dreieck: die Basiswinkel sind gleich groß
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧮 Winkel berechnen – Aufgaben</h2>
+    <div class="level-tabs">
+      <button class="level-btn easy active" onclick="setWinkelLevel('easy',this)">⭐ Grundlegendes</button>
+      <button class="level-btn medium" onclick="setWinkelLevel('medium',this)">⭐⭐ Regelstandard</button>
+      <button class="level-btn hard" onclick="setWinkelLevel('hard',this)">⭐⭐⭐ Expertenaufgaben</button>
+    </div>
+    <div id="winkel-wrap"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn" onclick="checkWinkel()">✔ Prüfen</button>
+      <button class="btn outline" onclick="initWinkel()">🔄 Neue Aufgaben</button>
+    </div>
+    <div class="feedback" id="winkel-fb"></div>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Blitz-Aufgaben: Welcher Winkel fehlt?</h2>
+    <p style="margin-bottom:12px">Wähle die richtige Antwort – schnell!</p>
+    <div id="blitz-winkel-wrap"></div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn outline" onclick="initBlitzWinkel()">🔄 Neue Aufgaben</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ FLÄCHE & UMFANG ══════════════ -->
+<div class="section" id="s-flaeche">
+  <div class="section-intro">
+    <h2>📏 Fläche und Umfang berechnen</h2>
+    <p>A = ½ · g · h &nbsp;&nbsp; U = a + b + c</p>
+  </div>
+
+  <div class="card">
+    <h2>📖 Formeln und Beispiele</h2>
+    <div class="formula-box">
+      <div class="f-label">Flächeninhalt</div>
+      <div class="f-formula">A = ½ · g · h</div>
+    </div>
+    <div class="formula-box green">
+      <div class="f-label">Umfang</div>
+      <div class="f-formula">U = a + b + c</div>
+    </div>
+    <div class="beispiel-box">
+      <div class="bsp-title">Fläche berechnen</div>
+      <div class="bsp-content">g = 8 cm, h = 5 cm<br>A = ½ · 8 · 5 = <strong>20 cm²</strong></div>
+    </div>
+    <div class="beispiel-box">
+      <div class="bsp-title">Höhe berechnen (umgekehrt)</div>
+      <div class="bsp-content">A = 15 cm², g = 6 cm<br>15 = ½ · 6 · h &nbsp;→&nbsp; 15 = 3 · h &nbsp;→&nbsp; h = <strong>5 cm</strong></div>
+    </div>
+    <div class="info-box yellow">
+      <strong>Wichtig:</strong> Die Höhe steht immer <em>senkrecht</em> auf der Grundseite!
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧮 Fläche und Umfang – Aufgaben</h2>
+    <div class="level-tabs">
+      <button class="level-btn easy active" onclick="setFlaecheLevel('easy',this)">⭐ Grundlegendes</button>
+      <button class="level-btn medium" onclick="setFlaecheLevel('medium',this)">⭐⭐ Regelstandard</button>
+      <button class="level-btn hard" onclick="setFlaecheLevel('hard',this)">⭐⭐⭐ Expertenaufgaben</button>
+    </div>
+    <div id="flaeche-wrap"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn" onclick="checkFlaeche()">✔ Prüfen</button>
+      <button class="btn outline" onclick="initFlaeche()">🔄 Neue Aufgaben</button>
+    </div>
+    <div class="feedback" id="flaeche-fb"></div>
+  </div>
+</div>
+
+<!-- ══════════════ KONSTRUKTION ══════════════ -->
+<div class="section" id="s-konstruktion">
+  <div class="section-intro">
+    <h2>✏️ Dreiecke konstruieren</h2>
+    <p>Lerne, Dreiecke nach SSS, SWS und WSW zu zeichnen.</p>
+  </div>
+
+  <div class="card">
+    <h2>📖 Welche Angaben braucht man?</h2>
+    <div class="info-box yellow">
+      <strong>Für eine eindeutige Konstruktion braucht man mindestens 3 passende Angaben:</strong><br><br>
+      📌 <strong>SSS</strong> – drei Seiten (a, b, c)<br>
+      📌 <strong>SWS</strong> – zwei Seiten und der eingeschlossene Winkel<br>
+      📌 <strong>WSW</strong> – eine Seite und die beiden anliegenden Winkel
+    </div>
+
+    <div class="card" style="background:#f8fafc;margin-top:16px;border:none;box-shadow:none">
+      <h2 style="font-size:1rem;color:var(--primary)">✏️ SSS – Drei Seiten</h2>
+      <ol style="padding-left:1.3rem;color:var(--muted);font-size:0.93rem;line-height:2.2">
+        <li>Zeichne Grundseite <strong>c</strong> (z. B. 5 cm)</li>
+        <li>Schlage vom Punkt A einen Kreis mit Radius <strong>b</strong></li>
+        <li>Schlage vom Punkt B einen Kreis mit Radius <strong>a</strong></li>
+        <li>Schnittpunkt der Kreise = Punkt <strong>C</strong></li>
+        <li>Verbinde A–C und B–C</li>
+      </ol>
+    </div>
+    <div class="card" style="background:#f8fafc;margin-top:10px;border:none;box-shadow:none">
+      <h2 style="font-size:1rem;color:var(--accent)">✏️ SWS – Zwei Seiten + Winkel</h2>
+      <ol style="padding-left:1.3rem;color:var(--muted);font-size:0.93rem;line-height:2.2">
+        <li>Zeichne Seite <strong>c</strong></li>
+        <li>Zeichne an Punkt A den Winkel α</li>
+        <li>Trage Seite <strong>b</strong> auf dem Schenkel ab</li>
+        <li>Verbinde mit B → fertig</li>
+      </ol>
+    </div>
+    <div class="card" style="background:#f8fafc;margin-top:10px;border:none;box-shadow:none">
+      <h2 style="font-size:1rem;color:var(--success)">✏️ WSW – Seite + zwei Winkel</h2>
+      <ol style="padding-left:1.3rem;color:var(--muted);font-size:0.93rem;line-height:2.2">
+        <li>Zeichne Seite <strong>c</strong></li>
+        <li>Zeichne an Punkt A den Winkel α</li>
+        <li>Zeichne an Punkt B den Winkel β</li>
+        <li>Schnittpunkt der Schenkel = Punkt <strong>C</strong></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>❓ Reichen die Angaben zur Konstruktion?</h2>
+    <p style="margin-bottom:12px">Klicke auf die richtige Antwort.</p>
+    <div id="kq-wrap"></div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn outline" onclick="initKQ()">🔄 Neue Aufgaben</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📝 Lückentext: Konstruktionswissen</h2>
+    <div id="kluecken-wrap"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn" onclick="checkKLuecken()">✔ Prüfen</button>
+      <button class="btn outline" onclick="initKLuecken()">🔄 Neuer Text</button>
+    </div>
+    <div class="feedback" id="kluecken-fb"></div>
+  </div>
+</div>
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div class="section" id="s-quiz">
+  <div class="section-intro">
+    <h2>🏆 Großes Quiz – Dreiecke</h2>
+    <p>Teste dein Wissen über alle Aspekte dieses Kapitels!</p>
+  </div>
+  <div class="card">
+    <div class="level-tabs">
+      <button class="level-btn easy active" onclick="setQuizLevel('easy',this)">⭐ Grundlegendes</button>
+      <button class="level-btn medium" onclick="setQuizLevel('medium',this)">⭐⭐ Regelstandard</button>
+      <button class="level-btn hard" onclick="setQuizLevel('hard',this)">⭐⭐⭐ Expertenaufgaben</button>
+    </div>
+    <div id="quiz-main">
+      <div class="quiz-progress"><div class="quiz-progress-bar" id="quiz-prog-bar" style="width:0%"></div></div>
+      <div class="quiz-q" id="quiz-q">Klicke auf „Quiz starten".</div>
+      <div class="quiz-options" id="quiz-opts"></div>
+      <div class="feedback" id="quiz-fb"></div>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn green-btn" id="quiz-start-btn" onclick="startQuiz()">▶ Quiz starten</button>
+        <button class="btn outline" id="quiz-next-btn" onclick="nextQuizQ()" style="display:none">Weiter →</button>
+      </div>
+    </div>
+    <div id="quiz-result" style="display:none">
+      <div class="result-screen">
+        <div class="result-emoji" id="quiz-emoji">🎉</div>
+        <div class="quiz-score-big" id="quiz-score-big"></div>
+        <h3 id="quiz-title"></h3>
+        <p id="quiz-msg"></p>
+        <button class="btn green-btn" onclick="startQuiz()">🔄 Nochmal versuchen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<div class="sticky-progress">
+  <span class="prog-label">Mein Fortschritt</span>
+  <div class="prog-bar-wrap"><div class="prog-bar" id="main-prog-bar" style="width:0%"></div></div>
+  <span id="main-stars">⭐ 0</span>
+</div>
+
+<script>
+'use strict';
+
+// ═══ GLOBALS ═══
+let totalPts = 0;
+function addPts(n) {
+  totalPts = Math.min(totalPts + n, 100);
+  document.getElementById('main-prog-bar').style.width = totalPts + '%';
+  document.getElementById('main-stars').textContent = '⭐ ' + totalPts;
+}
+function rnd(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ═══ ZUORDNUNG (Index-basiert, keine String-Vergleiche in HTML-Attributen) ═══
+const ZU_PAIRS = [
+  { left: 'Gleichseitiges Dreieck',   right: 'Alle 3 Seiten gleich lang, alle Winkel 60°' },
+  { left: 'Gleichschenkliges Dreieck', right: 'Genau 2 Seiten gleich lang' },
+  { left: 'Rechtwinkliges Dreieck',   right: 'Ein Winkel beträgt genau 90°' },
+  { left: 'Stumpfwinkliges Dreieck',  right: 'Ein Winkel ist größer als 90°' },
+  { left: 'Spitzwinkliges Dreieck',   right: 'Alle Winkel sind kleiner als 90°' },
+];
+let zuSelectedLeft = null;
+let zuSolved = {};
+let zuRightOrder = [];
+
+function initZuordnung() {
+  zuSelectedLeft = null;
+  zuSolved = {};
+  zuRightOrder = [...Array(ZU_PAIRS.length).keys()].sort(() => Math.random() - 0.5);
+
+  const wrap = document.getElementById('zuordnung-wrap');
+  let leftHTML = '<div class="zu-col-label">DREIECKNAME</div>';
+  ZU_PAIRS.forEach((p, i) => {
+    leftHTML += `<div class="zu-item" id="zul-${i}" data-idx="${i}" onclick="zuClickLeft(${i})">${p.left}</div>`;
+  });
+
+  let rightHTML = '<div class="zu-col-label">MERKMAL</div>';
+  zuRightOrder.forEach((origIdx, pos) => {
+    rightHTML += `<div class="zu-item" id="zur-${pos}" data-orig="${origIdx}" onclick="zuClickRight(${pos})">${ZU_PAIRS[origIdx].right}</div>`;
+  });
+
+  wrap.innerHTML = `<div class="zu-grid"><div>${leftHTML}</div><div>${rightHTML}</div></div>`;
+  document.getElementById('zu-fb').style.display = 'none';
+}
+
+function zuClickLeft(idx) {
+  if (zuSolved[idx]) return;
+  document.querySelectorAll('[id^="zul-"]').forEach(e => e.classList.remove('selected'));
+  document.getElementById('zul-' + idx).classList.add('selected');
+  zuSelectedLeft = idx;
+}
+
+function zuClickRight(pos) {
+  if (zuSelectedLeft === null) return;
+  const rightEl = document.getElementById('zur-' + pos);
+  if (rightEl.classList.contains('correct')) return;
+
+  const origIdx = parseInt(rightEl.dataset.orig);
+  const leftEl = document.getElementById('zul-' + zuSelectedLeft);
+
+  if (origIdx === zuSelectedLeft) {
+    // Richtig!
+    leftEl.classList.remove('selected');
+    leftEl.classList.add('correct');
+    leftEl.onclick = null;
+    rightEl.classList.add('correct');
+    rightEl.onclick = null;
+    zuSolved[zuSelectedLeft] = true;
+    addPts(1);
+    zuSelectedLeft = null;
+    if (Object.keys(zuSolved).length === ZU_PAIRS.length) {
+      const fb = document.getElementById('zu-fb');
+      fb.className = 'feedback correct';
+      fb.textContent = '✅ Alle 5 Paare richtig zugeordnet!';
+    }
+  } else {
+    // Falsch
+    leftEl.classList.add('wrong-flash');
+    rightEl.classList.add('wrong-flash');
+    setTimeout(() => {
+      leftEl.classList.remove('wrong-flash');
+      rightEl.classList.remove('wrong-flash');
+    }, 700);
+    const fb = document.getElementById('zu-fb');
+    fb.className = 'feedback wrong';
+    fb.textContent = '❌ Das passt nicht. Versuche es nochmal!';
+    fb.style.display = 'block';
+    setTimeout(() => { fb.style.display = 'none'; }, 1500);
+    zuSelectedLeft = null;
+    document.querySelectorAll('[id^="zul-"]').forEach(e => e.classList.remove('selected'));
+  }
+}
+
+// ═══ ARTEN QUIZ ═══
+const ARTEN_POOL = [
+  { q: 'Dreieck mit α = 40°, β = 70°, γ = 70° – welche Art?', opts: ['Gleichseitiges △', 'Gleichschenkliges △', 'Stumpfwinkliges △', 'Rechtwinkliges △'], ans: 1, tip: 'Zwei gleiche Winkel (70°) → gleichschenkliges Dreieck!' },
+  { q: 'Dreieck mit a = 5 cm, b = 5 cm, c = 5 cm – welche Art?', opts: ['Gleichschenkliges △', 'Ungleichseitiges △', 'Gleichseitiges △', 'Rechtwinkliges △'], ans: 2, tip: 'Alle drei Seiten gleich → gleichseitiges Dreieck!' },
+  { q: 'Dreieck mit einem Winkel von 115° – welche Art?', opts: ['Spitzwinkliges △', 'Rechtwinkliges △', 'Stumpfwinkliges △', 'Gleichschenkliges △'], ans: 2, tip: 'Ein Winkel > 90° → stumpfwinkliges Dreieck!' },
+  { q: 'Dreieck mit Winkeln 30°, 60°, 90° – welche Art?', opts: ['Spitzwinkliges △', 'Rechtwinkliges △', 'Stumpfwinkliges △', 'Gleichseitiges △'], ans: 1, tip: 'Ein Winkel = 90° → rechtwinkliges Dreieck!' },
+  { q: 'Dreieck mit a = 3 cm, b = 5 cm, c = 7 cm – welche Art?', opts: ['Gleichseitiges △', 'Gleichschenkliges △', 'Rechtwinkliges △', 'Ungleichseitiges △'], ans: 3, tip: 'Alle Seiten verschieden → ungleichseitiges Dreieck!' },
+  { q: 'Was gilt für jedes gleichseitige Dreieck?', opts: ['Alle Winkel sind 90°', 'Alle Winkel sind 60°', 'Zwei Winkel sind 60°', 'Alle Winkel sind verschieden'], ans: 1, tip: 'Gleichseitig: alle Seiten gleich, daher alle Winkel = 60°!' },
+  { q: 'Dreieck mit α = β – was kann man sagen?', opts: ['Es ist rechtwinklig', 'Es ist gleichschenklig', 'Es ist gleichseitig', 'Es ist stumpfwinklig'], ans: 1, tip: 'Gleiche Winkel → gleiche Gegenseiten → gleichschenklig!' },
+];
+let artenQuizData = [];
+function initArtenQuiz() {
+  artenQuizData = [...ARTEN_POOL].sort(() => Math.random() - 0.5).slice(0, 4);
+  const wrap = document.getElementById('arten-quiz-wrap');
+  wrap.innerHTML = artenQuizData.map((d, i) => `
+    <div class="aufgabe-box" id="aq-${i}" style="margin-bottom:12px">
+      <div class="aufgabe-nr">Aufgabe ${i + 1}</div>
+      <div class="aufgabe-text">${d.q}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${d.opts.map((o, j) => `<button class="btn small outline" onclick="answerArten(${i},${j},this)">${o}</button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function answerArten(i, choice, btn) {
+  const d = artenQuizData[i];
+  document.querySelectorAll('#aq-' + i + ' button').forEach(b => { b.disabled = true; });
+  if (choice === d.ans) {
+    btn.style.background = 'var(--success)'; btn.style.color = 'white'; btn.style.borderColor = 'var(--success)';
+    addPts(2);
+  } else {
+    btn.style.background = 'var(--danger)'; btn.style.color = 'white';
+    const allBtns = document.querySelectorAll('#aq-' + i + ' button');
+    allBtns[d.ans].style.background = 'var(--success)'; allBtns[d.ans].style.color = 'white';
+    const tip = document.createElement('div');
+    tip.style.cssText = 'margin-top:8px;font-size:0.88rem;font-weight:700;color:#7f1d1d';
+    tip.textContent = '→ ' + d.tip;
+    document.getElementById('aq-' + i).appendChild(tip);
+  }
+}
+
+// ═══ WINKEL BERECHNEN ═══
+let winkelLevel = 'easy', winkelData = [];
+function setWinkelLevel(l, btn) {
+  winkelLevel = l;
+  document.querySelectorAll('#s-winkel .level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  initWinkel();
+}
+function initWinkel() {
+  winkelData = [];
+  const count = winkelLevel === 'hard' ? 4 : 5;
+  for (let i = 0; i < count; i++) {
+    let a, b, c, mode;
+    let attempts = 0;
+    do {
+      a = rnd(25, 80); b = rnd(20, 80); c = 180 - a - b;
+      attempts++;
+    } while ((c <= 5 || c >= 170) && attempts < 100);
+    if (winkelLevel === 'easy') {
+      mode = 'c';
+    } else if (winkelLevel === 'medium') {
+      mode = ['a', 'b', 'c'][rnd(0, 2)];
+    } else {
+      // hard: include special case gleichschenklig
+      if (Math.random() < 0.4) {
+        const base = rnd(30, 70);
+        a = base; b = base; c = 180 - 2 * base;
+        if (c <= 0) { i--; continue; }
+      }
+      mode = ['a', 'b', 'c'][rnd(0, 2)];
+    }
+    winkelData.push({ a, b, c, mode });
+  }
+  const wrap = document.getElementById('winkel-wrap');
+  wrap.innerHTML = '<div class="two-col">' + winkelData.map((d, i) => {
+    const aShow = d.mode === 'a' ? '?' : d.a + '°';
+    const bShow = d.mode === 'b' ? '?' : d.b + '°';
+    const cShow = d.mode === 'c' ? '?' : d.c + '°';
+    const label = d.mode === 'a' ? 'α' : d.mode === 'b' ? 'β' : 'γ';
+    return `
+      <div class="aufgabe-box">
+        <div class="aufgabe-nr">Aufgabe ${i + 1}</div>
+        <div class="aufgabe-text">α = ${aShow} &nbsp; β = ${bShow} &nbsp; γ = ${cShow}</div>
+        <div class="row">
+          <label style="font-weight:700">${label} =</label>
+          <input type="number" id="wi-${i}" min="1" max="178"> °
+        </div>
+      </div>`;
+  }).join('') + '</div>';
+  document.getElementById('winkel-fb').style.display = 'none';
+}
+function checkWinkel() {
+  let correct = 0;
+  winkelData.forEach((d, i) => {
+    const inp = document.getElementById('wi-' + i);
+    const ans = d.mode === 'a' ? d.a : d.mode === 'b' ? d.b : d.c;
+    if (parseInt(inp.value) === ans) { inp.className = 'correct'; correct++; }
+    else inp.className = 'wrong';
+  });
+  const fb = document.getElementById('winkel-fb');
+  if (correct === winkelData.length) {
+    fb.className = 'feedback correct';
+    fb.textContent = '✅ Alle ' + correct + ' Winkel richtig!';
+    addPts(6);
+  } else {
+    const sol = winkelData.map((d, i) => {
+      const ans = d.mode === 'a' ? d.a : d.mode === 'b' ? d.b : d.c;
+      return parseInt(document.getElementById('wi-' + i).value) !== ans
+        ? 'A' + (i + 1) + ': 180°−' + (d.mode !== 'a' ? d.a : '?') + '°−' + (d.mode !== 'b' ? d.b : '?') + '°=' + ans + '°'
+        : null;
+    }).filter(Boolean);
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '❌ ' + correct + '/' + winkelData.length + ' richtig.<br>' + sol.join('<br>');
+  }
+}
+
+// ═══ BLITZ WINKEL ═══
+let blitzWData = [];
+function initBlitzWinkel() {
+  blitzWData = [];
+  for (let i = 0; i < 6; i++) {
+    let a, b, c;
+    let tries = 0;
+    do { a = rnd(30, 80); b = rnd(20, 80); c = 180 - a - b; tries++; }
+    while ((c <= 5 || c >= 170) && tries < 100);
+
+    // Generate 3 wrong options distinct from c
+    const wrong = new Set();
+    while (wrong.size < 3) {
+      const w = c + [-20, -15, -10, 10, 15, 20, 25, 30][rnd(0, 7)];
+      if (w > 0 && w < 180 && w !== c) wrong.add(w);
+    }
+    const opts = [c, ...wrong].sort(() => Math.random() - 0.5);
+    blitzWData.push({ a, b, c, opts });
+  }
+  const wrap = document.getElementById('blitz-winkel-wrap');
+  wrap.innerHTML = '<div class="two-col">' + blitzWData.map((d, i) => `
+    <div class="aufgabe-box" id="bw-${i}">
+      <div class="aufgabe-nr">Aufgabe ${i + 1}</div>
+      <div class="aufgabe-text">α = ${d.a}°, β = ${d.b}°<br>γ = ?</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${d.opts.map(o => `<button class="btn small outline" onclick="answerBlitzWinkel(${i},${o},this)">${o}°</button>`).join('')}
+      </div>
+    </div>`).join('') + '</div>';
+}
+function answerBlitzWinkel(i, choice, btn) {
+  const d = blitzWData[i];
+  document.querySelectorAll('#bw-' + i + ' button').forEach(b => { b.disabled = true; });
+  if (choice === d.c) {
+    btn.style.background = 'var(--success)'; btn.style.color = 'white'; btn.style.borderColor = 'var(--success)';
+    addPts(2);
+  } else {
+    btn.style.background = 'var(--danger)'; btn.style.color = 'white';
+    const tip = document.createElement('div');
+    tip.style.cssText = 'margin-top:6px;font-size:0.85rem;font-weight:700;color:#7f1d1d';
+    tip.textContent = '→ 180°−' + d.a + '°−' + d.b + '°=' + d.c + '°';
+    document.getElementById('bw-' + i).appendChild(tip);
+  }
+}
+
+// ═══ FLÄCHE & UMFANG ═══
+let flaecheLevel = 'easy', flaecheData = [];
+function setFlaecheLevel(l, btn) {
+  flaecheLevel = l;
+  document.querySelectorAll('#s-flaeche .level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  initFlaeche();
+}
+function initFlaeche() {
+  flaecheData = [];
+  if (flaecheLevel === 'easy') {
+    for (let i = 0; i < 6; i++) {
+      const g = rnd(2, 12) * 2;
+      const h = rnd(2, 10);
+      if (i < 3) {
+        flaecheData.push({ type: 'A', g, h, ans: g * h / 2, label: 'g = ' + g + ' cm, h = ' + h + ' cm' });
+      } else {
+        const b = rnd(3, 10), c = rnd(3, 10);
+        flaecheData.push({ type: 'U', a: g, b, c, ans: g + b + c, label: 'a = ' + g + ' cm, b = ' + b + ' cm, c = ' + c + ' cm' });
+      }
+    }
+  } else if (flaecheLevel === 'medium') {
+    for (let i = 0; i < 6; i++) {
+      const g = rnd(4, 16);
+      const h = rnd(3, 12);
+      const A = g * h / 2;
+      const mode = i < 2 ? 'A' : i < 4 ? 'U' : 'h';
+      if (mode === 'A') {
+        flaecheData.push({ type: 'A', g, h, ans: A, label: 'g = ' + g + ' cm, h = ' + h + ' cm' });
+      } else if (mode === 'U') {
+        const b = rnd(3, 14), c = rnd(3, 14);
+        flaecheData.push({ type: 'U', a: g, b, c, ans: g + b + c, label: 'a = ' + g + ' cm, b = ' + b + ' cm, c = ' + c + ' cm' });
+      } else {
+        // h aus A und g
+        const Aval = rnd(6, 30);
+        const gval = rnd(2, 10) * 2;
+        const hval = 2 * Aval / gval;
+        if (!Number.isInteger(hval)) { i--; continue; }
+        flaecheData.push({ type: 'h', g: gval, A: Aval, ans: hval, label: 'A = ' + Aval + ' cm², g = ' + gval + ' cm' });
+      }
+    }
+  } else {
+    // hard: Dezimalwerte, gemischt
+    for (let i = 0; i < 6; i++) {
+      const g = rnd(3, 14);
+      const h = rnd(3, 12);
+      const A = g * h / 2;
+      const type = i < 3 ? 'A' : 'h';
+      if (type === 'A') {
+        flaecheData.push({ type: 'A', g, h, ans: A, label: 'g = ' + g + ' cm, h = ' + h + ' cm' });
+      } else {
+        const Av = rnd(12, 50);
+        const gv = rnd(4, 16);
+        const hv = 2 * Av / gv;
+        if (hv !== Math.round(hv * 10) / 10) { i--; continue; }
+        flaecheData.push({ type: 'h', g: gv, A: Av, ans: parseFloat(hv.toFixed(1)), label: 'A = ' + Av + ' cm², g = ' + gv + ' cm' });
+      }
+    }
+  }
+  const wrap = document.getElementById('flaeche-wrap');
+  wrap.innerHTML = '<div class="two-col">' + flaecheData.map((d, i) => {
+    const askLabel = d.type === 'A' ? 'A =' : d.type === 'U' ? 'U =' : 'h =';
+    const unit = d.type === 'A' ? 'cm²' : 'cm';
+    return `
+      <div class="aufgabe-box">
+        <div class="aufgabe-nr">Aufgabe ${i + 1}</div>
+        <div class="aufgabe-text">${d.label}</div>
+        <div class="row">
+          <label style="font-weight:700">${askLabel}</label>
+          <input type="number" id="fl-${i}" step="0.1">
+          <span style="color:var(--muted);font-weight:700">${unit}</span>
+        </div>
+      </div>`;
+  }).join('') + '</div>';
+  document.getElementById('flaeche-fb').style.display = 'none';
+}
+function checkFlaeche() {
+  let correct = 0;
+  flaecheData.forEach((d, i) => {
+    const inp = document.getElementById('fl-' + i);
+    if (Math.abs(parseFloat(inp.value) - d.ans) < 0.05) { inp.className = 'correct'; correct++; }
+    else inp.className = 'wrong';
+  });
+  const fb = document.getElementById('flaeche-fb');
+  if (correct === flaecheData.length) {
+    fb.className = 'feedback correct';
+    fb.textContent = '✅ Alle ' + correct + ' Aufgaben korrekt!';
+    addPts(8);
+  } else {
+    const sol = flaecheData.map((d, i) => {
+      const v = parseFloat(document.getElementById('fl-' + i).value);
+      if (Math.abs(v - d.ans) >= 0.05) {
+        const hint = d.type === 'A' ? '½·' + d.g + '·' + d.h + '=' + d.ans
+          : d.type === 'U' ? d.a + '+' + d.b + '+' + d.c + '=' + d.ans
+          : '2·' + d.A + '÷' + d.g + '=' + d.ans;
+        return 'A' + (i + 1) + ': ' + hint;
+      }
+      return null;
+    }).filter(Boolean);
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '❌ ' + correct + '/' + flaecheData.length + ' richtig.<br>' + sol.join('<br>');
+  }
+}
+
+// ═══ KONSTRUKTION QUIZ ═══
+const KQ_POOL = [
+  { q: 'Sind 3 Seiten (SSS) ausreichend für eine eindeutige Konstruktion?', opts: ['Ja, eindeutig', 'Nein, nicht eindeutig', 'Nur wenn alle gleich lang'], ans: 0, tip: 'Drei Seiten bestimmen ein Dreieck eindeutig (SSS-Kongruenzsatz).' },
+  { q: 'Reichen 3 Winkel (WWW) zur eindeutigen Konstruktion?', opts: ['Ja, eindeutig', 'Nein – Größe bleibt unbekannt', 'Nur wenn die Summe 180° ergibt'], ans: 1, tip: '3 Winkel geben nur die Form an – unendlich viele verschieden große Dreiecke möglich!' },
+  { q: 'Was ist das Verfahren WSW?', opts: ['3 Winkel', 'Eine Seite + die anliegenden zwei Winkel', '2 Seiten + eingeschlossener Winkel'], ans: 1, tip: 'WSW = Winkel-Seite-Winkel: eine Seite und die beiden angrenzenden Winkel.' },
+  { q: 'Was ist das Verfahren SWS?', opts: ['3 Seiten', '2 Seiten + eingeschlossener Winkel', '1 Seite + 2 Winkel'], ans: 1, tip: 'SWS = Seite-Winkel-Seite: zwei Seiten und der von ihnen eingeschlossene Winkel.' },
+  { q: 'Wie findet man bei SSS den Punkt C?', opts: ['Winkel messen', 'Schnittpunkt zweier Kreise', 'Mittelpunkt der Grundseite'], ans: 1, tip: 'Von A und B je einen Kreis schlagen (Radien b bzw. a) – Schnittpunkt = C.' },
+  { q: 'Kann man ein Dreieck mit a=3, b=4, c=10 zeichnen?', opts: ['Ja', 'Nein – 3+4=7 < 10, das geht nicht', 'Nur mit Taschenrechner'], ans: 1, tip: 'Die Summe zweier Seiten muss immer größer sein als die dritte Seite!' },
+];
+let kqData = [];
+function initKQ() {
+  kqData = [...KQ_POOL].sort(() => Math.random() - 0.5).slice(0, 4);
+  const wrap = document.getElementById('kq-wrap');
+  wrap.innerHTML = kqData.map((d, i) => `
+    <div class="aufgabe-box" id="kq-${i}" style="margin-bottom:12px">
+      <div class="aufgabe-nr">Aufgabe ${i + 1}</div>
+      <div class="aufgabe-text">${d.q}</div>
+      <div style="display:grid;gap:6px">
+        ${d.opts.map((o, j) => `<button class="btn small outline" onclick="answerKQ(${i},${j},this)">${o}</button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function answerKQ(i, choice, btn) {
+  const d = kqData[i];
+  document.querySelectorAll('#kq-' + i + ' button').forEach(b => { b.disabled = true; });
+  if (choice === d.ans) {
+    btn.style.background = 'var(--success)'; btn.style.color = 'white'; btn.style.borderColor = 'var(--success)';
+    addPts(2);
+  } else {
+    btn.style.background = 'var(--danger)'; btn.style.color = 'white';
+    document.querySelectorAll('#kq-' + i + ' button')[d.ans].style.background = 'var(--success)';
+    document.querySelectorAll('#kq-' + i + ' button')[d.ans].style.color = 'white';
+    const tip = document.createElement('div');
+    tip.style.cssText = 'margin-top:6px;font-size:0.85rem;font-weight:700;color:#7f1d1d';
+    tip.textContent = '→ ' + d.tip;
+    document.getElementById('kq-' + i).appendChild(tip);
+  }
+}
+
+// ═══ KONSTRUKTION LÜCKENTEXT ═══
+const KLUECKEN = [
+  {
+    parts: ['Um ein Dreieck eindeutig zu konstruieren, braucht man mindestens ', ' passende Angaben. Beim Verfahren SSS kennt man alle drei ', '. Den dritten Punkt findet man als Schnittpunkt von zwei ', '.'],
+    blanks: ['3', 'Seiten', 'Kreisen'],
+    opts: ['2', '3', '4', 'Seiten', 'Winkel', 'Kreisen', 'Geraden']
+  },
+  {
+    parts: ['Beim Verfahren SWS kennt man ', ' Seiten und den ', ' Winkel. Beim Verfahren WSW sind eine ', ' und zwei Winkel gegeben.'],
+    blanks: ['zwei', 'eingeschlossenen', 'Seite'],
+    opts: ['eine', 'zwei', 'drei', 'eingeschlossenen', 'gegenüberliegenden', 'Seite', 'Höhe']
+  },
+  {
+    parts: ['Drei Winkel allein reichen ', ' zur eindeutigen Konstruktion, weil die ', ' des Dreiecks unbekannt bleibt. Man kann beliebig ', ' ähnliche Dreiecke zeichnen.'],
+    blanks: ['nicht', 'Größe', 'viele'],
+    opts: ['nicht', 'immer', 'Größe', 'Form', 'viele', 'keine', 'wenige']
+  }
+];
+let klueckenData = null;
+function initKLuecken() {
+  klueckenData = KLUECKEN[rnd(0, KLUECKEN.length - 1)];
+  let html = '<div style="font-size:1rem;line-height:3">';
+  klueckenData.parts.forEach((part, i) => {
+    html += part;
+    if (i < klueckenData.blanks.length) {
+      html += `<select id="kl-${i}" style="padding:5px 8px;border-radius:6px;border:2px solid var(--border);font-family:Nunito,sans-serif;font-weight:700;font-size:0.92rem">`;
+      html += '<option value="">– wählen –</option>';
+      klueckenData.opts.forEach(o => { html += `<option value="${o}">${o}</option>`; });
+      html += '</select>';
+    }
+  });
+  html += '</div>';
+  document.getElementById('kluecken-wrap').innerHTML = html;
+  document.getElementById('kluecken-fb').style.display = 'none';
+}
+function checkKLuecken() {
+  let correct = 0;
+  klueckenData.blanks.forEach((ans, i) => {
+    const sel = document.getElementById('kl-' + i);
+    if (sel.value === ans) {
+      sel.style.borderColor = 'var(--success)'; sel.style.background = 'var(--success-light)'; correct++;
+    } else {
+      sel.style.borderColor = 'var(--danger)'; sel.style.background = 'var(--danger-light)';
+    }
+  });
+  const fb = document.getElementById('kluecken-fb');
+  if (correct === klueckenData.blanks.length) {
+    fb.className = 'feedback correct'; fb.textContent = '✅ Alle Lücken richtig!'; addPts(4);
+  } else {
+    fb.className = 'feedback wrong';
+    fb.textContent = '❌ ' + correct + '/' + klueckenData.blanks.length + ' richtig. Lösungen: ' + klueckenData.blanks.join(' | ');
+  }
+}
+
+// ═══ QUIZ ═══
+const QUIZ_POOL = {
+  easy: [
+    { q: 'Wie viel Grad haben alle Innenwinkel eines Dreiecks zusammen?', opts: ['90°', '180°', '360°', '270°'], ans: 1, tip: 'Die Innenwinkelsumme beträgt immer 180°!' },
+    { q: 'Wie lautet die Formel für den Flächeninhalt eines Dreiecks?', opts: ['A = g · h', 'A = ½ · g · h', 'A = 2 · g · h', 'A = (g + h) / 2'], ans: 1, tip: 'A = ½ · g · h (halb mal Grundlinie mal Höhe)' },
+    { q: 'α = 60°, β = 80°. Wie groß ist γ?', opts: ['40°', '50°', '140°', '20°'], ans: 0, tip: '180° − 60° − 80° = 40°' },
+    { q: 'Umfang eines Dreiecks mit a=3, b=4, c=5?', opts: ['12 cm', '15 cm', '20 cm', '10 cm'], ans: 0, tip: 'U = 3+4+5 = 12 cm' },
+    { q: 'Welches Dreieck hat alle Winkel gleich groß?', opts: ['Gleichschenkliges △', 'Rechtwinkliges △', 'Gleichseitiges △', 'Stumpfwinkliges △'], ans: 2, tip: 'Gleichseitig = alle Seiten und alle Winkel gleich (60° je)' },
+    { q: 'Wie heißt die Seite gegenüber dem 90°-Winkel?', opts: ['Grundseite', 'Kathete', 'Höhe', 'Hypotenuse'], ans: 3, tip: 'Die längste Seite im rechtwinkligen Dreieck heißt Hypotenuse.' },
+  ],
+  medium: [
+    { q: 'Dreieck: g=8 cm, h=6 cm. Wie groß ist A?', opts: ['48 cm²', '24 cm²', '14 cm²', '96 cm²'], ans: 1, tip: 'A = ½ · 8 · 6 = 24 cm²' },
+    { q: 'Welcher Dreieckstyp hat genau einen 90°-Winkel?', opts: ['Stumpfwinkliges', 'Gleichschenkliges', 'Rechtwinkliges', 'Spitzwinkliges'], ans: 2, tip: 'Ein Winkel = 90° → rechtwinkliges Dreieck!' },
+    { q: 'Fläche = 20 cm², Grundseite = 8 cm. Wie groß ist die Höhe?', opts: ['2,5 cm', '5 cm', '10 cm', '4 cm'], ans: 1, tip: 'h = 2·A÷g = 2·20÷8 = 5 cm' },
+    { q: 'α = β = 55°. Welcher Typ (nach Seiten)?', opts: ['Gleichseitiges △', 'Ungleichseitiges △', 'Gleichschenkliges △', 'Rechtwinkliges △'], ans: 2, tip: 'Zwei gleiche Winkel → zwei gleiche Seiten → gleichschenklig!' },
+    { q: 'Was braucht man NICHT für SSS-Konstruktion?', opts: ['Zirkel', 'Lineal', 'Geodreieck zum Winkelmessen', 'Die drei Seitenlängen'], ans: 2, tip: 'Beim SSS-Verfahren braucht man nur Zirkel und Lineal.' },
+    { q: 'Wie viele Angaben braucht man mindestens für eine eindeutige Konstruktion?', opts: ['2', '3', '4', '5'], ans: 1, tip: '3 Angaben in richtiger Kombination reichen aus.' },
+  ],
+  hard: [
+    { q: 'Gleichschenkliges △, Basiswinkel = 72°. Wie groß ist der Spitzenwinkel?', opts: ['18°', '36°', '44°', '108°'], ans: 1, tip: '72+72+γ=180° → γ=36°' },
+    { q: 'Dreieck: U=24 cm, b=7 cm, c=9 cm. Wie lang ist a?', opts: ['8 cm', '5 cm', '7 cm', '10 cm'], ans: 0, tip: 'a = 24−7−9 = 8 cm' },
+    { q: 'Warum reichen 3 Winkel NICHT zur eindeutigen Konstruktion?', opts: ['Weil die Summe immer 180° ergibt', 'Weil die Größe des Dreiecks unbekannt bleibt', 'Weil man den Zirkel braucht', 'Weil kein rechter Winkel vorhanden'], ans: 1, tip: '3 Winkel geben nur die Form an – das Dreieck kann beliebig groß sein!' },
+    { q: 'Ist die kleinste Seite dem kleinsten Winkel gegenüber?', opts: ['Ja, immer', 'Nein, nie', 'Nur bei rechtwinkligen', 'Nur bei gleichseitigen'], ans: 0, tip: 'Ja! Größere Winkel liegen immer der größeren Seite gegenüber.' },
+    { q: 'Dreieck mit a=5, b=5, γ=40°. Welcher Typ?', opts: ['Gleichseitig', 'Stumpfwinklig', 'Gleichschenklig und spitzwinklig', 'Rechtwinklig'], ans: 2, tip: 'a=b → gleichschenklig; γ=40°, α=β=70° → alle < 90° → spitzwinklig' },
+    { q: 'Welche Dreiecke sind IMMER spitzwinklig?', opts: ['Gleichschenklige', 'Stumpfwinklige', 'Gleichseitige', 'Ungleichseitige'], ans: 2, tip: 'Gleichseitig: alle Winkel = 60° < 90° → immer spitzwinklig!' },
+  ]
+};
+let quizLevel = 'easy', quizData = [], quizIdx = 0, quizScore = 0, quizAnswered = false;
+function setQuizLevel(l, btn) {
+  quizLevel = l;
+  document.querySelectorAll('#s-quiz .level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('quiz-start-btn').style.display = 'inline-flex';
+  document.getElementById('quiz-opts').innerHTML = '';
+  document.getElementById('quiz-q').textContent = 'Klicke auf „Quiz starten".';
+  document.getElementById('quiz-fb').style.display = 'none';
+  document.getElementById('quiz-next-btn').style.display = 'none';
+}
+function startQuiz() {
+  quizData = [...QUIZ_POOL[quizLevel]].sort(() => Math.random() - 0.5).slice(0, 6);
+  quizIdx = 0; quizScore = 0; quizAnswered = false;
+  document.getElementById('quiz-main').style.display = 'block';
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('quiz-start-btn').style.display = 'none';
+  document.getElementById('quiz-next-btn').style.display = 'none';
+  showQuizQ();
+}
+function showQuizQ() {
+  const d = quizData[quizIdx];
+  document.getElementById('quiz-prog-bar').style.width = (quizIdx / quizData.length * 100) + '%';
+  document.getElementById('quiz-q').innerHTML =
+    '<span style="color:var(--muted);font-size:0.82rem">Frage ' + (quizIdx + 1) + '/' + quizData.length + '</span><br>' + d.q;
+  document.getElementById('quiz-opts').innerHTML =
+    d.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('');
+  document.getElementById('quiz-fb').style.display = 'none';
+  document.getElementById('quiz-next-btn').style.display = 'none';
+  quizAnswered = false;
+}
+function answerQuiz(i) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const d = quizData[quizIdx];
+  const allOpts = document.querySelectorAll('.quiz-opt');
+  allOpts.forEach((o, j) => {
+    o.disabled = true;
+    if (j === d.ans) o.classList.add(i === d.ans ? 'sel-correct' : 'show-correct');
+  });
+  const fb = document.getElementById('quiz-fb');
+  if (i === d.ans) {
+    allOpts[i].classList.add('sel-correct');
+    quizScore++; addPts(2);
+    fb.className = 'feedback correct'; fb.textContent = '✅ Richtig!'; fb.style.display = 'block';
+  } else {
+    allOpts[i].classList.add('sel-wrong');
+    fb.className = 'feedback wrong';
+    fb.innerHTML = '❌ Nicht ganz! <strong>Tipp:</strong> ' + d.tip; fb.style.display = 'block';
+  }
+  if (quizIdx < quizData.length - 1) {
+    document.getElementById('quiz-next-btn').style.display = 'inline-flex';
+  } else {
+    setTimeout(() => {
+      document.getElementById('quiz-main').style.display = 'none';
+      document.getElementById('quiz-result').style.display = 'block';
+      const pct = Math.round(quizScore / quizData.length * 100);
+      document.getElementById('quiz-emoji').textContent = pct >= 80 ? '🎉' : pct >= 60 ? '😊' : '💪';
+      document.getElementById('quiz-score-big').textContent = quizScore + ' / ' + quizData.length;
+      document.getElementById('quiz-title').textContent = pct >= 80 ? 'Hervorragend!' : pct >= 60 ? 'Gut gemacht!' : 'Weiter üben!';
+      document.getElementById('quiz-msg').textContent = 'Du hast ' + pct + '% richtig.';
+    }, 1200);
+  }
+}
+function nextQuizQ() { quizIdx++; showQuizQ(); }
+
+// ═══ INIT ═══
+window.onload = function () {
+  initZuordnung();
+  initArtenQuiz();
+  initWinkel();
+  initBlitzWinkel();
+  initFlaeche();
+  initKQ();
+  initKLuecken();
+};
+</script>
+</body>
+</html>

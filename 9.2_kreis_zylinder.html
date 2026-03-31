@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kreis & Zylinder – 9.2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600&display=swap');
+
+:root {
+  --bg: #f5f3ff;
+  --card: #ffffff;
+  --primary: #7c3aed;
+  --primary-light: #ede9fe;
+  --primary-dark: #5b21b6;
+  --primary-mid: #a78bfa;
+  --teal: #0d9488;
+  --teal-light: #ccfbf1;
+  --amber: #d97706;
+  --amber-light: #fef3c7;
+  --green: #16a34a;
+  --green-light: #dcfce7;
+  --red: #dc2626;
+  --red-light: #fee2e2;
+  --text: #1e1b4b;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 2px 16px rgba(124,58,237,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 55%, #a855f7 100%);
+  color: #fff;
+  padding: 28px 20px 22px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header::before { content:''; position:absolute; top:-50px; right:-40px; width:220px; height:220px; background:rgba(255,255,255,.05); border-radius:50%; }
+.header::after  { content:''; position:absolute; bottom:-60px; left:-30px; width:180px; height:180px; background:rgba(255,255,255,.04); border-radius:50%; }
+.header-icon { font-size:2.6rem; display:block; margin-bottom:6px; position:relative; z-index:1; }
+.header h1 { font-family:'Nunito',sans-serif; font-size:1.75rem; font-weight:900; letter-spacing:-0.5px; position:relative; z-index:1; }
+.header p  { font-size:.88rem; opacity:.8; margin-top:5px; position:relative; z-index:1; }
+
+/* ── TABS ── */
+.nav {
+  display:flex; gap:3px; padding:14px 14px 0;
+  overflow-x:auto; background:var(--bg);
+  -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.nav::-webkit-scrollbar { display:none; }
+.tab {
+  flex:0 0 auto; padding:9px 15px;
+  border:none; border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+  background:#ddd6fe; color:#5b21b6;
+  font-family:'Nunito',sans-serif; font-weight:700; font-size:.8rem;
+  cursor:pointer; transition:all .18s; white-space:nowrap;
+}
+.tab:hover { background:#c4b5fd; }
+.tab.active { background:var(--card); color:var(--primary); box-shadow:0 -2px 0 var(--primary) inset; }
+
+/* ── CONTENT ── */
+.content { padding:0 14px 36px; max-width:820px; margin:0 auto; }
+.section { display:none; animation:fadeUp .22s ease; }
+.section.active { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ── CARD ── */
+.card { background:var(--card); border-radius:var(--radius); padding:20px; margin-top:14px; box-shadow:var(--shadow); border:1px solid #ede9fe; }
+.card h2 { font-family:'Nunito',sans-serif; font-size:1.08rem; font-weight:800; color:var(--primary); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.card h3 { font-family:'Nunito',sans-serif; font-size:.95rem; font-weight:700; margin-bottom:8px; }
+
+/* ── FORMULA ── */
+.formula-box {
+  background:linear-gradient(135deg,#f5f3ff,#ede9fe);
+  border:2px solid #c4b5fd; border-radius:var(--radius);
+  padding:14px; text-align:center; margin:12px 0;
+}
+.formula-big { font-family:'Nunito',sans-serif; font-size:1.4rem; font-weight:900; color:var(--primary-dark); letter-spacing:.5px; }
+.formula-sub { font-size:.83rem; color:var(--muted); margin-top:5px; }
+
+/* ── STEPS ── */
+.steps { display:flex; flex-direction:column; gap:9px; margin-top:10px; }
+.step {
+  display:flex; gap:11px; align-items:flex-start;
+  padding:11px; background:#faf5ff; border-radius:var(--radius-sm);
+  border-left:3px solid var(--primary); font-size:.9rem;
+}
+.step-n {
+  background:var(--primary); color:#fff;
+  font-family:'Nunito',sans-serif; font-weight:800; font-size:.78rem;
+  min-width:25px; height:25px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+
+/* ── BUTTONS ── */
+.btn { padding:9px 18px; border:none; border-radius:var(--radius-sm); font-family:'Nunito',sans-serif; font-weight:700; font-size:.88rem; cursor:pointer; transition:all .16s; }
+.btn:active { transform:scale(.97); }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:var(--primary-dark); }
+.btn-teal { background:var(--teal); color:#fff; }
+.btn-teal:hover { background:#0f766e; }
+.btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary); }
+.btn-outline:hover { background:var(--primary-light); }
+.btn-sm { padding:6px 13px; font-size:.8rem; }
+
+/* ── INPUTS ── */
+.inp {
+  border:2px solid var(--border); border-radius:var(--radius-sm);
+  padding:9px 13px; font-size:.95rem; font-family:'Nunito Sans',sans-serif;
+  transition:border-color .18s; background:#fff; color:var(--text); width:110px;
+}
+.inp:focus { outline:none; border-color:var(--primary); }
+.inp.ok  { border-color:var(--green); background:var(--green-light); }
+.inp.err { border-color:var(--red);   background:var(--red-light); }
+
+/* ── FEEDBACK ── */
+.fb { padding:11px 14px; border-radius:var(--radius-sm); font-size:.88rem; font-weight:700; margin-top:9px; display:none; animation:fadeUp .2s ease; }
+.fb.show { display:block; }
+.fb.ok  { background:var(--green-light); color:var(--green); border:1px solid #86efac; }
+.fb.err { background:var(--red-light);   color:var(--red);   border:1px solid #fca5a5; }
+.fb.info{ background:var(--primary-light); color:var(--primary-dark); border:1px solid #c4b5fd; }
+
+/* ── QUIZ OPTIONS ── */
+.q-opts { display:flex; flex-direction:column; gap:7px; margin-top:9px; }
+.q-opt {
+  padding:11px 15px; border:2px solid var(--border); border-radius:var(--radius-sm);
+  cursor:pointer; font-size:.9rem; background:#fff; transition:all .14s; text-align:left;
+  font-family:'Nunito Sans',sans-serif;
+}
+.q-opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.q-opt.ok  { border-color:var(--green); background:var(--green-light); color:var(--green); font-weight:700; }
+.q-opt.err { border-color:var(--red);   background:var(--red-light);   color:var(--red); }
+
+/* ── CLOZE ── */
+.cloze { font-size:.95rem; line-height:2.4; margin:10px 0; }
+.cl {
+  display:inline-block; border:none; border-bottom:2px solid var(--primary);
+  background:transparent; font-size:.95rem; font-family:'Nunito Sans',sans-serif;
+  width:90px; text-align:center; color:var(--primary-dark); font-weight:700; padding:2px 4px; outline:none;
+}
+.cl.ok  { border-color:var(--green); color:var(--green); }
+.cl.err { border-color:var(--red);   color:var(--red); }
+
+/* ── MATCH ── */
+.match-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:10px 0; }
+.match-col  { display:flex; flex-direction:column; gap:7px; }
+.mi {
+  padding:10px 13px; border:2px solid var(--border); border-radius:var(--radius-sm);
+  font-size:.85rem; cursor:pointer; background:#fff; transition:all .14s; text-align:center;
+}
+.mi:hover   { border-color:var(--primary); }
+.mi.sel     { border-color:var(--primary); background:var(--primary-light); }
+.mi.done    { border-color:var(--green);   background:var(--green-light);  color:var(--green); font-weight:700; cursor:default; }
+.mi.bad     { border-color:var(--red);     background:var(--red-light);    animation:shake .3s; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
+/* ── PROGRESS ── */
+.prog-outer { height:7px; background:var(--border); border-radius:8px; overflow:hidden; margin:7px 0; }
+.prog-inner { height:100%; background:var(--primary); border-radius:8px; transition:width .4s ease; }
+
+/* ── DIFF TABS ── */
+.dtabs { display:flex; gap:6px; margin-bottom:13px; flex-wrap:wrap; }
+.dtab {
+  padding:5px 14px; border:2px solid var(--border); border-radius:20px;
+  font-size:.78rem; font-family:'Nunito',sans-serif; font-weight:700;
+  cursor:pointer; background:#fff; color:var(--muted); transition:all .14s;
+}
+.dtab.active.easy   { border-color:var(--green); background:var(--green-light); color:var(--green); }
+.dtab.active.medium { border-color:var(--amber); background:var(--amber-light); color:var(--amber); }
+.dtab.active.hard   { border-color:var(--red);   background:var(--red-light);   color:var(--red); }
+
+/* ── BLITZ ── */
+.blitz-display {
+  font-family:'Nunito',sans-serif; font-size:1.7rem; font-weight:900; color:var(--primary-dark);
+  background:var(--primary-light); border-radius:var(--radius); padding:18px; margin:12px 0;
+  text-align:center; min-height:72px; display:flex; align-items:center; justify-content:center;
+}
+.blitz-opts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.blitz-opt {
+  padding:13px 8px; border:2px solid var(--border); border-radius:var(--radius-sm);
+  font-family:'Nunito',sans-serif; font-size:.95rem; font-weight:700;
+  cursor:pointer; background:#fff; transition:all .14s; text-align:center;
+}
+.blitz-opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.blitz-opt.ok  { border-color:var(--green); background:var(--green-light); color:var(--green); }
+.blitz-opt.err { border-color:var(--red);   background:var(--red-light);   color:var(--red); }
+
+/* ── SCORE ── */
+.score-row { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin:10px 0; }
+.score-box { background:var(--primary-light); color:var(--primary-dark); border-radius:var(--radius-sm); padding:7px 15px; font-family:'Nunito',sans-serif; font-weight:800; font-size:1rem; }
+
+/* ── HINT ── */
+.hint-btn { background:none; border:1px dashed var(--muted); border-radius:var(--radius-sm); color:var(--muted); padding:5px 11px; font-size:.78rem; cursor:pointer; font-family:'Nunito Sans',sans-serif; margin-top:7px; }
+.hint-box { display:none; font-size:.84rem; color:#92400e; margin-top:7px; padding:9px; background:var(--amber-light); border-radius:var(--radius-sm); border-left:3px solid var(--amber); line-height:1.6; }
+.hint-box.show { display:block; }
+
+/* ── INPUT ROW ── */
+.irow { display:flex; gap:9px; align-items:center; flex-wrap:wrap; margin:10px 0; }
+
+/* ── CALC DISPLAY ── */
+.calc-out {
+  background:#1e1b4b; color:#a5b4fc; border-radius:var(--radius-sm);
+  padding:13px 16px; font-family:monospace; font-size:.84rem; line-height:1.9;
+  margin:10px 0; min-height:76px;
+}
+.calc-h { color:#c4b5fd; font-weight:bold; }
+.calc-r { color:#34d399; font-size:1rem; font-weight:bold; }
+
+/* ── TABLE ── */
+.tbl { width:100%; border-collapse:collapse; font-size:.88rem; margin:10px 0; }
+.tbl th { background:var(--primary-light); color:var(--primary-dark); padding:9px 12px; font-family:'Nunito',sans-serif; font-weight:700; text-align:left; border:1px solid #ddd6fe; }
+.tbl td { padding:9px 12px; border:1px solid var(--border); background:#fff; }
+.tbl tr:nth-child(even) td { background:#faf5ff; }
+
+/* ── CIRCLE DIAGRAM (SVG) ── */
+.svg-wrap { text-align:center; margin:12px 0; }
+
+/* ── CYLINDER DIAGRAM ── */
+.info-pill {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 12px; border-radius:20px; font-size:.8rem;
+  font-family:'Nunito',sans-serif; font-weight:700;
+}
+.pill-p { background:#ede9fe; color:#5b21b6; }
+.pill-g { background:#dcfce7; color:#15803d; }
+.pill-t { background:#ccfbf1; color:#0f766e; }
+.pill-a { background:#fef3c7; color:#a16207; }
+
+/* ── GAME: SPORTPLATZ ── */
+.fig-row { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0; }
+.fig-card {
+  flex:1; min-width:120px; padding:12px; border:2px solid var(--border);
+  border-radius:var(--radius-sm); text-align:center; cursor:pointer; background:#fff;
+  transition:all .15s;
+}
+.fig-card:hover  { border-color:var(--primary); }
+.fig-card.sel    { border-color:var(--primary); background:var(--primary-light); }
+.fig-card.done-g { border-color:var(--green);   background:var(--green-light); }
+.fig-card.done-r { border-color:var(--red);     background:var(--red-light); }
+.fig-icon { font-size:2rem; margin-bottom:4px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:500px) {
+  .match-grid { grid-template-columns:1fr; }
+  .blitz-opts  { grid-template-columns:1fr; }
+  .header h1   { font-size:1.35rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-icon">⭕</span>
+  <h1>Kreis &amp; Zylinder</h1>
+  <p>Lernen · Üben · Verstehen</p>
+</div>
+
+<div class="nav">
+  <button class="tab active" onclick="showSec('lernen',this)">📖 Lernen</button>
+  <button class="tab" onclick="showSec('begriffe',this)">🔤 Begriffe</button>
+  <button class="tab" onclick="showSec('rechner',this)">🔢 Rechner</button>
+  <button class="tab" onclick="showSec('luecke',this)">✏️ Lückentext</button>
+  <button class="tab" onclick="showSec('quiz',this)">❓ Quiz</button>
+  <button class="tab" onclick="showSec('zuordnen',this)">🔗 Zuordnen</button>
+  <button class="tab" onclick="showSec('blitz',this)">⚡ Blitz</button>
+  <button class="tab" onclick="showSec('aufgaben',this)">🌍 Aufgaben</button>
+  <button class="tab" onclick="showSec('generator',this)">🎲 Neu</button>
+</div>
+
+<div class="content">
+
+<!-- ════════ LERNEN ════════ -->
+<div id="sec-lernen" class="section active">
+
+  <div class="card">
+    <h2>⭕ Der Kreis – was gehört dazu?</h2>
+
+    <!-- Interactive Circle SVG -->
+    <div class="svg-wrap">
+      <svg viewBox="0 0 340 300" width="100%" style="max-width:340px;display:block;margin:0 auto;">
+        <!-- Circle -->
+        <circle cx="170" cy="155" r="110" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5"/>
+        <!-- Center dot -->
+        <circle cx="170" cy="155" r="4" fill="#7c3aed"/>
+        <!-- Radius line -->
+        <line x1="170" y1="155" x2="280" y2="155" stroke="#7c3aed" stroke-width="2" stroke-dasharray="5,3"/>
+        <!-- Diameter line -->
+        <line x1="60" y1="155" x2="280" y2="155" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="4,3" opacity=".6"/>
+        <!-- Chord -->
+        <line x1="100" y1="80" x2="240" y2="240" stroke="#d97706" stroke-width="2" stroke-dasharray="5,3"/>
+        <!-- Arc highlight -->
+        <path d="M280,155 A110,110 0 0,1 170,265" fill="none" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- Labels -->
+        <text x="228" y="145" font-family="Nunito" font-size="13" font-weight="700" fill="#5b21b6">r</text>
+        <text x="175" y="168" font-family="Nunito" font-size="11" fill="#5b21b6">M</text>
+        <text x="96"  y="165" font-family="Nunito" font-size="12" fill="#0f766e">d</text>
+        <text x="152" y="248" font-family="Nunito" font-size="12" fill="#b91c1c" font-weight="700">Bogen</text>
+        <text x="186" y="212" font-family="Nunito" font-size="12" fill="#b45309">Sehne</text>
+        <!-- Umfang label -->
+        <text x="275" y="230" font-family="Nunito" font-size="11" fill="#7c3aed">U</text>
+        <path d="M265 225 A96,96 0 0 1 253 232" fill="none" stroke="#7c3aed" stroke-width="1" marker-end="none"/>
+      </svg>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+      <span class="info-pill pill-p">r = Radius</span>
+      <span class="info-pill pill-t">d = Durchmesser</span>
+      <span class="info-pill pill-g">M = Mittelpunkt</span>
+      <span class="info-pill pill-a">U = Umfang</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+      <div style="padding:10px;background:#faf5ff;border-radius:8px;border-left:3px solid var(--primary);font-size:.88rem;">
+        <strong>Radius r</strong> – Strecke vom Mittelpunkt bis zum Rand. <em>r = d ÷ 2</em>
+      </div>
+      <div style="padding:10px;background:#f0fdfa;border-radius:8px;border-left:3px solid var(--teal);font-size:.88rem;">
+        <strong>Durchmesser d</strong> – Strecke quer durch den Kreis, durch M. <em>d = 2 · r</em>
+      </div>
+      <div style="padding:10px;background:#fffbeb;border-radius:8px;border-left:3px solid var(--amber);font-size:.88rem;">
+        <strong>Mittelpunkt M</strong> – Der Punkt genau in der Mitte des Kreises.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📐 Formeln für den Kreis</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div>
+        <div style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px;">UMFANG</div>
+        <div class="formula-box">
+          <div class="formula-big">U = π · d = 2 · π · r</div>
+          <div class="formula-sub">π ≈ 3,14159… &nbsp;|&nbsp; mit Taschenrechner: π-Taste verwenden</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px;">FLÄCHENINHALT</div>
+        <div class="formula-box">
+          <div class="formula-big">A = π · r²</div>
+          <div class="formula-sub">r² bedeutet: r · r &nbsp;|&nbsp; Erst quadrieren, dann mit π multiplizieren</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px;">ZUSAMMENHANG r UND d</div>
+        <div class="formula-box">
+          <div class="formula-big" style="font-size:1.1rem;">d = 2 · r &nbsp;|&nbsp; r = d ÷ 2</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:11px;background:#fef3c7;border-radius:8px;border-left:3px solid var(--amber);font-size:.85rem;color:#92400e;margin-top:12px;">
+      💡 <strong>Merke:</strong> Im Unterricht wird immer auf 2 Stellen nach dem Komma gerundet!
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧮 Schritt für Schritt – Beispiel</h2>
+
+    <div id="ex-buttons" class="dtabs">
+      <button class="dtab active easy" onclick="showEx('u',this)">Umfang berechnen</button>
+      <button class="dtab medium"       onclick="showEx('a',this)">Fläche berechnen</button>
+      <button class="dtab hard"         onclick="showEx('r',this)">Radius aus U berechnen</button>
+    </div>
+
+    <div id="ex-u">
+      <p style="font-size:.9rem;color:#374151;margin-bottom:9px;"><strong>Gegeben:</strong> r = 14 cm &nbsp;|&nbsp; <strong>Gesucht:</strong> Umfang U</p>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><div>Formel aufschreiben: <strong>U = 2 · π · r</strong></div></div>
+        <div class="step"><span class="step-n">2</span><div>Werte einsetzen: <strong>U = 2 · π · 14</strong></div></div>
+        <div class="step"><span class="step-n">3</span><div>Berechnen: <strong>U = 2 · 3,14159 · 14 ≈ 87,96 cm</strong> ✓</div></div>
+      </div>
+    </div>
+    <div id="ex-a" style="display:none;">
+      <p style="font-size:.9rem;color:#374151;margin-bottom:9px;"><strong>Gegeben:</strong> d = 36 dm → r = 18 dm &nbsp;|&nbsp; <strong>Gesucht:</strong> Fläche A</p>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><div>Radius bestimmen: <strong>r = d ÷ 2 = 36 ÷ 2 = 18 dm</strong></div></div>
+        <div class="step"><span class="step-n">2</span><div>Formel: <strong>A = π · r²</strong></div></div>
+        <div class="step"><span class="step-n">3</span><div>Einsetzen: <strong>A = π · 18² = π · 324</strong></div></div>
+        <div class="step"><span class="step-n">4</span><div>Berechnen: <strong>A ≈ 1017,88 dm²</strong> ✓</div></div>
+      </div>
+    </div>
+    <div id="ex-r" style="display:none;">
+      <p style="font-size:.9rem;color:#374151;margin-bottom:9px;"><strong>Gegeben:</strong> U = 37,70 m &nbsp;|&nbsp; <strong>Gesucht:</strong> r</p>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><div>Formel umstellen: <strong>U = 2 · π · r &nbsp;→&nbsp; r = U ÷ (2 · π)</strong></div></div>
+        <div class="step"><span class="step-n">2</span><div>Einsetzen: <strong>r = 37,70 ÷ (2 · π)</strong></div></div>
+        <div class="step"><span class="step-n">3</span><div>Berechnen: <strong>r ≈ 6,0 m</strong> ✓</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZYLINDER -->
+  <div class="card">
+    <h2>🥫 Der Zylinder</h2>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 300 260" width="100%" style="max-width:300px;display:block;margin:0 auto;">
+        <!-- Zylinder Körper -->
+        <rect x="60" y="60" width="180" height="140" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+        <!-- Deckel (Ellipse oben) -->
+        <ellipse cx="150" cy="60" rx="90" ry="22" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+        <!-- Boden (Ellipse unten) -->
+        <ellipse cx="150" cy="200" rx="90" ry="22" fill="#ddd6fe" stroke="#7c3aed" stroke-width="2"/>
+        <!-- Höhe Pfeil -->
+        <line x1="258" y1="60" x2="258" y2="200" stroke="#0d9488" stroke-width="2"/>
+        <polygon points="258,55 255,65 261,65" fill="#0d9488"/>
+        <polygon points="258,205 255,195 261,195" fill="#0d9488"/>
+        <text x="264" y="133" font-family="Nunito" font-size="13" font-weight="700" fill="#0f766e">h</text>
+        <!-- Radius Pfeil -->
+        <line x1="150" y1="60" x2="240" y2="60" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="188" y="52" font-family="Nunito" font-size="13" font-weight="700" fill="#5b21b6">r</text>
+        <!-- Labels -->
+        <text x="130" y="140" font-family="Nunito" font-size="12" fill="#5b21b6" text-anchor="middle">Mantel</text>
+        <text x="150" y="56" font-family="Nunito" font-size="11" fill="#5b21b6" text-anchor="middle" dy="0">G</text>
+        <text x="150" y="204" font-family="Nunito" font-size="11" fill="#4c1d95" text-anchor="middle" dy="0">G</text>
+      </svg>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">
+      <span class="info-pill pill-p">G = Grundfläche</span>
+      <span class="info-pill pill-t">M = Mantelfläche</span>
+      <span class="info-pill pill-g">O = Oberfläche</span>
+      <span class="info-pill pill-a">V = Volumen</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:9px;margin-top:12px;">
+      <div class="formula-box"><div class="formula-big" style="font-size:1.1rem;">G = π · r²</div><div class="formula-sub">Eine Kreisfläche (Boden oder Deckel)</div></div>
+      <div class="formula-box"><div class="formula-big" style="font-size:1.1rem;">M = 2 · π · r · h</div><div class="formula-sub">Der Mantel, aufgerollt = Rechteck</div></div>
+      <div class="formula-box"><div class="formula-big" style="font-size:1.1rem;">O = 2 · G + M</div><div class="formula-sub">Beide Kreise + Mantel</div></div>
+      <div class="formula-box"><div class="formula-big" style="font-size:1.1rem;">V = G · h = π · r² · h</div><div class="formula-sub">Grundfläche mal Höhe</div></div>
+    </div>
+  </div>
+
+</div><!-- /lernen -->
+
+<!-- ════════ BEGRIFFE ════════ -->
+<div id="sec-begriffe" class="section">
+
+  <div class="card">
+    <h2>🔤 Begriffe im Überblick</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="padding:11px;background:#faf5ff;border-radius:8px;border-left:3px solid var(--primary);font-size:.85rem;"><strong>Radius r</strong><br><span style="color:var(--muted)">Hälfte des Durchmessers. r = d/2</span></div>
+      <div style="padding:11px;background:#f0fdfa;border-radius:8px;border-left:3px solid var(--teal);font-size:.85rem;"><strong>Durchmesser d</strong><br><span style="color:var(--muted)">Doppelter Radius. d = 2r</span></div>
+      <div style="padding:11px;background:#fffbeb;border-radius:8px;border-left:3px solid var(--amber);font-size:.85rem;"><strong>Mittelpunkt M</strong><br><span style="color:var(--muted)">Zentrum des Kreises</span></div>
+      <div style="padding:11px;background:#faf5ff;border-radius:8px;border-left:3px solid var(--primary);font-size:.85rem;"><strong>Umfang U</strong><br><span style="color:var(--muted)">Länge der Kreislinie</span></div>
+      <div style="padding:11px;background:#f0fdf4;border-radius:8px;border-left:3px solid var(--green);font-size:.85rem;"><strong>Flächeninhalt A</strong><br><span style="color:var(--muted)">Fläche innerhalb des Kreises</span></div>
+      <div style="padding:11px;background:#fef2f2;border-radius:8px;border-left:3px solid var(--red);font-size:.85rem;"><strong>Kreisbogen</strong><br><span style="color:var(--muted)">Teilstück der Kreislinie</span></div>
+      <div style="padding:11px;background:#fffbeb;border-radius:8px;border-left:3px solid var(--amber);font-size:.85rem;"><strong>Sehne</strong><br><span style="color:var(--muted)">Gerade zwischen zwei Kreispunkten</span></div>
+      <div style="padding:11px;background:#f0fdfa;border-radius:8px;border-left:3px solid var(--teal);font-size:.85rem;"><strong>π (Pi)</strong><br><span style="color:var(--muted)">Konstante ≈ 3,14159</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔤 Zylinder-Begriffe</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="padding:11px;background:#faf5ff;border-radius:8px;font-size:.85rem;border-left:3px solid var(--primary);"><strong>Grundfläche G</strong><br><span style="color:var(--muted)">Kreisfläche (oben & unten)</span></div>
+      <div style="padding:11px;background:#f0fdfa;border-radius:8px;font-size:.85rem;border-left:3px solid var(--teal);"><strong>Mantelfläche M</strong><br><span style="color:var(--muted)">Seitenfläche des Zylinders</span></div>
+      <div style="padding:11px;background:#f0fdf4;border-radius:8px;font-size:.85rem;border-left:3px solid var(--green);"><strong>Oberfläche O</strong><br><span style="color:var(--muted)">Gesamte Fläche: 2G + M</span></div>
+      <div style="padding:11px;background:#fffbeb;border-radius:8px;font-size:.85rem;border-left:3px solid var(--amber);"><strong>Volumen V</strong><br><span style="color:var(--muted)">Rauminhalt: G · h</span></div>
+      <div style="padding:11px;background:#faf5ff;border-radius:8px;font-size:.85rem;border-left:3px solid var(--primary);"><strong>Höhe h</strong><br><span style="color:var(--muted)">Länge des Zylinders</span></div>
+      <div style="padding:11px;background:#fef2f2;border-radius:8px;font-size:.85rem;border-left:3px solid var(--red);"><strong>Radius r</strong><br><span style="color:var(--muted)">Radius der Kreisfläche</span></div>
+    </div>
+  </div>
+
+  <!-- Richtig / Falsch Quiz aus Aufgabe 4b -->
+  <div class="card">
+    <h2>✓✗ Richtig oder Falsch?</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px;">Kreuze an – stimmt die Aussage?</p>
+    <div id="rf-area"></div>
+    <button class="btn btn-outline btn-sm" onclick="loadRF()" style="margin-top:10px;">🔄 Neue Aussagen</button>
+  </div>
+
+</div>
+
+<!-- ════════ RECHNER ════════ -->
+<div id="sec-rechner" class="section">
+
+  <div class="card">
+    <h2>🔢 Kreis-Rechner</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px;">Gib Radius <em>oder</em> Durchmesser ein – die App berechnet alles andere.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div>
+        <label style="font-size:.8rem;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">Radius r</label>
+        <input class="inp" id="cr-r" type="number" step="0.01" placeholder="z.B. 14" style="width:100%" oninput="syncRD('r')">
+      </div>
+      <div>
+        <label style="font-size:.8rem;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">Durchmesser d</label>
+        <input class="inp" id="cr-d" type="number" step="0.01" placeholder="z.B. 28" style="width:100%" oninput="syncRD('d')">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calcKreis()" style="width:100%;">Berechnen</button>
+    <div class="calc-out" id="kreis-out">Gib einen Wert ein und klicke auf Berechnen…</div>
+  </div>
+
+  <div class="card">
+    <h2>🥫 Zylinder-Rechner</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px;">Radius und Höhe eingeben – alle Maße werden berechnet.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div>
+        <label style="font-size:.8rem;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">Radius r (cm)</label>
+        <input class="inp" id="cz-r" type="number" step="0.01" placeholder="z.B. 6" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:.8rem;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">Höhe h (cm)</label>
+        <input class="inp" id="cz-h" type="number" step="0.01" placeholder="z.B. 20" style="width:100%">
+      </div>
+    </div>
+    <button class="btn btn-teal" onclick="calcZyl()" style="width:100%;">Berechnen</button>
+    <div class="calc-out" id="zyl-out">Gib r und h ein und klicke auf Berechnen…</div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Tabelle vervollständigen</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px;">Trage Werte ein und überprüfe sie.</p>
+    <table class="tbl">
+      <tr><th></th><th>a.</th><th>b.</th></tr>
+      <tr><td><strong>Radius r</strong></td>
+          <td><input class="inp" id="tt-ra" type="number" step="0.01" placeholder="?" style="width:90px"></td>
+          <td>18 dm</td></tr>
+      <tr><td><strong>Durchmesser d</strong></td>
+          <td>28 cm</td>
+          <td><input class="inp" id="tt-db" type="number" step="0.01" placeholder="?" style="width:90px"></td></tr>
+      <tr><td><strong>Umfang U</strong></td>
+          <td><input class="inp" id="tt-ua" type="number" step="0.01" placeholder="?" style="width:90px"></td>
+          <td><input class="inp" id="tt-ub" type="number" step="0.01" placeholder="?" style="width:90px"></td></tr>
+      <tr><td><strong>Fläche A</strong></td>
+          <td><input class="inp" id="tt-aa" type="number" step="0.01" placeholder="?" style="width:90px"></td>
+          <td><input class="inp" id="tt-ab" type="number" step="0.01" placeholder="?" style="width:90px"></td></tr>
+    </table>
+    <button class="btn btn-primary btn-sm" onclick="checkTabelle()">Überprüfen</button>
+    <div class="fb" id="fb-tab"></div>
+  </div>
+
+</div>
+
+<!-- ════════ LÜCKENTEXT ════════ -->
+<div id="sec-luecke" class="section">
+
+  <div class="card">
+    <h2>✏️ Kreis – Lückentext 1</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:4px;">Ergänze die Begriffe.</p>
+    <div class="cloze">
+      Der Kreis hat einen <input class="cl" id="l1" data-a="Mittelpunkt" size="10">, der genau in der Mitte liegt.
+      Die Strecke vom Mittelpunkt bis zum Rand heißt
+      <input class="cl" id="l2" data-a="Radius" size="6">.
+      Die Strecke quer durch den Kreis heißt
+      <input class="cl" id="l3" data-a="Durchmesser" size="11">
+      und ist doppelt so lang wie der Radius.
+      Der Umfang des Kreises wird berechnet mit
+      <input class="cl" id="l4" data-a="U = π · d" size="8">.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+      <button class="btn btn-primary btn-sm" onclick="checkCloze(['l1','l2','l3','l4'],'fb-l1')">✓ Prüfen</button>
+      <button class="btn btn-outline btn-sm" onclick="resetCloze(['l1','l2','l3','l4'],'fb-l1')">↺ Reset</button>
+    </div>
+    <div class="fb" id="fb-l1"></div>
+  </div>
+
+  <div class="card">
+    <h2>✏️ Zylinder – Lückentext 2</h2>
+    <div class="cloze">
+      Der Zylinder hat zwei <input class="cl" id="l5" data-a="Kreisflächen" size="11"> als Ober- und Unterseite.
+      Diese heißen <input class="cl" id="l6" data-a="Grundflächen" size="12">.
+      Die Seitenfläche heißt <input class="cl" id="l7" data-a="Mantelfläche" size="12">.
+      Das Volumen berechnet man mit: V =
+      <input class="cl" id="l8" data-a="G · h" size="5">.
+      Die Oberfläche ist: O = <input class="cl" id="l9" data-a="2G + M" size="7">.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+      <button class="btn btn-primary btn-sm" onclick="checkCloze(['l5','l6','l7','l8','l9'],'fb-l2')">✓ Prüfen</button>
+      <button class="btn btn-outline btn-sm" onclick="resetCloze(['l5','l6','l7','l8','l9'],'fb-l2')">↺ Reset</button>
+    </div>
+    <div class="fb" id="fb-l2"></div>
+  </div>
+
+  <div class="card">
+    <h2>✏️ Rechenweg vervollständigen</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:8px;"><strong>Gegeben:</strong> r = 6 cm, h = 20 cm</p>
+    <div class="cloze" style="font-family:monospace;font-size:.9rem;line-height:2.8;">
+      G = π · r² = π · <input class="cl" id="rw1" data-a="6²" size="4"> = π · <input class="cl" id="rw2" data-a="36" size="4"> ≈ <input class="cl" id="rw3" data-a="113,10" size="7"> cm²<br>
+      M = 2 · π · r · h = 2 · π · 6 · <input class="cl" id="rw4" data-a="20" size="4"> ≈ <input class="cl" id="rw5" data-a="753,98" size="7"> cm²<br>
+      O = 2 · G + M = 2 · 113,10 + 753,98 ≈ <input class="cl" id="rw6" data-a="980,18" size="8"> cm²<br>
+      V = G · h = 113,10 · 20 ≈ <input class="cl" id="rw7" data-a="2262,00" size="8"> cm³
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="checkCloze(['rw1','rw2','rw3','rw4','rw5','rw6','rw7'],'fb-rw')" style="margin-top:10px;">Prüfen</button>
+    <div class="fb" id="fb-rw"></div>
+  </div>
+
+</div>
+
+<!-- ════════ QUIZ ════════ -->
+<div id="sec-quiz" class="section">
+
+  <div class="card">
+    <h2>❓ Wissens-Quiz</h2>
+    <div class="prog-outer"><div class="prog-inner" id="qprog" style="width:0%"></div></div>
+    <div style="font-size:.78rem;color:var(--muted);text-align:right;margin-bottom:9px;" id="q-cnt">Frage 1 von 10</div>
+
+    <div id="q-area">
+      <div id="q-text" style="font-size:.97rem;font-weight:600;margin-bottom:9px;line-height:1.55;"></div>
+      <div class="q-opts" id="q-opts"></div>
+      <div class="fb" id="fb-q"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+        <button class="btn btn-outline btn-sm" id="q-next" onclick="nextQ()" style="display:none;">Nächste →</button>
+      </div>
+    </div>
+
+    <div id="q-result" style="display:none;text-align:center;padding:16px;">
+      <div style="font-size:2.8rem;margin-bottom:8px;" id="q-emoji">🎉</div>
+      <div style="font-family:Nunito;font-size:1.25rem;font-weight:800;" id="q-final"></div>
+      <button class="btn btn-primary" onclick="restartQ()" style="margin-top:14px;">Nochmal</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>❓ Multiple Choice – Richtig / Falsch</h2>
+    <div id="mc-area"></div>
+    <button class="btn btn-outline btn-sm" onclick="loadMC()" style="margin-top:10px;">🔄 Neue Aufgaben</button>
+  </div>
+
+</div>
+
+<!-- ════════ ZUORDNEN ════════ -->
+<div id="sec-zuordnen" class="section">
+
+  <div class="card">
+    <h2>🔗 Begriffe zuordnen</h2>
+    <p style="font-size:.83rem;color:var(--muted);margin-bottom:10px;">Klicke zuerst einen Begriff (links), dann die passende Erklärung (rechts).</p>
+    <div class="match-grid">
+      <div class="match-col" id="mc-left"></div>
+      <div class="match-col" id="mc-right"></div>
+    </div>
+    <div class="fb" id="fb-m1"></div>
+    <button class="btn btn-outline btn-sm" onclick="setupMatch()" style="margin-top:8px;">↺ Neu mischen</button>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Formeln zuordnen</h2>
+    <p style="font-size:.83rem;color:var(--muted);margin-bottom:10px;">Was berechnet diese Formel?</p>
+    <div id="fm-area"></div>
+    <button class="btn btn-outline btn-sm" onclick="loadFM()" style="margin-top:8px;">🔄 Neu laden</button>
+  </div>
+
+</div>
+
+<!-- ════════ BLITZ ════════ -->
+<div id="sec-blitz" class="section">
+
+  <div class="card">
+    <h2>⚡ Blitz-Rechnen</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:4px;">Klicke so schnell wie möglich die richtige Antwort!</p>
+
+    <div class="score-row">
+      <div class="score-box">⭐ <span id="bs-score">0</span></div>
+      <div style="font-size:.84rem;color:var(--muted);">Richtig: <span id="bs-r">0</span> / <span id="bs-t">0</span></div>
+    </div>
+
+    <div class="blitz-display" id="bl-display">Drücke Start!</div>
+    <div class="blitz-opts"    id="bl-opts"></div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="startBlitz()">▶ Start</button>
+      <button class="btn btn-outline" onclick="resetBlitz()">↺ Reset</button>
+    </div>
+    <div id="bl-fb" style="text-align:center;font-size:.85rem;margin-top:7px;color:var(--muted);"></div>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Begriff erkennen</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:8px;">Welcher Begriff passt zur Beschreibung?</p>
+    <div class="blitz-display" id="tb-display" style="font-size:.95rem;min-height:60px;padding:14px;">Klicke Start!</div>
+    <div class="blitz-opts" id="tb-opts" style="margin-top:8px;"></div>
+    <div style="text-align:center;margin-top:8px;">
+      <button class="btn btn-primary btn-sm" onclick="startTermBlitz()">▶ Start</button>
+    </div>
+    <div id="tb-fb" style="text-align:center;font-size:.85rem;margin-top:6px;color:var(--muted);"></div>
+  </div>
+
+</div>
+
+<!-- ════════ AUFGABEN ════════ -->
+<div id="sec-aufgaben" class="section">
+
+  <div class="card">
+    <h2>🌍 Sachaufgaben</h2>
+    <div class="dtabs">
+      <button class="dtab active easy"   onclick="showTask('e',this)">⭐ Einfach</button>
+      <button class="dtab medium"        onclick="showTask('m',this)">⭐⭐ Mittel</button>
+      <button class="dtab hard"          onclick="showTask('h',this)">⭐⭐⭐ Schwer</button>
+    </div>
+
+    <!-- Einfach: Riesenrad -->
+    <div id="task-e">
+      <div style="text-align:center;font-size:3.5rem;margin:6px 0;">🎡</div>
+      <p style="font-size:.95rem;line-height:1.7;">
+        Das <strong>„Wheel of Vision"</strong> in Düsseldorf hat einen Durchmesser von <strong>55 m</strong>.<br>
+        <strong>Wie weit fährt eine Gondel bei einer vollen Umdrehung?</strong>
+      </p>
+      <button class="hint-btn" onclick="toggleHint('h1')">💡 Hinweis</button>
+      <div class="hint-box" id="h1">Gesucht ist der Umfang. Formel: U = π · d. d = 55 m.</div>
+      <div class="irow" style="margin-top:10px;">
+        <span style="font-size:.9rem;">U =</span>
+        <input class="inp" id="t-e" type="number" step="0.01" placeholder="in m">
+        <span style="font-size:.9rem;">m</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask('t-e',172.79,'fb-te',0.5)">Prüfen</button>
+      </div>
+      <div class="fb" id="fb-te"></div>
+    </div>
+
+    <!-- Mittel: Pferd / Voltigieren -->
+    <div id="task-m" style="display:none;">
+      <div style="text-align:center;font-size:3.5rem;margin:6px 0;">🐴</div>
+      <p style="font-size:.95rem;line-height:1.7;">
+        Beim <strong>Voltigieren</strong> wird das Pferd an einer <strong>6 m</strong> langen Leine geführt.<br>
+        <strong>a) Wie weit läuft es bei einer Runde?</strong><br>
+        <strong>b) Wie weit nach 12 Runden?</strong>
+      </p>
+      <button class="hint-btn" onclick="toggleHint('h2')">💡 Hinweis</button>
+      <div class="hint-box" id="h2">Die Leine = Radius r = 6 m. Eine Runde = Umfang U = 2 · π · r.</div>
+      <div class="irow" style="margin-top:10px;">
+        <span style="font-size:.9rem;">a) U =</span>
+        <input class="inp" id="t-m1" type="number" step="0.01" placeholder="m">
+        <span>m</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask('t-m1',37.70,'fb-m1t',0.5)">Prüfen</button>
+      </div>
+      <div class="fb" id="fb-m1t"></div>
+      <div class="irow" style="margin-top:8px;">
+        <span style="font-size:.9rem;">b) 12 Runden =</span>
+        <input class="inp" id="t-m2" type="number" step="0.1" placeholder="m">
+        <span>m</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask('t-m2',452.39,'fb-m2t',1)">Prüfen</button>
+      </div>
+      <div class="fb" id="fb-m2t"></div>
+    </div>
+
+    <!-- Schwer: Zylinder -->
+    <div id="task-h" style="display:none;">
+      <div style="text-align:center;font-size:3.5rem;margin:6px 0;">🥫</div>
+      <p style="font-size:.95rem;line-height:1.7;">
+        Berechne <strong>G, M, O und V</strong> eines Zylinders mit <strong>r = 6 cm</strong> und <strong>h = 20 cm</strong>.
+      </p>
+      <button class="hint-btn" onclick="toggleHint('h3')">💡 Hinweis</button>
+      <div class="hint-box" id="h3">G = π·r², M = 2·π·r·h, O = 2G+M, V = G·h</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+        <div class="irow">
+          <span style="width:80px;font-size:.9rem;">G =</span>
+          <input class="inp" id="zh-G" type="number" step="0.01" placeholder="cm²">
+          <span style="font-size:.88rem;">cm²</span>
+          <button class="btn btn-primary btn-sm" onclick="checkTask('zh-G',113.10,'fb-zh-G',0.5)">✓</button>
+        </div>
+        <div class="fb" id="fb-zh-G"></div>
+        <div class="irow">
+          <span style="width:80px;font-size:.9rem;">M =</span>
+          <input class="inp" id="zh-M" type="number" step="0.01" placeholder="cm²">
+          <span style="font-size:.88rem;">cm²</span>
+          <button class="btn btn-primary btn-sm" onclick="checkTask('zh-M',753.98,'fb-zh-M',0.5)">✓</button>
+        </div>
+        <div class="fb" id="fb-zh-M"></div>
+        <div class="irow">
+          <span style="width:80px;font-size:.9rem;">O =</span>
+          <input class="inp" id="zh-O" type="number" step="0.01" placeholder="cm²">
+          <span style="font-size:.88rem;">cm²</span>
+          <button class="btn btn-primary btn-sm" onclick="checkTask('zh-O',980.18,'fb-zh-O',0.5)">✓</button>
+        </div>
+        <div class="fb" id="fb-zh-O"></div>
+        <div class="irow">
+          <span style="width:80px;font-size:.9rem;">V =</span>
+          <input class="inp" id="zh-V" type="number" step="0.1" placeholder="cm³">
+          <span style="font-size:.88rem;">cm³</span>
+          <button class="btn btn-primary btn-sm" onclick="checkTask('zh-V',2261.95,'fb-zh-V',1)">✓</button>
+        </div>
+        <div class="fb" id="fb-zh-V"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sportplatz -->
+  <div class="card">
+    <h2>🏟️ Sportplatz – Verbundaufgabe</h2>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:10px;">
+      Ein Sportplatz besteht aus einem Rechteck (100 m × 70 m) mit je einem Halbkreis (r = 35 m) an den schmalen Seiten.
+    </p>
+
+    <!-- Mini SVG Sportplatz -->
+    <div class="svg-wrap">
+      <svg viewBox="0 0 340 160" width="100%" style="max-width:340px;display:block;margin:0 auto;">
+        <rect x="80" y="25" width="180" height="110" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+        <path d="M80,25 A55,55 0 0,0 80,135" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+        <path d="M260,25 A55,55 0 0,1 260,135" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+        <text x="170" y="85" text-anchor="middle" font-family="Nunito" font-size="12" fill="#065f46" font-weight="700">100 m × 70 m</text>
+        <text x="40"  y="82" text-anchor="middle" font-family="Nunito" font-size="11" fill="#1e40af">r=35m</text>
+        <text x="300" y="82" text-anchor="middle" font-family="Nunito" font-size="11" fill="#1e40af">r=35m</text>
+      </svg>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+      <p style="font-size:.88rem;font-weight:600;">a) Aus welchen Figuren besteht der Sportplatz?</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="checkFig(this,'Rechteck')" data-f="Rechteck">Rechteck</button>
+        <button class="btn btn-outline btn-sm" onclick="checkFig(this,'Kreis')"    data-f="Kreis">Kreis (aus 2 Halbkreisen)</button>
+        <button class="btn btn-outline btn-sm" onclick="checkFig(this,'Dreieck')"  data-f="Dreieck">Dreieck</button>
+      </div>
+      <div class="fb" id="fb-fig"></div>
+
+      <p style="font-size:.88rem;font-weight:600;margin-top:8px;">b) Wie lang ist der Weg einmal herum?</p>
+      <div class="irow">
+        <input class="inp" id="sp-u" type="number" step="0.01" placeholder="m">
+        <span style="font-size:.88rem;">m</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask('sp-u',419.91,'fb-sp-u',1)">Prüfen</button>
+      </div>
+      <button class="hint-btn" onclick="toggleHint('hsp-u')">💡 Hinweis</button>
+      <div class="hint-box" id="hsp-u">Der Rand = 2 × Länge Rechteck (100 m) + Umfang eines ganzen Kreises (r=35). U_Kreis = 2·π·35</div>
+      <div class="fb" id="fb-sp-u"></div>
+
+      <p style="font-size:.88rem;font-weight:600;margin-top:8px;">c) Wie groß ist die gesamte Sportfläche?</p>
+      <div class="irow">
+        <input class="inp" id="sp-a" type="number" step="0.01" placeholder="m²">
+        <span style="font-size:.88rem;">m²</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask('sp-a',10849.56,'fb-sp-a',2)">Prüfen</button>
+      </div>
+      <button class="hint-btn" onclick="toggleHint('hsp-a')">💡 Hinweis</button>
+      <div class="hint-box" id="hsp-a">A = Rechteck + Kreisfläche = (100·70) + π·35²</div>
+      <div class="fb" id="fb-sp-a"></div>
+    </div>
+  </div>
+
+  <!-- Zusatz: Baum -->
+  <div class="card">
+    <h2>🌳 Zusatzaufgabe: Dicker Baum</h2>
+    <p style="font-size:.9rem;line-height:1.7;">
+      Sieben Schülerinnen und Schüler mit einer Spannweite von je <strong>1,20 m</strong> können den Baum gerade umfassen.
+      <br><strong>Wie groß ist der Durchmesser des Baums?</strong>
+    </p>
+    <button class="hint-btn" onclick="toggleHint('hb')">💡 Hinweis</button>
+    <div class="hint-box" id="hb">Alle Spannweiten zusammen = Umfang des Baums. U = 7 · 1,20. Dann: d = U ÷ π</div>
+    <div class="irow" style="margin-top:10px;">
+      <span style="font-size:.9rem;">d ≈</span>
+      <input class="inp" id="t-baum" type="number" step="0.01" placeholder="in m">
+      <span>m</span>
+      <button class="btn btn-primary btn-sm" onclick="checkTask('t-baum',2.67,'fb-baum',0.05)">Prüfen</button>
+    </div>
+    <div class="fb" id="fb-baum"></div>
+  </div>
+
+</div>
+
+<!-- ════════ GENERATOR ════════ -->
+<div id="sec-generator" class="section">
+
+  <div class="card">
+    <h2>🎲 Neue Aufgaben erstellen</h2>
+    <div class="dtabs">
+      <button class="dtab active easy"   onclick="setGD('e',this)">⭐ Einfach</button>
+      <button class="dtab medium"        onclick="setGD('m',this)">⭐⭐ Mittel</button>
+      <button class="dtab hard"          onclick="setGD('h',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+      <button class="btn btn-outline btn-sm" onclick="genTask('kreis')">⭕ Kreis</button>
+      <button class="btn btn-outline btn-sm" onclick="genTask('zyl')">🥫 Zylinder</button>
+      <button class="btn btn-outline btn-sm" onclick="genTask('word')">📝 Sachaufgabe</button>
+      <button class="btn btn-primary btn-sm" onclick="genTask('all')">🎲 Überraschung</button>
+    </div>
+    <div id="gen-out"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Übungsblatt – 5 Aufgaben</h2>
+    <button class="btn btn-primary" onclick="genSheet()">📋 Erstellen</button>
+    <div id="gen-sheet" style="margin-top:12px;"></div>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+
+<script>
+const PI = Math.PI;
+const r2 = v => Math.round(v*100)/100;
+
+// ── NAVIGATION ──
+function showSec(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── LERNEN EXAMPLES ──
+function showEx(type, btn) {
+  ['u','a','r'].forEach(t => document.getElementById('ex-'+t).style.display = t===type?'block':'none');
+  btn.parentElement.querySelectorAll('.dtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── KREIS RECHNER ──
+function syncRD(src) {
+  if (src==='r') {
+    const r = parseFloat(document.getElementById('cr-r').value);
+    if (!isNaN(r)) document.getElementById('cr-d').value = r2(r*2);
+  } else {
+    const d = parseFloat(document.getElementById('cr-d').value);
+    if (!isNaN(d)) document.getElementById('cr-r').value = r2(d/2);
+  }
+}
+function calcKreis() {
+  const r = parseFloat(document.getElementById('cr-r').value);
+  const out = document.getElementById('kreis-out');
+  if (isNaN(r)||r<=0) { out.innerHTML='<span style="color:#f87171">Bitte einen gültigen Radius eingeben!</span>'; return; }
+  const d = r*2, u = 2*PI*r, a = PI*r*r;
+  out.innerHTML =
+    `<span class="calc-h">Kreis mit r = ${r} cm</span>\n`+
+    `d = 2 · r = 2 · ${r} = <span class="calc-r">${r2(d)} cm</span>\n`+
+    `U = 2 · π · r = 2 · π · ${r} ≈ <span class="calc-r">${r2(u)} cm</span>\n`+
+    `A = π · r² = π · ${r}² ≈ <span class="calc-r">${r2(a)} cm²</span>`;
+}
+
+// ── ZYLINDER RECHNER ──
+function calcZyl() {
+  const r = parseFloat(document.getElementById('cz-r').value);
+  const h = parseFloat(document.getElementById('cz-h').value);
+  const out = document.getElementById('zyl-out');
+  if (isNaN(r)||isNaN(h)||r<=0||h<=0) { out.innerHTML='<span style="color:#f87171">Bitte r und h eingeben!</span>'; return; }
+  const G = PI*r*r, M = 2*PI*r*h, O = 2*G+M, V = G*h;
+  out.innerHTML =
+    `<span class="calc-h">Zylinder: r = ${r} cm, h = ${h} cm</span>\n`+
+    `G = π · ${r}² ≈ <span class="calc-r">${r2(G)} cm²</span>\n`+
+    `M = 2 · π · ${r} · ${h} ≈ <span class="calc-r">${r2(M)} cm²</span>\n`+
+    `O = 2·G + M = 2·${r2(G)} + ${r2(M)} ≈ <span class="calc-r">${r2(O)} cm²</span>\n`+
+    `V = G · h = ${r2(G)} · ${h} ≈ <span class="calc-r">${r2(V)} cm³</span>`;
+}
+
+// ── TABELLE ──
+function checkTabelle() {
+  // a: d=28cm → r=14, u=87.96, a=615.75
+  // b: r=18dm → d=36, u=113.10, a=1017.88 (these are dm units)
+  const ans = {
+    'tt-ra': 14,
+    'tt-db': 36,
+    'tt-ua': r2(2*PI*14),   // 87.96
+    'tt-ub': r2(2*PI*18),   // 113.10
+    'tt-aa': r2(PI*14*14),  // 615.75
+    'tt-ab': r2(PI*18*18),  // 1017.88
+  };
+  let c=0, t=0;
+  Object.entries(ans).forEach(([id,cor]) => {
+    const el = document.getElementById(id);
+    el.classList.remove('ok','err');
+    const v = parseFloat(el.value);
+    if (!isNaN(v)) {
+      t++;
+      if (Math.abs(v-cor)<0.5) { el.classList.add('ok'); c++; }
+      else el.classList.add('err');
+    }
+  });
+  showFB('fb-tab', c===t&&t>0 ? `✅ Alle ${t} Werte richtig!` : `${c} von ${t} Werten korrekt.`, c===t&&t>0);
+}
+
+// ── LÜCKENTEXT ──
+function checkCloze(ids, fbId) {
+  let c=0;
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    const v = el.value.trim().toLowerCase();
+    const a = el.dataset.a.toLowerCase();
+    el.classList.remove('ok','err');
+    if (v===a) { el.classList.add('ok'); c++; }
+    else if (v) el.classList.add('err');
+  });
+  showFB(fbId, c===ids.length ? `✅ Perfekt! Alle ${ids.length} Lücken richtig!` : `${c} von ${ids.length} richtig.`, c===ids.length);
+}
+function resetCloze(ids, fbId) {
+  ids.forEach(id => { const el=document.getElementById(id); el.value=''; el.classList.remove('ok','err'); });
+  document.getElementById(fbId).classList.remove('show');
+}
+
+// ── RICHTIG/FALSCH ──
+const rfData = [
+  { s:'Der Durchmesser ist halb so groß wie der Radius.', ok:false },
+  { s:'A = π · r² berechnet den Flächeninhalt eines Kreises.', ok:true },
+  { s:'Der Umfang eines Kreises mit d = 10 m ist ca. 31,42 m.', ok:true },
+  { s:'Das Volumen eines Zylinders berechnet man mit V = G · h.', ok:true },
+  { s:'Die Mantelfläche des Zylinders ist eine Kreisfläche.', ok:false },
+  { s:'Bei r = 5 cm ist A ≈ 78,54 cm².', ok:true },
+  { s:'Die Oberfläche O = 2G + M enthält beide Grundflächen.', ok:true },
+  { s:'Ein Kreisbogen ist immer der gesamte Umfang.', ok:false },
+  { s:'Bei d = 14 cm ist r = 7 cm.', ok:true },
+  { s:'π ist genau 3,14.', ok:false },
+];
+function loadRF() {
+  const area = document.getElementById('rf-area');
+  const sample = [...rfData].sort(()=>Math.random()-.5).slice(0,5);
+  area.innerHTML = '';
+  sample.forEach((item,i) => {
+    const d = document.createElement('div');
+    d.style.cssText='padding:11px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;';
+    d.innerHTML=`<p style="font-size:.9rem;font-weight:600;margin-bottom:7px;">${item.s}</p>
+      <div style="display:flex;gap:7px;">
+        <button class="btn btn-sm" id="rf-t-${i}" onclick="chkRF(${i},true,${item.ok})" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">✓ Richtig</button>
+        <button class="btn btn-sm" id="rf-f-${i}" onclick="chkRF(${i},false,${item.ok})" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;">✗ Falsch</button>
+      </div>
+      <div class="fb" id="rf-fb-${i}"></div>`;
+    area.appendChild(d);
+  });
+}
+function chkRF(i,chosen,ok) {
+  document.getElementById(`rf-t-${i}`).disabled=true;
+  document.getElementById(`rf-f-${i}`).disabled=true;
+  showFB(`rf-fb-${i}`, chosen===ok ? '✅ Richtig!' : `❌ Die Aussage ist ${ok?'richtig':'falsch'}.`, chosen===ok);
+}
+
+// ── QUIZ ──
+const qData = [
+  { q:'Wie lautet die Formel für den Umfang eines Kreises?', o:['A = π·r²','U = π·d','V = G·h','O = 2G+M'], c:1 },
+  { q:'Ein Kreis hat r = 5 cm. Was ist der Durchmesser?', o:['5 cm','10 cm','25 cm','π·5 cm'], c:1 },
+  { q:'Was ist π näherungsweise?', o:['3,14159','2,71828','1,41421','4,66920'], c:0 },
+  { q:'Formel für die Fläche eines Kreises?', o:['A = π·d','A = 2·π·r','A = π·r²','A = r²'], c:2 },
+  { q:'Ein Zylinder: r=3, h=10. Was ist G (Grundfläche)?', o:['30 cm²','9π cm²','3π cm²','6π cm²'], c:1 },
+  { q:'Was bedeutet M beim Zylinder?', o:['Mittelpunkt','Mantelfläche','Maßstab','Meter'], c:1 },
+  { q:'Formel für die Oberfläche des Zylinders?', o:['O = G+M','O = 2G+M','O = V·h','O = 2G·M'], c:1 },
+  { q:'Kreis mit d=20 cm. Wie groß ist der Umfang (ca.)?', o:['62,83 cm','31,42 cm','40 cm','314,16 cm'], c:0 },
+  { q:'Was berechnet V = π · r² · h?', o:['Mantelfläche','Oberfläche','Volumen des Zylinders','Umfang'], c:2 },
+  { q:'Zwei Halbkreise (r=35 m) ergeben zusammen welchen Umfang?', o:['70π m','35π m','2·35 m','140 m'], c:0 },
+];
+let qi=0, qsc=0;
+function initQ() { qi=0; qsc=0; loadQ(); }
+function loadQ() {
+  if (qi>=qData.length) {
+    document.getElementById('q-area').style.display='none';
+    document.getElementById('q-result').style.display='block';
+    const p=Math.round(qsc/qData.length*100);
+    document.getElementById('q-emoji').textContent = p===100?'🎉':p>=70?'👍':'📚';
+    document.getElementById('q-final').textContent = `${qsc} / ${qData.length} Punkte (${p}%)`;
+    return;
+  }
+  const q=qData[qi];
+  document.getElementById('q-text').textContent=`${qi+1}. ${q.q}`;
+  document.getElementById('q-cnt').textContent=`Frage ${qi+1} von ${qData.length}`;
+  document.getElementById('qprog').style.width=`${qi/qData.length*100}%`;
+  const opts=document.getElementById('q-opts');
+  opts.innerHTML='';
+  document.getElementById('q-next').style.display='none';
+  document.getElementById('fb-q').classList.remove('show');
+  q.o.forEach((o,i) => {
+    const b=document.createElement('button');
+    b.className='q-opt'; b.textContent=o;
+    b.onclick=()=>pickQ(i,q.c,q.o[q.c]);
+    opts.appendChild(b);
+  });
+}
+function pickQ(chosen,correct,correctText) {
+  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  if (chosen===correct) {
+    document.querySelectorAll('.q-opt')[chosen].classList.add('ok');
+    qsc++;
+    showFB('fb-q','✅ Richtig!',true);
+  } else {
+    document.querySelectorAll('.q-opt')[chosen].classList.add('err');
+    document.querySelectorAll('.q-opt')[correct].classList.add('ok');
+    showFB('fb-q',`❌ Falsch. Richtig: „${correctText}"`,false);
+  }
+  document.getElementById('q-next').style.display='inline-block';
+}
+function nextQ() { qi++; loadQ(); }
+function restartQ() { document.getElementById('q-area').style.display='block'; document.getElementById('q-result').style.display='none'; initQ(); }
+
+// MC
+const mcStatements = [
+  { s:'U = 2 · π · r ist die Formel für den Umfang.', ok:true },
+  { s:'Bei r = 7 cm ist A ≈ 153,94 cm².', ok:true },
+  { s:'Der Mantelfläche-Formel lautet M = 2 · G · h.', ok:false },
+  { s:'Volumen und Oberfläche haben immer dieselbe Einheit.', ok:false },
+  { s:'Bei d = 36 dm ist r = 18 dm.', ok:true },
+  { s:'Die Formel A = π · r² berechnet den Umfang.', ok:false },
+  { s:'V = π · r² · h berechnet das Volumen des Zylinders.', ok:true },
+];
+function loadMC() {
+  const area=document.getElementById('mc-area');
+  const sample=[...mcStatements].sort(()=>Math.random()-.5).slice(0,4);
+  area.innerHTML='';
+  sample.forEach((item,i) => {
+    const d=document.createElement('div');
+    d.style.cssText='padding:11px;border:1px solid var(--border);border-radius:8px;margin-bottom:7px;';
+    d.innerHTML=`<p style="font-size:.9rem;font-weight:600;margin-bottom:7px;">${item.s}</p>
+      <div style="display:flex;gap:7px;">
+        <button class="btn btn-sm" id="mc-t-${i}" onclick="chkMC(${i},true,${item.ok})" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">✓ Richtig</button>
+        <button class="btn btn-sm" id="mc-f-${i}" onclick="chkMC(${i},false,${item.ok})" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;">✗ Falsch</button>
+      </div>
+      <div class="fb" id="mc-fb-${i}"></div>`;
+    area.appendChild(d);
+  });
+}
+function chkMC(i,chosen,ok) {
+  document.getElementById(`mc-t-${i}`).disabled=true;
+  document.getElementById(`mc-f-${i}`).disabled=true;
+  showFB(`mc-fb-${i}`, chosen===ok ? '✅ Richtig!' : `❌ Diese Aussage ist ${ok?'richtig':'falsch'}.`, chosen===ok);
+}
+
+// ── MATCHING ──
+const mData = [
+  { t:'Radius r',      d:'Strecke vom Mittelpunkt zum Rand' },
+  { t:'Durchmesser d', d:'Doppelter Radius; d = 2·r' },
+  { t:'Umfang U',      d:'U = π · d (Länge der Kreislinie)' },
+  { t:'Fläche A',      d:'A = π · r² (Inhalt des Kreises)' },
+  { t:'Mantelfläche M',d:'M = 2·π·r·h (Seite des Zylinders)' },
+  { t:'Volumen V',     d:'V = π·r²·h (Inhalt des Zylinders)' },
+];
+let mSel=null;
+function setupMatch() {
+  const left=[...mData].sort(()=>Math.random()-.5);
+  const right=[...mData].sort(()=>Math.random()-.5);
+  mSel=null;
+  document.getElementById('fb-m1').classList.remove('show');
+  const lc=document.getElementById('mc-left');
+  const rc=document.getElementById('mc-right');
+  lc.innerHTML=''; rc.innerHTML='';
+  let done=[];
+  left.forEach(item => {
+    const d=document.createElement('div');
+    d.className='mi'; d.dataset.t=item.t; d.textContent=item.t;
+    d.onclick=()=>{ if(d.classList.contains('done'))return; document.querySelectorAll('#mc-left .mi').forEach(e=>e.classList.remove('sel')); d.classList.add('sel'); mSel=d; };
+    lc.appendChild(d);
+  });
+  right.forEach(item => {
+    const d=document.createElement('div');
+    d.className='mi'; d.dataset.t=item.t; d.textContent=item.d;
+    d.onclick=()=>{
+      if(!mSel||d.classList.contains('done'))return;
+      if(mSel.dataset.t===d.dataset.t) {
+        mSel.classList.remove('sel'); mSel.classList.add('done'); d.classList.add('done');
+        done.push(mSel.dataset.t); mSel=null;
+        if(done.length===mData.length) showFB('fb-m1','🎉 Alle Begriffe richtig zugeordnet!',true);
+      } else {
+        d.classList.add('bad'); setTimeout(()=>d.classList.remove('bad'),500);
+        mSel.classList.remove('sel'); mSel=null;
+        showFB('fb-m1','❌ Passt nicht. Versuch es nochmal!',false);
+        setTimeout(()=>document.getElementById('fb-m1').classList.remove('show'),1400);
+      }
+    };
+    rc.appendChild(d);
+  });
+}
+
+// Formula match
+const fmData = [
+  { lbl:'U = π · d',       what:'Umfang des Kreises' },
+  { lbl:'A = π · r²',      what:'Flächeninhalt des Kreises' },
+  { lbl:'M = 2·π·r·h',     what:'Mantelfläche des Zylinders' },
+  { lbl:'O = 2G + M',      what:'Oberfläche des Zylinders' },
+  { lbl:'V = π · r² · h',  what:'Volumen des Zylinders' },
+];
+let fmSel=null;
+function loadFM() {
+  const area=document.getElementById('fm-area');
+  const left=[...fmData].sort(()=>Math.random()-.5);
+  const right=[...fmData].sort(()=>Math.random()-.5);
+  fmSel=null;
+  area.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="fm-g"></div>`;
+  const grid=document.getElementById('fm-g');
+  const lc=document.createElement('div'); lc.style.display='flex'; lc.style.flexDirection='column'; lc.style.gap='7px';
+  const rc=document.createElement('div'); rc.style.display='flex'; rc.style.flexDirection='column'; rc.style.gap='7px';
+  grid.appendChild(lc); grid.appendChild(rc);
+  left.forEach(item=>{
+    const d=document.createElement('div');
+    d.className='mi'; d.dataset.k=item.lbl; d.textContent=item.lbl;
+    d.style.fontFamily='monospace';
+    d.onclick=()=>{ if(d.classList.contains('done'))return; document.querySelectorAll('#fm-g .mi').forEach(e=>{ if(!e.closest('[data-right]'))e.classList.remove('sel'); }); d.classList.add('sel'); fmSel=d; };
+    lc.appendChild(d);
+  });
+  right.forEach(item=>{
+    const d=document.createElement('div');
+    d.className='mi'; d.dataset.k=item.lbl; d.textContent=item.what;
+    d.setAttribute('data-right','1');
+    d.onclick=()=>{
+      if(!fmSel||d.classList.contains('done'))return;
+      if(fmSel.dataset.k===d.dataset.k){ fmSel.classList.remove('sel'); fmSel.classList.add('done'); d.classList.add('done'); fmSel=null; }
+      else { d.classList.add('bad'); setTimeout(()=>d.classList.remove('bad'),500); fmSel.classList.remove('sel'); fmSel=null; }
+    };
+    rc.appendChild(d);
+  });
+}
+
+// ── BLITZ ──
+const blPool = [
+  { q:'U = ? (r=7)', a:'43,98', w:['14','154','22'] },
+  { q:'A = ? (r=5)', a:'78,54', w:['31,42','25π','15,71'] },
+  { q:'d = ? (r=9)', a:'18', w:['9','81','4,5'] },
+  { q:'r = ? (d=24)', a:'12', w:['6','48','24'] },
+  { q:'V = ? (r=3,h=10)', a:'282,74', w:['90','94,25','30π'] },
+  { q:'G = ? (r=6)', a:'113,10', w:['37,70','36','6π'] },
+  { q:'M = ? (r=4,h=5)', a:'125,66', w:['20π','40','80'] },
+  { q:'U = ? (d=10)', a:'31,42', w:['20','100','10π'] },
+  { q:'A = ? (r=10)', a:'314,16', w:['62,83','100','1000'] },
+  { q:'r = ? (d=14)', a:'7', w:['14','28','3,5'] },
+];
+let bsScore=0,bsR=0,bsT=0;
+function startBlitz() {
+  const item=blPool[Math.floor(Math.random()*blPool.length)];
+  document.getElementById('bl-display').textContent=item.q;
+  const opts=[item.a,...item.w.slice(0,3)].sort(()=>Math.random()-.5);
+  const c=document.getElementById('bl-opts');
+  c.innerHTML='';
+  opts.forEach(o=>{ const b=document.createElement('button'); b.className='blitz-opt'; b.textContent=o; b.onclick=()=>chkBlitz(b,o===item.a); c.appendChild(b); });
+  document.getElementById('bl-fb').textContent='';
+}
+function chkBlitz(btn,ok) {
+  document.querySelectorAll('#bl-opts .blitz-opt').forEach(b=>b.disabled=true);
+  bsT++;
+  if(ok){ btn.classList.add('ok'); bsR++; bsScore+=10; document.getElementById('bl-fb').textContent='✅ Richtig! +10'; }
+  else { btn.classList.add('err'); document.getElementById('bl-fb').textContent='❌ Schade!'; }
+  document.getElementById('bs-score').textContent=bsScore;
+  document.getElementById('bs-r').textContent=bsR;
+  document.getElementById('bs-t').textContent=bsT;
+  setTimeout(startBlitz,1100);
+}
+function resetBlitz() {
+  bsScore=bsR=bsT=0;
+  ['bs-score','bs-r','bs-t'].forEach(id=>document.getElementById(id).textContent=0);
+  document.getElementById('bl-display').textContent='Drücke Start!';
+  document.getElementById('bl-opts').innerHTML='';
+  document.getElementById('bl-fb').textContent='';
+}
+
+// Term Blitz
+const tbPool = [
+  { d:'Strecke vom Mittelpunkt zum Rand', a:'Radius', w:['Durchmesser','Umfang','Sehne'] },
+  { d:'Länge der äußeren Kreislinie', a:'Umfang', w:['Fläche','Radius','Bogen'] },
+  { d:'Fläche im Inneren des Kreises', a:'Flächeninhalt', w:['Umfang','Durchmesser','Volumen'] },
+  { d:'Seitenfläche des Zylinders', a:'Mantelfläche', w:['Grundfläche','Oberfläche','Volumen'] },
+  { d:'Gesamte Hülle: 2G + M', a:'Oberfläche', w:['Volumen','Mantelfläche','Grundfläche'] },
+  { d:'Rauminhalt des Zylinders', a:'Volumen', w:['Oberfläche','Fläche','Umfang'] },
+  { d:'π ≈ 3,14159', a:'Pi', w:['Euler-Zahl','Goldener Schnitt','Fibonacci'] },
+];
+let tbC=null;
+function startTermBlitz() {
+  tbC=tbPool[Math.floor(Math.random()*tbPool.length)];
+  document.getElementById('tb-display').textContent=tbC.d;
+  const opts=[tbC.a,...tbC.w.slice(0,3)].sort(()=>Math.random()-.5);
+  const c=document.getElementById('tb-opts');
+  c.innerHTML='';
+  opts.forEach(o=>{ const b=document.createElement('button'); b.className='blitz-opt'; b.textContent=o; b.onclick=()=>chkTB(b,o===tbC.a); c.appendChild(b); });
+  document.getElementById('tb-fb').textContent='';
+}
+function chkTB(btn,ok) {
+  document.querySelectorAll('#tb-opts .blitz-opt').forEach(b=>b.disabled=true);
+  if(ok){ btn.classList.add('ok'); document.getElementById('tb-fb').textContent='✅ Super!'; }
+  else { btn.classList.add('err'); document.getElementById('tb-fb').textContent=`❌ Richtig: ${tbC.a}`; }
+  setTimeout(startTermBlitz,1300);
+}
+
+// ── AUFGABEN ──
+function showTask(lv, btn) {
+  ['e','m','h'].forEach(l=>document.getElementById('task-'+l).style.display=l===lv?'block':'none');
+  btn.parentElement.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleHint(id) { document.getElementById(id).classList.toggle('show'); }
+function checkTask(id, correct, fbId, tol) {
+  const v=parseFloat(document.getElementById(id).value);
+  if(Math.abs(v-correct)<=tol) showFB(fbId,`✅ Richtig! Ergebnis: ≈ ${r2(correct)}`,true);
+  else showFB(fbId,`❌ Nicht ganz. Das Ergebnis ist ca. ${r2(correct)}. Schau dir den Hinweis an!`,false);
+}
+let figSelected=new Set();
+function checkFig(btn, fig) {
+  figSelected.add(fig);
+  btn.classList.toggle('sel');
+  if(figSelected.has('Rechteck')&&figSelected.has('Kreis')) {
+    showFB('fb-fig','✅ Genau! Ein Rechteck und zwei Halbkreise (= ein ganzer Kreis).',true);
+  } else if(figSelected.has('Dreieck')) {
+    showFB('fb-fig','❌ Dreiecke sind nicht dabei. Schau genauer hin!',false);
+  }
+}
+
+// ── GENERATOR ──
+let gDiff='e';
+function setGD(d,btn) {
+  gDiff=d;
+  btn.parentElement.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function rndR() {
+  if(gDiff==='e') return [3,4,5,6,7,8,10,12,14,15][Math.floor(Math.random()*10)];
+  if(gDiff==='m') { const v=Math.floor(Math.random()*20)+2; return v; }
+  return Math.round((Math.random()*25+3)*10)/10;
+}
+function rndH() {
+  if(gDiff==='e') return [5,10,12,15,20][Math.floor(Math.random()*5)];
+  return Math.floor(Math.random()*30)+5;
+}
+function genTask(type) {
+  if(type==='all') type=['kreis','zyl','word'][Math.floor(Math.random()*3)];
+  const id='g'+Date.now();
+  let html='';
+  if(type==='kreis') {
+    const r=rndR(), u=r2(2*PI*r), a=r2(PI*r*r), d=r*2;
+    html=`<div class="card" style="border-left:4px solid var(--primary);">
+      <div style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:7px;">KREIS</div>
+      <p style="font-size:.92rem;margin-bottom:10px;">r = <strong>${r} cm</strong><br>Berechne: <strong>d, U und A</strong></p>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div class="irow"><span style="width:55px;font-size:.88rem;">d =</span><input class="inp" id="${id}-d" type="number" step="0.01" placeholder="cm"><button class="btn btn-primary btn-sm" onclick="checkTask('${id}-d',${d},'fb-${id}-d',0.1)">✓</button></div>
+        <div class="fb" id="fb-${id}-d"></div>
+        <div class="irow"><span style="width:55px;font-size:.88rem;">U =</span><input class="inp" id="${id}-u" type="number" step="0.01" placeholder="cm"><button class="btn btn-primary btn-sm" onclick="checkTask('${id}-u',${u},'fb-${id}-u',0.1)">✓</button></div>
+        <div class="fb" id="fb-${id}-u"></div>
+        <div class="irow"><span style="width:55px;font-size:.88rem;">A =</span><input class="inp" id="${id}-a" type="number" step="0.01" placeholder="cm²"><button class="btn btn-primary btn-sm" onclick="checkTask('${id}-a',${a},'fb-${id}-a',0.1)">✓</button></div>
+        <div class="fb" id="fb-${id}-a"></div>
+      </div>
+      <button class="btn btn-sm" style="margin-top:8px;background:#f5f3ff;color:var(--muted);border:1px solid var(--border);"
+        onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung</button>
+      <div id="sol-${id}" style="display:none;font-size:.82rem;margin-top:7px;padding:9px;background:var(--primary-light);border-radius:8px;color:var(--primary-dark);">
+        d = ${d} cm &nbsp;|&nbsp; U ≈ ${u} cm &nbsp;|&nbsp; A ≈ ${a} cm²
+      </div></div>`;
+  } else if(type==='zyl') {
+    const r=rndR(), h=rndH(), G=r2(PI*r*r), M=r2(2*PI*r*h), O=r2(2*G+M), V=r2(PI*r*r*h);
+    html=`<div class="card" style="border-left:4px solid var(--teal);">
+      <div style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:7px;">ZYLINDER</div>
+      <p style="font-size:.92rem;margin-bottom:10px;">r = <strong>${r} cm</strong>, h = <strong>${h} cm</strong><br>Berechne: <strong>G, M, O, V</strong></p>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        ${['G','M','O'].map(s=>`<div class="irow"><span style="width:55px;font-size:.88rem;">${s} =</span><input class="inp" id="${id}-${s}" type="number" step="0.01" placeholder="cm²"><button class="btn btn-primary btn-sm" onclick="checkTask('${id}-${s}',${s==='G'?G:s==='M'?M:O},'fb-${id}-${s}',0.5)">✓</button></div><div class="fb" id="fb-${id}-${s}"></div>`).join('')}
+        <div class="irow"><span style="width:55px;font-size:.88rem;">V =</span><input class="inp" id="${id}-V" type="number" step="0.01" placeholder="cm³"><button class="btn btn-primary btn-sm" onclick="checkTask('${id}-V',${V},'fb-${id}-V',0.5)">✓</button></div>
+        <div class="fb" id="fb-${id}-V"></div>
+      </div>
+      <button class="btn btn-sm" style="margin-top:8px;background:#f0fdfa;color:var(--muted);border:1px solid var(--border);"
+        onclick="document.getElementById('sol2-${id}').style.display='block';this.style.display='none'">Lösung</button>
+      <div id="sol2-${id}" style="display:none;font-size:.82rem;margin-top:7px;padding:9px;background:var(--teal-light);border-radius:8px;color:#0f766e;">
+        G ≈ ${G} cm² &nbsp;|&nbsp; M ≈ ${M} cm² &nbsp;|&nbsp; O ≈ ${O} cm² &nbsp;|&nbsp; V ≈ ${V} cm³
+      </div></div>`;
+  } else {
+    const r=Math.round((Math.random()*15+3)*10)/10;
+    const ctx=['Riesenrad','Münze','Brunnen','Drehscheibe','Kreisel','Kreisverkehr'];
+    const name=ctx[Math.floor(Math.random()*ctx.length)];
+    const u=r2(2*PI*r), a=r2(PI*r*r);
+    html=`<div class="card" style="border-left:4px solid var(--amber);">
+      <div style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:7px;">SACHAUFGABE</div>
+      <p style="font-size:.92rem;margin-bottom:10px;line-height:1.6;">Ein ${name} hat einen Radius von <strong>${r} m</strong>.<br>
+        a) Berechne den Umfang.<br>b) Berechne die Fläche.</p>
+      <div class="irow"><span style="font-size:.88rem;">a) U =</span><input class="inp" id="${id}-wu" type="number" step="0.01" placeholder="m"><span>m</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask('${id}-wu',${u},'fb-${id}-wu',0.1)">✓</button></div>
+      <div class="fb" id="fb-${id}-wu"></div>
+      <div class="irow"><span style="font-size:.88rem;">b) A =</span><input class="inp" id="${id}-wa" type="number" step="0.01" placeholder="m²"><span>m²</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask('${id}-wa',${a},'fb-${id}-wa',0.1)">✓</button></div>
+      <div class="fb" id="fb-${id}-wa"></div>
+      <button class="btn btn-sm" style="margin-top:8px;background:var(--amber-light);color:var(--amber);border:1px solid #fde68a;"
+        onclick="document.getElementById('sol3-${id}').style.display='block';this.style.display='none'">Lösung</button>
+      <div id="sol3-${id}" style="display:none;font-size:.82rem;margin-top:7px;padding:9px;background:var(--amber-light);border-radius:8px;color:#92400e;">
+        U ≈ ${u} m &nbsp;|&nbsp; A ≈ ${a} m²
+      </div></div>`;
+  }
+  document.getElementById('gen-out').innerHTML=html;
+}
+
+function genSheet() {
+  const cont=document.getElementById('gen-sheet');
+  let html='<div style="display:flex;flex-direction:column;gap:8px;">';
+  for(let i=1;i<=5;i++) {
+    const r=rndR();
+    if(i<=2) {
+      const u=r2(2*PI*r), a=r2(PI*r*r);
+      html+=`<div style="padding:11px;background:#f8f7ff;border-radius:8px;border-left:3px solid var(--primary);">
+        <strong>Aufgabe ${i}:</strong> Kreis mit r = ${r} cm. Berechne U und A.
+        <span style="float:right;font-size:.78rem;color:var(--muted);">U≈${u} cm | A≈${a} cm²</span></div>`;
+    } else if(i<=4) {
+      const h=rndH(), G=r2(PI*r*r), M=r2(2*PI*r*h), O=r2(2*G+M), V=r2(PI*r*r*h);
+      html+=`<div style="padding:11px;background:#f0fdfa;border-radius:8px;border-left:3px solid var(--teal);">
+        <strong>Aufgabe ${i}:</strong> Zylinder: r = ${r} cm, h = ${h} cm. Berechne G, M, O, V.
+        <span style="float:right;font-size:.78rem;color:var(--muted);">G≈${G} | M≈${M} | O≈${O} | V≈${V}</span></div>`;
+    } else {
+      const u=r2(2*PI*r);
+      html+=`<div style="padding:11px;background:#fffbeb;border-radius:8px;border-left:3px solid var(--amber);">
+        <strong>Aufgabe ${i}:</strong> Ein Brunnen hat d = ${r*2} m. Wie lang ist der Rand?
+        <span style="float:right;font-size:.78rem;color:var(--muted);">U≈${u} m</span></div>`;
+    }
+  }
+  html+='</div><p style="font-size:.76rem;color:#9ca3af;margin-top:7px;">Lösungen sind klein angezeigt.</p>';
+  cont.innerHTML=html;
+}
+
+// ── HELPERS ──
+function showFB(id, msg, ok) {
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=msg;
+  el.className='fb show '+(ok?'ok':'err');
+}
+
+// ── INIT ──
+initQ();
+setupMatch();
+loadMC();
+loadFM();
+loadRF();
+</script>
+</body>
+</html>

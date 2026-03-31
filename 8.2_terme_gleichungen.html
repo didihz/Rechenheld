@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terme und Gleichungen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:#0d9488; --teal-l:#ccfbf1; --teal-d:#0f766e;
+    --amber:#d97706; --amber-l:#fef3c7; --amber-d:#b45309;
+    --blue:#2563eb; --blue-l:#dbeafe; --blue-d:#1d4ed8;
+    --purple:#7c3aed; --purple-l:#ede9fe; --purple-d:#6d28d9;
+    --coral:#e11d48; --coral-l:#ffe4e6; --coral-d:#be123c;
+    --green:#16a34a; --green-l:#dcfce7; --green-d:#15803d;
+    --gray:#64748b; --gray-l:#f1f5f9;
+    --bg:#f8fafc; --white:#ffffff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --r:12px; --sh:0 2px 12px rgba(0,0,0,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito Sans',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;}
+  h1,h2,h3,h4{font-family:'Nunito',sans-serif;}
+
+  .nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 .5rem;display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100;}
+  .nb{background:none;border:none;cursor:pointer;padding:.85rem 1rem;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;}
+  .nb:hover{color:var(--text);}
+  .nb.active{color:var(--purple);border-bottom-color:var(--purple);}
+
+  .sec{display:none;padding:1.5rem 1rem;max-width:860px;margin:0 auto;}
+  .sec.active{display:block;}
+
+  .hero{border-radius:var(--r);padding:1.75rem;margin-bottom:1.5rem;text-align:center;color:white;}
+  .hero h1{font-size:1.75rem;margin-bottom:.4rem;}
+  .hero p{opacity:.9;font-size:.95rem;}
+
+  .card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--sh);}
+  .card h3{font-size:1.05rem;margin-bottom:.75rem;}
+
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem;}
+  .bt{background:var(--teal-l);color:var(--teal-d);}
+  .ba{background:var(--amber-l);color:var(--amber-d);}
+  .bp{background:var(--purple-l);color:var(--purple-d);}
+  .bb{background:var(--blue-l);color:var(--blue-d);}
+  .bc{background:var(--coral-l);color:var(--coral-d);}
+  .bg{background:var(--green-l);color:var(--green-d);}
+
+  .fbox{border-left:4px solid var(--blue);background:var(--blue-l);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0;}
+  .fbox .ft{font-size:11px;font-weight:700;color:var(--blue-d);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem;}
+  .fbox.amber{border-color:var(--amber);background:var(--amber-l);}
+  .fbox.amber .ft{color:var(--amber-d);}
+  .fbox.purple{border-color:var(--purple);background:var(--purple-l);}
+  .fbox.purple .ft{color:var(--purple-d);}
+  .fbox.teal{border-color:var(--teal);background:var(--teal-l);}
+  .fbox.teal .ft{color:var(--teal-d);}
+  .fbox.green{border-color:var(--green);background:var(--green-l);}
+  .fbox.green .ft{color:var(--green-d);}
+
+  .tip{background:var(--teal-l);border-left:4px solid var(--teal);border-radius:8px;padding:.75rem 1rem;margin:.75rem 0;font-size:.9rem;}
+  .warn{background:var(--amber-l);border-left:4px solid var(--amber);border-radius:8px;padding:.75rem 1rem;margin:.75rem 0;font-size:.9rem;}
+
+  .steps{margin:.75rem 0;}
+  .step{display:flex;gap:.75rem;margin-bottom:.65rem;align-items:flex-start;}
+  .sn{flex-shrink:0;width:30px;height:30px;background:var(--purple);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;}
+  .st{padding-top:3px;font-size:.95rem;}
+
+  .math{font-family:'Nunito',sans-serif;font-weight:700;background:var(--gray-l);border-radius:6px;padding:2px 8px;font-size:.95rem;}
+  .eq-box{background:var(--purple-l);border:2px solid var(--purple);border-radius:10px;padding:1rem 1.25rem;text-align:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.3rem;color:var(--purple-d);margin:.75rem 0;}
+
+  /* QUIZ */
+  .quiz-q{font-weight:700;margin-bottom:.75rem;font-size:1rem;}
+  .opts{display:grid;gap:.45rem;}
+  .ob{background:var(--gray-l);border:1.5px solid var(--border);border-radius:8px;padding:.65rem 1rem;text-align:left;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:.9rem;transition:all .15s;}
+  .ob:hover:not(:disabled){border-color:var(--purple);background:var(--purple-l);}
+  .ob.correct{background:var(--green-l);border-color:var(--green);color:var(--green-d);}
+  .ob.wrong{background:var(--coral-l);border-color:var(--coral);color:var(--coral-d);}
+  .fb{margin-top:.75rem;padding:.75rem 1rem;border-radius:8px;font-size:.9rem;display:none;}
+  .fb.ok{background:var(--green-l);color:var(--green-d);border-left:4px solid var(--green);display:block;}
+  .fb.nope{background:var(--coral-l);color:var(--coral-d);border-left:4px solid var(--coral);display:block;}
+  .qnav{display:flex;gap:.5rem;margin-top:1rem;align-items:center;flex-wrap:wrap;}
+  .qc{font-size:.85rem;color:var(--muted);}
+
+  .btn{background:var(--purple);color:white;border:none;border-radius:8px;padding:.55rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:background .15s;}
+  .btn:hover{background:var(--purple-d);}
+  .btn-o{background:transparent;color:var(--purple);border:1.5px solid var(--purple);}
+  .btn-o:hover{background:var(--purple-l);}
+  .btn-g{background:var(--green);}
+  .btn-g:hover{background:var(--green-d);}
+  .btn-a{background:var(--amber);}
+  .btn-a:hover{background:var(--amber-d);}
+
+  /* FILL */
+  .fi{border:2px solid var(--border);border-radius:8px;padding:.4rem .7rem;font-size:1rem;font-family:'Nunito',sans-serif;width:100px;text-align:center;transition:border-color .2s;}
+  .fi:focus{outline:none;border-color:var(--purple);}
+  .fi.correct{border-color:var(--green);background:var(--green-l);}
+  .fi.wrong{border-color:var(--coral);background:var(--coral-l);}
+  .fr{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;font-size:.95rem;}
+
+  /* TABLE */
+  .val-table{width:100%;border-collapse:collapse;font-size:.95rem;margin:.75rem 0;}
+  .val-table th{background:var(--purple-l);color:var(--purple-d);padding:.5rem .75rem;text-align:center;font-family:'Nunito',sans-serif;font-weight:700;}
+  .val-table td{border:1px solid var(--border);padding:.4rem .75rem;text-align:center;}
+  .val-table .x-col{background:var(--gray-l);font-weight:700;}
+  .val-table input{width:80px;border:1.5px solid var(--border);border-radius:6px;padding:.3rem .4rem;text-align:center;font-family:'Nunito',sans-serif;font-size:.9rem;}
+  .val-table input.correct{border-color:var(--green);background:var(--green-l);}
+  .val-table input.wrong{border-color:var(--coral);background:var(--coral-l);}
+
+  /* MATCH */
+  .mg{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.75rem;}
+  .mc{display:flex;flex-direction:column;gap:.5rem;}
+  .mi{background:var(--gray-l);border:1.5px solid var(--border);border-radius:8px;padding:.55rem 1rem;cursor:pointer;font-size:.88rem;font-weight:700;text-align:center;transition:all .15s;user-select:none;}
+  .mi:hover:not(.matched):not(.sel){border-color:var(--purple);}
+  .mi.sel{border-color:var(--blue);background:var(--blue-l);}
+  .mi.matched{border-color:var(--green);background:var(--green-l);color:var(--green-d);pointer-events:none;}
+  .mi.wf{border-color:var(--coral);background:var(--coral-l);}
+
+  /* WAAGE */
+  .scale-wrap{display:flex;justify-content:center;margin:1rem 0;}
+  .scale-svg{width:100%;max-width:380px;}
+
+  /* EXERCISE */
+  .gen-area{background:var(--gray-l);border-radius:var(--r);padding:1.25rem;margin-top:1rem;}
+  .gen-p{font-size:1rem;font-weight:700;margin-bottom:.75rem;}
+  .ga{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:.45rem .7rem;width:110px;font-size:1rem;font-family:'Nunito',sans-serif;}
+  .ar{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.5rem;}
+  .ans-rev{background:var(--amber-l);color:var(--amber-d);border-radius:8px;padding:.6rem 1rem;font-weight:700;font-size:.95rem;display:none;margin-top:.5rem;}
+
+  /* FLASH */
+  .fl-box{background:var(--purple-l);border-radius:var(--r);padding:2rem;text-align:center;min-height:130px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;}
+  .fl-w{font-family:'Nunito',sans-serif;font-size:1.9rem;font-weight:800;color:var(--purple-d);}
+
+  /* LEVEL */
+  .ltabs{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+  .lt{padding:.35rem .85rem;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .15s;}
+  .lt.active{background:var(--purple);color:white;border-color:var(--purple);}
+
+  .pb-wrap{background:var(--border);border-radius:20px;height:8px;margin-bottom:.25rem;}
+  .pb{height:100%;border-radius:20px;background:var(--purple);transition:width .3s;}
+  .sp{display:inline-flex;align-items:center;gap:.4rem;background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:.25rem .85rem;font-family:'Nunito',sans-serif;font-weight:700;font-size:.88rem;}
+  .sd{width:10px;height:10px;border-radius:50%;background:var(--purple);}
+
+  .eq-step{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin:.4rem 0;font-family:'Nunito',sans-serif;font-size:.95rem;}
+  .eq-step .op{color:var(--purple-d);font-weight:700;margin-right:.5rem;}
+
+  @media(max-width:500px){
+    .hero h1{font-size:1.35rem;}
+    .mg{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <button class="nb active" onclick="show('lernen')">📖 Lernen</button>
+  <button class="nb" onclick="show('begriffe')">🔤 Begriffe</button>
+  <button class="nb" onclick="show('auswerten')">🔢 Auswerten</button>
+  <button class="nb" onclick="show('vereinfachen')">✂️ Vereinfachen</button>
+  <button class="nb" onclick="show('gleichungen')">⚖️ Gleichungen</button>
+  <button class="nb" onclick="show('quiz')">❓ Quiz</button>
+  <button class="nb" onclick="show('ueben')">🏋️ Üben</button>
+  <button class="nb" onclick="show('blitz')">⚡ Blitz</button>
+</nav>
+
+<!-- ══════════════════════ LERNEN ══════════════════════ -->
+<section class="sec active" id="lernen">
+  <div class="hero" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
+    <h1>📖 Terme und Gleichungen</h1>
+    <p>Von Termen zu Gleichungen – Schritt für Schritt</p>
+  </div>
+
+  <div class="card">
+    <div class="badge bp">Was ist ein Term?</div>
+    <h3>Terme – Rechnungen mit Buchstaben</h3>
+    <p>Ein <strong>Term</strong> ist eine Rechnung, die auch <strong>Variablen</strong> (Buchstaben wie x oder a) enthalten kann.</p>
+    <div class="fbox purple" style="margin-top:.75rem;">
+      <div class="ft">Beispiele für Terme</div>
+      <span class="math">3 + 5</span> &nbsp; <span class="math">x + 2</span> &nbsp; <span class="math">4 · x – 3</span> &nbsp; <span class="math">2a + 3b</span>
+    </div>
+    <div class="warn">⚠️ <strong>Variable</strong> = Buchstabe, der für eine Zahl steht. Wir wissen noch nicht, welche Zahl!<br>Beispiel: In <strong>x + 2</strong> ist x die Variable.</div>
+    <div class="tip">💡 Terme sind wie Baupläne: Erst wenn du x einen Wert gibst, kommt ein Ergebnis raus.</div>
+  </div>
+
+  <div class="card">
+    <div class="badge ba">Terme auswerten</div>
+    <h3>Wert eines Terms berechnen</h3>
+    <p>Wenn du weißt, welchen Wert x hat, kannst du den Term <strong>auswerten</strong>: einfach x durch die Zahl ersetzen.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="st">Term aufschreiben: <span class="math">4 · x – 3</span></div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="st">x ersetzen: für x = 5 → <span class="math">4 · 5 – 3</span></div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="st">Ausrechnen: 20 – 3 = <strong>17</strong></div>
+      </div>
+    </div>
+    <div class="tip">💡 <strong>Punkt vor Strich!</strong> Erst Mal- und Geteiltrechnung, dann Plus und Minus.</div>
+  </div>
+
+  <div class="card">
+    <div class="badge bt">Terme vereinfachen</div>
+    <h3>Gleichartige Terme zusammenfassen</h3>
+    <p>Terme mit <strong>derselben Variable</strong> kann man zusammenzählen – wie Äpfel und Äpfel.</p>
+    <div class="fbox teal">
+      <div class="ft">Gleichartige Terme</div>
+      <span class="math">3x</span> und <span class="math">5x</span> → beide haben x → zusammenfassen: <span class="math">8x</span><br>
+      <span class="math">2a</span> und <span class="math">7a</span> → beide haben a → zusammenfassen: <span class="math">9a</span>
+    </div>
+    <div class="warn">⚠️ <strong>Nicht mischen!</strong> <span class="math">3x</span> und <span class="math">5y</span> kann man <em>nicht</em> zusammenfassen – das sind unterschiedliche Variablen.</div>
+    <div style="margin-top:.75rem;">
+      <p style="margin-bottom:.5rem;"><strong>Vollständiges Beispiel:</strong></p>
+      <div class="eq-step"><span class="op">Aufgabe:</span> 3x + 2y + 5x – y</div>
+      <div class="eq-step"><span class="op">x sammeln:</span> 3x + 5x = 8x</div>
+      <div class="eq-step"><span class="op">y sammeln:</span> 2y – y = 1y = y</div>
+      <div class="eq-step" style="background:var(--green-l);border-color:var(--green);"><span class="op" style="color:var(--green-d);">Ergebnis:</span> 8x + y</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge bp">Gleichungen</div>
+    <h3>Was ist eine Gleichung?</h3>
+    <p>Eine <strong>Gleichung</strong> hat ein <strong>=</strong>-Zeichen. Auf beiden Seiten steht das Gleiche.</p>
+    <div class="eq-box">x + 5 = 12</div>
+    <p>Ziel: Wir suchen die Zahl, die x sein muss, damit die Gleichung stimmt.</p>
+    <div class="fbox purple">
+      <div class="ft">Waagenbild – so kann man es sich vorstellen</div>
+      Die Waage ist im Gleichgewicht. Auf beiden Seiten liegt dasselbe Gewicht.<br>
+      Was wir auf einer Seite tun, müssen wir auf beiden Seiten tun!
+    </div>
+
+    <!-- Waage SVG -->
+    <div class="scale-wrap">
+      <svg class="scale-svg" viewBox="0 0 380 180">
+        <!-- Stange -->
+        <line x1="190" y1="40" x2="80" y2="110" stroke="#7c3aed" stroke-width="3" stroke-linecap="round"/>
+        <line x1="190" y1="40" x2="300" y2="110" stroke="#7c3aed" stroke-width="3" stroke-linecap="round"/>
+        <!-- Pfosten -->
+        <line x1="190" y1="40" x2="190" y2="160" stroke="#64748b" stroke-width="3"/>
+        <circle cx="190" cy="40" r="7" fill="#7c3aed"/>
+        <!-- Linke Schale -->
+        <ellipse cx="80" cy="120" rx="48" ry="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="80" y="118" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="14" fill="#6d28d9">x + 5</text>
+        <!-- Rechte Schale -->
+        <ellipse cx="300" cy="120" rx="48" ry="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="300" y="118" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="14" fill="#6d28d9">12</text>
+        <!-- Base -->
+        <rect x="170" y="158" width="40" height="8" rx="3" fill="#64748b"/>
+        <text x="190" y="175" text-anchor="middle" font-family="Nunito" font-size="12" fill="#64748b">Gleichgewicht → x = 7</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge bg">Gleichung lösen</div>
+    <h3>Schritt-für-Schritt: Gleichung lösen</h3>
+    <p style="margin-bottom:.5rem;">Ziel: x allein auf eine Seite bringen (isolieren).</p>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div class="st">Gleichung aufschreiben: <span class="math">a + 5 = 12</span></div></div>
+      <div class="step"><div class="sn">2</div><div class="st">5 auf beiden Seiten abziehen: <span class="math">a + 5 – 5 = 12 – 5</span></div></div>
+      <div class="step"><div class="sn">3</div><div class="st">Vereinfachen: <span class="math">a = 7</span></div></div>
+      <div class="step"><div class="sn">4</div><div class="st">Probe: 7 + 5 = 12 ✓</div></div>
+    </div>
+    <div class="tip">🔍 <strong>Probe:</strong> Immer am Ende einsetzen und prüfen ob die Gleichung stimmt!</div>
+
+    <p style="margin-top:1rem; margin-bottom:.5rem;"><strong>Variable auf beiden Seiten:</strong></p>
+    <div class="eq-step"><span class="op">Aufgabe:</span> 3x + 2 = x + 10</div>
+    <div class="eq-step"><span class="op">– x:</span> 2x + 2 = 10</div>
+    <div class="eq-step"><span class="op">– 2:</span> 2x = 8</div>
+    <div class="eq-step"><span class="op">÷ 2:</span> x = 4</div>
+    <div class="eq-step" style="background:var(--green-l);border-color:var(--green);"><span class="op" style="color:var(--green-d);">Probe:</span> 3·4+2 = 14 und 4+10 = 14 ✓</div>
+  </div>
+</section>
+
+<!-- ══════════════════════ BEGRIFFE ══════════════════════ -->
+<section class="sec" id="begriffe">
+  <div class="hero" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">
+    <h1>🔤 Fachbegriffe</h1>
+    <p>Lerne die Sprache der Algebra</p>
+  </div>
+
+  <div class="card">
+    <div class="badge bb">Wichtige Begriffe</div>
+    <h3>Die 6 wichtigsten Begriffe</h3>
+
+    <div style="display:grid;gap:.75rem;margin-top:.5rem;">
+      <div style="background:var(--purple-l);border-radius:10px;padding:1rem;display:flex;gap:1rem;align-items:flex-start;border-left:4px solid var(--purple);">
+        <div style="font-size:1.6rem;flex-shrink:0">🔡</div>
+        <div><strong>Variable</strong><br><small style="color:var(--muted);">Ein Buchstabe (z.&nbsp;B. x, a, b), der für eine unbekannte Zahl steht.<br>Beispiel: In <span class="math">x + 3</span> ist x die Variable.</small></div>
+      </div>
+      <div style="background:var(--blue-l);border-radius:10px;padding:1rem;display:flex;gap:1rem;align-items:flex-start;border-left:4px solid var(--blue);">
+        <div style="font-size:1.6rem;flex-shrink:0">📐</div>
+        <div><strong>Term</strong><br><small style="color:var(--muted);">Eine Rechnung (auch mit Variablen). Kein = Zeichen!<br>Beispiele: <span class="math">3x + 2</span>, <span class="math">a – 5</span>, <span class="math">2 · b</span></small></div>
+      </div>
+      <div style="background:var(--teal-l);border-radius:10px;padding:1rem;display:flex;gap:1rem;align-items:flex-start;border-left:4px solid var(--teal);">
+        <div style="font-size:1.6rem;flex-shrink:0">⚖️</div>
+        <div><strong>Gleichung</strong><br><small style="color:var(--muted);">Eine Rechnung mit = Zeichen. Hat eine Lösung (oder mehrere).<br>Beispiel: <span class="math">x + 5 = 12</span></small></div>
+      </div>
+      <div style="background:var(--green-l);border-radius:10px;padding:1rem;display:flex;gap:1rem;align-items:flex-start;border-left:4px solid var(--green);">
+        <div style="font-size:1.6rem;flex-shrink:0">➕</div>
+        <div><strong>Summe</strong><br><small style="color:var(--muted);">Das Ergebnis einer Addition (Plusrechnung).<br>Beispiel: 3 + 5 = <strong>8</strong> &nbsp;→ 8 ist die Summe</small></div>
+      </div>
+      <div style="background:var(--amber-l);border-radius:10px;padding:1rem;display:flex;gap:1rem;align-items:flex-start;border-left:4px solid var(--amber);">
+        <div style="font-size:1.6rem;flex-shrink:0">✖️</div>
+        <div><strong>Produkt</strong><br><small style="color:var(--muted);">Das Ergebnis einer Multiplikation (Malrechnung).<br>Beispiel: 4 · 5 = <strong>20</strong> &nbsp;→ 20 ist das Produkt</small></div>
+      </div>
+      <div style="background:var(--coral-l);border-radius:10px;padding:1rem;display:flex;gap:1rem;align-items:flex-start;border-left:4px solid var(--coral);">
+        <div style="font-size:1.6rem;flex-shrink:0">❓</div>
+        <div><strong>Koeffizient</strong><br><small style="color:var(--muted);">Die Zahl, die vor einer Variable steht.<br>Beispiel: In <span class="math">4x</span> ist 4 der Koeffizient.</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge bp">Zuordnungsspiel</div>
+    <h3>Begriff und Erklärung zuordnen</h3>
+    <p style="font-size:.9rem;color:var(--muted);margin-bottom:.5rem;">Klick zuerst auf einen Begriff (links), dann auf die Erklärung (rechts).</p>
+    <div id="match-status" style="font-weight:700;font-size:.9rem;margin-bottom:.5rem;min-height:1.4em;"></div>
+    <div class="mg">
+      <div class="mc" id="match-left"></div>
+      <div class="mc" id="match-right"></div>
+    </div>
+    <button class="btn btn-o" style="margin-top:.75rem;" onclick="initMatch()">Neu mischen 🔀</button>
+  </div>
+</section>
+
+<!-- ══════════════════════ AUSWERTEN ══════════════════════ -->
+<section class="sec" id="auswerten">
+  <div class="hero" style="background:linear-gradient(135deg,#d97706,#b45309);">
+    <h1>🔢 Terme auswerten</h1>
+    <p>Zahlen für Variablen einsetzen</p>
+  </div>
+
+  <div class="card">
+    <div class="badge ba">Erklärung</div>
+    <h3>So geht's</h3>
+    <p>Beim Auswerten ersetzt du die Variable durch eine Zahl und rechnest aus.</p>
+    <div class="fbox amber">
+      <div class="ft">Beispiel: Term x + 2 mit x = 5</div>
+      x + 2 → 5 + 2 = <strong>7</strong>
+    </div>
+    <div class="fbox amber">
+      <div class="ft">Beispiel: Term 4·x – 3 mit x = 3</div>
+      4 · 3 – 3 = 12 – 3 = <strong>9</strong>
+    </div>
+    <div class="warn">⚠️ <strong>Achtung bei negativen Zahlen!</strong><br>x = –2 einsetzen in x + 2: <span class="math">(–2) + 2 = 0</span></div>
+  </div>
+
+  <div class="card">
+    <div class="badge ba">Tabelle ausfüllen</div>
+    <h3>Fülle die Wertetabelle aus:</h3>
+    <table class="val-table" id="val-table-1">
+      <thead>
+        <tr>
+          <th>x</th>
+          <th>Term: x + 2</th>
+          <th>Term: 4·x – 3</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="x-col">5</td><td><input type="number" data-ans="7" placeholder="?"></td><td><input type="number" data-ans="17" placeholder="?"></td></tr>
+        <tr><td class="x-col">3</td><td><input type="number" data-ans="5" placeholder="?"></td><td><input type="number" data-ans="9" placeholder="?"></td></tr>
+        <tr><td class="x-col">–2</td><td><input type="number" data-ans="0" placeholder="?"></td><td><input type="number" data-ans="-11" placeholder="?"></td></tr>
+        <tr><td class="x-col">0</td><td><input type="number" data-ans="2" placeholder="?"></td><td><input type="number" data-ans="-3" placeholder="?"></td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+      <button class="btn" onclick="checkTable('val-table-1','table-fb-1')">Prüfen ✓</button>
+      <button class="btn btn-o" onclick="resetTable('val-table-1','table-fb-1')">Zurücksetzen</button>
+    </div>
+    <div class="fb" id="table-fb-1"></div>
+  </div>
+
+  <div class="card">
+    <div class="badge ba">Eigene Terme</div>
+    <h3>Probiere eigene Werte aus:</h3>
+    <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.75rem;">
+      <span>x =</span>
+      <input type="number" id="own-x" value="4" style="width:80px;border:2px solid var(--amber);border-radius:8px;padding:.4rem .6rem;font-size:1rem;text-align:center;" oninput="calcOwn()">
+    </div>
+    <div style="display:grid;gap:.5rem;" id="own-results">
+      <div class="eq-step"><span class="op">x + 2 =</span><span id="r1">6</span></div>
+      <div class="eq-step"><span class="op">4·x – 3 =</span><span id="r2">13</span></div>
+      <div class="eq-step"><span class="op">2·x + x =</span><span id="r3">12</span></div>
+      <div class="eq-step"><span class="op">x² =</span><span id="r4">16</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ VEREINFACHEN ══════════════════════ -->
+<section class="sec" id="vereinfachen">
+  <div class="hero" style="background:linear-gradient(135deg,#0d9488,#0f766e);">
+    <h1>✂️ Terme vereinfachen</h1>
+    <p>Gleichartige Terme zusammenfassen</p>
+  </div>
+
+  <div class="card">
+    <div class="badge bt">Regel</div>
+    <h3>Was darf man zusammenfassen?</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0;">
+      <div style="background:var(--green-l);border-radius:10px;padding:1rem;border-left:4px solid var(--green);text-align:center;">
+        <div style="font-size:1.2rem;margin-bottom:.25rem;">✅ Erlaubt</div>
+        <span class="math">3x + 5x = 8x</span><br>
+        <small style="color:var(--green-d);">Gleiche Variable!</small>
+      </div>
+      <div style="background:var(--coral-l);border-radius:10px;padding:1rem;border-left:4px solid var(--coral);text-align:center;">
+        <div style="font-size:1.2rem;margin-bottom:.25rem;">❌ Nicht möglich</div>
+        <span class="math">3x + 5y</span> bleibt so<br>
+        <small style="color:var(--coral-d);">Verschiedene Variablen!</small>
+      </div>
+    </div>
+    <div class="tip">💡 <strong>Zahlen ohne Variable</strong> kann man auch zusammenzählen:<br>
+    <span class="math">3x + 4 + 5x – 2 = 8x + 2</span></div>
+  </div>
+
+  <div class="card">
+    <div class="badge bt">Lückentext</div>
+    <h3>Fülle die Lücken aus:</h3>
+    <div class="fr">5x + 3x = <input class="fi" data-ans="8x" placeholder="?"> &nbsp; (x-Terme zusammen)</div>
+    <div class="fr">7a – 2a = <input class="fi" data-ans="5a" placeholder="?"></div>
+    <div class="fr">4b + b = <input class="fi" data-ans="5b" placeholder="?"> &nbsp; (1·b = b)</div>
+    <div class="fr">6x + 2y – x = <input class="fi" data-ans="5x" style="width:60px" placeholder="?">+ 2y</div>
+    <div class="fr">3a + 5 + 2a – 3 = <input class="fi" data-ans="5a" style="width:60px" placeholder="?"> + <input class="fi" data-ans="2" style="width:55px" placeholder="?"></div>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
+      <button class="btn" onclick="checkFill(this.closest('.card'))">Prüfen ✓</button>
+      <button class="btn btn-o" onclick="resetFill(this.closest('.card'))">Zurücksetzen</button>
+    </div>
+    <div class="fb" id="vf-fb"></div>
+  </div>
+
+  <div class="card">
+    <div class="badge bt">Aufgabengenerator</div>
+    <h3>Terme vereinfachen – neue Aufgaben:</h3>
+    <div class="gen-area" id="vgen-area">
+      <div class="gen-p" id="vgen-p"></div>
+      <div class="ar"><span>Ergebnis: </span><input class="ga" type="text" placeholder="z.B. 8x" id="vgen-inp"><button class="btn" onclick="checkVgen()">Prüfen</button></div>
+      <div class="fb" id="vgen-fb"></div>
+    </div>
+    <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+      <button class="btn btn-a" onclick="genVereinfachen()">🎲 Neue Aufgabe</button>
+      <button class="btn btn-o" onclick="showVAns()">Lösung</button>
+    </div>
+    <div class="ans-rev" id="vgen-ans"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════ GLEICHUNGEN ══════════════════════ -->
+<section class="sec" id="gleichungen">
+  <div class="hero" style="background:linear-gradient(135deg,#16a34a,#15803d);">
+    <h1>⚖️ Gleichungen lösen</h1>
+    <p>Mit Umformungsschritten zur Lösung</p>
+  </div>
+
+  <div class="ltabs">
+    <button class="lt active" onclick="setEqLevel(0)">⭐ Einfach</button>
+    <button class="lt" onclick="setEqLevel(1)">⭐⭐ Mittel</button>
+    <button class="lt" onclick="setEqLevel(2)">⭐⭐⭐ Beide Seiten</button>
+  </div>
+
+  <div class="card">
+    <div class="badge bg">Interaktiv lösen</div>
+    <h3 id="eq-title">Gleichung lösen</h3>
+    <div id="eq-content"></div>
+    <div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+      <button class="btn btn-a" onclick="genEq()">🎲 Neue Gleichung</button>
+      <button class="btn btn-o" onclick="showEqAns()">Lösung anzeigen</button>
+    </div>
+    <div class="ans-rev" id="eq-ans"></div>
+  </div>
+
+  <div class="card" id="waage-card">
+    <div class="badge bp">Waagenbild</div>
+    <h3>Stelle die Gleichung zum Bild auf</h3>
+    <p style="font-size:.9rem;color:var(--muted);margin-bottom:.75rem;">Schau dir die Waage an und schreibe die passende Gleichung auf.</p>
+    <div id="waage-content"></div>
+    <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+      <button class="btn btn-a" onclick="genWaage()">🎲 Neue Waage</button>
+      <button class="btn btn-o" onclick="showWaageAns()">Gleichung zeigen</button>
+    </div>
+    <div class="ans-rev" id="waage-ans"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════ QUIZ ══════════════════════ -->
+<section class="sec" id="quiz">
+  <div class="hero" style="background:linear-gradient(135deg,#e11d48,#be123c);">
+    <h1>❓ Quiz</h1>
+    <p>Wähle eine Stufe und teste dein Wissen!</p>
+  </div>
+
+  <div class="ltabs">
+    <button class="lt active" onclick="setQL(0)">⭐ Einfach</button>
+    <button class="lt" onclick="setQL(1)">⭐⭐ Mittel</button>
+    <button class="lt" onclick="setQL(2)">⭐⭐⭐ Schwierig</button>
+  </div>
+
+  <div class="card" id="quiz-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;">
+      <span class="sp"><span class="sd"></span><span id="qscore">0 Punkte</span></span>
+      <span class="qc" id="qctr">Frage 1/6</span>
+    </div>
+    <div class="pb-wrap"><div class="pb" id="qprog" style="width:0%"></div></div>
+    <div style="margin-top:1rem;">
+      <div class="quiz-q" id="qq"></div>
+      <div class="opts" id="qopts"></div>
+      <div class="fb" id="qfb"></div>
+    </div>
+    <div class="qnav">
+      <button class="btn" id="qnext" onclick="nextQ()" style="display:none">Weiter →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ ÜBEN ══════════════════════ -->
+<section class="sec" id="ueben">
+  <div class="hero" style="background:linear-gradient(135deg,#0d9488,#0f766e);">
+    <h1>🏋️ Übungsaufgaben</h1>
+    <p>Immer neue Zahlen – immer mehr Übung!</p>
+  </div>
+
+  <div class="ltabs">
+    <button class="lt active" onclick="setExL(0)">⭐ Term auswerten</button>
+    <button class="lt" onclick="setExL(1)">⭐⭐ Vereinfachen</button>
+    <button class="lt" onclick="setExL(2)">⭐⭐⭐ Gleichung lösen</button>
+  </div>
+
+  <div class="card" id="ex-card">
+    <div class="badge bt" id="ex-badge">Term auswerten</div>
+    <h3 id="ex-title">Berechne den Termwert</h3>
+    <div id="ex-content"></div>
+    <div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+      <button class="btn btn-a" onclick="genEx()">🎲 Neue Aufgabe</button>
+      <button class="btn btn-o" onclick="showExAns()">Lösung anzeigen</button>
+    </div>
+    <div class="ans-rev" id="ex-ans"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════ BLITZ ══════════════════════ -->
+<section class="sec" id="blitz">
+  <div class="hero" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
+    <h1>⚡ Blitzlesen</h1>
+    <p>Begriff oder Rechnung kurz einblenden – schnell die richtige Antwort finden!</p>
+  </div>
+
+  <div class="card">
+    <div class="badge bp">Fachbegriffe &amp; Terme</div>
+    <h3>Erkenne den Begriff sofort</h3>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem;">Ein Begriff erscheint kurz – klick dann auf die richtige Erklärung.</p>
+    <div style="display:flex;gap:.5rem;margin-bottom:.75rem;align-items:center;">
+      <label style="font-size:.9rem;">⏱ Tempo:
+        <select id="fspeed" style="border:1px solid var(--border);border-radius:6px;padding:.2rem .4rem;font-size:.88rem;margin-left:.3rem;">
+          <option value="3000">3 s (langsam)</option>
+          <option value="1500" selected>1,5 s (normal)</option>
+          <option value="700">0,7 s (schnell)</option>
+        </select>
+      </label>
+    </div>
+    <div class="fl-box" id="fl-disp"><div style="color:var(--purple-d);font-size:.9rem;">Klick auf Start um zu beginnen</div></div>
+    <div class="opts" id="fl-opts" style="margin-top:.75rem;"></div>
+    <div class="fb" id="fl-fb"></div>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;align-items:center;">
+      <button class="btn" onclick="startFlash()">▶ Start</button>
+      <button class="btn btn-o" onclick="stopFlash()">⏹ Stop</button>
+      <span class="sp" style="margin-left:.5rem;">✅ <span id="fl-sc">0</span></span>
+    </div>
+    <div style="margin-top:.5rem;font-size:.85rem;color:var(--muted);" id="fl-ctr">Runde 0/12</div>
+  </div>
+</section>
+
+<script>
+// ─── NAV ───
+const sections=['lernen','begriffe','auswerten','vereinfachen','gleichungen','quiz','ueben','blitz'];
+function show(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nb')[sections.indexOf(id)].classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ─── MATCH (BEGRIFFE) ───
+const matchData=[
+  {term:'Variable',def:'Platzhalter für eine Zahl (z.B. x)'},
+  {term:'Term',def:'Rechnung (auch mit Variablen)'},
+  {term:'Gleichung',def:'Rechnung verbunden durch = Zeichen'},
+  {term:'Summe',def:'Ergebnis einer Plusrechnung'},
+  {term:'Produkt',def:'Ergebnis einer Malrechnung'},
+  {term:'Koeffizient',def:'Zahl vor einer Variable'},
+];
+let mSel=null,mDone=0;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function initMatch(){
+  mSel=null;mDone=0;
+  const terms=shuffle([...matchData.map(m=>m.term)]);
+  const defs=shuffle([...matchData.map(m=>m.def)]);
+  const L=document.getElementById('match-left'),R=document.getElementById('match-right');
+  L.innerHTML='';R.innerHTML='';
+  terms.forEach(t=>{const d=document.createElement('div');d.className='mi';d.textContent=t;d.dataset.val=t;d.dataset.type='term';d.onclick=()=>mClick(d);L.appendChild(d);});
+  defs.forEach(f=>{const d=document.createElement('div');d.className='mi';d.textContent=f;d.dataset.val=f;d.dataset.type='def';d.onclick=()=>mClick(d);R.appendChild(d);});
+  document.getElementById('match-status').textContent='';
+}
+function mClick(el){
+  if(el.classList.contains('matched'))return;
+  if(mSel&&mSel.dataset.type===el.dataset.type){mSel.classList.remove('sel');mSel=null;}
+  if(!mSel){el.classList.add('sel');mSel=el;return;}
+  const term=mSel.dataset.type==='term'?mSel.dataset.val:el.dataset.val;
+  const def=mSel.dataset.type==='def'?mSel.dataset.val:el.dataset.val;
+  const item=matchData.find(m=>m.term===term);
+  if(item&&item.def===def){
+    [mSel,el].forEach(x=>{x.classList.remove('sel');x.classList.add('matched');});
+    mDone++;
+    if(mDone===matchData.length)document.getElementById('match-status').textContent='🎉 Alle richtig zugeordnet!';
+  }else{
+    [mSel,el].forEach(x=>{x.classList.add('wf');setTimeout(()=>x.classList.remove('wf','sel'),500);});
+  }
+  mSel=null;
+}
+
+// ─── TERM TABLE ───
+function checkTable(tid,fbid){
+  const tbl=document.getElementById(tid);
+  const inputs=tbl.querySelectorAll('input');
+  let ok=0;
+  inputs.forEach(inp=>{
+    inp.classList.remove('correct','wrong');
+    const v=parseFloat(inp.value),a=parseFloat(inp.dataset.ans);
+    if(!isNaN(v)&&Math.abs(v-a)<0.01){inp.classList.add('correct');ok++;}
+    else if(inp.value.trim()){inp.classList.add('wrong');}
+  });
+  const fb=document.getElementById(fbid);
+  fb.className=ok===inputs.length?'fb ok':'fb nope';
+  fb.textContent=ok===inputs.length?'🎉 Alle Felder richtig!':ok+' von '+inputs.length+' richtig. Falsche Felder sind rot.';
+}
+function resetTable(tid,fbid){
+  document.getElementById(tid).querySelectorAll('input').forEach(i=>{i.value='';i.classList.remove('correct','wrong');});
+  const fb=document.getElementById(fbid);if(fb)fb.className='fb';
+}
+
+// ─── CALC OWN ───
+function calcOwn(){
+  const x=parseFloat(document.getElementById('own-x').value)||0;
+  document.getElementById('r1').textContent=x+2;
+  document.getElementById('r2').textContent=4*x-3;
+  document.getElementById('r3').textContent=2*x+x;
+  document.getElementById('r4').textContent=x*x;
+}
+
+// ─── FILL CHECK ───
+function checkFill(card){
+  const inputs=card.querySelectorAll('.fi');
+  let ok=0;
+  inputs.forEach(inp=>{
+    inp.classList.remove('correct','wrong');
+    const a=inp.dataset.ans.toLowerCase().replace(/\s/g,'');
+    const v=inp.value.toLowerCase().replace(/\s/g,'');
+    if(v===a){inp.classList.add('correct');ok++;}
+    else if(v.length>0)inp.classList.add('wrong');
+  });
+  const fb=card.querySelector('.fb');
+  if(!fb)return;
+  fb.className=ok===inputs.length?'fb ok':'fb nope';
+  fb.textContent=ok===inputs.length?'🎉 Alles richtig!':ok+' von '+inputs.length+' richtig.';
+}
+function resetFill(card){
+  card.querySelectorAll('.fi').forEach(i=>{i.value='';i.classList.remove('correct','wrong');});
+  const fb=card.querySelector('.fb');if(fb)fb.className='fb';
+}
+
+// ─── VEREINFACHEN GENERATOR ───
+let vAns='';
+const vars=['x','a','b','y','n'];
+function rnd(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function genVereinfachen(){
+  const v=vars[Math.floor(Math.random()*3)];
+  const a=rnd(2,9),b=rnd(2,9),c=rnd(1,5),d=rnd(1,5);
+  const type=Math.floor(Math.random()*3);
+  let problem,ans;
+  if(type===0){
+    // simple: ax + bx
+    problem=`${a}${v} + ${b}${v}`;
+    ans=`${a+b}${v}`;
+  }else if(type===1){
+    // ax - bx (ensure positive)
+    const big=Math.max(a,b),small=Math.min(a,b);
+    problem=`${big}${v} – ${small}${v}`;
+    ans=`${big-small}${v}`;
+  }else{
+    // ax + bx + c - d
+    problem=`${a}${v} + ${c} + ${b}${v} – ${d}`;
+    const coef=a+b, num=c-d;
+    ans=num===0?`${coef}${v}`:num>0?`${coef}${v} + ${num}`:`${coef}${v} – ${Math.abs(num)}`;
+  }
+  document.getElementById('vgen-p').textContent=`Vereinfache: ${problem}`;
+  document.getElementById('vgen-inp').value='';
+  document.getElementById('vgen-fb').className='fb';
+  document.getElementById('vgen-ans').style.display='none';
+  vAns=ans;
+  document.getElementById('vgen-ans').textContent=`Lösung: ${ans}`;
+}
+function checkVgen(){
+  const v=document.getElementById('vgen-inp').value.trim().toLowerCase().replace(/\s/g,'');
+  const a=vAns.toLowerCase().replace(/\s/g,'');
+  const fb=document.getElementById('vgen-fb');
+  fb.className=v===a?'fb ok':'fb nope';
+  fb.textContent=v===a?'✅ Richtig!':'❌ Nicht ganz. Klick auf "Lösung" um zu schauen.';
+}
+function showVAns(){
+  const el=document.getElementById('vgen-ans');
+  el.style.display=el.style.display==='block'?'none':'block';
+}
+
+// ─── GLEICHUNGEN ───
+let eqLevel=0,eqAnsText='';
+function setEqLevel(l){
+  eqLevel=l;
+  document.querySelectorAll('#gleichungen .lt').forEach((t,i)=>t.classList.toggle('active',i===l));
+  genEq();genWaage();
+}
+function genEq(){
+  document.getElementById('eq-ans').style.display='none';
+  const cont=document.getElementById('eq-content');
+  if(eqLevel===0){
+    // x + a = b
+    const a=rnd(2,12),x=rnd(1,15),b=x+a;
+    const varName=['x','a','n','b'][Math.floor(Math.random()*4)];
+    document.getElementById('eq-title').textContent='Gleichung lösen (einfach)';
+    cont.innerHTML=`
+      <div class="gen-area">
+        <div class="gen-p" style="font-size:1.2rem;">${varName} + ${a} = ${b}</div>
+        <p style="font-size:.9rem;color:var(--muted);margin-bottom:.5rem;">Was muss ${varName} sein? Ziehe ${a} auf beiden Seiten ab.</p>
+        <div class="ar"><span>${varName} = </span><input class="ga" type="number" placeholder="?" id="eq-inp"><button class="btn" onclick="chkEq(${x})">Prüfen</button></div>
+        <div class="fb" id="eq-fb"></div>
+      </div>`;
+    eqAnsText=`${varName} + ${a} = ${b} &nbsp;|−${a}\n${varName} = ${b} – ${a} = ${x}\nProbe: ${x} + ${a} = ${b} ✓`;
+    document.getElementById('eq-ans').innerHTML=eqAnsText;
+  }else if(eqLevel===1){
+    // a·x - b = c
+    const coef=rnd(2,6),x=rnd(1,10),b=rnd(1,8),c=coef*x-b;
+    const varName=['x','y','z','m'][Math.floor(Math.random()*4)];
+    document.getElementById('eq-title').textContent='Gleichung lösen (mit Multiplikation)';
+    cont.innerHTML=`
+      <div class="gen-area">
+        <div class="gen-p" style="font-size:1.2rem;">${coef}${varName} – ${b} = ${c}</div>
+        <p style="font-size:.9rem;color:var(--muted);margin-bottom:.5rem;">Tipp: Erst +${b}, dann ÷${coef}</p>
+        <div class="ar"><span>${varName} = </span><input class="ga" type="number" placeholder="?" id="eq-inp"><button class="btn" onclick="chkEq(${x})">Prüfen</button></div>
+        <div class="fb" id="eq-fb"></div>
+      </div>`;
+    eqAnsText=`${coef}${varName} – ${b} = ${c} |+${b}\n${coef}${varName} = ${c+b} |÷${coef}\n${varName} = ${x}\nProbe: ${coef}·${x}–${b} = ${c} ✓`;
+    document.getElementById('eq-ans').innerHTML=eqAnsText;
+  }else{
+    // ax + b = cx + d  (variables on both sides)
+    const a=rnd(3,7),b=rnd(1,8),x=rnd(1,8),c=rnd(1,a-1),d=a*x+b-c*x;
+    const varName='x';
+    document.getElementById('eq-title').textContent='Gleichung lösen (Variable auf beiden Seiten)';
+    cont.innerHTML=`
+      <div class="gen-area">
+        <div class="gen-p" style="font-size:1.2rem;">${a}${varName} + ${b} = ${c}${varName} + ${d}</div>
+        <p style="font-size:.9rem;color:var(--muted);margin-bottom:.5rem;">Tipp: Variable auf eine Seite bringen → –${c}x auf beiden Seiten</p>
+        <div class="ar"><span>${varName} = </span><input class="ga" type="number" placeholder="?" id="eq-inp"><button class="btn" onclick="chkEq(${x})">Prüfen</button></div>
+        <div class="fb" id="eq-fb"></div>
+      </div>`;
+    eqAnsText=`${a}x + ${b} = ${c}x + ${d} |–${c}x\n${a-c}x + ${b} = ${d} |–${b}\n${a-c}x = ${d-b} |÷${a-c}\nx = ${x}\nProbe: ${a}·${x}+${b}=${a*x+b} und ${c}·${x}+${d}=${c*x+d} ✓`;
+    document.getElementById('eq-ans').innerHTML=eqAnsText;
+  }
+}
+function chkEq(ans){
+  const v=parseFloat(document.getElementById('eq-inp').value);
+  const fb=document.getElementById('eq-fb');
+  fb.className=Math.abs(v-ans)<0.01?'fb ok':'fb nope';
+  fb.textContent=Math.abs(v-ans)<0.01?'✅ Richtig! Super!':'❌ Noch nicht. Tipp: Schau dir die Lösung an.';
+}
+function showEqAns(){
+  const el=document.getElementById('eq-ans');
+  el.style.display=el.style.display==='block'?'none':'block';
+}
+
+// ─── WAAGE ───
+let waageAnsText='';
+const waageData=[
+  {left:'x + 3',right:'10',eq:'x + 3 = 10',sol:'x = 7'},
+  {left:'2x',right:'14',eq:'2x = 14',sol:'x = 7'},
+  {left:'x + 5',right:'x + 8',eq:'x + 5 = x + 8',sol:'Keine Lösung (kein Gleichgewicht)'},
+  {left:'3x – 1',right:'11',eq:'3x – 1 = 11',sol:'x = 4'},
+  {left:'x + 4',right:'2x',eq:'x + 4 = 2x',sol:'x = 4'},
+  {left:'5',right:'2x + 1',eq:'5 = 2x + 1',sol:'x = 2'},
+];
+function genWaage(){
+  document.getElementById('waage-ans').style.display='none';
+  const item=waageData[Math.floor(Math.random()*waageData.length)];
+  waageAnsText=`Gleichung: ${item.eq}\nLösung: ${item.sol}`;
+  document.getElementById('waage-ans').textContent=waageAnsText;
+  document.getElementById('waage-content').innerHTML=`
+    <svg class="scale-svg" style="max-width:360px;display:block;margin:0 auto;" viewBox="0 0 360 170">
+      <line x1="180" y1="38" x2="70" y2="105" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+      <line x1="180" y1="38" x2="290" y2="105" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+      <line x1="180" y1="38" x2="180" y2="155" stroke="#64748b" stroke-width="3"/>
+      <circle cx="180" cy="38" r="7" fill="#16a34a"/>
+      <ellipse cx="70" cy="115" rx="52" ry="11" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="70" y="113" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="15" fill="#15803d">${item.left}</text>
+      <ellipse cx="290" cy="115" rx="52" ry="11" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="290" y="113" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="15" fill="#15803d">${item.right}</text>
+      <rect x="163" y="153" width="34" height="8" rx="3" fill="#64748b"/>
+      <text x="180" y="168" text-anchor="middle" font-family="Nunito" font-size="11" fill="#64748b">Im Gleichgewicht</text>
+    </svg>
+    <p style="text-align:center;font-size:.9rem;color:var(--muted);margin-top:.5rem;">Schreibe die Gleichung auf und löse sie.</p>`;
+}
+function showWaageAns(){
+  const el=document.getElementById('waage-ans');
+  el.style.display=el.style.display==='block'?'none':'block';
+}
+
+// ─── QUIZ DATA ───
+const qData=[
+  // level 0
+  [
+    {q:'Was ist ein Term?',opts:['Eine Gleichung mit = Zeichen','Eine Rechnung (auch mit Variablen)','Eine Zahl ohne Buchstaben','Ein Ergebnis einer Addition'],ans:1,expl:'Ein Term ist eine Rechnung, die Zahlen und/oder Variablen enthält – aber kein = Zeichen!'},
+    {q:'Was ist eine Variable?',opts:['Eine Zahl größer als 10','Ein Buchstabe, der für eine Zahl steht','Das Ergebnis einer Gleichung','Eine Rechenart'],ans:1,expl:'Variablen (wie x, a, b) stehen als Platzhalter für unbekannte Zahlen.'},
+    {q:'Wie heißt das Ergebnis einer Plusrechnung?',opts:['Produkt','Differenz','Summe','Quotient'],ans:2,expl:'Die Summe ist das Ergebnis einer Addition.'},
+    {q:'Wie heißt das Ergebnis einer Malrechnung?',opts:['Summe','Produkt','Differenz','Term'],ans:1,expl:'Das Produkt ist das Ergebnis einer Multiplikation.'},
+    {q:'Was ist x in "3x + 2"?',opts:['Der Koeffizient','Die Konstante','Die Variable','Das Ergebnis'],ans:2,expl:'x ist die Variable – der unbekannte Platzhalter.'},
+    {q:'Was muss man nach dem Lösen einer Gleichung immer machen?',opts:['Nochmal die Aufgabe lesen','Die Probe','Die Variable umbenennen','Nichts mehr'],ans:1,expl:'Die Probe zeigt, ob die Lösung wirklich stimmt. x einsetzen und prüfen!'},
+  ],
+  // level 1
+  [
+    {q:'Was ergibt der Term 4·x – 3, wenn x = 5?',opts:['7','17','15','23'],ans:1,expl:'4·5 – 3 = 20 – 3 = 17 ✓'},
+    {q:'Vereinfache: 3x + 7x',opts:['10','10x','21x','3x7x'],ans:1,expl:'3x + 7x = (3+7)x = 10x ✓'},
+    {q:'Was ist 7a – 3a?',opts:['4','4a','10a','21a'],ans:1,expl:'7a – 3a = (7–3)a = 4a ✓'},
+    {q:'Löse: x + 8 = 15',opts:['x = 7','x = 23','x = 8','x = 6'],ans:0,expl:'x = 15 – 8 = 7 ✓. Probe: 7 + 8 = 15 ✓'},
+    {q:'Kann man 3x + 5y vereinfachen?',opts:['Ja, zu 8xy','Ja, zu 8x','Nein, verschiedene Variablen','Ja, zu 15xy'],ans:2,expl:'3x und 5y haben verschiedene Variablen → kann man nicht zusammenfassen!'},
+    {q:'Was ist x in: 2x = 14?',opts:['x = 28','x = 12','x = 7','x = 16'],ans:2,expl:'2x = 14 → x = 14 ÷ 2 = 7 ✓'},
+  ],
+  // level 2
+  [
+    {q:'Löse: 3x + 2 = x + 10',opts:['x = 3','x = 4','x = 6','x = 8'],ans:1,expl:'3x+2=x+10 | –x: 2x+2=10 | –2: 2x=8 | ÷2: x=4 ✓'},
+    {q:'Vereinfache: 4a + 3 + 2a – 1',opts:['6a + 4','6a + 2','8a + 2','6a – 2'],ans:1,expl:'4a+2a=6a und 3–1=2 → 6a+2 ✓'},
+    {q:'Der Term 3x – 5 hat den Wert 7. Was ist x?',opts:['x = 2','x = 3','x = 4','x = 5'],ans:2,expl:'3x–5=7 → 3x=12 → x=4 ✓. Probe: 3·4–5=7 ✓'},
+    {q:'Löse: 5y – 3 = 2y + 9',opts:['y = 2','y = 3','y = 4','y = 6'],ans:2,expl:'5y–3=2y+9 | –2y: 3y–3=9 | +3: 3y=12 | ÷3: y=4 ✓'},
+    {q:'Welcher Wert macht 2x + 1 = x + 5 wahr?',opts:['x = 2','x = 3','x = 4','x = 6'],ans:2,expl:'2x+1=x+5 | –x: x+1=5 | –1: x=4 ✓'},
+    {q:'Was bedeutet "Koeffizient" in dem Term 7n?',opts:['n','7n','7','0'],ans:2,expl:'Der Koeffizient ist die Zahl vor der Variable: in 7n ist das 7.'},
+  ]
+];
+let qlvl=0,qIdx=0,qScore=0,qAnswered=false;
+function setQL(l){qlvl=l;qIdx=0;qScore=0;document.querySelectorAll('#quiz .lt').forEach((t,i)=>t.classList.toggle('active',i===l));renderQ();}
+function renderQ(){
+  qAnswered=false;
+  const data=qData[qlvl];
+  if(qIdx>=data.length){
+    document.getElementById('quiz-card').innerHTML=`
+      <div style="text-align:center;padding:2rem;">
+        <div style="font-size:3rem;margin-bottom:.75rem;">${qScore>=data.length*.8?'🏆':qScore>=data.length*.5?'👍':'💪'}</div>
+        <h3 style="font-size:1.3rem;margin-bottom:.4rem;">Fertig!</h3>
+        <p style="color:var(--muted);margin-bottom:1rem;">${qScore} von ${data.length} Punkten</p>
+        <button class="btn" onclick="qIdx=0;qScore=0;renderQ();">Nochmal 🔄</button>
+      </div>`;
+    return;
+  }
+  const q=data[qIdx];
+  document.getElementById('qq').textContent=q.q;
+  document.getElementById('qctr').textContent=`Frage ${qIdx+1}/${data.length}`;
+  document.getElementById('qscore').textContent=`${qScore} Punkte`;
+  document.getElementById('qprog').style.width=(qIdx/data.length*100)+'%';
+  const opts=document.getElementById('qopts');opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='ob';b.textContent=o;
+    b.onclick=()=>selQ(i,q.ans,q.expl);opts.appendChild(b);
+  });
+  document.getElementById('qfb').className='fb';
+  document.getElementById('qnext').style.display='none';
+}
+function selQ(i,ans,expl){
+  if(qAnswered)return;qAnswered=true;
+  document.querySelectorAll('.ob').forEach((b,j)=>{b.disabled=true;if(j===ans)b.classList.add('correct');if(j===i&&i!==ans)b.classList.add('wrong');});
+  if(i===ans)qScore++;
+  const fb=document.getElementById('qfb');
+  fb.className=i===ans?'fb ok':'fb nope';
+  fb.textContent=i===ans?'✅ '+expl:'❌ '+expl;
+  document.getElementById('qscore').textContent=`${qScore} Punkte`;
+  document.getElementById('qnext').style.display='inline-block';
+}
+function nextQ(){qIdx++;renderQ();}
+
+// ─── EXERCISE GENERATOR ───
+let exLvl=0,exAns='';
+const exBadges=['⭐ Term auswerten','⭐⭐ Vereinfachen','⭐⭐⭐ Gleichung lösen'];
+function setExL(l){exLvl=l;document.querySelectorAll('#ueben .lt').forEach((t,i)=>t.classList.toggle('active',i===l));document.getElementById('ex-badge').textContent=exBadges[l];genEx();}
+function genEx(){
+  document.getElementById('ex-ans').style.display='none';
+  const cont=document.getElementById('ex-content');
+  const v=['x','a','n','b','y'][Math.floor(Math.random()*5)];
+  if(exLvl===0){
+    const a=rnd(2,8),b=rnd(1,6),xv=rnd(1,10);
+    const termType=Math.floor(Math.random()*3);
+    let term,ans;
+    if(termType===0){term=`${v} + ${a}`;ans=xv+a;}
+    else if(termType===1){term=`${a} · ${v} – ${b}`;ans=a*xv-b;}
+    else{term=`${a} · ${v} + ${b}`;ans=a*xv+b;}
+    document.getElementById('ex-title').textContent='Termwert berechnen';
+    cont.innerHTML=`<div class="gen-area">
+      <div class="gen-p">Berechne den Wert des Terms für <strong>${v} = ${xv}</strong>:<br><span style="font-size:1.2rem;font-family:Nunito;">${term}</span></div>
+      <div class="ar"><span>Ergebnis = </span><input class="ga" type="number" placeholder="?" id="ex-inp"><button class="btn" onclick="chkEx(${ans})">Prüfen</button></div>
+      <div class="fb" id="ex-fb"></div>
+    </div>`;
+    exAns=`${v} = ${xv} einsetzen: ${term.replace(v,`(${xv})`)} = ${ans}`;
+  }else if(exLvl===1){
+    const a=rnd(2,8),b=rnd(1,6);
+    const type=Math.floor(Math.random()*2);
+    let problem,ans;
+    if(type===0){problem=`${a}${v} + ${b}${v}`;ans=`${a+b}${v}`;}
+    else{const big=Math.max(a,b+1),small=b;problem=`${big}${v} – ${small}${v}`;ans=`${big-small}${v}`;}
+    document.getElementById('ex-title').textContent='Term vereinfachen';
+    cont.innerHTML=`<div class="gen-area">
+      <div class="gen-p">Vereinfache den Term:<br><span style="font-size:1.2rem;font-family:Nunito;">${problem}</span></div>
+      <div class="ar"><span>= </span><input class="ga" type="text" placeholder="z.B. 5x" id="ex-inp"><button class="btn" onclick="chkExText('${ans}')">Prüfen</button></div>
+      <div class="fb" id="ex-fb"></div>
+    </div>`;
+    exAns=`${problem} = ${ans}`;
+  }else{
+    const a=rnd(2,6),xv=rnd(2,10),b=rnd(1,8),c=a*xv+b;
+    document.getElementById('ex-title').textContent='Gleichung lösen';
+    cont.innerHTML=`<div class="gen-area">
+      <div class="gen-p">Löse die Gleichung:<br><span style="font-size:1.2rem;font-family:Nunito;">${a}${v} + ${b} = ${c}</span></div>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:.5rem;">Tipp: Erst –${b}, dann ÷${a}</p>
+      <div class="ar"><span>${v} = </span><input class="ga" type="number" placeholder="?" id="ex-inp"><button class="btn" onclick="chkEx(${xv})">Prüfen</button></div>
+      <div class="fb" id="ex-fb"></div>
+    </div>`;
+    exAns=`${a}${v} + ${b} = ${c} | –${b}\n${a}${v} = ${c-b} | ÷${a}\n${v} = ${xv}\nProbe: ${a}·${xv}+${b}=${c} ✓`;
+  }
+  document.getElementById('ex-ans').textContent=exAns;
+}
+function chkEx(ans){
+  const v=parseFloat(document.getElementById('ex-inp').value);
+  const fb=document.getElementById('ex-fb');
+  fb.className=Math.abs(v-ans)<0.01?'fb ok':'fb nope';
+  fb.textContent=Math.abs(v-ans)<0.01?'✅ Super! Richtig!':'❌ Nicht ganz. Tipp: Schau die Lösung an.';
+}
+function chkExText(ans){
+  const v=document.getElementById('ex-inp').value.trim().toLowerCase().replace(/\s/g,'');
+  const a=ans.toLowerCase().replace(/\s/g,'');
+  const fb=document.getElementById('ex-fb');
+  fb.className=v===a?'fb ok':'fb nope';
+  fb.textContent=v===a?'✅ Richtig!':'❌ Nicht ganz. Lösung: '+ans;
+}
+function showExAns(){const el=document.getElementById('ex-ans');el.style.display=el.style.display==='block'?'none':'block';}
+
+// ─── FLASH ───
+const flashData=[
+  {w:'Variable',opts:['Platzhalter für eine Zahl','Das Ergebnis','Eine Rechenart','Der Koeffizient'],ans:0},
+  {w:'Term',opts:['Rechnung mit/ohne Variablen (kein =)','Ergebnis einer Addition','Gleichung mit =','Zahl ohne Buchstabe'],ans:0},
+  {w:'Gleichung',opts:['Hat ein = Zeichen','Rechnung ohne =','Ergebnis einer Malrechnung','Variable ohne Zahl'],ans:0},
+  {w:'Summe',opts:['Ergebnis der Addition','Ergebnis der Multiplikation','Variable','Eine Gleichung'],ans:0},
+  {w:'Produkt',opts:['Ergebnis der Multiplikation','Ergebnis der Addition','Eine Variable','Ein Term'],ans:0},
+  {w:'3x + 5x = ?',opts:['8x','8','15x','3x5x'],ans:0},
+  {w:'x + 7 = 12 → x = ?',opts:['5','19','7','3'],ans:0},
+  {w:'4·x − 3 für x = 2',opts:['5','8','11','2'],ans:0},
+  {w:'5a − 2a = ?',opts:['3a','7a','10a','3'],ans:0},
+  {w:'Koeffizient in 6y',opts:['6','y','6y','0'],ans:0},
+  {w:'Probe bedeutet...',opts:['Lösung einsetzen und prüfen','Gleichung nochmal schreiben','Term vereinfachen','Variable umbenennen'],ans:0},
+  {w:'Variable auf beide Seiten?',opts:['Auf eine Seite bringen','Ignorieren','Dividieren','Multiplizieren'],ans:0},
+];
+let flIdx=0,flScore=0,flRunning=false,flTimer=null;
+function shuffleOpts(item){
+  const s=[...item.opts];
+  for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[s[i],s[j]]=[s[j],s[i]];}
+  const correct=item.opts[0];return{opts:s,ans:s.indexOf(correct)};
+}
+function startFlash(){if(flRunning)return;flRunning=true;flIdx=0;flScore=0;document.getElementById('fl-sc').textContent='0';runFlash();}
+function runFlash(){
+  if(flIdx>=flashData.length){
+    document.getElementById('fl-disp').innerHTML=`<div class="fl-w">🏁 Fertig!</div><div style="color:var(--purple-d);">${flScore}/${flashData.length}</div>`;
+    document.getElementById('fl-opts').innerHTML='';flRunning=false;return;
+  }
+  const item=flashData[flIdx];
+  const speed=parseInt(document.getElementById('fspeed').value);
+  document.getElementById('fl-fb').className='fb';
+  document.getElementById('fl-opts').innerHTML='';
+  document.getElementById('fl-ctr').textContent=`Runde ${flIdx+1}/${flashData.length}`;
+  document.getElementById('fl-disp').innerHTML=`<div class="fl-w">${item.w}</div>`;
+  flTimer=setTimeout(()=>{
+    document.getElementById('fl-disp').innerHTML=`<div style="color:var(--purple-d);font-size:.9rem;">Was passt dazu?</div>`;
+    const {opts,ans}=shuffleOpts(item);
+    opts.forEach((o,i)=>{
+      const b=document.createElement('button');b.className='ob';b.textContent=o;
+      b.onclick=()=>{
+        document.querySelectorAll('#fl-opts .ob').forEach(x=>x.disabled=true);
+        if(i===ans){b.classList.add('correct');document.getElementById('fl-fb').className='fb ok';document.getElementById('fl-fb').textContent='✅ Richtig!';flScore++;document.getElementById('fl-sc').textContent=flScore;}
+        else{b.classList.add('wrong');document.querySelectorAll('#fl-opts .ob')[ans].classList.add('correct');document.getElementById('fl-fb').className='fb nope';document.getElementById('fl-fb').textContent=`❌ Richtig wäre: "${opts[ans]}"`;}
+        flIdx++;setTimeout(runFlash,1200);
+      };
+      document.getElementById('fl-opts').appendChild(b);
+    });
+  },speed);
+}
+function stopFlash(){clearTimeout(flTimer);flRunning=false;document.getElementById('fl-disp').innerHTML='<div style="color:var(--purple-d);">Gestoppt. Start zum Neubeginn.</div>';document.getElementById('fl-opts').innerHTML='';}
+
+// ─── INIT ───
+initMatch();renderQ();genEq();genWaage();genEx();genVereinfachen();calcOwn();
+</script>
+</body>
+</html>

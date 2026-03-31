@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brüche – Klasse 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff4e8;
+    --card: #ffffff;
+    --primary: #e8720c;
+    --primary-dark: #c45e08;
+    --secondary: #f72585;
+    --accent: #4cc9f0;
+    --green: #06d6a0;
+    --orange: #fb8500;
+    --yellow: #ffd166;
+    --purple: #7209b7;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --shadow: 0 4px 24px rgba(232,114,12,0.10);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #e8720c 0%, #7209b7 100%);
+    color: white;
+    padding: 28px 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.4rem;
+    letter-spacing: 1px;
+    position: relative;
+  }
+  header p { font-size: 1rem; opacity: 0.85; margin-top: 4px; position: relative; }
+
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    height: 8px;
+    margin: 12px auto 0;
+    max-width: 340px;
+    position: relative;
+  }
+  .progress-bar {
+    background: var(--yellow);
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.5s ease;
+  }
+  .progress-label { font-size: 0.78rem; opacity: 0.9; margin-top: 4px; position: relative; }
+
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 16px 16px 0;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 10px 18px;
+    border-radius: 12px 12px 0 0;
+    border: none;
+    background: var(--bg);
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tab.active { background: var(--primary); color: white; }
+  .tab:hover:not(.active) { background: #ffe4cc; color: var(--primary); }
+
+  main { padding: 20px 16px 60px; max-width: 820px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px;
+    margin-bottom: 18px;
+    border: 1.5px solid var(--border);
+  }
+  .card-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.25rem;
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .emoji { font-size: 1.4rem; }
+
+  .level-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .level-1 { background: #d1fae5; color: #065f46; }
+  .level-2 { background: #fef3c7; color: #92400e; }
+  .level-3 { background: #fee2e2; color: #991b1b; }
+
+  /* Inline fraction rendering — gleiche Klasse wie Klasse-5-App */
+  .fraction-math {
+    font-size: 1.2rem; font-weight: 900;
+    display: inline-flex; flex-direction: column; align-items: center;
+    vertical-align: middle; margin: 0 4px; line-height: 1.1;
+  }
+  .fraction-math .ln { color: var(--secondary); }
+  .fraction-math .bar { border-top: 2.5px solid #333; width: 100%; min-width: 24px; margin: 2px 0; }
+  .fraction-math .ld { color: var(--primary); }
+  .fraction-math.lg { font-size: 1.7rem; }
+
+  .mixed { display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
+
+  .fraction-display {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1;
+    padding: 4px 12px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: #fff8f0;
+    margin: 4px;
+  }
+  .fraction-display .num { color: var(--secondary); }
+  .fraction-display .line { width: 100%; height: 2px; background: var(--text); margin: 3px 0; }
+  .fraction-display .den { color: var(--primary); }
+
+  .strip-row {
+    display: flex; height: 36px;
+    border-radius: 8px; overflow: hidden;
+    margin-bottom: 6px; border: 2px solid #e5e7eb;
+  }
+  .strip-cell {
+    flex: 1; border-right: 1px solid rgba(255,255,255,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 800; color: rgba(255,255,255,0.9);
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .strip-cell:last-child { border-right: none; }
+  .strip-cell.filled { opacity: 1; }
+  .strip-cell.empty { opacity: 0.25; }
+
+  .quiz-question {
+    font-size: 1.08rem; font-weight: 700;
+    margin-bottom: 14px; line-height: 1.4;
+  }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quiz-option {
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .quiz-option:hover { border-color: var(--primary); background: #fff4e8; }
+  .quiz-option.correct { border-color: var(--green); background: #d1fae5; color: #065f46; }
+  .quiz-option.wrong { border-color: var(--secondary); background: #fee2e2; color: #991b1b; }
+  .quiz-option:disabled { cursor: not-allowed; }
+  .quiz-feedback {
+    margin-top: 12px; padding: 10px 14px;
+    border-radius: 10px; font-weight: 700;
+    font-size: 0.95rem; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #d1fae5; color: #065f46; }
+  .quiz-feedback.fail { background: #fee2e2; color: #991b1b; }
+
+  .gap-input {
+    display: inline-block; width: 64px;
+    border: none; border-bottom: 3px solid var(--primary);
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem; font-weight: 800; text-align: center;
+    color: var(--text); padding: 2px 4px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .gap-input:focus { border-color: var(--secondary); }
+  .gap-input.correct { border-color: var(--green); color: var(--green); }
+  .gap-input.wrong { border-color: var(--secondary); color: var(--secondary); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 22px; border-radius: 12px; border: none;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-secondary { background: var(--bg); color: var(--primary); border: 2px solid var(--primary); }
+  .btn-secondary:hover { background: #ffe4cc; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+  .frac-grid { display: flex; gap: 4px; flex-wrap: wrap; margin: 10px 0; }
+  .frac-cell {
+    width: 42px; height: 42px; border: 2px solid var(--border);
+    border-radius: 8px; background: white; cursor: pointer;
+    transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+  }
+  .frac-cell.on { background: var(--primary); border-color: var(--primary); }
+  .frac-cell.on.correct { background: var(--green); border-color: var(--green); }
+
+  .flash-display {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.5rem; color: var(--primary);
+    text-align: center; min-height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    animation: pulse 0.3s ease;
+  }
+  @keyframes pulse { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .flash-fraction { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .flash-fraction .fn { font-size: 3rem; line-height: 1; color: var(--secondary); }
+  .flash-fraction .fbar { width: 80px; height: 5px; background: var(--text); border-radius: 3px; }
+  .flash-fraction .fd { font-size: 3rem; line-height: 1; color: var(--primary); }
+
+  .score-display {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.9rem; font-weight: 800; color: var(--primary); margin-bottom: 12px;
+  }
+  .score-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+
+  .info-box {
+    background: linear-gradient(135deg, #fff4e8, #ffe4cc);
+    border-left: 4px solid var(--primary);
+    border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 14px;
+    font-size: 0.95rem; line-height: 1.6;
+  }
+  .info-box strong { color: var(--primary); }
+
+  .regel-card {
+    background: linear-gradient(135deg, #e8720c, #7209b7);
+    color: white; border-radius: var(--radius);
+    padding: 20px; margin-bottom: 14px;
+    font-size: 1rem; line-height: 1.7;
+  }
+  .regel-card h3 { font-family: 'Fredoka One', cursive; font-size: 1.3rem; margin-bottom: 8px; }
+
+  .steps { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+  .step {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #fff8f0; border-radius: 12px;
+    padding: 12px 14px; font-size: 0.95rem;
+    border: 1.5px solid #fde8cc;
+  }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 0.85rem; flex-shrink: 0;
+  }
+
+  .pie-grid { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0; }
+  .pie-wrap { text-align: center; }
+  .pie-wrap .label { font-size: 0.82rem; font-weight: 700; color: var(--muted); margin-top: 4px; }
+
+  @media (max-width: 500px) {
+    header h1 { font-size: 1.8rem; }
+    .quiz-options { grid-template-columns: 1fr; }
+    .flash-display { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍕 Brüche – Klasse 6</h1>
+  <p>Interaktives Lernprogramm · Thema Brüche</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="globalProgress" style="width:0%"></div>
+  </div>
+  <p class="progress-label" id="progressLabel">Starte dein Abenteuer!</p>
+</header>
+
+<nav class="tabs" id="tabNav">
+  <button class="tab active" onclick="switchTab('info', event)">📖 Erklärung</button>
+  <button class="tab" onclick="switchTab('visual', event)">🎨 Entdecken</button>
+  <button class="tab" onclick="switchTab('flash', event)">⚡ Blitzlesen</button>
+  <button class="tab" onclick="switchTab('luecken', event)">✏️ Lückentext</button>
+  <button class="tab" onclick="switchTab('rechnen', event)">🔢 Rechnen</button>
+  <button class="tab" onclick="switchTab('vergleich', event)">⚖️ Vergleichen</button>
+  <button class="tab" onclick="switchTab('quiz', event)">🏆 Quiz</button>
+  <button class="tab" onclick="switchTab('profi', event)">🌟 Profi</button>
+</nav>
+
+<main>
+
+<!-- ======================== ERKLÄRUNG ======================== -->
+<section class="section active" id="section-info">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">📖</span> Bruchteile – Wiederholung</div>
+    <div class="info-box">
+      Ein Bruch beschreibt einen <strong>Teil eines Ganzen</strong>.<br>
+      <strong>Zähler</strong> (oben) = wie viele Teile gemeint sind.<br>
+      <strong>Nenner</strong> (unten) = in wie viele Teile das Ganze geteilt ist.
+    </div>
+    <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:center; margin:10px 0;">
+      <div style="text-align:center;">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="50" fill="#ffe4cc" stroke="#e8720c" stroke-width="2"/>
+          <path d="M55,55 L55,5 A50,50 0 1,1 5,55 Z" fill="#e8720c" opacity="0.85"/>
+          <circle cx="55" cy="55" r="3" fill="white"/>
+          <line x1="55" y1="5" x2="55" y2="55" stroke="white" stroke-width="2"/>
+          <line x1="55" y1="55" x2="5" y2="55" stroke="white" stroke-width="2"/>
+          <line x1="55" y1="55" x2="105" y2="55" stroke="white" stroke-width="2"/>
+          <line x1="55" y1="55" x2="55" y2="105" stroke="white" stroke-width="2"/>
+        </svg>
+        <div style="font-weight:800; margin-top:4px;">
+          <span class="fraction-math"><span class="ln">3</span><span class="bar"></span><span class="ld">4</span></span>
+        </div>
+        <div style="font-size:0.8rem; color:var(--muted);">3 von 4 Teilen</div>
+      </div>
+      <div style="flex:1; min-width:160px;">
+        <div class="steps">
+          <div class="step"><div class="step-num" style="background:var(--secondary);">Z</div><div><strong>Zähler = 3</strong> → 3 Teile sind gefärbt</div></div>
+          <div class="step"><div class="step-num">N</div><div><strong>Nenner = 4</strong> → Kreis in 4 gleiche Teile geteilt</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔁</span> Erweitern und Kürzen</div>
+    <div class="regel-card">
+      <h3>Die Regeln</h3>
+      <strong>Erweitern:</strong> Zähler und Nenner × gleiche Zahl<br>
+      <span class="fraction-math" style="color:white;font-size:1.4rem;"><span style="color:#ffd166;">2</span><span class="bar" style="border-color:white;"></span><span style="color:#4cc9f0;">5</span></span>
+      &nbsp;× 3&nbsp; =&nbsp;
+      <span class="fraction-math" style="color:white;font-size:1.4rem;"><span style="color:#ffd166;">6</span><span class="bar" style="border-color:white;"></span><span style="color:#4cc9f0;">15</span></span>
+      <br><br>
+      <strong>Kürzen:</strong> Zähler und Nenner ÷ gleiche Zahl<br>
+      <span class="fraction-math" style="color:white;font-size:1.4rem;"><span style="color:#ffd166;">6</span><span class="bar" style="border-color:white;"></span><span style="color:#4cc9f0;">15</span></span>
+      &nbsp;÷ 3&nbsp; =&nbsp;
+      <span class="fraction-math" style="color:white;font-size:1.4rem;"><span style="color:#ffd166;">2</span><span class="bar" style="border-color:white;"></span><span style="color:#4cc9f0;">5</span></span>
+    </div>
+    <div class="info-box">
+      💡 <strong>Wichtig:</strong> Der <em>Wert</em> des Bruchs ändert sich nicht!
+      <span class="fraction-math"><span class="ln">1</span><span class="bar"></span><span class="ld">2</span></span> =
+      <span class="fraction-math"><span class="ln">2</span><span class="bar"></span><span class="ld">4</span></span> =
+      <span class="fraction-math"><span class="ln">5</span><span class="bar"></span><span class="ld">10</span></span> =
+      <span class="fraction-math"><span class="ln">50</span><span class="bar"></span><span class="ld">100</span></span>
+      – alles gleich groß!
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔄</span> Gemischte Zahlen &amp; unechte Brüche</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <strong>Unechter Bruch → Gemischte Zahl</strong> (Zähler &gt; Nenner)<br>
+          <span class="fraction-math"><span class="ln">7</span><span class="bar"></span><span class="ld">4</span></span>
+          : 7 ÷ 4 = <strong>1 Rest 3</strong> →
+          <span class="mixed">1<span class="fraction-math"><span class="ln">3</span><span class="bar"></span><span class="ld">4</span></span></span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <strong>Gemischte Zahl → Unechter Bruch</strong><br>
+          <span class="mixed">3<span class="fraction-math"><span class="ln">2</span><span class="bar"></span><span class="ld">5</span></span></span>
+          : 3 × 5 + 2 = <strong>17</strong> →
+          <span class="fraction-math"><span class="ln">17</span><span class="bar"></span><span class="ld">5</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">➕</span> Brüche addieren &amp; subtrahieren</div>
+    <div class="info-box">
+      Nur bei <strong>gleichem Nenner</strong>: Zähler addieren oder subtrahieren – Nenner bleibt!<br><br>
+      <span class="fraction-math"><span class="ln">2</span><span class="bar"></span><span class="ld">7</span></span>
+      +
+      <span class="fraction-math"><span class="ln">3</span><span class="bar"></span><span class="ld">7</span></span>
+      =
+      <span class="fraction-math"><span class="ln">5</span><span class="bar"></span><span class="ld">7</span></span>
+      &nbsp;&nbsp;&nbsp;
+      <span class="fraction-math"><span class="ln">9</span><span class="bar"></span><span class="ld">10</span></span>
+      –
+      <span class="fraction-math"><span class="ln">4</span><span class="bar"></span><span class="ld">10</span></span>
+      =
+      <span class="fraction-math"><span class="ln">5</span><span class="bar"></span><span class="ld">10</span></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✖️</span> Bruch × natürliche Zahl</div>
+    <div class="regel-card">
+      <h3>Die Regel</h3>
+      Zähler × natürliche Zahl, Nenner bleibt gleich:<br><br>
+      <span class="fraction-math" style="color:white;font-size:1.4rem;"><span style="color:#ffd166;">2</span><span class="bar" style="border-color:white;"></span><span style="color:#4cc9f0;">3</span></span>
+      × 4 =
+      <span class="fraction-math" style="color:white;font-size:1.4rem;"><span style="color:#ffd166;">8</span><span class="bar" style="border-color:white;"></span><span style="color:#4cc9f0;">3</span></span>
+      =
+      <span class="mixed" style="color:white;">2<span class="fraction-math" style="color:white;font-size:1.4rem;"><span style="color:#ffd166;">2</span><span class="bar" style="border-color:white;"></span><span style="color:#4cc9f0;">3</span></span></span>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== ENTDECKEN ======================== -->
+<section class="section" id="section-visual">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🎨</span> Gleichwertige Brüche entdecken</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Klicke auf Felder, um Bruchteile einzufärben. Vergleiche die Streifen!</p>
+    <div id="strips-container"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="resetStrips()">↺ Zurücksetzen</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🍕</span> Pizza-Teiler</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Wähle einen Bruch und sieh, wie viel Pizza das ist!</p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px; align-items:center;">
+      <label style="font-weight:700; font-size:0.9rem;">Zähler:</label>
+      <input type="range" id="pizzaNum" min="0" max="7" value="3" style="width:100px;" oninput="updatePizza()">
+      <span id="pizzaNumVal" style="font-weight:900; color:var(--secondary); min-width:20px;">3</span>
+      <label style="font-weight:700; font-size:0.9rem;">Nenner:</label>
+      <input type="range" id="pizzaDen" min="1" max="8" value="4" style="width:100px;" oninput="updatePizza()">
+      <span id="pizzaDenVal" style="font-weight:900; color:var(--primary); min-width:20px;">4</span>
+    </div>
+    <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+      <svg id="pizzaSvg" width="140" height="140" viewBox="0 0 140 140"></svg>
+      <div>
+        <div style="font-size:1.1rem; font-weight:700;">Das ist:</div>
+        <div class="fraction-display">
+          <span class="num" id="pNum">3</span>
+          <span class="line"></span>
+          <span class="den" id="pDen">4</span>
+        </div>
+        <div id="pizzaPercent" style="margin-top:8px; font-size:0.9rem; color:var(--muted);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🎯</span> Bruchteil einzeichnen</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p id="drawTask" style="font-size:1rem; font-weight:700; margin-bottom:10px;"></p>
+    <div class="frac-grid" id="drawGrid"></div>
+    <div id="drawFeedback" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkDraw()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newDrawTask()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== BLITZLESEN ======================== -->
+<section class="section" id="section-flash">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">⚡</span> Blitzlesen – Bruch erkennen</div>
+    <p style="font-size:0.9rem; margin-bottom:14px;">Ein Bruch erscheint kurz. Wähle die richtige Antwort!</p>
+    <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+      <button class="btn btn-secondary" onclick="setFlashSpeed(2000)" id="spd-easy">🐢 Langsam</button>
+      <button class="btn btn-primary" onclick="setFlashSpeed(1200)" id="spd-mid">🚶 Mittel</button>
+      <button class="btn btn-secondary" onclick="setFlashSpeed(600)" id="spd-fast">⚡ Schnell</button>
+    </div>
+    <div class="score-display">
+      <div class="score-dot"></div>
+      <span>Punkte: <strong id="flashScore">0</strong> / <strong id="flashTotal">0</strong></span>
+    </div>
+    <div style="background:#fff8f0; border-radius:14px; padding:20px; text-align:center; margin-bottom:14px; min-height:130px; display:flex; align-items:center; justify-content:center;">
+      <div id="flashDisplay" class="flash-display" style="display:none;"></div>
+      <div id="flashStart" style="font-size:1.1rem; color:var(--muted); font-weight:700;">Drücke „Starten"!</div>
+    </div>
+    <div class="quiz-options" id="flashOptions" style="display:none;"></div>
+    <div id="flashFeedback" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="startFlash()">▶ Starten</button>
+      <button class="btn btn-secondary" onclick="resetFlash()">↺ Neu</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔤</span> Blitzlesen – Name des Bruchs</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:10px;">Wie heißt dieser Bruch auf Deutsch?</p>
+    <div class="score-display">
+      <div class="score-dot" style="background:var(--orange);"></div>
+      <span>Punkte: <strong id="nameScore">0</strong> / <strong id="nameTotal">0</strong></span>
+    </div>
+    <div id="nameDisplay" style="text-align:center; padding:14px 0;"></div>
+    <div class="quiz-options" id="nameOptions" style="display:none;"></div>
+    <div id="nameFeedback" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="startNameFlash()">▶ Starten</button>
+      <button class="btn btn-secondary" onclick="resetNameFlash()">↺ Neu</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== LÜCKENTEXT ======================== -->
+<section class="section" id="section-luecken">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✏️</span> Fachbegriffe – Lückentext</div>
+    <span class="level-badge level-1">Basis</span>
+    <div id="luecken1" style="font-size:1rem; line-height:2.2;">
+      Ein Bruch hat zwei Teile: den <input class="gap-input" data-ans="Zähler" id="g1_1" placeholder="???"> (oben) und den
+      <input class="gap-input" data-ans="Nenner" id="g1_2" placeholder="???"> (unten).<br>
+      Bei <span class="fraction-math"><span class="ln">3</span><span class="bar"></span><span class="ld">5</span></span>
+      ist der Zähler <input class="gap-input" data-ans="3" id="g1_3" placeholder="?" style="width:44px;"> und der Nenner
+      <input class="gap-input" data-ans="5" id="g1_4" placeholder="?" style="width:44px;">.<br>
+      Das Ganze ist in <input class="gap-input" data-ans="5" id="g1_5" placeholder="?"> Teile geteilt und
+      <input class="gap-input" data-ans="3" id="g1_6" placeholder="?"> Teile sind gemeint.
+    </div>
+    <div id="lueck1fb" class="quiz-feedback" style="margin-top:10px;"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkGaps('lueck1fb',['g1_1','g1_2','g1_3','g1_4','g1_5','g1_6'])">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="clearGaps(['g1_1','g1_2','g1_3','g1_4','g1_5','g1_6'],'lueck1fb')">↺ Neu</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✏️</span> Erweitern – Lückentext</div>
+    <span class="level-badge level-2">Mittel</span>
+    <div id="luecken2" style="font-size:1rem; line-height:2.5;">
+      Beim <strong>Erweitern</strong> multipliziert man Zähler und Nenner mit derselben Zahl.<br>
+      <span class="fraction-math"><span class="ln">2</span><span class="bar"></span><span class="ld">5</span></span>
+      mit 3 erweitern: Zähler 2 × <input class="gap-input" data-ans="3" id="g2_1" placeholder="?" style="width:44px;">
+      = <input class="gap-input" data-ans="6" id="g2_2" placeholder="?" style="width:44px;">,
+      Nenner 5 × <input class="gap-input" data-ans="3" id="g2_3" placeholder="?" style="width:44px;">
+      = <input class="gap-input" data-ans="15" id="g2_4" placeholder="?" style="width:50px;"><br>
+      Ergebnis:
+      <span class="fraction-math"><span class="ln">2</span><span class="bar"></span><span class="ld">5</span></span>
+      =
+      <span class="fraction-math"><span class="ln"><input class="gap-input" data-ans="6" id="g2_5" placeholder="?" style="width:44px; font-size:1rem;"></span><span class="bar"></span><span class="ld">15</span></span><br>
+      Der <strong>Wert</strong> des Bruchs <input class="gap-input" data-ans="ändert sich nicht" id="g2_6" placeholder="????????????????????" style="width:180px;">.
+    </div>
+    <div id="lueck2fb" class="quiz-feedback" style="margin-top:10px;"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkGaps('lueck2fb',['g2_1','g2_2','g2_3','g2_4','g2_5','g2_6'])">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="clearGaps(['g2_1','g2_2','g2_3','g2_4','g2_5','g2_6'],'lueck2fb')">↺ Neu</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✏️</span> Gemischte Zahlen – Lückentext</div>
+    <span class="level-badge level-3">Schwer</span>
+    <div id="luecken3" style="font-size:1rem; line-height:2.5;">
+      <span class="fraction-math"><span class="ln">11</span><span class="bar"></span><span class="ld">4</span></span>
+      als gemischte Zahl: 11 ÷ 4 = <input class="gap-input" data-ans="2" id="g3_1" placeholder="?" style="width:44px;"> Rest
+      <input class="gap-input" data-ans="3" id="g3_2" placeholder="?" style="width:44px;"> →
+      <input class="gap-input" data-ans="2" id="g3_3" placeholder="?" style="width:44px;">
+      <span class="fraction-math"><span class="ln">3</span><span class="bar"></span><span class="ld">4</span></span><br>
+
+      <span class="mixed">3<span class="fraction-math"><span class="ln">1</span><span class="bar"></span><span class="ld">5</span></span></span>
+      als Bruch: 3 × <input class="gap-input" data-ans="5" id="g3_4" placeholder="?" style="width:44px;"> +
+      <input class="gap-input" data-ans="1" id="g3_5" placeholder="?" style="width:44px;"> =
+      <input class="gap-input" data-ans="16" id="g3_6" placeholder="?" style="width:50px;"> →
+      <span class="fraction-math"><span class="ln"><input class="gap-input" data-ans="16" id="g3_7" placeholder="?" style="width:44px; font-size:1rem;"></span><span class="bar"></span><span class="ld">5</span></span>
+    </div>
+    <div id="lueck3fb" class="quiz-feedback" style="margin-top:10px;"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkGaps('lueck3fb',['g3_1','g3_2','g3_3','g3_4','g3_5','g3_6','g3_7'])">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="clearGaps(['g3_1','g3_2','g3_3','g3_4','g3_5','g3_6','g3_7'],'lueck3fb')">↺ Neu</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== RECHNEN ======================== -->
+<section class="section" id="section-rechnen">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔁</span> Erweitern üben</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Erweitere den Bruch mit der angegebenen Zahl.</p>
+    <div id="erwExercise"></div>
+    <div id="erwFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkErw()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newErw()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✂️</span> Kürzen üben</div>
+    <span class="level-badge level-1">Basis</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Kürze den Bruch mit der angegebenen Zahl.</p>
+    <div id="kuerzExercise"></div>
+    <div id="kuerzFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkKuerz()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newKuerz()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">➕</span> Addieren &amp; Subtrahieren</div>
+    <span class="level-badge level-2">Mittel</span>
+    <div id="addSubExercise"></div>
+    <div id="addSubFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkAddSub()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newAddSub()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔄</span> Umrechnen üben</div>
+    <span class="level-badge level-3">Schwer</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Gemischte Zahl ↔ Unechter Bruch</p>
+    <div id="convertExercise"></div>
+    <div id="convertFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkConvert()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newConvert()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">✖️</span> Bruch × natürliche Zahl</div>
+    <span class="level-badge level-2">Mittel</span>
+    <div id="multExercise"></div>
+    <div id="multFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkMult()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newMult()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== VERGLEICHEN ======================== -->
+<section class="section" id="section-vergleich">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">⚖️</span> Welcher Bruch ist größer?</div>
+    <span class="level-badge level-1">Basis</span>
+    <div class="info-box">
+      <strong>Gleicher Nenner:</strong> Größerer Zähler = größerer Bruch.<br>
+      <strong>Gleicher Zähler:</strong> Kleinerer Nenner = größerer Bruch.<br>
+      Tipp: Stell dir die Pizza vor – mehr Stücke oder größere Stücke?
+    </div>
+    <div class="score-display">
+      <div class="score-dot"></div>
+      <span>Punkte: <strong id="cmpScore">0</strong> / <strong id="cmpTotal">0</strong></span>
+    </div>
+    <div id="cmpDisplay" style="display:flex; gap:20px; justify-content:center; align-items:center; margin:16px 0; font-size:1.2rem; flex-wrap:wrap;"></div>
+    <div class="quiz-options" id="cmpOptions" style="display:none;"></div>
+    <div id="cmpFeedback" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="startCmp()">▶ Starten</button>
+      <button class="btn btn-secondary" onclick="resetCmp()">↺ Neu</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🔢</span> Zeichen einsetzen: &lt;, &gt;, =</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Setze das richtige Zeichen ein.</p>
+    <div id="signExercise"></div>
+    <div id="signFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkSign()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newSign()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">📏</span> Zahlenstrahl – Wo liegt der Bruch?</div>
+    <span class="level-badge level-2">Mittel</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Klicke auf die richtige Stelle!</p>
+    <div id="nlTask" style="font-weight:700; margin-bottom:10px;"></div>
+    <div id="nlStrahl" style="overflow-x:auto;"></div>
+    <div id="nlFeedback" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="newNL()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== QUIZ ======================== -->
+<section class="section" id="section-quiz">
+
+  <div class="card">
+    <div class="score-display">
+      <div class="score-dot" style="background:var(--yellow);"></div>
+      <span>Quiz-Punkte: <strong id="quizScore">0</strong> / <strong id="quizMax">0</strong></span>
+    </div>
+    <div class="card-title"><span class="emoji">🏆</span> Quiz – Brüche Klasse 6</div>
+    <div id="quizContainer"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="nextQuiz()">→ Nächste Frage</button>
+      <button class="btn btn-secondary" onclick="resetQuiz()">↺ Neustart</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================== PROFI ======================== -->
+<section class="section" id="section-profi">
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🌟</span> Profi-Level – Gemischte Aufgaben</div>
+    <span class="level-badge level-3">Herausforderung</span>
+    <p style="font-size:0.9rem; margin-bottom:14px;">Alle Typen gemischt – teste dein Können!</p>
+    <div class="score-display">
+      <div class="score-dot" style="background:var(--secondary);"></div>
+      <span>Punkte: <strong id="profiScore">0</strong> / <strong id="profiMax">0</strong></span>
+    </div>
+    <div id="profiExercise"></div>
+    <div id="profiFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkProfi()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newProfi()">→ Weiter</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">🍕</span> Textaufgabe</div>
+    <span class="level-badge level-3">Schwer</span>
+    <div id="wordProblem"></div>
+    <div id="wordFb" class="quiz-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkWord()">✓ Prüfen</button>
+      <button class="btn btn-secondary" onclick="newWordProblem()">→ Neue Aufgabe</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="emoji">⏱️</span> Blitzrechnen – 60 Sekunden</div>
+    <span class="level-badge level-3">Herausforderung</span>
+    <p style="font-size:0.9rem; margin-bottom:12px;">Löse so viele Aufgaben wie möglich in einer Minute!</p>
+    <div id="blitzDisplay">
+      <button class="btn btn-primary" onclick="startBlitz()">▶ Blitzrechnen starten</button>
+    </div>
+  </div>
+
+</section>
+</main>
+
+<script>
+// ===== GLOBAL STATE =====
+let totalPoints = 0, maxPoints = 0;
+function addPoints(p) {
+  totalPoints += p; maxPoints++;
+  const pct = Math.round((totalPoints/maxPoints)*100);
+  document.getElementById('globalProgress').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${totalPoints} von ${maxPoints} Aufgaben richtig (${pct}%)`;
+}
+
+// ===== TABS =====
+function switchTab(id, e) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  e.target.closest('.tab').classList.add('active');
+}
+
+// ===== HELPERS =====
+function rnd(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function fm(z, n) {
+  return `<span class="fraction-math"><span class="ln">${z}</span><span class="bar"></span><span class="ld">${n}</span></span>`;
+}
+function fmInp(placeholder_z, placeholder_n) {
+  return `<span class="fraction-math">
+    <span class="ln"><input id="inp-z" type="number" style="width:50px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="${placeholder_z}"></span>
+    <span class="bar"></span>
+    <span class="ld"><input id="inp-n" type="number" style="width:50px;border:none;border-bottom:3px solid var(--primary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="${placeholder_n}"></span>
+  </span>`;
+}
+
+// ===== STRIPS =====
+const stripDefs = [
+  {n:1,c:'#e8720c'},{n:2,c:'#7209b7'},{n:3,c:'#f72585'},
+  {n:4,c:'#4cc9f0'},{n:5,c:'#fb8500'},{n:6,c:'#06d6a0'},
+  {n:8,c:'#ffd166'},{n:10,c:'#ef476f'}
+];
+function buildStrips() {
+  const cont = document.getElementById('strips-container');
+  cont.innerHTML = '';
+  stripDefs.forEach(({n, c}) => {
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:0.75rem;font-weight:800;color:var(--muted);margin-bottom:2px;';
+    lbl.textContent = n === 1 ? 'Ganzes' : `1/${n}-Teile (${n}er)`;
+    cont.appendChild(lbl);
+    const row = document.createElement('div');
+    row.className = 'strip-row';
+    for (let i = 0; i < n; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'strip-cell filled';
+      cell.style.background = c;
+      cell.textContent = n > 1 ? `1/${n}` : '1';
+      cell.dataset.state = '1';
+      cell.onclick = function() {
+        this.dataset.state = this.dataset.state === '1' ? '0' : '1';
+        this.classList.toggle('filled', this.dataset.state === '1');
+        this.classList.toggle('empty', this.dataset.state === '0');
+      };
+      row.appendChild(cell);
+    }
+    cont.appendChild(row);
+  });
+}
+function resetStrips() { buildStrips(); }
+buildStrips();
+
+// ===== PIZZA =====
+function updatePizza() {
+  const n = +document.getElementById('pizzaNum').value;
+  const d = +document.getElementById('pizzaDen').value;
+  const adj = Math.min(n, d);
+  document.getElementById('pizzaNumVal').textContent = n;
+  document.getElementById('pizzaDenVal').textContent = d;
+  document.getElementById('pNum').textContent = adj;
+  document.getElementById('pDen').textContent = d;
+  document.getElementById('pizzaPercent').textContent = `≈ ${Math.round((adj/d)*100)}% der Pizza`;
+  drawPizza(adj, d);
+}
+function drawPizza(n, d) {
+  const svg = document.getElementById('pizzaSvg');
+  svg.innerHTML = '';
+  const cx=70, cy=70, r=60;
+  const colors = ['#e8720c','#f72585','#4cc9f0','#06d6a0','#fb8500','#ffd166','#7209b7','#ef476f'];
+  for (let i = 0; i < d; i++) {
+    const a1 = (i/d)*2*Math.PI - Math.PI/2;
+    const a2 = ((i+1)/d)*2*Math.PI - Math.PI/2;
+    const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+    const x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${d===1?1:0},1 ${x2},${y2} Z`);
+    path.setAttribute('fill', i < n ? colors[i % colors.length] : '#e5e7eb');
+    path.setAttribute('stroke', 'white'); path.setAttribute('stroke-width', '2');
+    svg.appendChild(path);
+  }
+  const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', 4);
+  c.setAttribute('fill', 'white'); svg.appendChild(c);
+}
+updatePizza();
+
+// ===== DRAW GRID =====
+let drawAns = {n:0, d:0, total:0};
+const drawTasks = [{n:2,d:5,t:10},{n:3,d:4,t:12},{n:5,d:6,t:12},{n:1,d:3,t:9},{n:3,d:8,t:16},{n:2,d:3,t:9},{n:3,d:5,t:10},{n:7,d:8,t:16}];
+function newDrawTask() {
+  const t = pick(drawTasks);
+  drawAns = {n:t.n, d:t.d, total:t.t};
+  document.getElementById('drawTask').innerHTML =
+    `Klicke genau <strong>${t.n}</strong> von <strong>${t.t}</strong> Feldern an (= ${fm(t.n, t.d)}):`;
+  const grid = document.getElementById('drawGrid');
+  grid.innerHTML = '';
+  grid.style.maxWidth = (Math.ceil(Math.sqrt(t.t)) * 50) + 'px';
+  for (let i = 0; i < t.t; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'frac-cell'; cell.dataset.on = '0';
+    cell.onclick = function() { this.dataset.on = this.dataset.on==='0'?'1':'0'; this.classList.toggle('on', this.dataset.on==='1'); };
+    grid.appendChild(cell);
+  }
+  document.getElementById('drawFeedback').className = 'quiz-feedback';
+}
+function checkDraw() {
+  const cells = document.querySelectorAll('#drawGrid .frac-cell');
+  let sel = 0;
+  cells.forEach(c => { if (c.dataset.on === '1') sel++; });
+  const exp = Math.round(drawAns.n * drawAns.total / drawAns.d);
+  const fb = document.getElementById('drawFeedback');
+  if (sel === exp) {
+    fb.textContent = '✅ Richtig! ' + exp + ' Felder eingefärbt.';
+    fb.className = 'quiz-feedback show ok';
+    cells.forEach(c => { if (c.dataset.on === '1') c.classList.add('correct'); });
+    addPoints(1);
+  } else {
+    fb.textContent = `❌ Du hast ${sel} gewählt – richtig wären ${exp}.`;
+    fb.className = 'quiz-feedback show fail';
+  }
+}
+newDrawTask();
+
+// ===== FLASH =====
+const flashFractions = [
+  {n:1,d:2},{n:1,d:3},{n:2,d:3},{n:1,d:4},{n:3,d:4},{n:1,d:5},{n:2,d:5},{n:3,d:5},{n:4,d:5},
+  {n:1,d:6},{n:5,d:6},{n:3,d:8},{n:5,d:8},{n:7,d:8},{n:3,d:10},{n:7,d:10},{n:2,d:7},{n:5,d:9}
+];
+let flashSpeed = 1200, flashScoreV = 0, flashTotalV = 0, flashActive = false;
+function setFlashSpeed(s) {
+  flashSpeed = s;
+  ['spd-easy','spd-mid','spd-fast'].forEach(id => {
+    const el = document.getElementById(id);
+    el.className = el.className.replace('btn-primary', 'btn-secondary');
+  });
+  const map = {2000:'spd-easy', 1200:'spd-mid', 600:'spd-fast'};
+  const el = document.getElementById(map[s]);
+  el.className = el.className.replace('btn-secondary', 'btn-primary');
+}
+function startFlash() {
+  if (flashActive) return;
+  flashActive = true;
+  const frac = pick(flashFractions);
+  const disp = document.getElementById('flashDisplay');
+  document.getElementById('flashStart').style.display = 'none';
+  disp.style.display = 'flex';
+  disp.innerHTML = `<div class="flash-fraction"><div class="fn">${frac.n}</div><div class="fbar"></div><div class="fd">${frac.d}</div></div>`;
+  document.getElementById('flashOptions').style.display = 'none';
+  document.getElementById('flashFeedback').className = 'quiz-feedback';
+  setTimeout(() => { disp.style.display = 'none'; showFlashOpts(frac); flashActive = false; }, flashSpeed);
+}
+function showFlashOpts(correct) {
+  const opts = [correct];
+  while (opts.length < 4) { const r = pick(flashFractions); if (!opts.find(o => o.n===r.n && o.d===r.d)) opts.push(r); }
+  opts.sort(() => Math.random() - 0.5);
+  const cont = document.getElementById('flashOptions');
+  cont.style.display = 'grid'; cont.innerHTML = '';
+  opts.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.innerHTML = `<span style="font-size:1.3rem;font-weight:900;color:var(--secondary)">${f.n}</span><span>/${f.d}</span>`;
+    btn.onclick = function() {
+      flashTotalV++; document.getElementById('flashTotal').textContent = flashTotalV;
+      if (f.n === correct.n && f.d === correct.d) {
+        this.classList.add('correct'); flashScoreV++;
+        document.getElementById('flashScore').textContent = flashScoreV;
+        showFlashFb('✅ Richtig!', true); addPoints(1);
+      } else { this.classList.add('wrong'); showFlashFb(`❌ Es war ${correct.n}/${correct.d}`, false); }
+      cont.querySelectorAll('button').forEach(b => b.disabled = true);
+      setTimeout(() => { cont.style.display = 'none'; const fs = document.getElementById('flashStart'); fs.style.display = 'block'; fs.textContent = 'Weiter →'; }, 1200);
+    };
+    cont.appendChild(btn);
+  });
+}
+function showFlashFb(msg, ok) { const fb = document.getElementById('flashFeedback'); fb.textContent = msg; fb.className = 'quiz-feedback show ' + (ok?'ok':'fail'); }
+function resetFlash() {
+  flashScoreV = 0; flashTotalV = 0;
+  document.getElementById('flashScore').textContent = '0'; document.getElementById('flashTotal').textContent = '0';
+  document.getElementById('flashOptions').style.display = 'none'; document.getElementById('flashDisplay').style.display = 'none';
+  document.getElementById('flashStart').style.display = 'block'; document.getElementById('flashStart').textContent = 'Drücke „Starten"!';
+  document.getElementById('flashFeedback').className = 'quiz-feedback';
+}
+
+// ===== NAME FLASH =====
+const fracNames = [
+  {n:1,d:2,name:'ein Halb'},{n:1,d:3,name:'ein Drittel'},{n:2,d:3,name:'zwei Drittel'},
+  {n:1,d:4,name:'ein Viertel'},{n:3,d:4,name:'drei Viertel'},{n:1,d:5,name:'ein Fünftel'},
+  {n:2,d:5,name:'zwei Fünftel'},{n:3,d:5,name:'drei Fünftel'},{n:4,d:5,name:'vier Fünftel'},
+  {n:1,d:6,name:'ein Sechstel'},{n:5,d:6,name:'fünf Sechstel'},{n:1,d:8,name:'ein Achtel'},
+  {n:3,d:8,name:'drei Achtel'},{n:7,d:8,name:'sieben Achtel'},{n:1,d:10,name:'ein Zehntel'},
+  {n:3,d:10,name:'drei Zehntel'},{n:7,d:10,name:'sieben Zehntel'},
+];
+let nameScoreV = 0, nameTotalV = 0;
+function startNameFlash() {
+  const correct = pick(fracNames);
+  document.getElementById('nameDisplay').innerHTML = `<div style="font-size:2rem; font-weight:900; text-align:center;">${fm(correct.n, correct.d)}</div>`;
+  const wrongs = fracNames.filter(f => f.name !== correct.name).sort(() => Math.random()-0.5).slice(0,3);
+  const opts = [correct, ...wrongs].sort(() => Math.random()-0.5);
+  const cont = document.getElementById('nameOptions'); cont.style.display = 'grid'; cont.innerHTML = '';
+  opts.forEach(f => {
+    const btn = document.createElement('button'); btn.className = 'quiz-option'; btn.textContent = f.name;
+    btn.onclick = function() {
+      nameTotalV++; document.getElementById('nameTotal').textContent = nameTotalV;
+      const ok = f.name === correct.name;
+      this.classList.add(ok ? 'correct' : 'wrong');
+      if (ok) { nameScoreV++; document.getElementById('nameScore').textContent = nameScoreV; addPoints(1); }
+      const fb = document.getElementById('nameFeedback');
+      fb.textContent = ok ? '✅ Richtig!' : '❌ Es heißt: ' + correct.name;
+      fb.className = 'quiz-feedback show ' + (ok?'ok':'fail');
+      cont.querySelectorAll('button').forEach(b => b.disabled = true);
+      setTimeout(startNameFlash, 1400);
+    };
+    cont.appendChild(btn);
+  });
+  document.getElementById('nameFeedback').className = 'quiz-feedback';
+}
+function resetNameFlash() {
+  nameScoreV = 0; nameTotalV = 0;
+  document.getElementById('nameScore').textContent = '0'; document.getElementById('nameTotal').textContent = '0';
+  document.getElementById('nameDisplay').innerHTML = ''; document.getElementById('nameOptions').style.display = 'none';
+  document.getElementById('nameFeedback').className = 'quiz-feedback';
+}
+
+// ===== GAPS =====
+function checkGaps(fbId, ids) {
+  let ok = 0;
+  ids.forEach(id => {
+    const inp = document.getElementById(id);
+    const val = inp.value.trim().toLowerCase();
+    const ans = inp.dataset.ans.toLowerCase();
+    const correct = val === ans;
+    inp.classList.toggle('correct', correct); inp.classList.toggle('wrong', !correct);
+    if (correct) ok++;
+  });
+  const fb = document.getElementById(fbId);
+  if (ok === ids.length) { fb.textContent = '✅ Alle richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ ${ok} von ${ids.length} richtig. Schau nochmal nach!`; fb.className = 'quiz-feedback show fail'; }
+}
+function clearGaps(ids, fbId) {
+  ids.forEach(id => { const i = document.getElementById(id); i.value = ''; i.classList.remove('correct','wrong'); });
+  document.getElementById(fbId).className = 'quiz-feedback';
+}
+
+// ===== ERWEITERN =====
+const erwBases = [{z:1,n:2},{z:2,n:3},{z:1,n:4},{z:3,n:5},{z:2,n:7},{z:4,n:5},{z:3,n:8},{z:1,n:3},{z:2,n:9},{z:5,n:6},{z:1,n:5}];
+let curErw = null;
+function newErw() {
+  const base = pick(erwBases); const factor = rnd(2, 9);
+  curErw = {z:base.z, n:base.n, factor, rz:base.z*factor, rn:base.n*factor};
+  document.getElementById('erwExercise').innerHTML = `
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      Erweitere ${fm(base.z, base.n)} mit <strong>${factor}</strong>: ${fm(base.z, base.n)} =
+      <span class="fraction-math"><span class="ln"><input id="erw-z" type="number" style="width:50px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld"><input id="erw-n" type="number" style="width:50px;border:none;border-bottom:3px solid var(--primary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span></span>
+    </div>`;
+  document.getElementById('erwFb').className = 'quiz-feedback';
+}
+function checkErw() {
+  const zv = +document.getElementById('erw-z').value, nv = +document.getElementById('erw-n').value;
+  const fb = document.getElementById('erwFb');
+  if (zv === curErw.rz && nv === curErw.rn) { fb.textContent = `✅ Richtig! ${curErw.z}×${curErw.factor}=${curErw.rz}, ${curErw.n}×${curErw.factor}=${curErw.rn}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Richtig wäre: ${curErw.rz}/${curErw.rn}`; fb.className = 'quiz-feedback show fail'; }
+}
+newErw();
+
+// ===== KÜRZEN =====
+const kuerzPool = [
+  {z:4,n:6,k:2},{z:6,n:9,k:3},{z:8,n:12,k:4},{z:10,n:15,k:5},{z:6,n:15,k:3},
+  {z:9,n:12,k:3},{z:12,n:16,k:4},{z:15,n:20,k:5},{z:8,n:24,k:8},{z:21,n:28,k:7},
+  {z:25,n:35,k:5},{z:18,n:24,k:6},{z:16,n:20,k:4},{z:72,n:81,k:9},{z:40,n:56,k:8}
+];
+let curKuerz = null;
+function newKuerz() {
+  curKuerz = pick(kuerzPool);
+  document.getElementById('kuerzExercise').innerHTML = `
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      Kürze ${fm(curKuerz.z, curKuerz.n)} mit <strong>${curKuerz.k}</strong>: ${fm(curKuerz.z, curKuerz.n)} =
+      <span class="fraction-math"><span class="ln"><input id="kuerz-z" type="number" style="width:50px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld"><input id="kuerz-n" type="number" style="width:50px;border:none;border-bottom:3px solid var(--primary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span></span>
+    </div>`;
+  document.getElementById('kuerzFb').className = 'quiz-feedback';
+}
+function checkKuerz() {
+  const rz = curKuerz.z/curKuerz.k, rn = curKuerz.n/curKuerz.k;
+  const zv = +document.getElementById('kuerz-z').value, nv = +document.getElementById('kuerz-n').value;
+  const fb = document.getElementById('kuerzFb');
+  if (zv === rz && nv === rn) { fb.textContent = `✅ Richtig! ${curKuerz.z}÷${curKuerz.k}=${rz}, ${curKuerz.n}÷${curKuerz.k}=${rn}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Richtig wäre: ${rz}/${rn}`; fb.className = 'quiz-feedback show fail'; }
+}
+newKuerz();
+
+// ===== ADD/SUB =====
+function genAddSub() {
+  const denoms = [3,4,5,6,7,8,9,10,11,12,13,15,20,25,100];
+  const d = pick(denoms);
+  const op = Math.random() < 0.5 ? '+' : '-';
+  const z1 = rnd(1, d-1);
+  const z2 = op === '+' ? rnd(1, d-1) : rnd(1, z1);
+  const rz = op === '+' ? z1+z2 : z1-z2;
+  return {z1, z2, d, op, rz};
+}
+let curAddSub = null;
+function newAddSub() {
+  curAddSub = genAddSub();
+  const t = curAddSub;
+  document.getElementById('addSubExercise').innerHTML = `
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      ${fm(t.z1, t.d)} ${t.op} ${fm(t.z2, t.d)} =
+      <span class="fraction-math"><span class="ln"><input id="as-z" type="number" style="width:50px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld"><input id="as-n" type="number" style="width:50px;border:none;border-bottom:3px solid var(--primary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span></span>
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);">Tipp: Nur Zähler ${t.op === '+'?'addieren':'subtrahieren'} – Nenner bleibt ${t.d}</div>`;
+  document.getElementById('addSubFb').className = 'quiz-feedback';
+}
+function checkAddSub() {
+  const zv = +document.getElementById('as-z').value, nv = +document.getElementById('as-n').value;
+  const t = curAddSub, fb = document.getElementById('addSubFb');
+  if (zv === t.rz && nv === t.d) { fb.textContent = `✅ Richtig! ${t.rz}/${t.d}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Richtig wäre: ${t.rz}/${t.d}`; fb.className = 'quiz-feedback show fail'; }
+}
+newAddSub();
+
+// ===== CONVERT =====
+const convertPool = [
+  {type:'toMixed',n:4,d:3,w:1,rem:1},{type:'toMixed',n:7,d:4,w:1,rem:3},
+  {type:'toMixed',n:13,d:5,w:2,rem:3},{type:'toMixed',n:25,d:8,w:3,rem:1},
+  {type:'toMixed',n:17,d:4,w:4,rem:1},{type:'toMixed',n:43,d:10,w:4,rem:3},
+  {type:'toMixed',n:23,d:7,w:3,rem:2},{type:'toMixed',n:34,d:9,w:3,rem:7},
+  {type:'toBruch',g:2,z:2,d:3,ans:8},{type:'toBruch',g:4,z:1,d:5,ans:21},
+  {type:'toBruch',g:3,z:2,d:7,ans:23},{type:'toBruch',g:5,z:3,d:4,ans:23},
+  {type:'toBruch',g:6,z:1,d:8,ans:49},{type:'toBruch',g:2,z:5,d:9,ans:23},
+  {type:'toBruch',g:7,z:3,d:10,ans:73},{type:'toBruch',g:4,z:3,d:11,ans:47},
+];
+let curConvert = null;
+function newConvert() {
+  curConvert = pick(convertPool); const t = curConvert; let html = '';
+  if (t.type === 'toMixed') {
+    html = `<div style="font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      Schreibe als gemischte Zahl: ${fm(t.n, t.d)} =
+      <input id="cvWhole" type="number" style="width:50px;border:2px solid var(--border);border-radius:8px;padding:6px;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?">
+      <span class="fraction-math"><span class="ln"><input id="cvNum" type="number" style="width:44px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld">${t.d}</span></span>
+    </div>`;
+  } else {
+    html = `<div style="font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      Schreibe als Bruch: <span class="mixed">${t.g}${fm(t.z, t.d)}</span> =
+      <span class="fraction-math"><span class="ln"><input id="cvAns" type="number" style="width:54px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld">${t.d}</span></span>
+    </div>`;
+  }
+  document.getElementById('convertExercise').innerHTML = html;
+  document.getElementById('convertFb').className = 'quiz-feedback';
+}
+function checkConvert() {
+  const t = curConvert, fb = document.getElementById('convertFb');
+  if (t.type === 'toMixed') {
+    const w = +document.getElementById('cvWhole').value, n = +document.getElementById('cvNum').value;
+    if (w === t.w && n === t.rem) { fb.textContent = `✅ Richtig! ${t.w} ${t.rem}/${t.d}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+    else { fb.textContent = `❌ Richtig wäre: ${t.w} ${t.rem}/${t.d}`; fb.className = 'quiz-feedback show fail'; }
+  } else {
+    const a = +document.getElementById('cvAns').value;
+    if (a === t.ans) { fb.textContent = `✅ Richtig! ${t.g}×${t.d}+${t.z}=${t.ans}`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+    else { fb.textContent = `❌ Richtig: ${t.g}×${t.d}+${t.z}=${t.ans}`; fb.className = 'quiz-feedback show fail'; }
+  }
+}
+newConvert();
+
+// ===== MULT =====
+function genMult() {
+  const bases = [{z:1,n:3},{z:2,n:3},{z:1,n:4},{z:3,n:4},{z:1,n:5},{z:2,n:5},{z:3,n:5},{z:4,n:5},{z:1,n:6},{z:5,n:6},{z:3,n:7},{z:2,n:9}];
+  const base = pick(bases); const nat = rnd(2, 6);
+  const rz = base.z * nat;
+  const w = Math.floor(rz / base.n), rem = rz % base.n;
+  return {z:base.z, n:base.n, nat, rz, w, rem};
+}
+let curMult = null;
+function newMult() {
+  curMult = genMult(); const t = curMult;
+  document.getElementById('multExercise').innerHTML = `
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      ${fm(t.z, t.n)} × ${t.nat} =
+      <span class="fraction-math"><span class="ln"><input id="mult-rz" type="number" style="width:50px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld">${t.n}</span></span>
+      <span style="font-size:0.88rem;color:var(--muted);">(= gemischte Zahl?):</span>
+      <input id="mult-w" type="number" style="width:46px;border:2px solid var(--border);border-radius:8px;padding:6px;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?">
+      <span class="fraction-math"><span class="ln"><input id="mult-rem" type="number" style="width:46px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld">${t.n}</span></span>
+    </div>`;
+  document.getElementById('multFb').className = 'quiz-feedback';
+}
+function checkMult() {
+  const t = curMult, fb = document.getElementById('multFb');
+  const rzv = +document.getElementById('mult-rz').value;
+  const wv = +document.getElementById('mult-w').value;
+  const remv = +document.getElementById('mult-rem').value;
+  if (rzv === t.rz && wv === t.w && remv === t.rem) {
+    fb.textContent = `✅ Richtig! ${t.z}×${t.nat}=${t.rz}, also ${t.w} ${t.rem}/${t.n}`;
+    fb.className = 'quiz-feedback show ok'; addPoints(1);
+  } else {
+    fb.textContent = `❌ Richtig: ${t.rz}/${t.n} = ${t.w} ${t.rem}/${t.n}`;
+    fb.className = 'quiz-feedback show fail';
+  }
+}
+newMult();
+
+// ===== VERGLEICHEN =====
+let cmpScore = 0, cmpTotal = 0;
+function startCmp() {
+  let a = pick(flashFractions), b = pick(flashFractions);
+  while (a.n === b.n && a.d === b.d) b = pick(flashFractions);
+  const va = a.n/a.d, vb = b.n/b.d;
+  const correct = va > vb ? 'A' : va < vb ? 'B' : 'gleich';
+  document.getElementById('cmpDisplay').innerHTML = `
+    <div style="text-align:center;">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--muted);">A</div>
+      <div class="fraction-math" style="font-size:2rem;"><span class="ln">${a.n}</span><span class="bar"></span><span class="ld">${a.d}</span></div>
+    </div>
+    <div style="font-size:1.8rem;font-weight:900;color:var(--muted);">vs</div>
+    <div style="text-align:center;">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--muted);">B</div>
+      <div class="fraction-math" style="font-size:2rem;"><span class="ln">${b.n}</span><span class="bar"></span><span class="ld">${b.d}</span></div>
+    </div>`;
+  const opts = document.getElementById('cmpOptions');
+  opts.style.display = 'grid';
+  opts.innerHTML = `<button class="quiz-option" onclick="answerCmp('A','${correct}','${a.n}/${a.d}','${b.n}/${b.d}')">A ist größer</button>
+                    <button class="quiz-option" onclick="answerCmp('B','${correct}','${a.n}/${a.d}','${b.n}/${b.d}')">B ist größer</button>`;
+  document.getElementById('cmpFeedback').className = 'quiz-feedback';
+}
+function answerCmp(ans, correct, la, lb) {
+  cmpTotal++; document.getElementById('cmpTotal').textContent = cmpTotal;
+  const fb = document.getElementById('cmpFeedback');
+  if (ans === correct) { cmpScore++; document.getElementById('cmpScore').textContent = cmpScore; fb.textContent = '✅ Richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ ${correct} war größer. (${la} vs ${lb})`; fb.className = 'quiz-feedback show fail'; }
+  document.querySelectorAll('#cmpOptions .quiz-option').forEach(b => b.disabled = true);
+  setTimeout(startCmp, 1500);
+}
+function resetCmp() {
+  cmpScore = 0; cmpTotal = 0;
+  document.getElementById('cmpScore').textContent = '0'; document.getElementById('cmpTotal').textContent = '0';
+  document.getElementById('cmpOptions').style.display = 'none'; document.getElementById('cmpFeedback').className = 'quiz-feedback';
+  document.getElementById('cmpDisplay').innerHTML = '';
+}
+
+// ===== SIGN EXERCISE =====
+function genSign() {
+  const tasks = [];
+  for (let i = 0; i < 4; i++) {
+    let a = pick(flashFractions), b = pick(flashFractions);
+    const va = a.n/a.d, vb = b.n/b.d;
+    const sign = va > vb ? '>' : va < vb ? '<' : '=';
+    tasks.push({a, b, sign});
+  }
+  return tasks;
+}
+let signTasks = [];
+function newSign() {
+  signTasks = genSign();
+  let html = '';
+  signTasks.forEach((t, i) => {
+    html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;font-size:1.05rem;font-weight:700;">
+      <span class="fraction-math"><span class="ln">${t.a.n}</span><span class="bar"></span><span class="ld">${t.a.d}</span></span>
+      <select id="sign-${i}" style="font-size:1.1rem;font-weight:800;padding:5px 8px;border:2px solid var(--border);border-radius:8px;cursor:pointer;outline:none;font-family:Nunito;">
+        <option value="">?</option><option>&lt;</option><option>&gt;</option><option>=</option>
+      </select>
+      <span class="fraction-math"><span class="ln">${t.b.n}</span><span class="bar"></span><span class="ld">${t.b.d}</span></span>
+    </div>`;
+  });
+  document.getElementById('signExercise').innerHTML = html;
+  document.getElementById('signFb').className = 'quiz-feedback';
+}
+function checkSign() {
+  let ok = 0;
+  signTasks.forEach((t, i) => {
+    const sel = document.getElementById(`sign-${i}`);
+    const val = sel.value.trim();
+    const correct = val === t.sign;
+    sel.style.borderColor = correct ? 'var(--green)' : 'var(--secondary)';
+    sel.style.background = correct ? '#d1fae5' : '#fee2e2';
+    if (correct) ok++;
+  });
+  const fb = document.getElementById('signFb');
+  if (ok === signTasks.length) { fb.textContent = '✅ Alle richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ ${ok} von ${signTasks.length} richtig.`; fb.className = 'quiz-feedback show fail'; }
+}
+newSign();
+
+// ===== ZAHLENSTRAHL =====
+const nlFracs = [
+  {n:1,d:2,lbl:'½'},{n:1,d:4,lbl:'¼'},{n:3,d:4,lbl:'¾'},{n:1,d:3,lbl:'⅓'},{n:2,d:3,lbl:'⅔'},
+  {n:1,d:5,lbl:'⅕'},{n:4,d:5,lbl:'⁴⁄₅'},{n:3,d:8,lbl:'⅜'},{n:7,d:8,lbl:'⁷⁄₈'},
+  {n:3,d:10,lbl:'3/10'},{n:7,d:10,lbl:'7/10'},{n:2,d:5,lbl:'⅖'},
+];
+let curNL = null;
+function newNL() {
+  curNL = pick(nlFracs);
+  document.getElementById('nlTask').innerHTML = `Wo liegt ${fm(curNL.n, curNL.d)} auf dem Zahlenstrahl?`;
+  drawNL(); document.getElementById('nlFeedback').className = 'quiz-feedback';
+}
+function drawNL() {
+  const W=560, H=70, m=40;
+  const correctX = m + (curNL.n/curNL.d)*(W - 2*m);
+  const positions = [{x:correctX, correct:true}];
+  [0.1, 0.22, 0.38].forEach(off => {
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    let px = correctX + dir * off * (W - 2*m);
+    px = Math.max(m+10, Math.min(W-m-10, px));
+    if (!positions.find(p => Math.abs(p.x - px) < 18)) positions.push({x:px, correct:false});
+  });
+  positions.sort(() => Math.random()-0.5);
+  let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="font-family:Nunito,sans-serif;cursor:pointer;max-width:100%;">`;
+  svg += `<line x1="${m}" y1="${H/2}" x2="${W-m}" y2="${H/2}" stroke="#555" stroke-width="2.5"/>`;
+  svg += `<polygon points="${W-m},${H/2} ${W-m-8},${H/2-4} ${W-m-8},${H/2+4}" fill="#555"/>`;
+  [0,1].forEach(v => {
+    const x = m + v*(W-2*m);
+    svg += `<line x1="${x}" y1="${H/2-6}" x2="${x}" y2="${H/2+6}" stroke="#555" stroke-width="2"/>`;
+    svg += `<text x="${x}" y="${H/2+20}" text-anchor="middle" font-size="13" fill="#555" font-weight="700">${v}</text>`;
+  });
+  positions.forEach((p, i) => {
+    svg += `<circle cx="${p.x.toFixed(1)}" cy="${H/2}" r="9" fill="white" stroke="#e8720c" stroke-width="2.5" id="nlpt-${i}" onclick="checkNL(${p.correct})" style="cursor:pointer;" onmouseover="this.setAttribute('fill','#fff4e8')" onmouseout="this.setAttribute('fill','white')"/>`;
+    svg += `<text x="${p.x.toFixed(1)}" y="${H/2-14}" text-anchor="middle" font-size="10" fill="#e8720c" font-weight="800">${String.fromCharCode(65+i)}</text>`;
+  });
+  svg += '</svg>';
+  document.getElementById('nlStrahl').innerHTML = svg;
+}
+function checkNL(correct) {
+  const fb = document.getElementById('nlFeedback');
+  if (correct) { fb.textContent = `✅ Richtig! ${curNL.lbl} liegt genau dort.`; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = `❌ Nicht ganz. ${curNL.lbl} = ${curNL.n} ÷ ${curNL.d} ≈ ${(curNL.n/curNL.d).toFixed(2)}. Drücke „Neue Aufgabe" für einen neuen Versuch.`; fb.className = 'quiz-feedback show fail'; }
+}
+newNL();
+
+// ===== QUIZ =====
+const quizQuestions = [
+  {q:`Was ist der <strong>Nenner</strong> bei ${fm(5,7)}?`, opts:['5','7','12','2'], ans:1},
+  {q:`Erweitere ${fm(2,5)} mit 4. Was kommt raus?`, opts:[fm(6,5),fm(8,20),fm(2,20),fm(6,9)], ans:1},
+  {q:`Kürze ${fm(6,9)} mit 3. Was kommt raus?`, opts:[fm(2,3),fm(3,9),fm(6,3),fm(1,3)], ans:0},
+  {q:`${fm(3,7)} + ${fm(2,7)} = ?`, opts:[fm(5,7),fm(5,14),fm(6,49),fm(1,7)], ans:0},
+  {q:`${fm(9,10)} – ${fm(4,10)} = ?`, opts:[fm(5,10),fm(13,10),fm(5,100),fm(4,10)], ans:0},
+  {q:`Welcher Bruch ist <strong>größer</strong>?`, opts:[fm(2,5),fm(3,5),fm(1,5),fm(4,5)], ans:3},
+  {q:`${fm(7,4)} als gemischte Zahl?`, opts:['1 ¾','2 ½','1 ½','2 ¼'], ans:0},
+  {q:`<span class="mixed">3<span class="fraction-math"><span class="ln">2</span><span class="bar"></span><span class="ld">5</span></span></span> als unechter Bruch?`, opts:[fm(17,5),fm(15,5),fm(8,5),fm(13,5)], ans:0},
+  {q:`${fm(2,3)} × 4 = ?`, opts:[fm(8,3),fm(8,12),fm(6,3),fm(2,12)], ans:0},
+  {q:`Welcher Bruch hat denselben Wert wie ${fm(3,4)}?`, opts:[fm(6,8),fm(4,5),fm(3,8),fm(9,16)], ans:0},
+  {q:`Kürze ${fm(12,16)} mit 4.`, opts:[fm(3,4),fm(6,8),fm(4,5),fm(2,4)], ans:0},
+  {q:`${fm(5,8)} – ${fm(2,8)} = ?`, opts:[fm(3,8),fm(7,8),fm(3,16),fm(7,16)], ans:0},
+];
+let quizIdx = 0, quizScore = 0;
+function renderQuiz() {
+  const q = quizQuestions[quizIdx % quizQuestions.length];
+  document.getElementById('quizMax').textContent = quizQuestions.length;
+  document.getElementById('quizContainer').innerHTML = `
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options">${q.opts.map((o,i) => `<button class="quiz-option" onclick="answerQuiz(${i})">${o}</button>`).join('')}</div>
+    <div id="qfb" class="quiz-feedback"></div>`;
+}
+function answerQuiz(i) {
+  const q = quizQuestions[quizIdx % quizQuestions.length];
+  const btns = document.querySelectorAll('#quizContainer .quiz-option');
+  btns.forEach(b => b.disabled = true); btns[q.ans].classList.add('correct');
+  const fb = document.getElementById('qfb');
+  if (i === q.ans) { fb.textContent = '✅ Richtig!'; fb.className = 'quiz-feedback show ok'; quizScore++; document.getElementById('quizScore').textContent = quizScore; addPoints(1); }
+  else { btns[i].classList.add('wrong'); fb.textContent = '❌ Leider falsch. Die richtige Antwort ist markiert.'; fb.className = 'quiz-feedback show fail'; }
+}
+function nextQuiz() { quizIdx++; renderQuiz(); }
+function resetQuiz() { quizIdx = 0; quizScore = 0; document.getElementById('quizScore').textContent = '0'; renderQuiz(); }
+renderQuiz();
+
+// ===== PROFI =====
+let profiScore = 0, profiMax = 0, curProfi = null;
+function genProfiTask() {
+  const types = ['erw','kuerz','add','sub','toMixed','toBruch','mult'];
+  const type = pick(types);
+  if (type === 'erw') {
+    const base = pick(erwBases); const factor = rnd(2, 9);
+    return {type, lbl:`Erweitere ${fm(base.z,base.n)} mit ${factor}:`, z:base.z, n:base.n, factor, rz:base.z*factor, rn:base.n*factor};
+  } else if (type === 'kuerz') {
+    const t = pick(kuerzPool);
+    return {type, lbl:`Kürze ${fm(t.z,t.n)} mit ${t.k}:`, z:t.z, n:t.n, k:t.k, rz:t.z/t.k, rn:t.n/t.k};
+  } else if (type === 'add' || type === 'sub') {
+    const t = genAddSub();
+    return {...t, type, lbl:`${fm(t.z1,t.d)} ${t.op} ${fm(t.z2,t.d)} =`};
+  } else if (type === 'toMixed') {
+    const t = pick(convertPool.filter(x => x.type==='toMixed'));
+    return {type, lbl:`${fm(t.n,t.d)} als gemischte Zahl:`, n:t.n, d:t.d, w:t.w, rem:t.rem};
+  } else if (type === 'toBruch') {
+    const t = pick(convertPool.filter(x => x.type==='toBruch'));
+    return {type, lbl:`<span class="mixed">${t.g}${fm(t.z,t.d)}</span> als Bruch:`, g:t.g, z:t.z, d:t.d, ans:t.ans};
+  } else {
+    const t = genMult();
+    return {...t, type, lbl:`${fm(t.z,t.n)} × ${t.nat} = ?/${t.n} = ? gemischte Zahl`};
+  }
+}
+function newProfi() {
+  curProfi = genProfiTask(); const t = curProfi; let html = '';
+  if (t.type === 'erw' || t.type === 'kuerz') {
+    html = `<div style="font-size:1.1rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${t.lbl}
+      <span class="fraction-math"><span class="ln"><input id="pi-z" type="number" style="width:50px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld"><input id="pi-n" type="number" style="width:50px;border:none;border-bottom:3px solid var(--primary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span></span>
+    </div>`;
+  } else if (t.type === 'add' || t.type === 'sub') {
+    html = `<div style="font-size:1.1rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${t.lbl}
+      <span class="fraction-math"><span class="ln"><input id="pi-z" type="number" style="width:50px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld"><input id="pi-n" type="number" style="width:50px;border:none;border-bottom:3px solid var(--primary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span></span>
+    </div>`;
+  } else if (t.type === 'toMixed') {
+    html = `<div style="font-size:1.1rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${t.lbl}
+      <input id="pv-w" type="number" style="width:50px;border:2px solid var(--border);border-radius:8px;padding:6px;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?">
+      <span class="fraction-math"><span class="ln"><input id="pv-n" type="number" style="width:44px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld">${t.d}</span></span>
+    </div>`;
+  } else if (t.type === 'toBruch') {
+    html = `<div style="font-size:1.1rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${t.lbl}
+      <span class="fraction-math"><span class="ln"><input id="pi-a" type="number" style="width:54px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld">${t.d}</span></span>
+    </div>`;
+  } else {
+    html = `<div style="font-size:1.1rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${t.lbl}
+      <input id="pm-rz" type="number" style="width:50px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="Zähler"> /
+      <span style="font-weight:900">${t.n}</span> =
+      <input id="pm-w" type="number" style="width:46px;border:2px solid var(--border);border-radius:8px;padding:6px;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?">
+      <span class="fraction-math"><span class="ln"><input id="pm-rem" type="number" style="width:44px;border:none;border-bottom:3px solid var(--secondary);background:transparent;font-weight:800;font-size:1rem;text-align:center;outline:none;" placeholder="?"></span><span class="bar"></span><span class="ld">${t.n}</span></span>
+    </div>`;
+  }
+  document.getElementById('profiExercise').innerHTML = html;
+  document.getElementById('profiFb').className = 'quiz-feedback';
+}
+function checkProfi() {
+  const t = curProfi, fb = document.getElementById('profiFb');
+  profiMax++; document.getElementById('profiMax').textContent = profiMax;
+  let ok = false, hint = '';
+  if (t.type === 'erw') { const zv=+document.getElementById('pi-z').value, nv=+document.getElementById('pi-n').value; ok=zv===t.rz&&nv===t.rn; hint=`${t.rz}/${t.rn}`; }
+  else if (t.type === 'kuerz') { const zv=+document.getElementById('pi-z').value, nv=+document.getElementById('pi-n').value; ok=zv===t.rz&&nv===t.rn; hint=`${t.rz}/${t.rn}`; }
+  else if (t.type==='add'||t.type==='sub') { const zv=+document.getElementById('pi-z').value, nv=+document.getElementById('pi-n').value; ok=zv===t.rz&&nv===t.d; hint=`${t.rz}/${t.d}`; }
+  else if (t.type==='toMixed') { const wv=+document.getElementById('pv-w').value, nv=+document.getElementById('pv-n').value; ok=wv===t.w&&nv===t.rem; hint=`${t.w} ${t.rem}/${t.d}`; }
+  else if (t.type==='toBruch') { const av=+document.getElementById('pi-a').value; ok=av===t.ans; hint=`${t.ans}/${t.d}`; }
+  else { const rzv=+document.getElementById('pm-rz').value, wv=+document.getElementById('pm-w').value, remv=+document.getElementById('pm-rem').value; ok=rzv===t.rz&&wv===t.w&&remv===t.rem; hint=`${t.rz}/${t.n} = ${t.w} ${t.rem}/${t.n}`; }
+  if (ok) { profiScore++; document.getElementById('profiScore').textContent = profiScore; fb.textContent = '✅ Ausgezeichnet!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = '❌ Richtig: ' + hint; fb.className = 'quiz-feedback show fail'; }
+}
+newProfi();
+
+// ===== WORD PROBLEMS =====
+const wordProblems = [
+  {text:'Eine Pizza wird in <strong>8 Stücke</strong> geschnitten. Nils isst 3 Stücke, Lea isst 2 Stücke. Welchen Bruchteil haben beide zusammen gegessen?', ans:'5/8', hint:'3+2=5, also 5/8'},
+  {text:`In einer Klasse sind <strong>30 Kinder</strong>. ${fm(2,5)} von ihnen haben ein Haustier. Wie viele Kinder ist das?`, ans:'12', hint:'30 ÷ 5 × 2 = 12'},
+  {text:`Ein Seil ist <strong>45 m</strong> lang. Man braucht ${fm(2,3)} davon. Wie viele Meter sind das?`, ans:'30', hint:'45 ÷ 3 × 2 = 30'},
+  {text:`Ein Tank fasst <strong>40 Liter</strong>. Er ist zu ${fm(5,8)} gefüllt. Wie viele Liter sind drin?`, ans:'25', hint:'40 ÷ 8 × 5 = 25'},
+  {text:`Erweitere ${fm(2,5)} mit 6. Schreibe das Ergebnis als Bruch (Zähler/Nenner mit Schrägstrich).`, ans:'12/30', hint:'2×6=12, 5×6=30 → 12/30'},
+  {text:'Ein Kuchen hat <strong>12 Stücke</strong>. Tom isst jeden Tag 2 Stücke. Welchen Bruchteil isst er in 3 Tagen?', ans:'6/12', hint:'3 × 2 = 6 Stücke = 6/12'},
+];
+let currentWord = null;
+function newWordProblem() {
+  currentWord = pick(wordProblems);
+  document.getElementById('wordProblem').innerHTML = `
+    <div style="background:#fff8f0;border-radius:12px;padding:14px;font-size:1rem;line-height:1.6;margin-bottom:14px;border:1.5px solid #fde8cc;">${currentWord.text}</div>
+    <div style="display:flex;align-items:center;gap:8px;font-weight:700;">
+      Antwort: <input id="wordAns" style="width:100px;border:2px solid var(--border);border-radius:10px;padding:8px;font-weight:800;font-size:1rem;outline:none;" placeholder="z.B. 12">
+    </div>`;
+  document.getElementById('wordFb').className = 'quiz-feedback';
+}
+function checkWord() {
+  const val = document.getElementById('wordAns').value.trim().replace(' ', '');
+  const fb = document.getElementById('wordFb');
+  if (val === currentWord.ans) { fb.textContent = '✅ Richtig!'; fb.className = 'quiz-feedback show ok'; addPoints(1); }
+  else { fb.textContent = '❌ Tipp: ' + currentWord.hint; fb.className = 'quiz-feedback show fail'; }
+}
+newWordProblem();
+
+// ===== BLITZRECHNEN =====
+let blitzScore = 0, blitzTotalB = 0, blitzInterval = null;
+function startBlitz() {
+  blitzScore = 0; blitzTotalB = 0;
+  let timeLeft = 60;
+  const disp = document.getElementById('blitzDisplay');
+  nextBlitzTask(disp);
+  blitzInterval = setInterval(() => {
+    timeLeft--;
+    const timer = document.getElementById('blitz-timer');
+    if (timer) timer.textContent = timeLeft + 's';
+    if (timeLeft <= 0) {
+      clearInterval(blitzInterval);
+      disp.innerHTML = `<div style="text-align:center;padding:18px;">
+        <div style="font-size:2.8rem;">⏱️</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;margin:8px 0;">Zeit ist um!</div>
+        <div style="font-size:1.05rem;">Du hast <strong>${blitzScore}</strong> von <strong>${blitzTotalB}</strong> richtig gelöst.</div>
+        <div style="margin-top:4px;font-size:0.85rem;color:var(--muted);">${blitzScore >= blitzTotalB*0.8?'🏆 Super!':blitzScore >= blitzTotalB*0.5?'👍 Gut gemacht!':'💪 Weiter üben!'}</div>
+        <button class="btn btn-primary" style="margin-top:14px;" onclick="startBlitz()">↺ Nochmal</button>
+      </div>`;
+    }
+  }, 1000);
+}
+function nextBlitzTask(disp) {
+  const types = ['add','sub','mult'];
+  const type = pick(types);
+  const d = pick([3,4,5,6,7,8,9,10]);
+  let q = '', ans = 0;
+  if (type === 'add') { const z1=rnd(1,d-2), z2=rnd(1,d-z1-1||1); q=`${fm(z1,d)} + ${fm(z2,d)} = ?/${d}`; ans=z1+z2; }
+  else if (type === 'sub') { const z1=rnd(2,d-1), z2=rnd(1,z1-1); q=`${fm(z1,d)} – ${fm(z2,d)} = ?/${d}`; ans=z1-z2; }
+  else { const z=rnd(1,d-1), nat=rnd(2,5); q=`${fm(z,d)} × ${nat} = ?/${d}`; ans=z*nat; }
+  blitzTotalB++;
+  disp.innerHTML = `<div style="text-align:center;">
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:6px;">Aufgabe ${blitzTotalB} · <span id="blitz-timer">60s</span> · ✅ ${blitzScore}</div>
+    <div style="font-size:1.05rem;font-weight:700;margin:10px 0;">${q}</div>
+    <div style="display:flex;align-items:center;gap:8px;justify-content:center;">
+      <input type="number" id="blitz-inp" placeholder="Zähler?" style="width:80px;text-align:center;padding:8px;border:2.5px solid var(--primary);border-radius:9px;font-size:1.1rem;font-weight:800;font-family:Nunito;outline:none;" onkeydown="if(event.key==='Enter')submitBlitz(${ans}, this)">
+      <button class="btn btn-primary" onclick="submitBlitz(${ans}, document.getElementById('blitz-inp'))">→</button>
+    </div>
+  </div>`;
+  setTimeout(() => { const inp = document.getElementById('blitz-inp'); if (inp) inp.focus(); }, 50);
+}
+function submitBlitz(ans, inp) {
+  if (+inp.value === ans) blitzScore++;
+  nextBlitzTask(document.getElementById('blitzDisplay'));
+}
+</script>
+</body>
+</html>

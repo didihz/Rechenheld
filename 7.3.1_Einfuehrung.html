@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prozent - Was ist das? Eine Einführung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #764ba2;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        h2 {
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #667eea;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .box {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border-left: 5px solid #17a2b8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-100 {
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(10, 30px);
+            gap: 2px;
+            margin: 20px auto;
+            width: fit-content;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-cell {
+            background: #667eea;
+            border: 1px solid #5568d3;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .grid-cell:hover {
+            background: #764ba2;
+            transform: scale(1.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .exercise {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .exercise h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            width: 100px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .visual-bar {
+            height: 40px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .visual-bar:hover {
+            transform: scale(1.02);
+        }
+
+        .solution {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .solution.show {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .example {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .correct {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .incorrect {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .grid-100 {
+                grid-template-columns: repeat(10, 25px);
+                grid-template-rows: repeat(10, 25px);
+            }
+        }
+
+        .interactive-quiz {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+
+        .quiz-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Prozent - Was ist das?</h1>
+        <p class="subtitle">Eine Einführung mit interaktiven Elementen</p>
+
+        <!-- Einleitung -->
+        <h2><span class="emoji">📌</span>Was bedeutet "Prozent"?</h2>
+        <p><strong>Prozent</strong> kommt von den lateinischen Wörtern <strong>"pro"</strong> (von) und <strong>"centum"</strong> (hundert).</p>
+        
+        <div class="box">
+            <p>Prozent bedeutet also: <strong>"von Hundert"</strong></p>
+            <p>Das Prozentzeichen ist: <strong>%</strong></p>
+        </div>
+
+        <!-- 100er-Feld -->
+        <h2><span class="emoji">🎨</span>Visualisierung: Das 100er-Feld</h2>
+        <p>Stell dir ein Feld mit 100 kleinen Quadraten vor. Jedes Quadrat steht für 1%:</p>
+        
+        <div class="grid-100" id="grid100">
+            <!-- 100 Zellen werden mit JavaScript generiert -->
+        </div>
+
+        <div class="info-box">
+            <p><strong>Bewege den Maus über die Quadrate!</strong></p>
+            <p>• Wenn 1 Quadrat gefärbt ist = <strong>1 von 100</strong> = <strong>1%</strong></p>
+            <p>• Wenn 50 Quadrate gefärbt sind = <strong>50 von 100</strong> = <strong>50%</strong></p>
+            <p>• Wenn alle 100 Quadrate gefärbt sind = <strong>100 von 100</strong> = <strong>100%</strong></p>
+        </div>
+
+        <!-- Teil 1: Von Brüchen zu Prozenten -->
+        <h2><span class="emoji">📊</span>Teil 1: Von Brüchen zu Prozenten (ganz einfach!)</h2>
+        
+        <div class="box">
+            <strong>Regel:</strong> Wenn der Nenner (untere Zahl) <strong>100</strong> ist, dann ist der Zähler (obere Zahl) die Prozentzahl!
+        </div>
+
+        <h3>Beispiele:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Bruch</th>
+                    <th>Prozent</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>23/100</td>
+                    <td><strong>23%</strong></td>
+                </tr>
+                <tr>
+                    <td>45/100</td>
+                    <td><strong>45%</strong></td>
+                </tr>
+                <tr>
+                    <td>7/100</td>
+                    <td><strong>7%</strong></td>
+                </tr>
+                <tr>
+                    <td>100/100</td>
+                    <td><strong>100%</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Übung 1 -->
+        <div class="exercise">
+            <h3><span class="emoji">💪</span>Übung 1: Bruch zu Prozent</h3>
+            <p>Wandle die Brüche in Prozente um:</p>
+            
+            <p>a) 15/100 = <input type="text" id="ex1a" placeholder="?"> %</p>
+            <p>b) 60/100 = <input type="text" id="ex1b" placeholder="?"> %</p>
+            <p>c) 8/100 = <input type="text" id="ex1c" placeholder="?"> %</p>
+            <p>d) 99/100 = <input type="text" id="ex1d" placeholder="?"> %</p>
+            <p>e) 50/100 = <input type="text" id="ex1e" placeholder="?"> %</p>
+            <p>f) 1/100 = <input type="text" id="ex1f" placeholder="?"> %</p>
+            
+            <button onclick="checkExercise1()">Antworten überprüfen</button>
+            <button onclick="showSolution1()">Lösung anzeigen</button>
+            
+            <div id="result1" class="quiz-result"></div>
+            <div id="solution1" class="solution">
+                <strong>Lösungen:</strong><br>
+                a) 15% &nbsp; b) 60% &nbsp; c) 8% &nbsp; d) 99% &nbsp; e) 50% &nbsp; f) 1%
+            </div>
+        </div>
+
+        <!-- Teil 2: Prozent als Dezimalzahl -->
+        <h2><span class="emoji">🔢</span>Teil 2: Prozent als Dezimalzahl</h2>
+        
+        <div class="box">
+            <p><strong>Regel:</strong> Prozent bedeutet "durch 100 teilen"</p>
+            <p>Um von Prozent zur Dezimalzahl zu kommen:</p>
+            <p>• <strong>Teile durch 100</strong> ODER</p>
+            <p>• <strong>Verschiebe das Komma 2 Stellen nach links</strong></p>
+        </div>
+
+        <h3>Beispiele:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Prozent</th>
+                    <th>Bruch</th>
+                    <th>Dezimalzahl</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>23%</td>
+                    <td>23/100</td>
+                    <td><strong>0,23</strong></td>
+                </tr>
+                <tr>
+                    <td>45%</td>
+                    <td>45/100</td>
+                    <td><strong>0,45</strong></td>
+                </tr>
+                <tr>
+                    <td>7%</td>
+                    <td>7/100</td>
+                    <td><strong>0,07</strong></td>
+                </tr>
+                <tr>
+                    <td>100%</td>
+                    <td>100/100</td>
+                    <td><strong>1,00</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="example">
+            <strong>Visualisierung der Kommaverschiebung:</strong><br>
+            50% → 50,<strong>0</strong>% → 5,<strong>0</strong>% → <strong>0,50</strong><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⬅️&nbsp;&nbsp;&nbsp;&nbsp;⬅️<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(2 Stellen nach links)
+        </div>
+
+        <!-- Übung 2 -->
+        <div class="exercise">
+            <h3><span class="emoji">💪</span>Übung 2: Prozent zu Dezimalzahl</h3>
+            <p>Wandle die Prozente in Dezimalzahlen um:</p>
+            
+            <p>a) 25% = <input type="text" id="ex2a" placeholder="?"></p>
+            <p>b) 80% = <input type="text" id="ex2b" placeholder="?"></p>
+            <p>c) 5% = <input type="text" id="ex2c" placeholder="?"></p>
+            <p>d) 100% = <input type="text" id="ex2d" placeholder="?"></p>
+            
+            <button onclick="checkExercise2()">Antworten überprüfen</button>
+            <button onclick="showSolution2()">Lösung anzeigen</button>
+            
+            <div id="result2" class="quiz-result"></div>
+            <div id="solution2" class="solution">
+                <strong>Lösungen:</strong><br>
+                a) 0,25 &nbsp; b) 0,80 oder 0,8 &nbsp; c) 0,05 &nbsp; d) 1,00 oder 1
+            </div>
+        </div>
+
+        <!-- Teil 3: Wichtige Prozentwerte -->
+        <h2><span class="emoji">🎯</span>Teil 3: Die wichtigsten Prozentwerte</h2>
+        
+        <div class="info-box">
+            Diese Prozentwerte solltest du <strong>auswendig</strong> kennen!
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Prozent</th>
+                    <th>Bruch</th>
+                    <th>Dezimal</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background: #d4edda;">
+                    <td><strong>100%</strong></td>
+                    <td>100/100 = 1</td>
+                    <td>1,00</td>
+                    <td>Ganz/Alles</td>
+                </tr>
+                <tr>
+                    <td><strong>50%</strong></td>
+                    <td>50/100 = 1/2</td>
+                    <td>0,50</td>
+                    <td>Hälfte</td>
+                </tr>
+                <tr>
+                    <td><strong>75%</strong></td>
+                    <td>75/100 = 3/4</td>
+                    <td>0,75</td>
+                    <td>Drei Viertel</td>
+                </tr>
+                <tr>
+                    <td><strong>25%</strong></td>
+                    <td>25/100 = 1/4</td>
+                    <td>0,25</td>
+                    <td>Ein Viertel</td>
+                </tr>
+                <tr>
+                    <td><strong>20%</strong></td>
+                    <td>20/100 = 1/5</td>
+                    <td>0,20</td>
+                    <td>Ein Fünftel</td>
+                </tr>
+                <tr>
+                    <td><strong>10%</strong></td>
+                    <td>10/100 = 1/10</td>
+                    <td>0,10</td>
+                    <td>Ein Zehntel</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Visuelle Darstellung:</h3>
+        <div class="visual-bar" style="width: 100%;">100% - Alles/Ganz</div>
+        <div class="visual-bar" style="width: 75%; background: linear-gradient(90deg, #28a745 0%, #20c997 100%);">75% - Drei Viertel</div>
+        <div class="visual-bar" style="width: 50%; background: linear-gradient(90deg, #ffc107 0%, #ffb300 100%);">50% - Hälfte</div>
+        <div class="visual-bar" style="width: 25%; background: linear-gradient(90deg, #fd7e14 0%, #ff6b35 100%);">25% - Ein Viertel</div>
+        <div class="visual-bar" style="width: 10%; background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);">10% - Ein Zehntel</div>
+
+        <!-- Interaktiver Prozent-Rechner -->
+        <h2><span class="emoji">🧮</span>Interaktiver Prozent-Rechner</h2>
+        <div class="interactive-quiz">
+            <p><strong>Gib einen Prozentsatz ein und sieh die Umwandlungen:</strong></p>
+            <p>Prozent: <input type="number" id="percentInput" placeholder="z.B. 45" style="width: 150px;"> %</p>
+            <button onclick="calculatePercent()">Berechnen</button>
+            
+            <div id="calcResult" style="margin-top: 20px;"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0%</div>
+            </div>
+        </div>
+
+        <!-- Übung 3 -->
+        <div class="exercise">
+            <h3><span class="emoji">💪</span>Übung 3: Wichtige Prozentwerte erkennen</h3>
+            <p>Verbinde die Prozente mit den passenden Brüchen:</p>
+            
+            <p>a) 50% = <select id="ex3a">
+                <option value="">-- Wähle --</option>
+                <option value="1/2">1/2</option>
+                <option value="1/4">1/4</option>
+                <option value="3/4">3/4</option>
+                <option value="1/5">1/5</option>
+                <option value="1/10">1/10</option>
+            </select></p>
+            
+            <p>b) 25% = <select id="ex3b">
+                <option value="">-- Wähle --</option>
+                <option value="1/2">1/2</option>
+                <option value="1/4">1/4</option>
+                <option value="3/4">3/4</option>
+                <option value="1/5">1/5</option>
+                <option value="1/10">1/10</option>
+            </select></p>
+            
+            <p>c) 10% = <select id="ex3c">
+                <option value="">-- Wähle --</option>
+                <option value="1/2">1/2</option>
+                <option value="1/4">1/4</option>
+                <option value="3/4">3/4</option>
+                <option value="1/5">1/5</option>
+                <option value="1/10">1/10</option>
+            </select></p>
+            
+            <p>d) 75% = <select id="ex3d">
+                <option value="">-- Wähle --</option>
+                <option value="1/2">1/2</option>
+                <option value="1/4">1/4</option>
+                <option value="3/4">3/4</option>
+                <option value="1/5">1/5</option>
+                <option value="1/10">1/10</option>
+            </select></p>
+            
+            <p>e) 20% = <select id="ex3e">
+                <option value="">-- Wähle --</option>
+                <option value="1/2">1/2</option>
+                <option value="1/4">1/4</option>
+                <option value="3/4">3/4</option>
+                <option value="1/5">1/5</option>
+                <option value="1/10">1/10</option>
+            </select></p>
+            
+            <button onclick="checkExercise3()">Antworten überprüfen</button>
+            
+            <div id="result3" class="quiz-result"></div>
+        </div>
+
+        <!-- Merksätze -->
+        <h2><span class="emoji">📝</span>Wichtige Merksätze</h2>
+        <div class="note">
+            <p><strong>1.</strong> Prozent = von Hundert</p>
+            <p><strong>2.</strong> Bruch → Prozent: Nenner auf 100 erweitern</p>
+            <p><strong>3.</strong> Prozent → Dezimal: Durch 100 teilen (Komma 2 nach links)</p>
+            <p><strong>4.</strong> Dezimal → Prozent: Mit 100 multiplizieren (Komma 2 nach rechts)</p>
+            <p><strong>5.</strong> Die wichtigsten Werte auswendig lernen: 50%, 25%, 75%, 10%, 20%</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; font-size: 2em; color: #667eea;">
+            <p>Viel Erfolg! 🌟</p>
+        </div>
+    </div>
+
+    <script>
+        // 100er-Feld generieren
+        const grid = document.getElementById('grid100');
+        for (let i = 0; i < 100; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            grid.appendChild(cell);
+        }
+
+        // Übung 1 überprüfen
+        function checkExercise1() {
+            const answers = {
+                'ex1a': '15',
+                'ex1b': '60',
+                'ex1c': '8',
+                'ex1d': '99',
+                'ex1e': '50',
+                'ex1f': '1'
+            };
+            
+            let correct = 0;
+            let total = 6;
+            
+            for (let id in answers) {
+                const input = document.getElementById(id);
+                if (input.value.trim() === answers[id]) {
+                    correct++;
+                    input.style.background = '#d4edda';
+                } else {
+                    input.style.background = '#f8d7da';
+                }
+            }
+            
+            const result = document.getElementById('result1');
+            result.style.background = correct === total ? '#d4edda' : '#fff3cd';
+            result.innerHTML = `Du hast ${correct} von ${total} Aufgaben richtig! ${correct === total ? '🎉' : '💪'}`;
+        }
+
+        function showSolution1() {
+            document.getElementById('solution1').classList.add('show');
+        }
+
+        // Übung 2 überprüfen
+        function checkExercise2() {
+            const answers = {
+                'ex2a': ['0,25', '0.25'],
+                'ex2b': ['0,80', '0.80', '0,8', '0.8'],
+                'ex2c': ['0,05', '0.05'],
+                'ex2d': ['1', '1,00', '1.00', '1,0', '1.0']
+            };
+            
+            let correct = 0;
+            let total = 4;
+            
+            for (let id in answers) {
+                const input = document.getElementById(id);
+                const value = input.value.trim();
+                if (answers[id].includes(value)) {
+                    correct++;
+                    input.style.background = '#d4edda';
+                } else {
+                    input.style.background = '#f8d7da';
+                }
+            }
+            
+            const result = document.getElementById('result2');
+            result.style.background = correct === total ? '#d4edda' : '#fff3cd';
+            result.innerHTML = `Du hast ${correct} von ${total} Aufgaben richtig! ${correct === total ? '🎉' : '💪'}`;
+        }
+
+        function showSolution2() {
+            document.getElementById('solution2').classList.add('show');
+        }
+
+        // Übung 3 überprüfen
+        function checkExercise3() {
+            const answers = {
+                'ex3a': '1/2',
+                'ex3b': '1/4',
+                'ex3c': '1/10',
+                'ex3d': '3/4',
+                'ex3e': '1/5'
+            };
+            
+            let correct = 0;
+            let total = 5;
+            
+            for (let id in answers) {
+                const select = document.getElementById(id);
+                if (select.value === answers[id]) {
+                    correct++;
+                    select.style.background = '#d4edda';
+                } else {
+                    select.style.background = '#f8d7da';
+                }
+            }
+            
+            const result = document.getElementById('result3');
+            result.style.background = correct === total ? '#d4edda' : '#fff3cd';
+            result.innerHTML = `Du hast ${correct} von ${total} Aufgaben richtig! ${correct === total ? '🎉 Perfekt!' : '💪 Weiter so!'}`;
+        }
+
+        // Interaktiver Prozent-Rechner
+        function calculatePercent() {
+            const percent = parseFloat(document.getElementById('percentInput').value);
+            
+            if (isNaN(percent)) {
+                document.getElementById('calcResult').innerHTML = '<p style="color: red;">Bitte gib eine Zahl ein!</p>';
+                return;
+            }
+            
+            const decimal = percent / 100;
+            const fraction = `${percent}/100`;
+            
+            let result = `
+                <h4>Ergebnis für ${percent}%:</h4>
+                <p><strong>Als Bruch:</strong> ${fraction}</p>
+                <p><strong>Als Dezimalzahl:</strong> ${decimal}</p>
+            `;
+            
+            if (percent === 50) result += '<p><strong>Besonderer Wert:</strong> Die Hälfte (1/2)</p>';
+            if (percent === 25) result += '<p><strong>Besonderer Wert:</strong> Ein Viertel (1/4)</p>';
+            if (percent === 75) result += '<p><strong>Besonderer Wert:</strong> Drei Viertel (3/4)</p>';
+            if (percent === 100) result += '<p><strong>Besonderer Wert:</strong> Das Ganze!</p>';
+            
+            document.getElementById('calcResult').innerHTML = result;
+            
+            // Progress Bar aktualisieren
+            const progressBar = document.getElementById('progressBar');
+            const width = Math.min(percent, 100);
+            progressBar.style.width = width + '%';
+            progressBar.textContent = percent + '%';
+        }
+
+        // Enter-Taste für Prozent-Rechner
+        document.getElementById('percentInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculatePercent();
+            }
+        });
+    </script>
+</body>
+</html>

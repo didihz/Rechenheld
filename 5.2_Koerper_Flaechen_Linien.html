@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5.2 Körper, Flächen und Linien</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700&display=swap');
+
+  :root {
+    --primary: #2d6a9f;
+    --primary-light: #4a90d9;
+    --secondary: #e8a020;
+    --accent: #27ae60;
+    --danger: #e74c3c;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #1a2340;
+    --muted: #6b7a99;
+    --radius: 16px;
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #1a3a6b 0%, #2d6a9f 60%, #4a90d9 100%);
+    color: white;
+    padding: 20px 24px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  }
+  header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  header p { font-size: 0.85rem; opacity: 0.85; margin-top: 2px; }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    gap: 8px;
+    padding: 16px 20px 0;
+    overflow-x: auto;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: #e2eaf5;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab-btn:hover { background: #c5d8f0; }
+  .tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(45,106,159,0.4);
+  }
+
+  /* MAIN CONTENT */
+  main { padding: 20px; max-width: 900px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+  /* HERO ICONS for bodies */
+  .bodies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .body-card {
+    background: linear-gradient(145deg, #f8faff, #edf2fb);
+    border: 2px solid #dae4f5;
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .body-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(45,106,159,0.2);
+    border-color: var(--primary-light);
+  }
+  .body-card.revealed { background: linear-gradient(145deg, #e8f5e9, #c8e6c9); border-color: var(--accent); }
+  .body-card svg { margin-bottom: 8px; }
+  .body-card .name {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--primary);
+    min-height: 22px;
+  }
+  .body-card .hint { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+  .reveal-hint { font-size: 0.8rem; color: var(--muted); text-align: center; margin-top: 8px; }
+
+  /* STECKBRIEF */
+  .steckbrief {
+    border: 2px solid #dae4f5;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .steckbrief-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .steckbrief-header .arrow { margin-left: auto; transition: transform 0.3s; font-size: 1.1rem; }
+  .steckbrief-header.open .arrow { transform: rotate(180deg); }
+  .steckbrief-body {
+    display: none;
+    padding: 16px 18px;
+    background: #fafcff;
+  }
+  .steckbrief-body.open { display: block; }
+  .props-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .props-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eef2f9;
+    font-size: 0.9rem;
+  }
+  .props-table td:first-child { font-weight: 700; color: var(--primary); width: 40%; }
+  .badge {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    border-radius: 50px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .badge.green { background: var(--accent); }
+  .badge.orange { background: var(--secondary); }
+
+  /* QUIZ */
+  .quiz-progress {
+    background: #e2eaf5;
+    border-radius: 50px;
+    height: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .quiz-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 50px;
+    transition: width 0.5s ease;
+  }
+  .quiz-question {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .quiz-options { display: grid; gap: 10px; }
+  .quiz-option {
+    background: #f5f8ff;
+    border: 2px solid #dae4f5;
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+  .quiz-option:hover:not(:disabled) {
+    background: #dae4f5;
+    border-color: var(--primary);
+    transform: translateX(4px);
+  }
+  .quiz-option.correct { background: #e8f5e9; border-color: var(--accent); color: #1b5e20; }
+  .quiz-option.wrong { background: #fdecea; border-color: var(--danger); color: #7f0000; }
+  .quiz-option:disabled { cursor: not-allowed; }
+  .quiz-feedback {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: #e8f5e9; color: #2e7d32; }
+  .quiz-feedback.wrong { background: #fdecea; color: #c62828; }
+  .quiz-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+  }
+  .btn {
+    border: none;
+    border-radius: 50px;
+    padding: 10px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(45,106,159,0.35);
+  }
+  .btn-primary:hover { background: #1a5285; transform: translateY(-2px); }
+  .btn-secondary { background: #e2eaf5; color: var(--primary); }
+  .btn-secondary:hover { background: #c5d8f0; }
+  .score-display {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--primary);
+  }
+
+  /* LÜCKENTEXT */
+  .lueckentext-container { font-size: 0.95rem; line-height: 2.2; }
+  .luecke {
+    display: inline-block;
+    min-width: 100px;
+    border-bottom: 3px solid var(--primary);
+    padding: 0 6px;
+    margin: 0 4px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+  }
+  .luecke input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--primary);
+    width: 100px;
+    text-align: center;
+  }
+  .luecke.correct { border-color: var(--accent); }
+  .luecke.correct input { color: var(--accent); }
+  .luecke.wrong { border-color: var(--danger); }
+  .luecke.wrong input { color: var(--danger); }
+  .check-btn-row { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* LEVEL TABS */
+  .level-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .level-btn {
+    border: none;
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.65;
+  }
+  .level-btn.active { opacity: 1; box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
+  .level-btn.easy { background: #c8e6c9; color: #1b5e20; }
+  .level-btn.medium { background: #fff3cd; color: #856404; }
+  .level-btn.hard { background: #fde0e0; color: #7f0000; }
+  .level-content { display: none; }
+  .level-content.active { display: block; }
+
+  /* FLASH READ */
+  .flashread-box {
+    background: linear-gradient(135deg, #1a3a6b, #2d6a9f);
+    color: white;
+    border-radius: var(--radius);
+    padding: 30px;
+    text-align: center;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .flash-word {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+  .flash-word.show { opacity: 1; }
+  .flash-controls { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+  .flash-controls label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+  .flash-controls select {
+    border: 2px solid #dae4f5;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  /* RESULT SCREEN */
+  .result-screen {
+    text-align: center;
+    padding: 30px 20px;
+  }
+  .result-emoji { font-size: 4rem; margin-bottom: 12px; }
+  .result-score { font-size: 2rem; font-weight: 900; color: var(--primary); }
+  .result-msg { color: var(--muted); margin-top: 6px; font-size: 0.95rem; }
+
+  /* WORTSCHATZ */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .vocab-item {
+    background: #f5f8ff;
+    border: 2px solid #dae4f5;
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+  .vocab-item .term {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--primary);
+  }
+  .vocab-item .definition {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .vocab-item .example {
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* SORTIERSPIEL */
+  .sort-container { display: flex; gap: 16px; flex-wrap: wrap; }
+  .sort-column {
+    flex: 1;
+    min-width: 200px;
+    border: 2px dashed #dae4f5;
+    border-radius: 14px;
+    padding: 14px;
+    min-height: 120px;
+  }
+  .sort-column h3 {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .sort-item {
+    background: var(--primary);
+    color: white;
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-block;
+    margin: 4px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s;
+  }
+  .sort-item:hover { transform: scale(1.05); }
+  .sort-item.in-bin {
+    background: var(--accent);
+  }
+  .sort-item.wrong-bin { background: var(--danger); }
+  .words-pool { margin-bottom: 16px; }
+
+  /* PROPERTY EXPLORER */
+  .prop-slider-container { margin: 12px 0; }
+  .prop-slider-container label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: var(--primary);
+  }
+
+  .info-box {
+    background: #fffbeb;
+    border-left: 4px solid var(--secondary);
+    border-radius: 0 12px 12px 0;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .info-box strong { color: var(--secondary); }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+  .tag.blue { background: #dbeafe; color: #1e40af; }
+  .tag.green { background: #dcfce7; color: #166534; }
+  .tag.orange { background: #fef3c7; color: #92400e; }
+
+  @media (max-width: 600px) {
+    .bodies-grid { grid-template-columns: repeat(2, 1fr); }
+    .flash-word { font-size: 2rem; }
+    .sort-container { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📐 5.2 Körper, Flächen und Linien</h1>
+  <p>Klasse 5 · Mathematik · interaktive Übungen</p>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showSection('erkunden')" data-tab="erkunden">🔍 Erkunden</button>
+  <button class="tab-btn" onclick="showSection('steckbriefe')" data-tab="steckbriefe">📋 Steckbriefe</button>
+  <button class="tab-btn" onclick="showSection('quiz')" data-tab="quiz">🧠 Quiz</button>
+  <button class="tab-btn" onclick="showSection('lueckentext')" data-tab="lueckentext">✏️ Lückentext</button>
+  <button class="tab-btn" onclick="showSection('sortieren')" data-tab="sortieren">🗂️ Sortieren</button>
+  <button class="tab-btn" onclick="showSection('blitzlesen')" data-tab="blitzlesen">⚡ Blitzlesen</button>
+  <button class="tab-btn" onclick="showSection('wortschatz')" data-tab="wortschatz">📖 Wortschatz</button>
+</nav>
+
+<main>
+
+<!-- ===== ERKUNDEN ===== -->
+<div id="erkunden" class="section active">
+  <div class="card">
+    <h2>🔍 Körper entdecken</h2>
+    <p>Klick auf einen Körper, um seinen Namen zu sehen. Schau, ob du ihn schon kannst, bevor du aufdeckst!</p>
+  </div>
+  <div class="bodies-grid" id="bodiesGrid"></div>
+  <p class="reveal-hint">💡 Tipp: Klick auf einen Körper → Name wird gezeigt. Nochmal klicken → zuklappen.</p>
+
+  <div class="card" style="margin-top:20px;">
+    <h2>🧩 Eigenschaften erkunden</h2>
+    <p>Wähle einen Körper und lerne seine Eigenschaften kennen:</p>
+    <div style="margin-top:14px;">
+      <select id="propSelect" onchange="showProps()" style="border:2px solid #dae4f5;border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:0.95rem;color:var(--text);cursor:pointer;width:100%;">
+        <option value="">— Körper auswählen —</option>
+        <option value="wuerfel">Würfel</option>
+        <option value="quader">Quader</option>
+        <option value="pyramide">Pyramide (quadratisch)</option>
+        <option value="zylinder">Zylinder</option>
+        <option value="kegel">Kegel</option>
+        <option value="kugel">Kugel</option>
+        <option value="prisma">Dreieckiges Prisma</option>
+      </select>
+    </div>
+    <div id="propsResult" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- ===== STECKBRIEFE ===== -->
+<div id="steckbriefe" class="section">
+  <div class="card">
+    <h2>📋 Körper-Steckbriefe</h2>
+    <p>Klappe die Steckbriefe auf und lerne alle wichtigen Eigenschaften – ideal zum Wiederholen!</p>
+  </div>
+
+  <div id="steckbriefContainer"></div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quiz" class="section">
+  <div class="card">
+    <h2>🧠 Wissensquiz</h2>
+    <p>Teste dein Wissen! Wähle deinen Schwierigkeitsgrad:</p>
+    <div class="level-tabs" style="margin-top:12px;">
+      <button class="level-btn easy active" onclick="setQuizLevel('easy', this)">⭐ Einfach</button>
+      <button class="level-btn medium" onclick="setQuizLevel('medium', this)">⭐⭐ Mittel</button>
+      <button class="level-btn hard" onclick="setQuizLevel('hard', this)">⭐⭐⭐ Schwer</button>
+    </div>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="quiz-progress"><div class="quiz-progress-bar" id="quizBar" style="width:0%"></div></div>
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<!-- ===== LÜCKENTEXT ===== -->
+<div id="lueckentext" class="section">
+  <div class="card">
+    <h2>✏️ Lückentext</h2>
+    <p>Fülle die Lücken mit den richtigen Fachbegriffen aus. Wähle deinen Level:</p>
+    <div class="level-tabs" style="margin-top:12px;">
+      <button class="level-btn easy active" onclick="setLueckeLevel('easy', this)">⭐ Einfach</button>
+      <button class="level-btn medium" onclick="setLueckeLevel('medium', this)">⭐⭐ Mittel</button>
+      <button class="level-btn hard" onclick="setLueckeLevel('hard', this)">⭐⭐⭐ Schwer</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div id="lueckeContent"></div>
+    <div class="check-btn-row">
+      <button class="btn btn-primary" onclick="checkLuecken()">✅ Überprüfen</button>
+      <button class="btn btn-secondary" onclick="resetLuecken()">🔄 Neu versuchen</button>
+    </div>
+    <div id="lueckeResult" style="margin-top:12px;font-weight:700;font-size:0.95rem;"></div>
+  </div>
+</div>
+
+<!-- ===== SORTIEREN ===== -->
+<div id="sortieren" class="section">
+  <div class="card">
+    <h2>🗂️ Körper & Flächen sortieren</h2>
+    <p>Ziehe die Begriffe in die richtige Spalte: Körper oder Fläche?</p>
+  </div>
+  <div class="card">
+    <p style="font-weight:700;margin-bottom:12px;">📦 Begriffe zum Sortieren:</p>
+    <div class="words-pool" id="wordPool"></div>
+    <div class="sort-container">
+      <div class="sort-column" id="bin-koerper" ondragover="event.preventDefault()" ondrop="dropItem(event,'koerper')">
+        <h3>🧊 Körper</h3>
+      </div>
+      <div class="sort-column" id="bin-flaeche" ondragover="event.preventDefault()" ondrop="dropItem(event,'flaeche')">
+        <h3>📐 Fläche</h3>
+      </div>
+    </div>
+    <div class="check-btn-row">
+      <button class="btn btn-primary" onclick="checkSort()">✅ Überprüfen</button>
+      <button class="btn btn-secondary" onclick="resetSort()">🔄 Neu starten</button>
+    </div>
+    <div id="sortResult" style="margin-top:12px;font-weight:700;"></div>
+  </div>
+
+  <div class="card">
+    <h2>📏 Senkrecht & Parallel</h2>
+    <p>Was bedeutet das? Schau dir die Erklärungen an:</p>
+    <div class="info-box" style="margin-top:12px;">
+      <strong>⊥ Senkrecht</strong> – zwei Geraden stehen im rechten Winkel (90°) zueinander.<br>
+      <em>Beispiel: Die Kanten eines Würfels an einer Ecke stehen senkrecht zueinander.</em>
+    </div>
+    <div class="info-box" style="border-left-color: var(--accent);">
+      <strong style="color:var(--accent);">∥ Parallel</strong> – zwei Geraden verlaufen nebeneinander und treffen sich nie.<br>
+      <em>Beispiel: Die gegenüberliegenden Kanten eines Quaders sind parallel.</em>
+    </div>
+    <div id="perpendicularQuiz" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- ===== BLITZLESEN ===== -->
+<div id="blitzlesen" class="section">
+  <div class="card">
+    <h2>⚡ Blitzlesen – Fachbegriffe</h2>
+    <p>Ein Begriff erscheint kurz auf dem Bildschirm. Kannst du ihn lesen und dir merken? Das trainiert das schnelle Erkennen von Fachbegriffen!</p>
+  </div>
+  <div class="card">
+    <div class="flashread-box">
+      <div class="flash-word" id="flashWord">Drücke Start!</div>
+    </div>
+    <div class="flash-controls" style="margin-top:14px;">
+      <button class="btn btn-primary" id="flashStartBtn" onclick="startFlash()">▶ Start</button>
+      <button class="btn btn-secondary" onclick="stopFlash()">⏹ Stop</button>
+      <label>Geschwindigkeit:
+        <select id="flashSpeed" onchange="updateFlashSpeed()">
+          <option value="2000">Langsam (2 Sek.)</option>
+          <option value="1200" selected>Normal (1,2 Sek.)</option>
+          <option value="700">Schnell (0,7 Sek.)</option>
+          <option value="400">Sehr schnell (0,4 Sek.)</option>
+        </select>
+      </label>
+      <label>Wortgruppe:
+        <select id="flashGroup" onchange="changeFlashGroup()">
+          <option value="all">Alle Begriffe</option>
+          <option value="bodies">Nur Körper</option>
+          <option value="props">Ecken/Kanten/Flächen</option>
+          <option value="directions">Lagebeziehungen</option>
+        </select>
+      </label>
+    </div>
+    <div id="flashSeen" style="margin-top:14px;font-size:0.85rem;color:var(--muted);">Gesehene Begriffe erscheinen hier ↓</div>
+    <div id="flashLog" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>🔤 Begriffe nachschlagen</h2>
+    <p>Nach dem Blitzlesen: Was hast du dir gemerkt? Schreibe es auf – oder klick hier, um nachzuschlagen.</p>
+    <button class="btn btn-secondary" onclick="showSection('wortschatz'); setActiveTab('wortschatz')" style="margin-top:10px;">📖 Zum Wortschatz</button>
+  </div>
+</div>
+
+<!-- ===== WORTSCHATZ ===== -->
+<div id="wortschatz" class="section">
+  <div class="card">
+    <h2>📖 Wortschatz & Sprachförderung</h2>
+    <p>Alle wichtigen Fachbegriffe mit Erklärung – auch für Lernende mit wenig Deutschkenntnissen.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧊 Körper</h2>
+    <div class="vocab-grid" id="vocabBodies"></div>
+  </div>
+  <div class="card">
+    <h2>📐 Flächen & Formen</h2>
+    <div class="vocab-grid" id="vocabFaces"></div>
+  </div>
+  <div class="card">
+    <h2>📏 Teile eines Körpers</h2>
+    <div class="vocab-grid" id="vocabParts"></div>
+  </div>
+  <div class="card">
+    <h2>↔️ Lagebeziehungen</h2>
+    <div class="vocab-grid" id="vocabRelations"></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ============ DATA ============
+
+const BODIES = [
+  { id: 'wuerfel', name: 'Würfel', svg: `<svg width="70" height="70" viewBox="0 0 70 70"><polygon points="20,50 20,20 50,20 50,50" fill="#4a90d9" stroke="#1a5285" stroke-width="2"/><polygon points="20,20 35,10 65,10 50,20" fill="#2d6a9f" stroke="#1a5285" stroke-width="2"/><polygon points="50,20 65,10 65,40 50,50" fill="#1a5285" stroke="#1a5285" stroke-width="2"/></svg>`, hint: '6 gleiche Flächen' },
+  { id: 'quader', name: 'Quader', svg: `<svg width="70" height="70" viewBox="0 0 70 70"><polygon points="10,55 10,30 45,30 45,55" fill="#4a90d9" stroke="#1a5285" stroke-width="2"/><polygon points="10,30 25,18 60,18 45,30" fill="#2d6a9f" stroke="#1a5285" stroke-width="2"/><polygon points="45,30 60,18 60,43 45,55" fill="#1a5285" stroke="#1a5285" stroke-width="2"/></svg>`, hint: '6 rechteckige Flächen' },
+  { id: 'pyramide', name: 'Pyramide', svg: `<svg width="70" height="70" viewBox="0 0 70 70"><polygon points="35,8 60,60 10,60" fill="#e8a020" stroke="#a06010" stroke-width="2"/><polygon points="35,8 60,60 55,65 10,65 10,60" fill="#c07010" stroke="#a06010" stroke-width="2"/></svg>`, hint: '4 Dreiecke + 1 Viereck' },
+  { id: 'zylinder', name: 'Zylinder', svg: `<svg width="70" height="70" viewBox="0 0 70 70"><ellipse cx="35" cy="18" rx="25" ry="8" fill="#27ae60" stroke="#1a7a40" stroke-width="2"/><rect x="10" y="18" width="50" height="36" fill="#2ecc71" stroke="#1a7a40" stroke-width="2"/><ellipse cx="35" cy="54" rx="25" ry="8" fill="#27ae60" stroke="#1a7a40" stroke-width="2"/></svg>`, hint: '2 kreisförmige Flächen' },
+  { id: 'kegel', name: 'Kegel', svg: `<svg width="70" height="70" viewBox="0 0 70 70"><polygon points="35,8 65,62 5,62" fill="#e74c3c" stroke="#a93226" stroke-width="2"/><ellipse cx="35" cy="62" rx="30" ry="8" fill="#c0392b" stroke="#a93226" stroke-width="2"/></svg>`, hint: '1 Kreis + 1 gebogene Fläche' },
+  { id: 'kugel', name: 'Kugel', svg: `<svg width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="35" r="28" fill="#9b59b6" stroke="#7d3c98" stroke-width="2"/><ellipse cx="35" cy="35" rx="14" ry="28" fill="none" stroke="#7d3c98" stroke-width="1.5" stroke-dasharray="5,4"/></svg>`, hint: 'Keine Ecken und Kanten' },
+  { id: 'prisma', name: 'Dreieckiges Prisma', svg: `<svg width="70" height="70" viewBox="0 0 70 70"><polygon points="10,60 35,15 60,60" fill="#16a085" stroke="#0e6655" stroke-width="2"/><polygon points="10,60 35,15 40,18 15,63" fill="#1abc9c" stroke="#0e6655" stroke-width="2"/><polygon points="35,15 60,60 65,63 40,18" fill="#0e6655" stroke="#0e6655" stroke-width="2"/></svg>`, hint: '2 Dreiecke + 3 Rechtecke' },
+];
+
+const BODY_PROPS = {
+  wuerfel:  { ecken:8, kanten:12, flaechen:6, beschreibung:'Ein Würfel hat 6 gleiche quadratische Flächen, 12 gleich lange Kanten und 8 Ecken.', netz:'6 Quadrate', alltagsbsp:'Spielwürfel, Zuckerwürfel' },
+  quader:   { ecken:8, kanten:12, flaechen:6, beschreibung:'Ein Quader hat 6 rechteckige Flächen (gegenüberliegende sind gleich), 12 Kanten und 8 Ecken.', netz:'6 Rechtecke', alltagsbsp:'Schachtel, Buch, Mauerstein' },
+  pyramide: { ecken:5, kanten:8, flaechen:5, beschreibung:'Eine quadratische Pyramide hat 1 quadratische Grundfläche, 4 dreieckige Seitenflächen, 8 Kanten und 5 Ecken.', netz:'1 Quadrat + 4 Dreiecke', alltagsbsp:'Cheops-Pyramide in Ägypten' },
+  zylinder: { ecken:0, kanten:0, flaechen:3, beschreibung:'Ein Zylinder hat 2 kreisförmige Flächen oben und unten sowie 1 gebogene Mantelfläche. Er hat keine Ecken und keine Kanten.', netz:'2 Kreise + 1 Rechteck', alltagsbsp:'Dose, Rolle Toilettenpapier' },
+  kegel:    { ecken:1, kanten:0, flaechen:2, beschreibung:'Ein Kegel hat 1 kreisförmige Grundfläche, 1 gebogene Mantelfläche und 1 Spitze (Ecke).', netz:'1 Kreis + 1 Kreissektor', alltagsbsp:'Eiswaffel, Verkehrskegel' },
+  kugel:    { ecken:0, kanten:0, flaechen:1, beschreibung:'Eine Kugel hat keine Ecken, keine Kanten und 1 gebogene Oberfläche. Jeder Punkt auf der Oberfläche ist gleich weit vom Mittelpunkt entfernt.', netz:'—', alltagsbsp:'Fußball, Orange, Globus' },
+  prisma:   { ecken:6, kanten:9, flaechen:5, beschreibung:'Ein dreieckiges Prisma hat 2 dreieckige Flächen und 3 rechteckige Seitenflächen. Es hat 9 Kanten und 6 Ecken.', netz:'2 Dreiecke + 3 Rechtecke', alltagsbsp:'Toblerone-Verpackung, Prisma in Physik' },
+};
+
+const QUIZ_EASY = [
+  { q:'Wie viele Flächen hat ein Würfel?', o:['4','6','8','12'], a:1 },
+  { q:'Welcher Körper hat keine Ecken und keine Kanten?', o:['Würfel','Zylinder','Kugel','Pyramide'], a:2 },
+  { q:'Wie nennt man die „Ränder" eines Körpers, wo zwei Flächen zusammentreffen?', o:['Ecken','Kanten','Flächen','Netze'], a:1 },
+  { q:'Was ist ein Netz eines Körpers?', o:['Eine Zeichnung eines Körpers','Das Auseinandergefaltete eines Körpers als flache Figur','Eine Liste der Eigenschaften','Eine Art Gitter'], a:1 },
+  { q:'Welcher Körper hat nur kreisförmige Flächen?', o:['Kegel','Zylinder','Kugel','Prisma'], a:1 },
+  { q:'Wie viele Ecken hat ein Quader?', o:['4','6','8','12'], a:2 },
+];
+
+const QUIZ_MEDIUM = [
+  { q:'Wie viele Kanten hat ein Würfel?', o:['8','10','12','16'], a:2 },
+  { q:'Das Netz eines Würfels besteht aus …', o:['4 Quadraten','6 Quadraten','6 Rechtecken','8 Quadraten'], a:1 },
+  { q:'Ein Körper hat 5 Flächen, 8 Kanten und 5 Ecken. Welcher ist es?', o:['Würfel','Zylinder','Pyramide (quadratisch)','Prisma (dreieckig)'], a:2 },
+  { q:'Welche Aussage zu parallelen Kanten ist richtig?', o:['Sie treffen sich immer','Sie stehen senkrecht aufeinander','Sie verlaufen nebeneinander ohne sich zu treffen','Sie sind immer gleich lang'], a:2 },
+  { q:'Rechteck und Quadrat sind beides …', o:['Körper','Flächen','Kanten','Netze'], a:1 },
+  { q:'Wie viele Flächen hat ein dreieckiges Prisma?', o:['3','4','5','6'], a:2 },
+  { q:'Ein Zylinder hat 2 kreisförmige Flächen. Was ist die dritte Fläche?', o:['Ein Rechteck','Eine gebogene Mantelfläche','Ein Dreieck','Ein Quadrat'], a:1 },
+];
+
+const QUIZ_HARD = [
+  { q:'Ein Quader hat 8 Ecken, 12 Kanten und 6 Flächen. Wie viele Flächen hat ein dreieckiges Prisma?', o:['3','4','5','6'], a:2 },
+  { q:'Zwei Geraden stehen im rechten Winkel (90°) zueinander. Wie nennt man diese Beziehung?', o:['Parallel','Senkrecht','Spiegelgleich','Kongruent'], a:1 },
+  { q:'Das Netz eines Körpers besteht aus 2 Dreiecken und 3 Rechtecken. Um welchen Körper handelt es sich?', o:['Pyramide','Quader','Prisma (dreieckig)','Würfel'], a:2 },
+  { q:'Mein Netz besteht aus 6 Quadraten. Welcher Körper bin ich?', o:['Quader','Würfel','Prisma','Pyramide'], a:1 },
+  { q:'Welche Körper haben keine Kanten?', o:['Würfel und Quader','Zylinder und Kegel','Kugel und Zylinder','Kugel und Kegel'], a:1, explanation:'Kugel: 0 Kanten. Zylinder: In manchen Definitionen 2 Kreiskanten, aber keine scharfen Kanten. Frage bezieht sich auf Kugel (0) und Kegel (0 scharfe Kanten).' },
+  { q:'Ein Körper hat genau 1 Ecke (Spitze), keine scharfen Kanten und 2 Flächen. Was ist er?', o:['Pyramide','Zylinder','Kegel','Prisma'], a:2 },
+];
+
+const VOCAB = {
+  bodies: [
+    { term:'der Würfel', definition:'Ein Körper mit 6 gleichen quadratischen Flächen.', example:'z.B. Spielwürfel' },
+    { term:'der Quader', definition:'Ein Körper mit 6 rechteckigen Flächen; gegenüber liegende Flächen sind gleich.', example:'z.B. Milchkarton' },
+    { term:'die Pyramide', definition:'Ein Körper mit einer viereckigen Grundfläche und 4 dreieckigen Seiten, die in einer Spitze enden.', example:'z.B. Cheops-Pyramide' },
+    { term:'der Zylinder', definition:'Ein Körper mit 2 gleichen Kreisflächen oben und unten.', example:'z.B. Dose' },
+    { term:'der Kegel', definition:'Ein Körper mit einer Kreisfläche und einer Spitze.', example:'z.B. Eiswaffel' },
+    { term:'die Kugel', definition:'Ein runder Körper – jeder Punkt auf der Oberfläche ist gleich weit vom Mittelpunkt.', example:'z.B. Fußball' },
+    { term:'das Prisma', definition:'Ein Körper, dessen Grundfläche und Deckfläche gleich sind und parallel stehen.', example:'z.B. dreieckiges Prisma' },
+  ],
+  faces: [
+    { term:'das Rechteck', definition:'Eine Fläche mit 4 rechten Winkeln; Seiten paarweise gleich lang.', example:'z.B. Türrahmen' },
+    { term:'das Quadrat', definition:'Ein Rechteck mit 4 gleich langen Seiten.', example:'z.B. Tafel Schokolade' },
+    { term:'das Dreieck', definition:'Eine Fläche mit 3 Seiten und 3 Ecken.', example:'z.B. Verkehrsschild' },
+    { term:'der Kreis', definition:'Eine runde Fläche; alle Randpunkte sind gleich weit vom Mittelpunkt.', example:'z.B. Münze' },
+    { term:'das Viereck', definition:'Oberbegriff für alle Flächen mit 4 Seiten.', example:'Rechteck, Quadrat, Raute, …' },
+  ],
+  parts: [
+    { term:'die Ecke', definition:'Der Punkt, wo mindestens 3 Kanten zusammentreffen.', example:'Ein Würfel hat 8 Ecken.' },
+    { term:'die Kante', definition:'Die Linie, wo zwei Flächen eines Körpers zusammentreffen.', example:'Ein Würfel hat 12 Kanten.' },
+    { term:'die Fläche', definition:'Die ebene (flache) Begrenzung eines Körpers.', example:'Ein Würfel hat 6 Flächen.' },
+    { term:'das Netz', definition:'Ein Körper flach auseinandergefaltet – so sieht man alle Flächen auf einen Blick.', example:'Das Netz eines Würfels = 6 Quadrate' },
+  ],
+  relations: [
+    { term:'senkrecht (⊥)', definition:'Zwei Geraden oder Flächen stehen im rechten Winkel (90°) zueinander.', example:'Tischbein und Tischplatte' },
+    { term:'parallel (∥)', definition:'Zwei Geraden verlaufen nebeneinander – sie treffen sich nie.', example:'Gegenüberliegende Kanten eines Quaders' },
+    { term:'der rechte Winkel', definition:'Ein Winkel von genau 90°.', example:'Ecke eines Blattes Papier' },
+  ]
+};
+
+const FLASH_WORDS = {
+  all: ['Würfel','Quader','Pyramide','Zylinder','Kegel','Kugel','Prisma','Ecke','Kante','Fläche','Netz','senkrecht','parallel','Rechteck','Quadrat','Dreieck','Kreis','rechter Winkel'],
+  bodies: ['Würfel','Quader','Pyramide','Zylinder','Kegel','Kugel','Prisma'],
+  props: ['Ecke','Kante','Fläche','Netz','8 Ecken','12 Kanten','6 Flächen'],
+  directions: ['senkrecht','parallel','rechter Winkel','90 Grad','∥ parallel','⊥ senkrecht'],
+};
+
+const SORT_WORDS = [
+  {w:'Dreieck',type:'flaeche'},{w:'Quader',type:'koerper'},{w:'Viereck',type:'flaeche'},
+  {w:'Würfel',type:'koerper'},{w:'Kegel',type:'koerper'},{w:'Quadrat',type:'flaeche'},
+  {w:'Zylinder',type:'koerper'},{w:'Kugel',type:'koerper'},{w:'Prisma',type:'koerper'},
+  {w:'Pyramide',type:'koerper'},{w:'Rechteck',type:'flaeche'},{w:'Kreis',type:'flaeche'},
+];
+
+const PERP_QUIZ = [
+  { q:'Zwei Kanten stehen im rechten Winkel (90°) zueinander. Das nennt man …', o:['parallel','senkrecht','kongruent'], a:1 },
+  { q:'Zwei Geraden, die sich nie treffen, sind …', o:['senkrecht','gleich','parallel'], a:2 },
+  { q:'Wie viele Grad hat ein rechter Winkel?', o:['45°','90°','180°'], a:1 },
+];
+
+// ============ STATE ============
+let quizLevel = 'easy';
+let quizIdx = 0;
+let quizScore = 0;
+let quizAnswered = false;
+let quizQuestions = [...QUIZ_EASY];
+
+let lueckeLevel = 'easy';
+let flashInterval = null;
+let flashSpeed = 1200;
+let flashGroup = 'all';
+let flashIdx = 0;
+let flashList = [];
+
+let sortState = {};
+
+let perpIdx = 0;
+let perpAnswered = false;
+
+// ============ SECTION NAV ============
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  setActiveTab(id);
+}
+function setActiveTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-tab="${id}"]`)?.classList.add('active');
+}
+
+// ============ ERKUNDEN ============
+function buildBodiesGrid() {
+  const grid = document.getElementById('bodiesGrid');
+  grid.innerHTML = '';
+  BODIES.forEach(b => {
+    const div = document.createElement('div');
+    div.className = 'body-card';
+    div.innerHTML = `${b.svg}<div class="name" style="display:none">${b.name}</div><div class="hint">${b.hint}</div>`;
+    div.onclick = () => {
+      const nameEl = div.querySelector('.name');
+      if(nameEl.style.display === 'none') {
+        nameEl.style.display = 'block';
+        div.classList.add('revealed');
+      } else {
+        nameEl.style.display = 'none';
+        div.classList.remove('revealed');
+      }
+    };
+    grid.appendChild(div);
+  });
+}
+
+function showProps() {
+  const val = document.getElementById('propSelect').value;
+  const r = document.getElementById('propsResult');
+  if(!val) { r.innerHTML=''; return; }
+  const p = BODY_PROPS[val];
+  const b = BODIES.find(x=>x.id===val);
+  r.innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+      ${b.svg}
+      <div>
+        <div style="font-weight:800;font-size:1.1rem;color:var(--primary)">${b.name}</div>
+        <div style="font-size:0.85rem;color:var(--muted);margin-top:2px;">${p.beschreibung}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+      <span class="badge">🔺 ${p.ecken} Ecken</span>
+      <span class="badge green">— ${p.kanten} Kanten</span>
+      <span class="badge orange">▪ ${p.flaechen} Flächen</span>
+    </div>
+    <div class="info-box">
+      <strong>📄 Netz:</strong> ${p.netz}<br>
+      <strong>🌍 Im Alltag:</strong> ${p.alltagsbsp}
+    </div>
+  `;
+}
+
+// ============ STECKBRIEFE ============
+function buildSteckbriefe() {
+  const c = document.getElementById('steckbriefContainer');
+  BODIES.forEach(b => {
+    const p = BODY_PROPS[b.id];
+    const div = document.createElement('div');
+    div.className = 'steckbrief';
+    div.innerHTML = `
+      <div class="steckbrief-header" onclick="toggleSteckbrief(this)">
+        ${b.svg.replace('width="70" height="70"','width="40" height="40"')}
+        <span>${b.name}</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="steckbrief-body">
+        <p style="margin-bottom:10px;font-size:0.9rem;line-height:1.6;">${p.beschreibung}</p>
+        <table class="props-table">
+          <tr><td>Ecken</td><td><span class="badge">${p.ecken}</span></td></tr>
+          <tr><td>Kanten</td><td><span class="badge green">${p.kanten}</span></td></tr>
+          <tr><td>Flächen</td><td><span class="badge orange">${p.flaechen}</span></td></tr>
+          <tr><td>Netz</td><td>${p.netz}</td></tr>
+          <tr><td>Beispiel</td><td><em>${p.alltagsbsp}</em></td></tr>
+        </table>
+        <div style="margin-top:10px;">
+          ${['Körper','3D','Geometrie'].concat(b.hint.split(' ')).filter(Boolean).map(t=>`<span class="tag blue">${t}</span>`).join('')}
+        </div>
+      </div>
+    `;
+    c.appendChild(div);
+  });
+}
+
+function toggleSteckbrief(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+
+// ============ QUIZ ============
+function setQuizLevel(level, btn) {
+  quizLevel = level;
+  document.querySelectorAll('.level-btn').forEach(b => {
+    if(['easy','medium','hard'].some(l => b.classList.contains(l))) b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  if(level==='easy') quizQuestions = [...QUIZ_EASY];
+  else if(level==='medium') quizQuestions = [...QUIZ_MEDIUM];
+  else quizQuestions = [...QUIZ_HARD];
+  shuffle(quizQuestions);
+  quizIdx = 0; quizScore = 0; quizAnswered = false;
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if(quizIdx >= quizQuestions.length) {
+    const pct = Math.round(quizScore/quizQuestions.length*100);
+    const emoji = pct>=80?'🎉':pct>=50?'👍':'😅';
+    container.innerHTML = `
+      <div class="result-screen">
+        <div class="result-emoji">${emoji}</div>
+        <div class="result-score">${quizScore}/${quizQuestions.length}</div>
+        <div class="result-msg">${pct}% richtig – ${pct>=80?'Hervorragend!':pct>=50?'Gut gemacht!':'Noch einmal üben!'}</div>
+        <button class="btn btn-primary" style="margin-top:20px" onclick="setQuizLevel(quizLevel,document.querySelector('.level-btn.active'))">🔄 Nochmal</button>
+      </div>`;
+    document.getElementById('quizBar').style.width = '100%';
+    return;
+  }
+  const q = quizQuestions[quizIdx];
+  const pct = (quizIdx/quizQuestions.length*100).toFixed(0);
+  document.getElementById('quizBar').style.width = pct+'%';
+  container.innerHTML = `
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:8px;">Frage ${quizIdx+1} von ${quizQuestions.length}</div>
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options">${q.o.map((opt,i)=>`<button class="quiz-option" onclick="answerQuiz(${i})">${opt}</button>`).join('')}</div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-primary" id="nextBtn" style="display:none" onclick="nextQuiz()">Weiter →</button>
+    </div>
+  `;
+  quizAnswered = false;
+}
+
+function answerQuiz(idx) {
+  if(quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQuestions[quizIdx];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  const fb = document.getElementById('quizFeedback');
+  if(idx === q.a) {
+    quizScore++;
+    opts[idx].classList.add('correct');
+    fb.className = 'quiz-feedback show correct';
+    fb.textContent = '✅ Richtig! '+( q.explanation||'');
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.a].classList.add('correct');
+    fb.className = 'quiz-feedback show wrong';
+    fb.textContent = '❌ Leider falsch. Richtig: '+q.o[q.a];
+  }
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextQuiz() { quizIdx++; renderQuiz(); }
+
+// ============ LÜCKENTEXT ============
+const LUECKEN_EASY = {
+  text: `Ein <span data-word="Würfel"></span> hat sechs gleiche <span data-word="Flächen"></span>. 
+Wo zwei Flächen zusammentreffen, entsteht eine <span data-word="Kante"></span>. 
+Die Punkte, wo Kanten zusammentreffen, heißen <span data-word="Ecken"></span>. 
+Ein Quader und ein Würfel haben jeweils <span data-word="8"></span> Ecken.`,
+  words: ['Würfel','Flächen','Kante','Ecken','8']
+};
+const LUECKEN_MEDIUM = {
+  text: `Ein Würfel hat <span data-word="12"></span> Kanten und <span data-word="6"></span> Flächen. 
+Eine quadratische Pyramide hat <span data-word="5"></span> Flächen – eine <span data-word="quadratische"></span> Grundfläche und vier <span data-word="dreieckige"></span> Seitenflächen. 
+Das ausgefaltete Netz eines Würfels besteht aus sechs <span data-word="Quadraten"></span>.`,
+  words: ['12','6','5','quadratische','dreieckige','Quadraten']
+};
+const LUECKEN_HARD = {
+  text: `Zwei Geraden, die sich im rechten Winkel schneiden, stehen <span data-word="senkrecht"></span> zueinander (Symbol: <span data-word="⊥"></span>). 
+Geraden, die nebeneinander verlaufen und sich nie treffen, heißen <span data-word="parallel"></span> (Symbol: <span data-word="∥"></span>). 
+Ein dreieckiges Prisma hat <span data-word="9"></span> Kanten, <span data-word="6"></span> Ecken und <span data-word="5"></span> Flächen.`,
+  words: ['senkrecht','⊥','parallel','∥','9','6','5']
+};
+
+let currentLuecke = null;
+function setLueckeLevel(level, btn) {
+  lueckeLevel = level;
+  document.querySelectorAll('#lueckentext .level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLuecken();
+}
+
+function renderLuecken() {
+  const data = lueckeLevel==='easy'?LUECKEN_EASY:lueckeLevel==='medium'?LUECKEN_MEDIUM:LUECKEN_HARD;
+  currentLuecke = data;
+  const container = document.getElementById('lueckeContent');
+  let html = `<div style="background:#f0f7ff;border-radius:12px;padding:14px;margin-bottom:14px;font-size:0.88rem;color:var(--muted);">
+    <strong>Wortkasten:</strong> ${data.words.map(w=>`<span style="display:inline-block;background:#dae4f5;color:var(--primary);font-weight:700;border-radius:6px;padding:2px 8px;margin:2px;">${w}</span>`).join('')}
+  </div>
+  <div class="lueckentext-container">${data.text.replace(/<span data-word="([^"]+)"><\/span>/g, (_,w)=>`<span class="luecke"><input type="text" data-answer="${w}" placeholder="______"/></span>`)}</div>`;
+  container.innerHTML = html;
+  document.getElementById('lueckeResult').textContent = '';
+  container.querySelectorAll('.luecke').forEach(l=>{
+    l.querySelector('input').style.width = (Math.max(l.querySelector('input').dataset.answer.length*12,60))+'px';
+  });
+}
+
+function checkLuecken() {
+  const inputs = document.querySelectorAll('.luecke input');
+  let correct=0;
+  inputs.forEach(inp => {
+    const userVal = inp.value.trim().toLowerCase();
+    const ans = inp.dataset.answer.toLowerCase();
+    const luecke = inp.closest('.luecke');
+    luecke.classList.remove('correct','wrong');
+    if(userVal === ans) { luecke.classList.add('correct'); correct++; }
+    else { luecke.classList.add('wrong'); }
+  });
+  const res = document.getElementById('lueckeResult');
+  const pct = Math.round(correct/inputs.length*100);
+  res.innerHTML = `<span style="color:${pct===100?'var(--accent)':'var(--danger)'}">${correct}/${inputs.length} richtig (${pct}%)</span> ${pct===100?'🎉 Super!':''}`;
+}
+
+function resetLuecken() { renderLuecken(); }
+
+// ============ SORTIEREN ============
+function buildSortGame() {
+  const pool = document.getElementById('wordPool');
+  pool.innerHTML = '';
+  sortState = {};
+  SORT_WORDS.forEach(sw => {
+    sortState[sw.w] = { correct: sw.type, current: null };
+    const span = document.createElement('span');
+    span.className = 'sort-item';
+    span.textContent = sw.w;
+    span.id = 'sw_'+sw.w;
+    span.draggable = true;
+    span.ondragstart = e => e.dataTransfer.setData('word', sw.w);
+    pool.appendChild(span);
+  });
+  document.getElementById('bin-koerper').querySelectorAll('.sort-item').forEach(e=>e.remove());
+  document.getElementById('bin-flaeche').querySelectorAll('.sort-item').forEach(e=>e.remove());
+  document.getElementById('sortResult').textContent = '';
+}
+
+function dropItem(e, bin) {
+  const word = e.dataTransfer.getData('word');
+  const item = document.getElementById('sw_'+word);
+  if(!item) return;
+  item.classList.add('in-bin');
+  sortState[word].current = bin;
+  document.getElementById('bin-'+bin).appendChild(item);
+}
+
+function checkSort() {
+  let correct = 0;
+  SORT_WORDS.forEach(sw => {
+    const item = document.getElementById('sw_'+sw.w);
+    item.classList.remove('in-bin','wrong-bin');
+    if(sortState[sw.w].current === sw.type) { item.classList.add('in-bin'); correct++; }
+    else if(sortState[sw.w].current !== null) { item.classList.add('wrong-bin'); }
+  });
+  const r = document.getElementById('sortResult');
+  const total = SORT_WORDS.filter(s=>sortState[s.w].current!==null).length;
+  r.innerHTML = `<span style="color:${correct===SORT_WORDS.length?'var(--accent)':'var(--primary)'}">${correct}/${SORT_WORDS.length} richtig!</span> ${correct===SORT_WORDS.length?'🎉 Perfekt!':''}`;
+}
+
+function resetSort() { buildSortGame(); }
+
+// Parallel/Senkrecht mini quiz
+function buildPerpQuiz() {
+  renderPerpQuiz();
+}
+
+function renderPerpQuiz() {
+  if(perpIdx >= PERP_QUIZ.length) {
+    document.getElementById('perpendicularQuiz').innerHTML = `<div style="text-align:center;padding:16px;"><span style="font-size:2rem">🎉</span><br><strong>Alle Fragen richtig!</strong></div>`;
+    return;
+  }
+  const q = PERP_QUIZ[perpIdx];
+  document.getElementById('perpendicularQuiz').innerHTML = `
+    <div style="font-weight:700;margin-bottom:10px;font-size:0.95rem;">${q.q}</div>
+    <div class="quiz-options">${q.o.map((o,i)=>`<button class="quiz-option" onclick="answerPerp(${i})">${o}</button>`).join('')}</div>
+    <div id="perpFb" class="quiz-feedback"></div>
+    <button class="btn btn-secondary" id="perpNext" style="display:none;margin-top:10px;" onclick="perpIdx++;perpAnswered=false;renderPerpQuiz()">Weiter →</button>
+  `;
+  perpAnswered = false;
+}
+
+function answerPerp(idx) {
+  if(perpAnswered) return;
+  perpAnswered = true;
+  const q = PERP_QUIZ[perpIdx];
+  const opts = document.querySelectorAll('#perpendicularQuiz .quiz-option');
+  opts.forEach(o=>o.disabled=true);
+  const fb = document.getElementById('perpFb');
+  if(idx===q.a) { opts[idx].classList.add('correct'); fb.className='quiz-feedback show correct'; fb.textContent='✅ Richtig!'; }
+  else { opts[idx].classList.add('wrong'); opts[q.a].classList.add('correct'); fb.className='quiz-feedback show wrong'; fb.textContent='❌ Falsch. Richtig: '+q.o[q.a]; }
+  document.getElementById('perpNext').style.display='block';
+}
+
+// ============ BLITZLESEN ============
+function startFlash() {
+  stopFlash();
+  const group = document.getElementById('flashGroup').value;
+  flashList = shuffle([...FLASH_WORDS[group]]);
+  flashIdx = 0;
+  document.getElementById('flashLog').innerHTML = '';
+  document.getElementById('flashSeen').textContent = 'Gesehene Begriffe:';
+  runFlash();
+  flashInterval = setInterval(runFlash, flashSpeed);
+}
+
+function runFlash() {
+  if(flashIdx >= flashList.length) { stopFlash(); return; }
+  const word = flashList[flashIdx++];
+  const el = document.getElementById('flashWord');
+  el.classList.remove('show');
+  setTimeout(()=>{ el.textContent=word; el.classList.add('show'); }, 80);
+  const tag = document.createElement('span');
+  tag.className='tag blue';
+  tag.textContent = word;
+  document.getElementById('flashLog').appendChild(tag);
+}
+
+function stopFlash() {
+  if(flashInterval) { clearInterval(flashInterval); flashInterval=null; }
+}
+
+function updateFlashSpeed() {
+  flashSpeed = parseInt(document.getElementById('flashSpeed').value);
+}
+
+function changeFlashGroup() {
+  flashGroup = document.getElementById('flashGroup').value;
+}
+
+// ============ VOCAB ============
+function buildVocab() {
+  const render = (id, data) => {
+    const el = document.getElementById(id);
+    el.innerHTML = data.map(v=>`
+      <div class="vocab-item">
+        <div class="term">${v.term}</div>
+        <div class="definition">${v.definition}</div>
+        ${v.example?`<div class="example">📌 ${v.example}</div>`:''}
+      </div>
+    `).join('');
+  };
+  render('vocabBodies', VOCAB.bodies);
+  render('vocabFaces', VOCAB.faces);
+  render('vocabParts', VOCAB.parts);
+  render('vocabRelations', VOCAB.relations);
+}
+
+// ============ UTILS ============
+function shuffle(arr) {
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+// ============ INIT ============
+buildBodiesGrid();
+buildSteckbriefe();
+renderQuiz();
+renderLuecken();
+buildSortGame();
+buildPerpQuiz();
+buildVocab();
+</script>
+</body>
+</html>

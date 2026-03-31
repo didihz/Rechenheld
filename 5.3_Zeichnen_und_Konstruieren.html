@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5.3 Zeichnen und Konstruieren</title>
+<style>
+  :root {
+    --primary: #2c6e49;
+    --secondary: #4a9e6d;
+    --accent: #f4a261;
+    --light: #f0f7f4;
+    --dark: #1a3a2a;
+    --error: #e63946;
+    --success: #2a9d8f;
+    --warning: #e9c46a;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --text: #222;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white; padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  header .icon { font-size: 2rem; }
+  header h1 { font-size: 1.3rem; font-weight: 700; }
+  header p { font-size: 0.85rem; opacity: 0.85; }
+
+  /* NAV */
+  nav {
+    background: var(--dark); display: flex; flex-wrap: wrap;
+    gap: 0; overflow: hidden;
+  }
+  nav button {
+    background: none; border: none; color: rgba(255,255,255,0.75);
+    padding: 0.7rem 1.1rem; cursor: pointer; font-size: 0.85rem;
+    transition: all 0.2s; border-bottom: 3px solid transparent;
+    font-weight: 500;
+  }
+  nav button:hover { color: white; background: rgba(255,255,255,0.08); }
+  nav button.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(255,255,255,0.05); }
+
+  /* MAIN */
+  main { max-width: 860px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+  /* SECTION */
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CARDS */
+  .card {
+    background: var(--card); border-radius: 12px; padding: 1.4rem 1.5rem;
+    margin-bottom: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-left: 5px solid var(--primary);
+  }
+  .card.accent { border-left-color: var(--accent); }
+  .card.success { border-left-color: var(--success); }
+  .card.warning { border-left-color: var(--warning); }
+
+  h2 { color: var(--primary); font-size: 1.15rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1rem; color: var(--dark); margin: 0.8rem 0 0.5rem; }
+  p, li { line-height: 1.6; font-size: 0.95rem; }
+  ul { padding-left: 1.2rem; margin: 0.5rem 0; }
+  li { margin-bottom: 0.25rem; }
+
+  /* FACHBEGRIFF CARDS */
+  .begriffe-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.8rem; margin-top: 0.8rem;
+  }
+  .begriff-card {
+    background: var(--light); border-radius: 10px; padding: 1rem;
+    border: 2px solid transparent; cursor: pointer; transition: all 0.2s;
+    text-align: center;
+  }
+  .begriff-card:hover { border-color: var(--secondary); transform: translateY(-2px); }
+  .begriff-card .term { font-weight: 700; color: var(--primary); font-size: 1rem; margin-bottom: 0.3rem; }
+  .begriff-card .def { font-size: 0.82rem; color: var(--muted); display: none; }
+  .begriff-card.open .def { display: block; }
+  .begriff-card.open { border-color: var(--primary); background: #e8f5ee; }
+  .flip-hint { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 0.4rem; }
+
+  /* SVG SHAPES */
+  .shape-demo { text-align: center; margin: 0.5rem 0; }
+  .shape-demo svg { max-width: 100%; }
+
+  /* QUIZ */
+  .quiz-container { margin-top: 0.5rem; }
+  .question-block {
+    background: var(--light); border-radius: 10px; padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .question-text { font-weight: 600; margin-bottom: 0.8rem; font-size: 0.95rem; }
+  .options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .option-btn {
+    background: white; border: 2px solid #ddd; border-radius: 8px;
+    padding: 0.6rem 1rem; cursor: pointer; text-align: left; font-size: 0.9rem;
+    transition: all 0.18s;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--secondary); background: #e8f5ee; }
+  .option-btn.correct { background: #d4edda; border-color: var(--success); color: #155724; }
+  .option-btn.wrong { background: #f8d7da; border-color: var(--error); color: #721c24; }
+  .option-btn:disabled { cursor: default; }
+  .feedback { margin-top: 0.5rem; font-size: 0.85rem; font-weight: 600; min-height: 1.2rem; }
+  .feedback.ok { color: var(--success); }
+  .feedback.err { color: var(--error); }
+
+  .quiz-score {
+    background: var(--light); border-radius: 10px; padding: 1rem 1.2rem;
+    display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem;
+  }
+  .score-num { font-size: 2rem; font-weight: 800; color: var(--primary); }
+  .score-label { font-size: 0.9rem; color: var(--muted); }
+
+  /* DIFFICULTY BADGES */
+  .diff-badge {
+    display: inline-block; font-size: 0.7rem; font-weight: 700;
+    padding: 0.15rem 0.5rem; border-radius: 20px; margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  .diff-1 { background: #d4edda; color: #155724; }
+  .diff-2 { background: #fff3cd; color: #856404; }
+  .diff-3 { background: #f8d7da; color: #721c24; }
+
+  /* LÜCKENTEXT */
+  .lueckentext {
+    background: var(--light); border-radius: 10px; padding: 1.2rem;
+    margin-bottom: 1rem; line-height: 2.2;
+  }
+  .lueckentext input {
+    border: none; border-bottom: 2px solid var(--secondary);
+    background: transparent; font-size: 0.95rem; width: 100px;
+    text-align: center; outline: none; padding: 0 4px;
+    font-family: inherit;
+  }
+  .lueckentext input.correct { border-bottom-color: var(--success); background: #d4edda; border-radius: 4px; }
+  .lueckentext input.wrong { border-bottom-color: var(--error); background: #f8d7da; border-radius: 4px; }
+  .check-btn, .reset-btn {
+    background: var(--primary); color: white; border: none;
+    padding: 0.55rem 1.2rem; border-radius: 8px; cursor: pointer;
+    font-size: 0.9rem; font-weight: 600; margin-top: 0.8rem; margin-right: 0.5rem;
+    transition: background 0.2s;
+  }
+  .check-btn:hover { background: var(--secondary); }
+  .reset-btn { background: #888; }
+  .reset-btn:hover { background: #555; }
+
+  /* KOORDINATENSYSTEM */
+  #koord-canvas {
+    border: 2px solid #ccc; border-radius: 8px; cursor: crosshair;
+    display: block; margin: 0 auto;
+    max-width: 100%;
+  }
+  .koord-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.7rem; align-items: center; }
+  .koord-controls label { font-size: 0.85rem; font-weight: 600; }
+  .koord-controls input { width: 55px; border: 1.5px solid #ccc; border-radius: 6px; padding: 0.3rem 0.5rem; font-size: 0.9rem; }
+  .koord-controls select { border: 1.5px solid #ccc; border-radius: 6px; padding: 0.3rem; font-size: 0.85rem; }
+  #placed-points { font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem; min-height: 1.2rem; }
+
+  /* BLITZLESEN */
+  .blitz-container { text-align: center; }
+  .blitz-word {
+    font-size: 2.5rem; font-weight: 800; color: var(--primary);
+    min-height: 4rem; display: flex; align-items: center; justify-content: center;
+    background: var(--light); border-radius: 12px; padding: 1rem;
+    margin: 1rem 0; letter-spacing: 1px;
+  }
+  .blitz-btn {
+    background: var(--accent); color: white; border: none; border-radius: 10px;
+    padding: 0.7rem 1.5rem; font-size: 1rem; font-weight: 700; cursor: pointer;
+    transition: background 0.2s; margin: 0.3rem;
+  }
+  .blitz-btn:hover { background: #e08c50; }
+  .blitz-speed { display: flex; align-items: center; gap: 0.5rem; justify-content: center; margin-top: 0.5rem; font-size: 0.85rem; }
+  .blitz-speed input { width: 80px; }
+
+  /* VIERECKE SORTER */
+  .sort-container { display: flex; flex-wrap: wrap; gap: 0.7rem; margin: 0.8rem 0; }
+  .sort-item {
+    background: var(--light); border: 2px solid #ccc; border-radius: 8px;
+    padding: 0.5rem 1rem; cursor: grab; font-size: 0.9rem; font-weight: 600;
+    user-select: none;
+  }
+  .sort-item.dragging { opacity: 0.5; }
+  .sort-target {
+    background: #e8f5ee; border: 2px dashed var(--secondary);
+    border-radius: 8px; padding: 0.5rem; min-height: 80px;
+    margin-bottom: 0.5rem;
+  }
+  .sort-target-label { font-weight: 700; color: var(--primary); font-size: 0.85rem; margin-bottom: 0.3rem; }
+
+  /* SYMMETRIE CANVAS */
+  #sym-canvas { border: 2px solid #ccc; border-radius: 8px; display: block; margin: 0 auto; max-width: 100%; }
+
+  /* TABS WITHIN SECTION */
+  .sub-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .sub-tab-btn {
+    background: var(--light); border: none; border-radius: 20px;
+    padding: 0.4rem 1rem; cursor: pointer; font-size: 0.85rem;
+    font-weight: 600; color: var(--muted); transition: all 0.18s;
+  }
+  .sub-tab-btn.active { background: var(--primary); color: white; }
+
+  .sub-section { display: none; }
+  .sub-section.active { display: block; }
+
+  /* PROGRESS */
+  .progress-bar-wrap { background: #e0e0e0; border-radius: 20px; height: 8px; margin-top: 0.5rem; }
+  .progress-bar { background: linear-gradient(90deg, var(--secondary), var(--primary)); height: 8px; border-radius: 20px; transition: width 0.4s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    nav button { font-size: 0.78rem; padding: 0.6rem 0.7rem; }
+    .blitz-word { font-size: 1.8rem; }
+    .begriffe-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .highlight { background: #fff3cd; padding: 0.1rem 0.3rem; border-radius: 4px; font-weight: 600; }
+  .emoji-header { font-size: 1.3rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="icon">📐</div>
+  <div>
+    <h1>5.3 · Zeichnen und Konstruieren</h1>
+    <p>Klasse 5 · Mathematik · Interaktive Lernapp</p>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showSection('start')">🏠 Start</button>
+  <button onclick="showSection('begriffe')">📖 Begriffe</button>
+  <button onclick="showSection('blitzlesen')">⚡ Blitzlesen</button>
+  <button onclick="showSection('koordinaten')">📍 Koordinaten</button>
+  <button onclick="showSection('vierecke')">🔷 Vierecke</button>
+  <button onclick="showSection('symmetrie')">🪞 Symmetrie</button>
+  <button onclick="showSection('quiz')">❓ Quiz</button>
+  <button onclick="showSection('luecken')">✏️ Lückentext</button>
+</nav>
+
+<main>
+
+<!-- START -->
+<div class="section active" id="start">
+  <div class="card">
+    <h2>🎯 Was lernst du hier?</h2>
+    <p>In diesem Thema lernst du, geometrische Figuren zu <strong>beschreiben, zeichnen und konstruieren</strong>. Du brauchst dafür Lineal, Geodreieck – und manchmal einen Zirkel.</p>
+  </div>
+  <div class="begriffe-grid">
+    <div class="card" style="border-left-color:#4a9e6d; cursor:pointer;" onclick="showSection('begriffe')">
+      <h3>📖 Fachbegriffe</h3>
+      <p style="font-size:0.85rem;color:#666">Gerade, Strecke, Strahl, parallel, senkrecht …</p>
+    </div>
+    <div class="card" style="border-left-color:#f4a261; cursor:pointer;" onclick="showSection('blitzlesen')">
+      <h3>⚡ Blitzlesen</h3>
+      <p style="font-size:0.85rem;color:#666">Fachbegriffe schnell erkennen</p>
+    </div>
+    <div class="card" style="border-left-color:#2a9d8f; cursor:pointer;" onclick="showSection('koordinaten')">
+      <h3>📍 Koordinatensystem</h3>
+      <p style="font-size:0.85rem;color:#666">Punkte einzeichnen und ablesen</p>
+    </div>
+    <div class="card" style="border-left-color:#e63946; cursor:pointer;" onclick="showSection('vierecke')">
+      <h3>🔷 Vierecke sortieren</h3>
+      <p style="font-size:0.85rem;color:#666">Rechteck, Quadrat, Raute …</p>
+    </div>
+    <div class="card" style="border-left-color:#9c27b0; cursor:pointer;" onclick="showSection('symmetrie')">
+      <h3>🪞 Symmetrie</h3>
+      <p style="font-size:0.85rem;color:#666">Achsen finden und Figuren spiegeln</p>
+    </div>
+    <div class="card" style="border-left-color:#ff9800; cursor:pointer;" onclick="showSection('quiz')">
+      <h3>❓ Quiz</h3>
+      <p style="font-size:0.85rem;color:#666">Teste dein Wissen – 3 Niveaus</p>
+    </div>
+    <div class="card" style="border-left-color:#607d8b; cursor:pointer;" onclick="showSection('luecken')">
+      <h3>✏️ Lückentext</h3>
+      <p style="font-size:0.85rem;color:#666">Fachsprache üben</p>
+    </div>
+  </div>
+
+  <div class="card warning">
+    <h2>🛠 Werkzeug-Tipp</h2>
+    <ul>
+      <li><strong>Lineal</strong> → gerade Linien zeichnen, Längen messen</li>
+      <li><strong>Geodreieck</strong> → Winkel messen, senkrechte und parallele Linien zeichnen</li>
+      <li><strong>Zirkel</strong> → Kreise zeichnen, Abstände übertragen</li>
+    </ul>
+  </div>
+</div>
+
+<!-- BEGRIFFE -->
+<div class="section" id="begriffe">
+  <div class="card">
+    <h2>📖 Fachbegriffe – tippe auf eine Karte!</h2>
+    <p class="flip-hint">👆 Karte anklicken → Definition anzeigen</p>
+  </div>
+
+  <div class="sub-tabs">
+    <button class="sub-tab-btn active" onclick="showSubTab('begriffe','linien')">Linien</button>
+    <button class="sub-tab-btn" onclick="showSubTab('begriffe','lage')">Lagebeziehungen</button>
+    <button class="sub-tab-btn" onclick="showSubTab('begriffe','vierecke-def')">Vierecke</button>
+    <button class="sub-tab-btn" onclick="showSubTab('begriffe','dreiecke-def')">Dreiecke</button>
+  </div>
+
+  <div class="sub-section active" id="begriffe-linien">
+    <div class="begriffe-grid">
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Gerade</div>
+        <div class="def">Eine gerade Linie, die <strong>in beide Richtungen unendlich</strong> weitergeht. Sie hat keinen Anfangs- und Endpunkt.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Strecke</div>
+        <div class="def">Ein Teil einer Geraden mit <strong>zwei Endpunkten</strong>. Sie hat eine messbare Länge, z. B. AB = 5 cm.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Strahl</div>
+        <div class="def">Geht von einem <strong>Anfangspunkt</strong> aus und geht in <strong>eine Richtung unendlich</strong> weiter.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Abstand</div>
+        <div class="def">Der <strong>kürzeste Weg</strong> zwischen einem Punkt und einer Geraden. Immer <strong>senkrecht</strong> gemessen.</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem;">
+      <h3>Vergleich: Gerade – Strahl – Strecke</h3>
+      <div class="shape-demo">
+        <svg width="480" height="120" viewBox="0 0 480 120">
+          <!-- Gerade -->
+          <text x="10" y="22" font-size="13" fill="#2c6e49" font-weight="bold">Gerade</text>
+          <line x1="10" y1="40" x2="200" y2="40" stroke="#2c6e49" stroke-width="2.5"/>
+          <polygon points="200,36 215,40 200,44" fill="#2c6e49"/>
+          <polygon points="10,36 -5,40 10,44" fill="#2c6e49"/>
+          <!-- Strahl -->
+          <text x="240" y="22" font-size="13" fill="#f4a261" font-weight="bold">Strahl</text>
+          <circle cx="250" cy="40" r="4" fill="#f4a261"/>
+          <line x1="254" y1="40" x2="440" y2="40" stroke="#f4a261" stroke-width="2.5"/>
+          <polygon points="440,36 455,40 440,44" fill="#f4a261"/>
+          <!-- Strecke -->
+          <text x="10" y="90" font-size="13" fill="#2a9d8f" font-weight="bold">Strecke</text>
+          <line x1="40" y1="108" x2="200" y2="108" stroke="#2a9d8f" stroke-width="2.5"/>
+          <circle cx="40" cy="108" r="4" fill="#2a9d8f"/>
+          <circle cx="200" cy="108" r="4" fill="#2a9d8f"/>
+          <text x="30" y="122" font-size="11" fill="#2a9d8f">A</text>
+          <text x="195" y="122" font-size="11" fill="#2a9d8f">B</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="begriffe-lage">
+    <div class="begriffe-grid">
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">parallel (║)</div>
+        <div class="def">Zwei Geraden, die <strong>denselben Abstand</strong> voneinander haben und sich <strong>niemals schneiden</strong>.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">senkrecht (⊥)</div>
+        <div class="def">Zwei Geraden, die sich im <strong>rechten Winkel (90°)</strong> schneiden.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">rechter Winkel</div>
+        <div class="def">Ein Winkel von genau <strong>90°</strong>. Er wird mit einem kleinen Quadrat gekennzeichnet.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Abstand zweier Parallelen</div>
+        <div class="def">Der senkrechte Abstand zwischen zwei parallelen Geraden – er ist <strong>überall gleich groß</strong>.</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem;">
+      <div class="shape-demo">
+        <svg width="400" height="140" viewBox="0 0 400 140">
+          <!-- Parallel -->
+          <text x="10" y="18" font-size="12" fill="#2c6e49" font-weight="bold">parallel</text>
+          <line x1="10" y1="35" x2="180" y2="35" stroke="#2c6e49" stroke-width="2"/>
+          <line x1="10" y1="65" x2="180" y2="65" stroke="#2c6e49" stroke-width="2"/>
+          <text x="75" y="55" font-size="11" fill="#999">Abstand</text>
+          <line x1="90" y1="37" x2="90" y2="63" stroke="#999" stroke-width="1" stroke-dasharray="3"/>
+          <!-- Senkrecht -->
+          <text x="220" y="18" font-size="12" fill="#e63946" font-weight="bold">senkrecht</text>
+          <line x1="250" y1="20" x2="250" y2="120" stroke="#e63946" stroke-width="2"/>
+          <line x1="210" y1="70" x2="370" y2="70" stroke="#e63946" stroke-width="2"/>
+          <rect x="250" y="70" width="10" height="10" fill="none" stroke="#e63946" stroke-width="1.5"/>
+          <text x="256" y="95" font-size="11" fill="#999">90°</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="begriffe-vierecke-def">
+    <div class="begriffe-grid">
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Rechteck</div>
+        <div class="def">4 rechte Winkel, gegenüberliegende Seiten gleich lang und <strong>parallel</strong>.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Quadrat</div>
+        <div class="def">Wie ein Rechteck, aber <strong>alle 4 Seiten gleich lang</strong>. Ist ein besonderes Rechteck.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Raute</div>
+        <div class="def"><strong>Alle Seiten gleich lang</strong>, gegenüberliegende Seiten parallel. Winkel müssen nicht 90° sein.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Parallelogramm</div>
+        <div class="def">Gegenüberliegende Seiten <strong>parallel und gleich lang</strong>. Winkel müssen nicht 90° sein.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Trapez</div>
+        <div class="def">Genau <strong>ein Paar paralleler Seiten</strong>.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">Drachen</div>
+        <div class="def">Zwei Paare <strong>benachbarter Seiten gleich lang</strong>. Eine Diagonale ist Symmetrieachse.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="begriffe-dreiecke-def">
+    <div class="begriffe-grid">
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">gleichseitiges Dreieck</div>
+        <div class="def"><strong>Alle 3 Seiten</strong> gleich lang, alle Winkel = 60°.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">gleichschenkliges Dreieck</div>
+        <div class="def"><strong>2 Seiten</strong> gleich lang (Schenkel), 1 Basis. Die Basiswinkel sind gleich.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">rechtwinkliges Dreieck</div>
+        <div class="def">Hat einen <strong>rechten Winkel (90°)</strong>. Die längste Seite heißt Hypotenuse.</div>
+      </div>
+      <div class="begriff-card" onclick="this.classList.toggle('open')">
+        <div class="term">unregelmäßiges Dreieck</div>
+        <div class="def"><strong>Alle Seiten und Winkel</strong> verschieden.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BLITZLESEN -->
+<div class="section" id="blitzlesen">
+  <div class="card">
+    <h2>⚡ Blitzlesen – Fachbegriffe</h2>
+    <p>Begriffe erscheinen kurz – lies sie so schnell du kannst! Dann erkläre sie jemandem neben dir.</p>
+  </div>
+  <div class="card accent">
+    <div class="blitz-container">
+      <div class="blitz-word" id="blitz-display">Drücke START</div>
+      <button class="blitz-btn" onclick="startBlitz()" id="blitz-start-btn">▶ START</button>
+      <button class="blitz-btn" onclick="stopBlitz()" id="blitz-stop-btn" style="background:#888;display:none">■ STOP</button>
+      <div class="blitz-speed">
+        <label>Anzeigezeit:</label>
+        <input type="range" min="500" max="3000" value="1500" id="blitz-speed" step="100" oninput="updateSpeedLabel()">
+        <span id="blitz-speed-label">1.5 s</span>
+      </div>
+      <p id="blitz-count" style="margin-top:0.5rem;font-size:0.82rem;color:#888"></p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Alle Begriffe auf einen Blick</h3>
+    <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem">Tippe auf ein Wort für die Erklärung:</p>
+    <div id="all-begriffe-list" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+  </div>
+</div>
+
+<!-- KOORDINATEN -->
+<div class="section" id="koordinaten">
+  <div class="card">
+    <h2>📍 Koordinatensystem</h2>
+    <p>Punkte werden als <span class="highlight">P(x | y)</span> geschrieben. Der erste Wert ist der <strong>x-Wert</strong> (waagerecht), der zweite der <strong>y-Wert</strong> (senkrecht).</p>
+  </div>
+
+  <div class="sub-tabs">
+    <button class="sub-tab-btn active" onclick="showSubTab('koordinaten','erklaerung')">Erklärung</button>
+    <button class="sub-tab-btn" onclick="showSubTab('koordinaten','zeichnen')">Punkte einzeichnen</button>
+    <button class="sub-tab-btn" onclick="showSubTab('koordinaten','ablesen')">Koordinaten ablesen</button>
+  </div>
+
+  <div class="sub-section active" id="koordinaten-erklaerung">
+    <div class="card">
+      <h3>So funktioniert das Koordinatensystem</h3>
+      <ul>
+        <li>Die <strong>waagerechte Achse</strong> heißt <strong>x-Achse</strong>.</li>
+        <li>Die <strong>senkrechte Achse</strong> heißt <strong>y-Achse</strong>.</li>
+        <li>Der <strong>Ursprung O(0|0)</strong> ist der Schnittpunkt beider Achsen.</li>
+        <li>Ein Punkt <span class="highlight">A(3|5)</span> liegt: 3 Einheiten nach rechts, 5 Einheiten nach oben.</li>
+      </ul>
+      <div class="shape-demo" style="margin-top:0.8rem;">
+        <svg width="260" height="260" viewBox="-20 -20 260 260">
+          <!-- Gitter -->
+          <defs><pattern id="grid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M 22 0 L 0 0 0 22" fill="none" stroke="#e0e0e0" stroke-width="0.7"/></pattern></defs>
+          <rect x="0" y="0" width="220" height="220" fill="url(#grid)"/>
+          <!-- Achsen -->
+          <line x1="0" y1="220" x2="230" y2="220" stroke="#333" stroke-width="2"/>
+          <line x1="0" y1="220" x2="0" y2="-10" stroke="#333" stroke-width="2"/>
+          <polygon points="230,216 240,220 230,224" fill="#333"/>
+          <polygon points="-4,-10 0,-20 4,-10" fill="#333"/>
+          <text x="238" y="224" font-size="12" fill="#333">x</text>
+          <text x="4" y="-12" font-size="12" fill="#333">y</text>
+          <!-- Beschriftungen -->
+          <text x="22" y="235" font-size="10" fill="#666">1</text>
+          <text x="44" y="235" font-size="10" fill="#666">2</text>
+          <text x="66" y="235" font-size="10" fill="#666">3</text>
+          <text x="88" y="235" font-size="10" fill="#666">4</text>
+          <text x="110" y="235" font-size="10" fill="#666">5</text>
+          <text x="-15" y="200" font-size="10" fill="#666">1</text>
+          <text x="-15" y="178" font-size="10" fill="#666">2</text>
+          <text x="-15" y="156" font-size="10" fill="#666">3</text>
+          <text x="-15" y="134" font-size="10" fill="#666">4</text>
+          <text x="-15" y="112" font-size="10" fill="#666">5</text>
+          <!-- Beispiel-Punkte -->
+          <circle cx="66" cy="110" r="5" fill="#e63946"/>
+          <text x="70" y="105" font-size="12" fill="#e63946" font-weight="bold">A(3|5)</text>
+          <line x1="0" y1="110" x2="66" y2="110" stroke="#e63946" stroke-width="1" stroke-dasharray="4"/>
+          <line x1="66" y1="220" x2="66" y2="110" stroke="#e63946" stroke-width="1" stroke-dasharray="4"/>
+          <circle cx="110" cy="176" r="5" fill="#2a9d8f"/>
+          <text x="114" y="171" font-size="12" fill="#2a9d8f" font-weight="bold">B(5|2)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="koordinaten-zeichnen">
+    <div class="card">
+      <h3>Zeichne Punkte ins Koordinatensystem</h3>
+      <p style="font-size:0.85rem;color:#666;margin-bottom:0.8rem">Gib Koordinaten ein und klicke „Punkt setzen" – oder klicke direkt ins Gitter!</p>
+      <canvas id="koord-canvas" width="320" height="320"></canvas>
+      <div class="koord-controls">
+        <label>Name:</label>
+        <input type="text" id="point-name" value="A" maxlength="2" style="width:40px">
+        <label>x:</label>
+        <input type="number" id="point-x" value="3" min="0" max="10">
+        <label>y:</label>
+        <input type="number" id="point-y" value="4" min="0" max="10">
+        <button class="check-btn" style="margin:0" onclick="addPoint()">Punkt setzen</button>
+        <button class="reset-btn" style="margin:0" onclick="clearPoints()">Leeren</button>
+      </div>
+      <div id="placed-points"></div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="koordinaten-ablesen">
+    <div class="card">
+      <h3>Koordinaten ablesen – Quiz</h3>
+      <p style="font-size:0.85rem;color:#666;margin-bottom:0.8rem">Welche Koordinaten hat der markierte Punkt?</p>
+      <canvas id="ablese-canvas" width="300" height="300"></canvas>
+      <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+        <strong id="ablese-point-name" style="color:var(--error)">?</strong>
+        <span>(</span>
+        <input type="number" id="ablese-x" style="width:55px;padding:0.3rem;border:1.5px solid #ccc;border-radius:6px;font-size:0.95rem" placeholder="x">
+        <span>|</span>
+        <input type="number" id="ablese-y" style="width:55px;padding:0.3rem;border:1.5px solid #ccc;border-radius:6px;font-size:0.95rem" placeholder="y">
+        <span>)</span>
+        <button class="check-btn" style="margin:0" onclick="checkAblesen()">Prüfen</button>
+        <button class="reset-btn" style="margin:0" onclick="newAblesePoint()">Neuer Punkt</button>
+      </div>
+      <div id="ablese-feedback" class="feedback" style="margin-top:0.5rem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- VIERECKE -->
+<div class="section" id="vierecke">
+  <div class="card">
+    <h2>🔷 Vierecke erkennen und klassifizieren</h2>
+  </div>
+
+  <div class="sub-tabs">
+    <button class="sub-tab-btn active" onclick="showSubTab('vierecke','uebersicht')">Übersicht</button>
+    <button class="sub-tab-btn" onclick="showSubTab('vierecke','quiz-vierecke')">Erkennungsquiz</button>
+  </div>
+
+  <div class="sub-section active" id="vierecke-uebersicht">
+    <div class="card">
+      <h3>Vierecke im Überblick</h3>
+      <div style="overflow-x:auto;">
+        <svg width="580" height="340" viewBox="0 0 580 340" style="min-width:500px;">
+          <!-- Rechteck -->
+          <rect x="20" y="40" width="90" height="60" fill="#e8f5ee" stroke="#2c6e49" stroke-width="2"/>
+          <rect x="20" y="40" width="8" height="8" fill="none" stroke="#2c6e49" stroke-width="1.5"/>
+          <text x="65" y="120" font-size="12" text-anchor="middle" fill="#2c6e49" font-weight="bold">Rechteck</text>
+
+          <!-- Quadrat -->
+          <rect x="145" y="40" width="70" height="70" fill="#e8f5ee" stroke="#4a9e6d" stroke-width="2"/>
+          <rect x="145" y="40" width="8" height="8" fill="none" stroke="#4a9e6d" stroke-width="1.5"/>
+          <text x="180" y="125" font-size="12" text-anchor="middle" fill="#4a9e6d" font-weight="bold">Quadrat</text>
+
+          <!-- Raute -->
+          <polygon points="295,40 340,70 295,100 250,70" fill="#fff3cd" stroke="#f4a261" stroke-width="2"/>
+          <text x="295" y="120" font-size="12" text-anchor="middle" fill="#e09050" font-weight="bold">Raute</text>
+
+          <!-- Parallelogramm -->
+          <polygon points="370,100 460,100 450,40 360,40" fill="#fde8e8" stroke="#e63946" stroke-width="2"/>
+          <text x="410" y="120" font-size="12" text-anchor="middle" fill="#e63946" font-weight="bold">Parallelogramm</text>
+
+          <!-- Trapez -->
+          <polygon points="30,200 140,200 120,160 60,160" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+          <text x="85" y="225" font-size="12" text-anchor="middle" fill="#1976d2" font-weight="bold">Trapez</text>
+
+          <!-- Drachen -->
+          <polygon points="210,150 260,190 210,240 160,190" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+          <text x="210" y="260" font-size="12" text-anchor="middle" fill="#9c27b0" font-weight="bold">Drachen</text>
+
+          <!-- Legende -->
+          <text x="320" y="175" font-size="11" fill="#555">Alle Seiten gleich: Raute, Quadrat</text>
+          <text x="320" y="192" font-size="11" fill="#555">Alle Winkel 90°: Rechteck, Quadrat</text>
+          <text x="320" y="209" font-size="11" fill="#555">Gegenübers. Seiten ║: Parallelogramm, Rechteck, Raute, Quadrat</text>
+          <text x="320" y="226" font-size="11" fill="#555">Genau 1 Paar ║: Trapez</text>
+          <text x="320" y="243" font-size="11" fill="#555">Benachb. Seiten paarw. gleich: Drachen</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card warning">
+      <h3>🧠 Merkhilfe: Ober- und Unterbegriffe</h3>
+      <p>Das <strong>Quadrat</strong> ist ein besonderes <strong>Rechteck</strong> (alle 4 Winkel 90° + alle Seiten gleich).<br>
+      Die <strong>Raute</strong> ist ein besonderes <strong>Parallelogramm</strong> (alle Seiten gleich).<br>
+      Das <strong>Rechteck</strong> ist ein besonderes <strong>Parallelogramm</strong> (alle Winkel 90°).</p>
+    </div>
+  </div>
+
+  <div class="sub-section" id="vierecke-quiz-vierecke">
+    <div id="vierecke-quiz-container"></div>
+  </div>
+</div>
+
+<!-- SYMMETRIE -->
+<div class="section" id="symmetrie">
+  <div class="card">
+    <h2>🪞 Achsensymmetrie</h2>
+    <p>Eine Figur ist <strong>achsensymmetrisch</strong>, wenn sie durch eine Spiegelung an einer Achse auf sich selbst abgebildet wird.</p>
+  </div>
+
+  <div class="sub-tabs">
+    <button class="sub-tab-btn active" onclick="showSubTab('symmetrie','erklaerung2')">Erklärung</button>
+    <button class="sub-tab-btn" onclick="showSubTab('symmetrie','sym-quiz')">Quiz</button>
+  </div>
+
+  <div class="sub-section active" id="symmetrie-erklaerung2">
+    <div class="card">
+      <h3>Symmetrieachsen verschiedener Figuren</h3>
+      <div class="shape-demo">
+        <svg width="500" height="160" viewBox="0 0 500 160">
+          <!-- Rechteck: 2 Achsen -->
+          <rect x="20" y="40" width="100" height="70" fill="#e8f5ee" stroke="#2c6e49" stroke-width="2"/>
+          <line x1="70" y1="25" x2="70" y2="125" stroke="#e63946" stroke-width="1.5" stroke-dasharray="5"/>
+          <line x1="5" y1="75" x2="135" y2="75" stroke="#e63946" stroke-width="1.5" stroke-dasharray="5"/>
+          <text x="70" y="150" font-size="11" text-anchor="middle" fill="#2c6e49">Rechteck: 2 Achsen</text>
+
+          <!-- Quadrat: 4 Achsen -->
+          <rect x="165" y="40" width="80" height="80" fill="#e8f5ee" stroke="#4a9e6d" stroke-width="2"/>
+          <line x1="205" y1="20" x2="205" y2="135" stroke="#e63946" stroke-width="1.5" stroke-dasharray="5"/>
+          <line x1="145" y1="80" x2="265" y2="80" stroke="#e63946" stroke-width="1.5" stroke-dasharray="5"/>
+          <line x1="165" y1="40" x2="245" y2="120" stroke="#9c27b0" stroke-width="1.5" stroke-dasharray="5"/>
+          <line x1="245" y1="40" x2="165" y2="120" stroke="#9c27b0" stroke-width="1.5" stroke-dasharray="5"/>
+          <text x="205" y="150" font-size="11" text-anchor="middle" fill="#4a9e6d">Quadrat: 4 Achsen</text>
+
+          <!-- Gleichseitiges Dreieck: 3 Achsen -->
+          <polygon points="355,35 315,115 395,115" fill="#fff3cd" stroke="#f4a261" stroke-width="2"/>
+          <line x1="355" y1="20" x2="355" y2="130" stroke="#e63946" stroke-width="1.5" stroke-dasharray="5"/>
+          <text x="355" y="150" font-size="11" text-anchor="middle" fill="#e09050">Gleichseitiges Δ: 3 Achsen</text>
+
+          <!-- Raute: 2 Achsen -->
+          <polygon points="460,35 490,75 460,115 430,75" fill="#fde8e8" stroke="#e63946" stroke-width="2"/>
+          <line x1="460" y1="20" x2="460" y2="130" stroke="#e63946" stroke-width="1.5" stroke-dasharray="5"/>
+          <line x1="415" y1="75" x2="505" y2="75" stroke="#1976d2" stroke-width="1.5" stroke-dasharray="5"/>
+          <text x="460" y="150" font-size="11" text-anchor="middle" fill="#e63946">Raute: 2 Achsen</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card accent">
+      <h3>💡 Spiegeln im Koordinatensystem</h3>
+      <p>Beim Spiegeln an der <strong>y-Achse</strong> wird der x-Wert negiert: A(3|2) → A'(−3|2).<br>
+      Beim Spiegeln an der <strong>x-Achse</strong> wird der y-Wert negiert: A(3|2) → A'(3|−2).</p>
+    </div>
+  </div>
+
+  <div class="sub-section" id="symmetrie-sym-quiz">
+    <div id="sym-quiz-container"></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="card">
+    <h2>❓ Wissensquiz</h2>
+    <p>Wähle dein Niveau:</p>
+    <div class="sub-tabs" style="margin-top:0.8rem;">
+      <button class="sub-tab-btn active" onclick="loadQuiz(1);showSubTab('quiz','q1')">⭐ Niveau 1 – Grundlagen</button>
+      <button class="sub-tab-btn" onclick="loadQuiz(2);showSubTab('quiz','q2')">⭐⭐ Niveau 2 – Sicher</button>
+      <button class="sub-tab-btn" onclick="loadQuiz(3);showSubTab('quiz','q3')">⭐⭐⭐ Niveau 3 – Profi</button>
+    </div>
+  </div>
+  <div class="sub-section active" id="quiz-q1"><div class="quiz-container" id="quiz-q1-container"></div></div>
+  <div class="sub-section" id="quiz-q2"><div class="quiz-container" id="quiz-q2-container"></div></div>
+  <div class="sub-section" id="quiz-q3"><div class="quiz-container" id="quiz-q3-container"></div></div>
+</div>
+
+<!-- LÜCKENTEXT -->
+<div class="section" id="luecken">
+  <div class="card">
+    <h2>✏️ Lückentext – Fachsprache üben</h2>
+    <p>Fülle die Lücken mit den richtigen Fachbegriffen aus.</p>
+  </div>
+
+  <div class="sub-tabs">
+    <button class="sub-tab-btn active" onclick="showSubTab('luecken','l1')">Linien</button>
+    <button class="sub-tab-btn" onclick="showSubTab('luecken','l2')">Lagebeziehungen</button>
+    <button class="sub-tab-btn" onclick="showSubTab('luecken','l3')">Koordinaten</button>
+    <button class="sub-tab-btn" onclick="showSubTab('luecken','l4')">Vierecke</button>
+  </div>
+
+  <div class="sub-section active" id="luecken-l1">
+    <div class="card">
+      <div class="lueckentext" id="luecke-1">
+        Eine <input type="text" class="luecke" data-answer="Gerade" placeholder="?"> geht in beide Richtungen unendlich weiter.
+        Eine <input type="text" class="luecke" data-answer="Strecke" placeholder="?"> hat zwei Endpunkte und eine messbare <input type="text" class="luecke" data-answer="Länge" placeholder="?">. 
+        Ein <input type="text" class="luecke" data-answer="Strahl" placeholder="?"> beginnt bei einem Punkt und geht in eine Richtung unendlich weiter.
+      </div>
+      <button class="check-btn" onclick="checkLuecke('luecke-1')">Überprüfen</button>
+      <button class="reset-btn" onclick="resetLuecke('luecke-1')">Zurücksetzen</button>
+      <div class="feedback" id="fb-luecke-1"></div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="luecken-l2">
+    <div class="card">
+      <div class="lueckentext" id="luecke-2">
+        Zwei Geraden, die sich niemals schneiden, heißen <input type="text" class="luecke" data-answer="parallel" placeholder="?">. 
+        Zwei Geraden, die sich in einem rechten Winkel schneiden, heißen <input type="text" class="luecke" data-answer="senkrecht" placeholder="?">. 
+        Der kürzeste Abstand von einem Punkt zu einer Geraden wird immer <input type="text" class="luecke" data-answer="senkrecht" placeholder="?"> gemessen.
+        Parallele Geraden haben überall den <input type="text" class="luecke" data-answer="gleichen" placeholder="?"> Abstand.
+      </div>
+      <button class="check-btn" onclick="checkLuecke('luecke-2')">Überprüfen</button>
+      <button class="reset-btn" onclick="resetLuecke('luecke-2')">Zurücksetzen</button>
+      <div class="feedback" id="fb-luecke-2"></div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="luecken-l3">
+    <div class="card">
+      <div class="lueckentext" id="luecke-3">
+        Im Koordinatensystem heißt die waagerechte Achse <input type="text" class="luecke" data-answer="x-Achse" placeholder="?"> und die senkrechte Achse <input type="text" class="luecke" data-answer="y-Achse" placeholder="?">. 
+        Der Schnittpunkt der Achsen heißt <input type="text" class="luecke" data-answer="Ursprung" placeholder="?">. 
+        Einen Punkt A(4|3) findet man, indem man 4 Einheiten nach <input type="text" class="luecke" data-answer="rechts" placeholder="?"> und 3 Einheiten nach <input type="text" class="luecke" data-answer="oben" placeholder="?"> geht.
+      </div>
+      <button class="check-btn" onclick="checkLuecke('luecke-3')">Überprüfen</button>
+      <button class="reset-btn" onclick="resetLuecke('luecke-3')">Zurücksetzen</button>
+      <div class="feedback" id="fb-luecke-3"></div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="luecken-l4">
+    <div class="card">
+      <div class="lueckentext" id="luecke-4">
+        Ein Rechteck hat 4 <input type="text" class="luecke" data-answer="rechte" placeholder="?"> Winkel. 
+        Ein Quadrat ist ein besonderes Rechteck, bei dem alle 4 Seiten <input type="text" class="luecke" data-answer="gleich lang" placeholder="?"> sind. 
+        Bei einer Raute sind alle Seiten <input type="text" class="luecke" data-answer="gleich lang" placeholder="?">. 
+        Ein Trapez hat genau <input type="text" class="luecke" data-answer="ein" placeholder="?"> Paar paralleler Seiten. 
+        Eine Figur ist achsensymmetrisch, wenn man sie an einer Achse <input type="text" class="luecke" data-answer="spiegeln" placeholder="?"> kann.
+      </div>
+      <button class="check-btn" onclick="checkLuecke('luecke-4')">Überprüfen</button>
+      <button class="reset-btn" onclick="resetLuecke('luecke-4')">Zurücksetzen</button>
+      <div class="feedback" id="fb-luecke-4"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ========== NAVIGATION ==========
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['start','begriffe','blitzlesen','koordinaten','vierecke','symmetrie','quiz','luecken'].indexOf(id);
+  if (idx >= 0) document.querySelectorAll('nav button')[idx].classList.add('active');
+  // Init canvases when shown
+  if (id === 'koordinaten') { setTimeout(() => { initKoordCanvas(); initAbleseCanvas(); }, 50); }
+  if (id === 'quiz') { setTimeout(() => loadQuiz(1), 50); }
+  if (id === 'vierecke') { setTimeout(initVierQuiz, 50); }
+  if (id === 'symmetrie') { setTimeout(initSymQuiz, 50); }
+}
+
+function showSubTab(section, tab) {
+  const sectionEl = document.getElementById(section);
+  sectionEl.querySelectorAll('.sub-section').forEach(s => s.classList.remove('active'));
+  sectionEl.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  const target = document.getElementById(section + '-' + tab);
+  if (target) target.classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'zeichnen') initKoordCanvas();
+  if (tab === 'ablesen') initAbleseCanvas();
+}
+
+// ========== BLITZLESEN ==========
+const blitzWords = [
+  'Gerade','Strecke','Strahl','parallel','senkrecht','Abstand',
+  'Rechteck','Quadrat','Raute','Trapez','Drachen','Parallelogramm',
+  'Koordinatensystem','x-Achse','y-Achse','Ursprung',
+  'Symmetrieachse','achsensymmetrisch','Spiegeln',
+  'gleichseitig','gleichschenklig','rechtwinklig',
+  'Geodreieck','Lineal','Zirkel'
+];
+
+const blitzDefs = {
+  'Gerade':'Linie ohne Anfang und Ende',
+  'Strecke':'Teil einer Geraden mit 2 Endpunkten',
+  'Strahl':'Beginnt bei einem Punkt, geht unendlich weiter',
+  'parallel':'Gleicher Abstand, schneiden sich nicht',
+  'senkrecht':'Schneiden sich im 90°-Winkel',
+  'Abstand':'Kürzester Weg – senkrecht gemessen',
+  'Rechteck':'4 rechte Winkel, gegenübers. Seiten gleich',
+  'Quadrat':'Rechteck mit allen Seiten gleich lang',
+  'Raute':'Alle Seiten gleich, Winkel ≠ 90°',
+  'Trapez':'Genau ein Paar paralleler Seiten',
+  'Drachen':'2 Paare benachbarter Seiten gleich lang',
+  'Parallelogramm':'Gegenübers. Seiten parallel und gleich',
+  'Koordinatensystem':'Achsenkreuz mit x- und y-Achse',
+  'x-Achse':'Waagerechte Achse',
+  'y-Achse':'Senkrechte Achse',
+  'Ursprung':'Schnittpunkt der Achsen O(0|0)',
+  'Symmetrieachse':'Spiegelachse einer Figur',
+  'achsensymmetrisch':'Figur deckt sich nach Spiegelung',
+  'Spiegeln':'Abbildung an einer Achse',
+  'gleichseitig':'Alle Seiten gleich lang',
+  'gleichschenklig':'2 Seiten gleich lang',
+  'rechtwinklig':'Hat einen 90°-Winkel',
+  'Geodreieck':'Zeichenwerkzeug für Winkel und Parallelen',
+  'Lineal':'Werkzeug zum geraden Zeichnen und Messen',
+  'Zirkel':'Werkzeug für Kreise und Abstände'
+};
+
+let blitzInterval = null;
+let blitzIdx = 0;
+let blitzShuffled = [...blitzWords];
+
+function shuffle(arr) { for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+
+function updateSpeedLabel() {
+  const v = document.getElementById('blitz-speed').value;
+  document.getElementById('blitz-speed-label').textContent = (v/1000).toFixed(1) + ' s';
+}
+
+function startBlitz() {
+  blitzShuffled = shuffle([...blitzWords]);
+  blitzIdx = 0;
+  document.getElementById('blitz-start-btn').style.display = 'none';
+  document.getElementById('blitz-stop-btn').style.display = 'inline-block';
+  showBlitzWord();
+  const speed = parseInt(document.getElementById('blitz-speed').value);
+  blitzInterval = setInterval(() => {
+    blitzIdx++;
+    if (blitzIdx >= blitzShuffled.length) { stopBlitz(); return; }
+    showBlitzWord();
+  }, speed);
+}
+
+function showBlitzWord() {
+  document.getElementById('blitz-display').textContent = blitzShuffled[blitzIdx];
+  document.getElementById('blitz-count').textContent = `${blitzIdx+1} / ${blitzShuffled.length}`;
+}
+
+function stopBlitz() {
+  clearInterval(blitzInterval);
+  blitzInterval = null;
+  document.getElementById('blitz-start-btn').style.display = 'inline-block';
+  document.getElementById('blitz-stop-btn').style.display = 'none';
+  document.getElementById('blitz-display').textContent = 'Fertig! ✓';
+  document.getElementById('blitz-count').textContent = '';
+}
+
+// Build all begriffe list
+window.addEventListener('DOMContentLoaded', () => {
+  const list = document.getElementById('all-begriffe-list');
+  blitzWords.forEach(w => {
+    const span = document.createElement('span');
+    span.style.cssText = 'background:var(--light);border:1.5px solid #ccc;border-radius:6px;padding:0.3rem 0.7rem;cursor:pointer;font-size:0.85rem;font-weight:600;position:relative;';
+    span.textContent = w;
+    span.title = blitzDefs[w] || '';
+    span.onclick = () => { alert(w + ':\n' + (blitzDefs[w] || '')); };
+    list.appendChild(span);
+  });
+  loadQuiz(1);
+});
+
+// ========== KOORDINATENSYSTEM ZEICHNEN ==========
+let points = [];
+function initKoordCanvas() {
+  const c = document.getElementById('koord-canvas');
+  if (!c) return;
+  drawKoord(c, points);
+  c.onclick = (e) => {
+    const rect = c.getBoundingClientRect();
+    const scaleX = c.width / rect.width;
+    const scaleY = c.height / rect.height;
+    const px = (e.clientX - rect.left) * scaleX;
+    const py = (e.clientY - rect.top) * scaleY;
+    const cell = 28;
+    const ox = 30, oy = c.height - 30;
+    const gx = Math.round((px - ox) / cell);
+    const gy = Math.round((oy - py) / cell);
+    if (gx >= 0 && gx <= 10 && gy >= 0 && gy <= 10) {
+      const name = String.fromCharCode(65 + points.length % 26);
+      document.getElementById('point-name').value = name;
+      document.getElementById('point-x').value = gx;
+      document.getElementById('point-y').value = gy;
+      addPoint();
+    }
+  };
+}
+
+function drawKoord(c, pts) {
+  const ctx = c.getContext('2d');
+  const cell = 28, ox = 30, oy = c.height - 30;
+  ctx.clearRect(0, 0, c.width, c.height);
+  // Grid
+  ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 0.7;
+  for (let i = 0; i <= 10; i++) {
+    ctx.beginPath(); ctx.moveTo(ox + i*cell, 10); ctx.lineTo(ox + i*cell, oy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox, oy - i*cell); ctx.lineTo(ox + 10*cell, oy - i*cell); ctx.stroke();
+  }
+  // Axes
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + 10*cell + 15, oy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox, 10); ctx.stroke();
+  // Labels
+  ctx.fillStyle = '#555'; ctx.font = '11px Arial';
+  for (let i = 1; i <= 10; i++) {
+    ctx.fillText(i, ox + i*cell - 3, oy + 14);
+    ctx.fillText(i, ox - 16, oy - i*cell + 4);
+  }
+  ctx.fillText('x', ox + 10*cell + 18, oy + 4);
+  ctx.fillText('y', ox - 8, 14);
+  ctx.fillText('0', ox - 14, oy + 14);
+  // Points
+  pts.forEach(p => {
+    const cx = ox + p.x * cell, cy = oy - p.y * cell;
+    ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI*2);
+    ctx.fillStyle = '#e63946'; ctx.fill();
+    ctx.fillStyle = '#111'; ctx.font = 'bold 12px Arial';
+    ctx.fillText(`${p.name}(${p.x}|${p.y})`, cx + 7, cy - 5);
+  });
+}
+
+function addPoint() {
+  const name = document.getElementById('point-name').value || 'P';
+  const x = parseInt(document.getElementById('point-x').value);
+  const y = parseInt(document.getElementById('point-y').value);
+  if (isNaN(x) || isNaN(y) || x < 0 || x > 10 || y < 0 || y > 10) { alert('Koordinaten müssen zwischen 0 und 10 liegen!'); return; }
+  points.push({ name, x, y });
+  const c = document.getElementById('koord-canvas');
+  drawKoord(c, points);
+  document.getElementById('placed-points').textContent = 'Punkte: ' + points.map(p => `${p.name}(${p.x}|${p.y})`).join(', ');
+  // next letter
+  const last = name.charCodeAt(0);
+  document.getElementById('point-name').value = String.fromCharCode(((last - 65 + 1) % 26) + 65);
+}
+
+function clearPoints() {
+  points = [];
+  const c = document.getElementById('koord-canvas');
+  drawKoord(c, []);
+  document.getElementById('placed-points').textContent = '';
+}
+
+// ========== KOORDINATEN ABLESEN ==========
+let ablesePoint = null;
+function initAbleseCanvas() {
+  const c = document.getElementById('ablese-canvas');
+  if (!c) return;
+  newAblesePoint();
+}
+function newAblesePoint() {
+  const x = Math.floor(Math.random() * 9) + 1;
+  const y = Math.floor(Math.random() * 9) + 1;
+  const name = ['A','B','C','D','E','F','G','H'][Math.floor(Math.random()*8)];
+  ablesePoint = {x, y, name};
+  const c = document.getElementById('ablese-canvas');
+  if (!c) return;
+  drawKoord(c, [ablesePoint]);
+  document.getElementById('ablese-point-name').textContent = name;
+  document.getElementById('ablese-x').value = '';
+  document.getElementById('ablese-y').value = '';
+  document.getElementById('ablese-feedback').textContent = '';
+  document.getElementById('ablese-feedback').className = 'feedback';
+}
+function checkAblesen() {
+  const x = parseInt(document.getElementById('ablese-x').value);
+  const y = parseInt(document.getElementById('ablese-y').value);
+  const fb = document.getElementById('ablese-feedback');
+  if (x === ablesePoint.x && y === ablesePoint.y) {
+    fb.textContent = '✅ Richtig! Super!';
+    fb.className = 'feedback ok';
+    setTimeout(newAblesePoint, 1500);
+  } else {
+    fb.textContent = `❌ Nicht ganz. Der Punkt liegt bei (${ablesePoint.x}|${ablesePoint.y}).`;
+    fb.className = 'feedback err';
+  }
+}
+
+// ========== QUIZ ==========
+const quizData = {
+  1: [
+    { q: 'Was ist eine Strecke?', opts: ['Eine Linie mit zwei Endpunkten', 'Eine Linie ohne Ende', 'Ein Halbkreis', 'Ein Winkel'], a: 0 },
+    { q: 'Wie heißt eine Linie, die in beide Richtungen unendlich geht?', opts: ['Strahl', 'Strecke', 'Gerade', 'Achse'], a: 2 },
+    { q: 'Wo liegt der Punkt A(3|0)?', opts: ['3 hoch, 0 rechts', '3 rechts auf der x-Achse', 'Im Ursprung', '0 rechts, 3 hoch'], a: 1 },
+    { q: 'Welche Figur hat 4 rechte Winkel und alle Seiten gleich lang?', opts: ['Raute', 'Trapez', 'Rechteck', 'Quadrat'], a: 3 },
+    { q: 'Was bedeutet das Symbol ║?', opts: ['senkrecht', 'parallel', 'gleich groß', 'rechter Winkel'], a: 1 },
+    { q: 'Was ist eine Symmetrieachse?', opts: ['Eine Diagonale', 'Eine Spiegelachse', 'Eine Parallele', 'Eine Gerade im Koordinatensystem'], a: 1 },
+  ],
+  2: [
+    { q: 'Warum ist ein Quadrat auch ein Rechteck?', opts: ['Weil es 4 gleiche Seiten hat', 'Weil es 4 rechte Winkel und gleiche Seiten hat', 'Weil es keine Symmetrieachsen hat', 'Weil es ein Parallelogramm ist'], a: 1 },
+    { q: 'Ein Trapez hat...', opts: ['2 Paar parallele Seiten', '4 rechte Winkel', 'genau 1 Paar parallele Seiten', 'alle Seiten gleich lang'], a: 2 },
+    { q: 'Wie misst man den Abstand eines Punktes von einer Geraden?', opts: ['Diagonal', 'Senkrecht', 'Parallel', 'Mit dem Zirkel'], a: 1 },
+    { q: 'Welcher Punkt liegt auf der y-Achse?', opts: ['A(3|2)', 'B(0|5)', 'C(4|0)', 'D(2|2)'], a: 1 },
+    { q: 'Ein Parallelogramm hat…', opts: ['4 rechte Winkel', 'alle Seiten gleich lang', 'gegenübs. Seiten parallel und gleich lang', 'keine Symmetrieachse immer'], a: 2 },
+    { q: 'Wie viele Symmetrieachsen hat ein gleichseitiges Dreieck?', opts: ['1', '2', '3', '0'], a: 2 },
+  ],
+  3: [
+    { q: 'Welche Aussage über Raute und Quadrat ist FALSCH?', opts: ['Beide haben alle Seiten gleich lang', 'Beide sind Parallelogramme', 'Beide haben 4 rechte Winkel', 'Beide haben 2 Symmetrieachsen'], a: 2 },
+    { q: 'Ein Punkt P liegt bei (5|3). Wo liegt der gespiegelte Punkt P\' an der y-Achse?', opts: ['(-5|3)', '(5|-3)', '(-5|-3)', '(3|5)'], a: 0 },
+    { q: 'Was ist KEIN Viereck?', opts: ['Parallelogramm', 'Drachen', 'Trapez', 'gleichseitiges Dreieck'], a: 3 },
+    { q: 'Wie viele Symmetrieachsen hat ein Rechteck (das kein Quadrat ist)?', opts: ['4', '0', '2', '1'], a: 2 },
+    { q: 'Welche Figur hat IMMER 2 Symmetrieachsen?', opts: ['Drachen', 'Trapez', 'Raute', 'Parallelogramm'], a: 2 },
+    { q: 'Wenn zwei Geraden senkrecht zueinander sind, wie groß ist ihr Schnittwinkel?', opts: ['45°', '90°', '180°', '60°'], a: 1 },
+  ]
+};
+
+let quizScores = {1:{correct:0,total:0}, 2:{correct:0,total:0}, 3:{correct:0,total:0}};
+
+function loadQuiz(level) {
+  const container = document.getElementById(`quiz-q${level}-container`);
+  if (!container || container.children.length > 0) return;
+  const qs = quizData[level];
+  quizScores[level] = {correct:0, total:qs.length};
+  let html = `<div style="margin-bottom:10px;"><div class="progress-bar-wrap"><div class="progress-bar" id="pb-${level}" style="width:0%"></div></div></div>`;
+  qs.forEach((q, qi) => {
+    html += `<div class="question-block">
+      <div class="question-text">${qi+1}. ${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,oi) => `<button class="option-btn" onclick="answerQuiz(${level},${qi},${oi},${q.a})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="qf-${level}-${qi}"></div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function answerQuiz(level, qi, chosen, correct) {
+  const container = document.getElementById(`quiz-q${level}-container`);
+  const block = container.querySelectorAll('.question-block')[qi];
+  const btns = block.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[correct].classList.add('correct');
+  const fb = document.getElementById(`qf-${level}-${qi}`);
+  if (chosen === correct) {
+    btns[chosen].classList.add('correct');
+    fb.textContent = '✅ Richtig!';
+    fb.className = 'feedback ok';
+    quizScores[level].correct++;
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent = `❌ Nicht ganz. Richtig wäre: "${quizData[level][qi].opts[correct]}"`;
+    fb.className = 'feedback err';
+  }
+  const sc = quizScores[level];
+  document.getElementById(`score-${level}`).textContent = sc.correct;
+  document.getElementById(`pb-${level}`).style.width = Math.round(sc.correct / sc.total * 100) + '%';
+}
+
+// ========== LÜCKENTEXT ==========
+function checkLuecke(id) {
+  const container = document.getElementById(id);
+  const inputs = container.querySelectorAll('.luecke');
+  let correct = 0;
+  inputs.forEach(inp => {
+    const val = inp.value.trim().toLowerCase();
+    const ans = inp.dataset.answer.toLowerCase();
+    if (val === ans) { inp.classList.add('correct'); inp.classList.remove('wrong'); correct++; }
+    else { inp.classList.add('wrong'); inp.classList.remove('correct'); }
+  });
+  const fb = document.getElementById('fb-' + id);
+  fb.textContent = `${correct} von ${inputs.length} richtig`;
+  fb.className = 'feedback ' + (correct === inputs.length ? 'ok' : 'err');
+}
+function resetLuecke(id) {
+  const container = document.getElementById(id);
+  container.querySelectorAll('.luecke').forEach(inp => {
+    inp.value = ''; inp.classList.remove('correct','wrong');
+  });
+  document.getElementById('fb-' + id).textContent = '';
+}
+
+// ========== VIERECKE QUIZ ==========
+const vierQuizData = [
+  { q: 'Welche Figur hat 4 rechte Winkel, aber NICHT alle Seiten gleich lang?', opts: ['Quadrat','Raute','Rechteck','Drachen'], a: 2 },
+  { q: 'Welche Figur ist ein Sonderfall des Parallelogramms?', opts: ['Trapez','Drachen','Rechteck','Dreieck'], a: 2 },
+  { q: 'Welches Viereck hat genau EIN Paar paralleler Seiten?', opts: ['Parallelogramm','Raute','Trapez','Quadrat'], a: 2 },
+  { q: 'Beim Drachen sind … Paare benachbarter Seiten gleich lang.', opts: ['0','1','2','3'], a: 2 },
+  { q: 'Wie viele Symmetrieachsen hat ein Quadrat?', opts: ['1','2','3','4'], a: 3 },
+];
+let vierAnswered = [];
+function initVierQuiz() {
+  const c = document.getElementById('vierecke-quiz-vierecke');
+  if (!c || c.innerHTML.includes('question-block')) return;
+  vierAnswered = new Array(vierQuizData.length).fill(false);
+  let html = ``;
+  vierQuizData.forEach((q,qi) => {
+    html += `<div class="question-block"><div class="question-text">${qi+1}. ${q.q}</div><div class="options">${q.opts.map((o,oi)=>`<button class="option-btn" onclick="answerVier(${qi},${oi},${q.a})">${o}</button>`).join('')}</div><div class="feedback" id="vf-${qi}"></div></div>`;
+  });
+  c.innerHTML = html;
+}
+let vierScore = 0;
+function answerVier(qi, chosen, correct) {
+  if (vierAnswered[qi]) return;
+  vierAnswered[qi] = true;
+  const blocks = document.querySelectorAll('#vierecke-quiz-vierecke .question-block');
+  const block = blocks[qi];
+  const btns = block.querySelectorAll('.option-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[correct].classList.add('correct');
+  const fb = document.getElementById('vf-'+qi);
+  if (chosen === correct) {
+    btns[chosen].classList.add('correct');
+    fb.textContent='✅ Richtig!'; fb.className='feedback ok'; vierScore++;
+    document.getElementById('vier-score').textContent = vierScore;
+  } else {
+    btns[chosen].classList.add('wrong');
+    fb.textContent=`❌ Richtig wäre: "${vierQuizData[qi].opts[correct]}"`;
+    fb.className='feedback err';
+  }
+}
+
+// ========== SYMMETRIE QUIZ ==========
+const symFigures = [
+  { name:'Quadrat', achsen:4, desc:'4 Symmetrieachsen: waagerecht, senkrecht, 2 diagonal' },
+  { name:'Rechteck', achsen:2, desc:'2 Symmetrieachsen: waagerecht und senkrecht' },
+  { name:'Raute', achsen:2, desc:'2 Symmetrieachsen: die beiden Diagonalen' },
+  { name:'gleichseitiges Dreieck', achsen:3, desc:'3 Symmetrieachsen: durch jede Ecke und die gegenüberliegende Seite' },
+  { name:'Kreis', achsen:99, desc:'Unendlich viele Symmetrieachsen!' },
+  { name:'Trapez (allgemein)', achsen:0, desc:'Kein allgemeines Trapez ist achsensymmetrisch' },
+  { name:'gleichschenkliges Trapez', achsen:1, desc:'1 Symmetrieachse: senkrecht durch die Mitten der Parallelseiten' },
+  { name:'Drachen', achsen:1, desc:'1 Symmetrieachse: die längere Diagonale' },
+];
+
+function initSymQuiz() {
+  const c = document.getElementById('sym-quiz-container');
+  if (!c || c.innerHTML.includes('question-block')) return;
+  let html = '';
+  symFigures.forEach((fig, i) => {
+    const opts = [0,1,2,3,4].map(n => n === 99 ? 'unendlich viele' : n.toString());
+    const correctOpt = fig.achsen === 99 ? 4 : Math.min(fig.achsen, 4);
+    html += `<div class="question-block">
+      <div class="question-text">${i+1}. Wie viele Symmetrieachsen hat ein <strong>${fig.name}</strong>?</div>
+      <div class="options">${opts.map((o,oi)=>`<button class="option-btn" onclick="answerSym(this, ${oi}, ${correctOpt}, '${fig.desc}')">${o}</button>`).join('')}</div>
+      <div class="feedback" id="sf-${i}"></div>
+    </div>`;
+  });
+  c.innerHTML = html;
+}
+function answerSym(btn, chosen, correct, desc) {
+  const block = btn.closest('.question-block');
+  if (block.querySelector('.option-btn:disabled')) return;
+  block.querySelectorAll('.option-btn').forEach((b,i)=>{ b.disabled=true; if(i===correct)b.classList.add('correct'); });
+  const fb = block.querySelector('.feedback');
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ Richtig! ' + desc; fb.className='feedback ok';
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = '❌ ' + desc; fb.className='feedback err';
+  }
+}
+</script>
+</body>
+</html>

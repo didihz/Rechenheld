@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lerneinheit: Befragung & Auswertung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --glow: rgba(99, 102, 241, 0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: var(--bg-main); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 2rem; text-align: center; position: relative; overflow: hidden; }
+        .header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); opacity: 0.5; }
+        .header h1 { font-size: 2.5rem; font-weight: 800; position: relative; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.1rem; opacity: 0.9; margin-top: 0.5rem; position: relative; }
+        .progress-container { background: var(--bg-card); padding: 1rem 2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .progress-steps { display: flex; justify-content: space-between; max-width: 900px; margin: 0 auto; position: relative; }
+        .progress-steps::before { content: ''; position: absolute; top: 20px; left: 40px; right: 40px; height: 4px; background: var(--border); border-radius: 2px; }
+        .progress-step { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; transition: all 0.3s; position: relative; z-index: 1; }
+        .step-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; transition: all 0.3s; }
+        .progress-step.active .step-circle { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 20px var(--glow); }
+        .progress-step.completed .step-circle { background: var(--success); border-color: var(--success); }
+        .step-label { font-size: 0.75rem; color: var(--text-muted); text-align: center; max-width: 80px; }
+        .progress-step.active .step-label, .progress-step.completed .step-label { color: var(--text-primary); }
+        .main-content { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .section { display: none; animation: fadeIn 0.5s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: var(--bg-card); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border); transition: all 0.3s; }
+        .card:hover { border-color: var(--primary); box-shadow: 0 0 30px rgba(99, 102, 241, 0.1); }
+        .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+        .card-title .icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .info-box { background: rgba(6, 182, 212, 0.1); border-left: 4px solid var(--secondary); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .info-box.warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .info-box.success { background: rgba(16, 185, 129, 0.1); border-color: var(--success); }
+        .data-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+        .data-table th, .data-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .data-table th { background: var(--primary); color: white; font-weight: 600; }
+        .data-table tr:hover td { background: var(--bg-card-hover); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
+        .form-input { width: 100%; padding: 0.75rem 1rem; background: var(--bg-main); border: 2px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: inherit; font-size: 1rem; transition: all 0.3s; }
+        .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--glow); }
+        .form-input::placeholder { color: var(--text-muted); }
+        select.form-input { cursor: pointer; }
+        .quiz-question { background: var(--bg-main); padding: 1.5rem; border-radius: 12px; margin: 1rem 0; border: 2px solid var(--border); }
+        .quiz-question.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
+        .quiz-question.incorrect { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
+        .question-text { font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem; }
+        .answer-input { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+        .answer-input input { flex: 1; min-width: 150px; padding: 0.75rem 1rem; background: var(--bg-card); border: 2px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Fira Code', monospace; font-size: 1rem; }
+        .answer-input input:focus { outline: none; border-color: var(--primary); }
+        .feedback { margin-top: 0.75rem; padding: 0.75rem; border-radius: 8px; font-weight: 600; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .feedback.incorrect { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px var(--glow); }
+        .btn-secondary { background: var(--bg-card-hover); color: var(--text-primary); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-small { padding: 0.5rem 1rem; font-size: 0.875rem; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+        .question-builder { background: var(--bg-main); padding: 1.5rem; border-radius: 12px; margin: 1rem 0; border: 2px dashed var(--border); }
+        .question-preview { background: white; color: #1e293b; padding: 1.5rem; border-radius: 8px; margin-top: 1rem; min-height: 100px; }
+        .question-preview h4 { color: #4f46e5; margin-bottom: 0.5rem; }
+        .preview-options { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
+        .preview-option { display: flex; align-items: center; gap: 0.5rem; }
+        .preview-option input[type="checkbox"], .preview-option input[type="radio"] { width: 18px; height: 18px; }
+        .score-display { text-align: center; padding: 2rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 16px; margin: 1rem 0; }
+        .score-number { font-size: 4rem; font-weight: 800; }
+        .score-label { font-size: 1.2rem; opacity: 0.9; }
+        .calc-display { font-family: 'Fira Code', monospace; background: var(--bg-main); padding: 1rem; border-radius: 8px; margin: 0.5rem 0; border-left: 4px solid var(--primary); }
+        .calc-step { margin: 0.5rem 0; color: var(--text-secondary); }
+        .calc-step .highlight { color: var(--secondary); font-weight: 600; }
+        .calc-result { color: var(--success); font-weight: 700; font-size: 1.1rem; }
+        .chart-container { background: var(--bg-main); border-radius: 12px; padding: 1.5rem; margin: 1rem 0; }
+        .bar-chart { display: flex; flex-direction: column; gap: 0.75rem; }
+        .bar-row { display: flex; align-items: center; gap: 1rem; }
+        .bar-label { width: 100px; font-size: 0.875rem; text-align: right; }
+        .bar-track { flex: 1; height: 30px; background: var(--bg-card); border-radius: 6px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 0.5rem; font-size: 0.75rem; font-weight: 600; transition: width 1s ease; }
+        .data-entry-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin: 1rem 0; }
+        .data-entry-item { text-align: center; }
+        .data-entry-item label { display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
+        .data-entry-item .value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .shake { animation: shake 0.5s; }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.75rem; }
+            .step-label { display: none; }
+            .card { padding: 1.25rem; }
+            .nav-buttons { flex-direction: column; gap: 1rem; }
+            .nav-buttons .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📊 Befragung & Auswertung</h1>
+        <p>Lerne Schritt für Schritt, wie du eine Befragung erstellst und auswertest</p>
+    </header>
+
+    <nav class="progress-container">
+        <div class="progress-steps">
+            <div class="progress-step active" data-step="1" onclick="goToStep(1)">
+                <div class="step-circle">1</div>
+                <span class="step-label">Fragetypen</span>
+            </div>
+            <div class="progress-step" data-step="2" onclick="goToStep(2)">
+                <div class="step-circle">2</div>
+                <span class="step-label">Fragebogen</span>
+            </div>
+            <div class="progress-step" data-step="3" onclick="goToStep(3)">
+                <div class="step-circle">3</div>
+                <span class="step-label">Rohdaten</span>
+            </div>
+            <div class="progress-step" data-step="4" onclick="goToStep(4)">
+                <div class="step-circle">4</div>
+                <span class="step-label">Häufigkeiten</span>
+            </div>
+            <div class="progress-step" data-step="5" onclick="goToStep(5)">
+                <div class="step-circle">5</div>
+                <span class="step-label">Prozent</span>
+            </div>
+            <div class="progress-step" data-step="6" onclick="goToStep(6)">
+                <div class="step-circle">6</div>
+                <span class="step-label">Durchschnitt</span>
+            </div>
+            <div class="progress-step" data-step="7" onclick="goToStep(7)">
+                <div class="step-circle">7</div>
+                <span class="step-label">Diagramme</span>
+            </div>
+            <div class="progress-step" data-step="8" onclick="goToStep(8)">
+                <div class="step-circle">8</div>
+                <span class="step-label">Ergebnis</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- SECTION 1: Fragetypen -->
+        <section class="section active" id="section-1">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">📝</span>Verschiedene Fragetypen kennenlernen</h2>
+                <p>Bevor du einen Fragebogen erstellst, musst du die verschiedenen Fragetypen kennen!</p>
+                <div class="info-box"><strong>💡 Merke:</strong> Der Fragetyp bestimmt, wie du die Antworten später auswerten kannst!</div>
+                <table class="data-table">
+                    <thead><tr><th>Fragetyp</th><th>Beschreibung</th><th>Auswertung</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Geschlossen (Einfach)</strong></td><td>Nur EINE Antwort möglich</td><td>Häufigkeit, Prozent, Kreisdiagramm</td></tr>
+                        <tr><td><strong>Geschlossen (Mehrfach)</strong></td><td>MEHRERE Antworten möglich</td><td>Häufigkeit, Prozent (kann >100%!)</td></tr>
+                        <tr><td><strong>Skaliert (1-5)</strong></td><td>Bewertung auf einer Skala</td><td>Durchschnitt berechnen</td></tr>
+                        <tr><td><strong>Numerisch</strong></td><td>Eine Zahl als Antwort</td><td>Durchschnitt, Min, Max</td></tr>
+                        <tr><td><strong>Offen</strong></td><td>Freie Textantwort</td><td>Kategorisieren</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><span class="icon">✅</span>Quiz: Erkenne den Fragetyp</h3>
+                <div class="quiz-question" id="quiz-type-1">
+                    <div class="question-text">1. "Wie alt bist du?" □ 12-13 □ 14-15 □ 16-17 □ 18+</div>
+                    <div class="answer-input">
+                        <select class="form-input" id="answer-type-1" style="max-width:300px;">
+                            <option value="">-- Wähle den Fragetyp --</option>
+                            <option value="einfach">Geschlossen (Einfachauswahl)</option>
+                            <option value="mehrfach">Geschlossen (Mehrfachauswahl)</option>
+                            <option value="skala">Skaliert (Likert-Skala)</option>
+                            <option value="numerisch">Numerisch</option>
+                        </select>
+                        <button class="btn btn-primary btn-small" onclick="checkTypeQuiz(1,'einfach')">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-type-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-type-2">
+                    <div class="question-text">2. "Welche Apps nutzt du?" □ Instagram □ TikTok □ YouTube □ WhatsApp</div>
+                    <div class="answer-input">
+                        <select class="form-input" id="answer-type-2" style="max-width:300px;">
+                            <option value="">-- Wähle den Fragetyp --</option>
+                            <option value="einfach">Geschlossen (Einfachauswahl)</option>
+                            <option value="mehrfach">Geschlossen (Mehrfachauswahl)</option>
+                            <option value="skala">Skaliert (Likert-Skala)</option>
+                            <option value="numerisch">Numerisch</option>
+                        </select>
+                        <button class="btn btn-primary btn-small" onclick="checkTypeQuiz(2,'mehrfach')">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-type-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-type-3">
+                    <div class="question-text">3. "Wie zufrieden bist du mit dem Schulessen?" (1=gar nicht ... 5=sehr)</div>
+                    <div class="answer-input">
+                        <select class="form-input" id="answer-type-3" style="max-width:300px;">
+                            <option value="">-- Wähle den Fragetyp --</option>
+                            <option value="einfach">Geschlossen (Einfachauswahl)</option>
+                            <option value="mehrfach">Geschlossen (Mehrfachauswahl)</option>
+                            <option value="skala">Skaliert (Likert-Skala)</option>
+                            <option value="numerisch">Numerisch</option>
+                        </select>
+                        <button class="btn btn-primary btn-small" onclick="checkTypeQuiz(3,'skala')">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-type-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-type-4">
+                    <div class="question-text">4. "Wie viele Stunden pro Tag nutzt du dein Handy?" ___ Stunden</div>
+                    <div class="answer-input">
+                        <select class="form-input" id="answer-type-4" style="max-width:300px;">
+                            <option value="">-- Wähle den Fragetyp --</option>
+                            <option value="einfach">Geschlossen (Einfachauswahl)</option>
+                            <option value="mehrfach">Geschlossen (Mehrfachauswahl)</option>
+                            <option value="skala">Skaliert (Likert-Skala)</option>
+                            <option value="numerisch">Numerisch</option>
+                        </select>
+                        <button class="btn btn-primary btn-small" onclick="checkTypeQuiz(4,'numerisch')">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-type-4"></div>
+                </div>
+            </div>
+            <div class="nav-buttons"><div></div><button class="btn btn-primary" onclick="nextStep()">Weiter →</button></div>
+        </section>
+
+        <!-- SECTION 2: Fragebogen -->
+        <section class="section" id="section-2">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">📋</span>Erstelle deine eigene Frage</h2>
+                <p>Jetzt erstellst du selbst eine Frage. Wähle einen Fragetyp!</p>
+                <div class="question-builder">
+                    <div class="form-group">
+                        <label class="form-label">Fragetyp wählen:</label>
+                        <select class="form-input" id="question-type" onchange="updateQuestionPreview()">
+                            <option value="">-- Wähle einen Fragetyp --</option>
+                            <option value="einfach">Geschlossen (Einfachauswahl)</option>
+                            <option value="mehrfach">Geschlossen (Mehrfachauswahl)</option>
+                            <option value="skala">Skaliert (1-5)</option>
+                            <option value="numerisch">Numerisch</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deine Frage:</label>
+                        <input type="text" class="form-input" id="question-text" placeholder="z.B. Was ist dein Lieblingsfach?" oninput="updateQuestionPreview()">
+                    </div>
+                    <div class="form-group" id="options-group" style="display:none;">
+                        <label class="form-label">Antwortmöglichkeiten (durch Komma getrennt):</label>
+                        <input type="text" class="form-input" id="question-options" placeholder="z.B. Mathe, Deutsch, Sport, Kunst" oninput="updateQuestionPreview()">
+                    </div>
+                    <div class="question-preview" id="question-preview"><p style="color:#94a3b8;text-align:center;">Deine Vorschau erscheint hier...</p></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><span class="icon">📊</span>Unser Beispiel-Fragebogen</h3>
+                <p>Für die folgenden Übungen verwenden wir diesen Fragebogen zum Thema <strong>"Mediennutzung"</strong>:</p>
+                <div class="info-box">
+                    <strong>Frage 1:</strong> Wie alt bist du? □ 12-13 □ 14-15 □ 16-17 □ 18+<br><br>
+                    <strong>Frage 2:</strong> Welches Gerät nutzt du am häufigsten? □ Smartphone □ Tablet □ Computer □ Konsole<br><br>
+                    <strong>Frage 3:</strong> Welche Apps nutzt du? □ Instagram □ TikTok □ YouTube □ WhatsApp<br><br>
+                    <strong>Frage 4:</strong> Wie zufrieden bist du mit deiner Bildschirmzeit? (1-5)<br><br>
+                    <strong>Frage 5:</strong> Wie viele Stunden pro Tag nutzt du Medien? ___ h
+                </div>
+            </div>
+            <div class="nav-buttons"><button class="btn btn-secondary" onclick="prevStep()">← Zurück</button><button class="btn btn-primary" onclick="nextStep()">Weiter →</button></div>
+        </section>
+
+        <!-- SECTION 3: Rohdaten -->
+        <section class="section" id="section-3">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">📁</span>Die Rohdaten verstehen</h2>
+                <p>Nachdem du 20 Personen befragt hast, sehen deine Rohdaten so aus:</p>
+                <div style="overflow-x:auto;">
+                    <table class="data-table" id="raw-data-table">
+                        <thead><tr><th>Nr.</th><th>Alter</th><th>Hauptgerät</th><th>Instagram</th><th>TikTok</th><th>YouTube</th><th>WhatsApp</th><th>Zufriedenheit</th><th>Stunden</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="info-box warning"><strong>⚠️ Wichtig:</strong> Die Rohdaten zeigen jede einzelne Antwort. Für die Auswertung müssen wir diese Daten <strong>zusammenfassen</strong>!</div>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><span class="icon">🔢</span>Quiz: Verstehst du die Daten?</h3>
+                <div class="quiz-question" id="quiz-data-1">
+                    <div class="question-text">Wie viele Personen wurden insgesamt befragt?</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-data-1" placeholder="Anzahl">
+                        <button class="btn btn-primary btn-small" onclick="checkDataQuiz(1,20)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-data-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-data-2">
+                    <div class="question-text">Zähle: Wie viele Personen haben "Smartphone" als Hauptgerät?</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-data-2" placeholder="Anzahl">
+                        <button class="btn btn-primary btn-small" onclick="checkDataQuiz(2,13)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-data-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-data-3">
+                    <div class="question-text">Zähle: Wie viele Personen nutzen TikTok? (Zähle alle "Ja")</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-data-3" placeholder="Anzahl">
+                        <button class="btn btn-primary btn-small" onclick="checkDataQuiz(3,14)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-data-3"></div>
+                </div>
+            </div>
+            <div class="nav-buttons"><button class="btn btn-secondary" onclick="prevStep()">← Zurück</button><button class="btn btn-primary" onclick="nextStep()">Weiter →</button></div>
+        </section>
+
+        <!-- SECTION 4: Häufigkeiten -->
+        <section class="section" id="section-4">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">📈</span>Absolute & Relative Häufigkeit</h2>
+                <div class="info-box"><strong>📌 Absolute Häufigkeit</strong> = Die tatsächliche Anzahl<br><em>Beispiel: 8 Personen sind 14-15 Jahre alt</em></div>
+                <div class="info-box" style="margin-top:1rem;"><strong>📌 Relative Häufigkeit</strong> = Der Anteil (als Dezimalzahl)<br><em>Formel: Absolute Häufigkeit ÷ Gesamtzahl</em><br><em>Beispiel: 8 ÷ 20 = 0,40</em></div>
+                <h3 style="margin-top:1.5rem;margin-bottom:1rem;">Beispiel: Altersverteilung</h3>
+                <table class="data-table">
+                    <thead><tr><th>Altersgruppe</th><th>Absolute Häufigkeit</th><th>Rechnung</th><th>Relative Häufigkeit</th></tr></thead>
+                    <tbody>
+                        <tr><td>12-13 Jahre</td><td>4</td><td>4 ÷ 20</td><td>0,20</td></tr>
+                        <tr><td>14-15 Jahre</td><td>8</td><td>8 ÷ 20</td><td>0,40</td></tr>
+                        <tr><td>16-17 Jahre</td><td>5</td><td>5 ÷ 20</td><td>0,25</td></tr>
+                        <tr><td>18+ Jahre</td><td>3</td><td>3 ÷ 20</td><td>0,15</td></tr>
+                        <tr style="background:var(--bg-card-hover);font-weight:bold;"><td>SUMME</td><td>20</td><td></td><td>1,00</td></tr>
+                    </tbody>
+                </table>
+                <div class="info-box success"><strong>✓ Kontrolle:</strong> Die Summe der relativen Häufigkeiten muss immer <strong>1,00</strong> ergeben!</div>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><span class="icon">✏️</span>Übung: Berechne die relative Häufigkeit</h3>
+                <p>Geräte-Nutzung: n = 20 Befragte</p>
+                <div class="quiz-question" id="quiz-freq-1">
+                    <div class="question-text"><strong>Smartphone:</strong> 13 Personen. Berechne: 13 ÷ 20 = ?</div>
+                    <div class="answer-input">
+                        <input type="text" id="answer-freq-1" placeholder="z.B. 0,65">
+                        <button class="btn btn-primary btn-small" onclick="checkFreqQuiz(1,0.65)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-freq-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-freq-2">
+                    <div class="question-text"><strong>Tablet:</strong> 4 Personen. Berechne: 4 ÷ 20 = ?</div>
+                    <div class="answer-input">
+                        <input type="text" id="answer-freq-2" placeholder="z.B. 0,20">
+                        <button class="btn btn-primary btn-small" onclick="checkFreqQuiz(2,0.20)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-freq-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-freq-3">
+                    <div class="question-text"><strong>Computer:</strong> 2 Personen. Berechne: 2 ÷ 20 = ?</div>
+                    <div class="answer-input">
+                        <input type="text" id="answer-freq-3" placeholder="z.B. 0,10">
+                        <button class="btn btn-primary btn-small" onclick="checkFreqQuiz(3,0.10)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-freq-3"></div>
+                </div>
+            </div>
+            <div class="nav-buttons"><button class="btn btn-secondary" onclick="prevStep()">← Zurück</button><button class="btn btn-primary" onclick="nextStep()">Weiter →</button></div>
+        </section>
+
+        <!-- SECTION 5: Prozent -->
+        <section class="section" id="section-5">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">💯</span>Von der relativen Häufigkeit zum Prozent</h2>
+                <div class="info-box"><strong>📌 Die Formel ist einfach:</strong><br><span style="font-size:1.3rem;font-family:'Fira Code',monospace;">Prozent = Relative Häufigkeit × 100</span></div>
+                <h3 style="margin-top:1.5rem;margin-bottom:1rem;">Schritt-für-Schritt Beispiel</h3>
+                <div class="calc-display">
+                    <div class="calc-step"><strong>Gegeben:</strong> 8 von 20 Befragten sind 14-15 Jahre alt</div>
+                    <div class="calc-step"><strong>Schritt 1:</strong> Absolute Häufigkeit = <span class="highlight">8</span></div>
+                    <div class="calc-step"><strong>Schritt 2:</strong> Relative Häufigkeit = 8 ÷ 20 = <span class="highlight">0,40</span></div>
+                    <div class="calc-step"><strong>Schritt 3:</strong> Prozent = 0,40 × 100 = <span class="highlight">40</span></div>
+                    <div class="calc-result">→ Ergebnis: 40% der Befragten sind 14-15 Jahre alt</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><span class="icon">✏️</span>Übung: Berechne den Prozentwert</h3>
+                <div class="quiz-question" id="quiz-percent-1">
+                    <div class="question-text">Relative Häufigkeit = 0,65. Prozent = 0,65 × 100 = ?</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-percent-1" placeholder="z.B. 65"><span>%</span>
+                        <button class="btn btn-primary btn-small" onclick="checkPercentQuiz(1,65)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-percent-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-percent-2">
+                    <div class="question-text">Relative Häufigkeit = 0,20. Prozent = 0,20 × 100 = ?</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-percent-2" placeholder="z.B. 20"><span>%</span>
+                        <button class="btn btn-primary btn-small" onclick="checkPercentQuiz(2,20)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-percent-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-percent-3">
+                    <div class="question-text"><strong>Komplett-Aufgabe:</strong> 14 von 20 Personen nutzen TikTok. Berechne den Prozentwert! (14 ÷ 20 × 100)</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-percent-3" placeholder="Ergebnis"><span>%</span>
+                        <button class="btn btn-primary btn-small" onclick="checkPercentQuiz(3,70)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-percent-3"></div>
+                </div>
+            </div>
+            <div class="nav-buttons"><button class="btn btn-secondary" onclick="prevStep()">← Zurück</button><button class="btn btn-primary" onclick="nextStep()">Weiter →</button></div>
+        </section>
+
+        <!-- SECTION 6: Durchschnitt -->
+        <section class="section" id="section-6">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">➗</span>Den Durchschnitt berechnen</h2>
+                <div class="info-box warning"><strong>⚠️ Wichtig:</strong> Der Durchschnitt funktioniert nur bei <strong>Zahlen</strong>! Also bei: Skalierten Fragen (1-5) und Numerischen Fragen</div>
+                <div class="info-box" style="margin-top:1rem;"><strong>📌 Die Formel:</strong><br><span style="font-size:1.2rem;font-family:'Fira Code',monospace;">Durchschnitt = Summe aller Werte ÷ Anzahl der Werte</span></div>
+                <h3 style="margin-top:1.5rem;margin-bottom:1rem;">Beispiel: Bildschirmzeit</h3>
+                <p>Die 20 Befragten haben folgende Stunden angegeben:</p>
+                <div class="calc-display"><div class="calc-step">4, 5, 3, 6, 3, 5, 4, 4, 7, 5, 3, 5, 6, 6, 4, 4, 5, 6, 3, 5</div></div>
+                <div class="calc-display" style="margin-top:1rem;">
+                    <div class="calc-step"><strong>Schritt 1:</strong> Summe = 4+5+3+...+5 = <span class="highlight">93</span></div>
+                    <div class="calc-step"><strong>Schritt 2:</strong> 93 ÷ 20 = <span class="highlight">4,65</span></div>
+                    <div class="calc-result">→ Durchschnittliche Bildschirmzeit: 4,65 Stunden pro Tag</div>
+                </div>
+                <div class="data-entry-grid" style="margin-top:1.5rem;">
+                    <div class="data-entry-item"><label>Durchschnitt</label><div class="value">4,65h</div></div>
+                    <div class="data-entry-item"><label>Minimum</label><div class="value" style="color:var(--success);">3h</div></div>
+                    <div class="data-entry-item"><label>Maximum</label><div class="value" style="color:var(--danger);">7h</div></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><span class="icon">✏️</span>Übung: Durchschnitt berechnen</h3>
+                <div class="quiz-question" id="quiz-avg-1">
+                    <div class="question-text"><strong>Zufriedenheit (1-5):</strong> Die Werte sind:<br>3, 4, 4, 2, 5, 3, 3, 4, 2, 3, 4, 3, 5, 2, 4, 3, 3, 2, 4, 4<br><br>Was ist die Summe aller Werte?</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-avg-1" placeholder="Summe">
+                        <button class="btn btn-primary btn-small" onclick="checkAvgQuiz(1,67)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-avg-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-avg-2">
+                    <div class="question-text">Berechne den Durchschnitt: 67 ÷ 20 = ? (2 Nachkommastellen)</div>
+                    <div class="answer-input">
+                        <input type="text" id="answer-avg-2" placeholder="z.B. 3,35">
+                        <button class="btn btn-primary btn-small" onclick="checkAvgQuiz(2,3.35)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-avg-2"></div>
+                </div>
+            </div>
+            <div class="nav-buttons"><button class="btn btn-secondary" onclick="prevStep()">← Zurück</button><button class="btn btn-primary" onclick="nextStep()">Weiter →</button></div>
+        </section>
+
+        <!-- SECTION 7: Diagramme -->
+        <section class="section" id="section-7">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">📊</span>Das richtige Diagramm wählen</h2>
+                <table class="data-table">
+                    <thead><tr><th>Diagrammtyp</th><th>Wann verwenden?</th><th>Beispiel</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Säulendiagramm</strong></td><td>Vergleich von Kategorien (Summe = 100%)</td><td>Altersverteilung</td></tr>
+                        <tr><td><strong>Kreisdiagramm</strong></td><td>Anteile eines Ganzen zeigen</td><td>Hauptgerät</td></tr>
+                        <tr><td><strong>Balkendiagramm</strong></td><td>Mehrfachnennungen (Summe kann >100%)</td><td>Welche Apps?</td></tr>
+                    </tbody>
+                </table>
+                <h3 style="margin-top:2rem;margin-bottom:1rem;">Beispiel: Geräte-Nutzung</h3>
+                <div class="chart-container">
+                    <div class="bar-chart">
+                        <div class="bar-row"><span class="bar-label">Smartphone</span><div class="bar-track"><div class="bar-fill" style="width:65%;">65%</div></div></div>
+                        <div class="bar-row"><span class="bar-label">Tablet</span><div class="bar-track"><div class="bar-fill" style="width:20%;">20%</div></div></div>
+                        <div class="bar-row"><span class="bar-label">Computer</span><div class="bar-track"><div class="bar-fill" style="width:10%;">10%</div></div></div>
+                        <div class="bar-row"><span class="bar-label">Konsole</span><div class="bar-track"><div class="bar-fill" style="width:5%;">5%</div></div></div>
+                    </div>
+                </div>
+                <div class="info-box success"><strong>✓ Kontrolle:</strong> 65% + 20% + 10% + 5% = <strong>100%</strong> ✓</div>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><span class="icon">✏️</span>Quiz: Welches Diagramm passt?</h3>
+                <div class="quiz-question" id="quiz-chart-1">
+                    <div class="question-text">"Was ist dein Lieblingsfach?" (Einfachauswahl) - Welches Diagramm?</div>
+                    <div class="answer-input">
+                        <select class="form-input" id="answer-chart-1" style="max-width:300px;">
+                            <option value="">-- Diagramm wählen --</option>
+                            <option value="saeulen">Säulendiagramm</option>
+                            <option value="kreis">Kreisdiagramm</option>
+                            <option value="balken">Balkendiagramm</option>
+                        </select>
+                        <button class="btn btn-primary btn-small" onclick="checkChartQuiz(1,['saeulen','kreis'])">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-chart-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-chart-2">
+                    <div class="question-text">"Welche Hobbys hast du?" (Mehrfachauswahl) - Welches Diagramm?</div>
+                    <div class="answer-input">
+                        <select class="form-input" id="answer-chart-2" style="max-width:300px;">
+                            <option value="">-- Diagramm wählen --</option>
+                            <option value="saeulen">Säulendiagramm</option>
+                            <option value="kreis">Kreisdiagramm</option>
+                            <option value="balken">Balkendiagramm</option>
+                        </select>
+                        <button class="btn btn-primary btn-small" onclick="checkChartQuiz(2,['balken'])">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-chart-2"></div>
+                </div>
+            </div>
+            <div class="nav-buttons"><button class="btn btn-secondary" onclick="prevStep()">← Zurück</button><button class="btn btn-primary" onclick="nextStep()">Zum Abschlusstest →</button></div>
+        </section>
+
+        <!-- SECTION 8: Abschluss -->
+        <section class="section" id="section-8">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">🏆</span>Abschlusstest: Komplette Auswertung</h2>
+                <div class="info-box">
+                    <strong>Frage:</strong> "Welches Verkehrsmittel nutzt du für den Schulweg?"<br>
+                    <strong>Befragte:</strong> n = 25 Schüler<br>
+                    <strong>Ergebnisse:</strong> Bus: 10 | Fahrrad: 8 | Auto: 4 | Zu Fuß: 3
+                </div>
+            </div>
+            <div class="card">
+                <div class="quiz-question" id="quiz-final-1">
+                    <div class="question-text"><strong>1.</strong> Wie viele Schüler fahren mit dem Bus? (Absolute Häufigkeit)</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-final-1" placeholder="Anzahl">
+                        <button class="btn btn-primary btn-small" onclick="checkFinalQuiz(1,10)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-final-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-final-2">
+                    <div class="question-text"><strong>2.</strong> Relative Häufigkeit für "Fahrrad": 8 ÷ 25 = ?</div>
+                    <div class="answer-input">
+                        <input type="text" id="answer-final-2" placeholder="z.B. 0,32">
+                        <button class="btn btn-primary btn-small" onclick="checkFinalQuiz(2,0.32)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-final-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-final-3">
+                    <div class="question-text"><strong>3.</strong> Wie viel Prozent kommen mit dem Auto? (4 ÷ 25 × 100)</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-final-3" placeholder="Prozent"><span>%</span>
+                        <button class="btn btn-primary btn-small" onclick="checkFinalQuiz(3,16)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-final-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-final-4">
+                    <div class="question-text"><strong>4.</strong> Welches Diagramm passt für diese Einfachauswahl-Frage?</div>
+                    <div class="answer-input">
+                        <select class="form-input" id="answer-final-4" style="max-width:300px;">
+                            <option value="">-- Wählen --</option>
+                            <option value="saeulen">Säulendiagramm</option>
+                            <option value="balken">Balkendiagramm (für Mehrfach)</option>
+                            <option value="linien">Liniendiagramm</option>
+                        </select>
+                        <button class="btn btn-primary btn-small" onclick="checkFinalQuiz(4,'saeulen')">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-final-4"></div>
+                </div>
+                <div class="quiz-question" id="quiz-final-5">
+                    <div class="question-text"><strong>5.</strong> Was muss die Summe aller Prozentwerte bei Einfachauswahl ergeben?</div>
+                    <div class="answer-input">
+                        <input type="number" id="answer-final-5" placeholder="Summe"><span>%</span>
+                        <button class="btn btn-primary btn-small" onclick="checkFinalQuiz(5,100)">Prüfen</button>
+                    </div>
+                    <div class="feedback" id="feedback-final-5"></div>
+                </div>
+            </div>
+            <div class="card" id="result-card" style="display:none;">
+                <div class="score-display">
+                    <div class="score-number" id="final-score">0/5</div>
+                    <div class="score-label">Aufgaben richtig gelöst</div>
+                </div>
+                <div id="result-message" style="text-align:center;margin-top:1rem;"></div>
+            </div>
+            <div class="card">
+                <h3 class="card-title"><span class="icon">📝</span>Zusammenfassung</h3>
+                <div class="calc-display">
+                    <div class="calc-step"><strong>1.</strong> Rohdaten sammeln und in Tabelle eintragen</div>
+                    <div class="calc-step"><strong>2.</strong> Absolute Häufigkeit: Antworten zählen</div>
+                    <div class="calc-step"><strong>3.</strong> Relative Häufigkeit: Absolut ÷ Gesamt</div>
+                    <div class="calc-step"><strong>4.</strong> Prozent: Relativ × 100</div>
+                    <div class="calc-step"><strong>5.</strong> Bei Zahlen: Durchschnitt = Summe ÷ Anzahl</div>
+                    <div class="calc-step"><strong>6.</strong> Passendes Diagramm wählen</div>
+                    <div class="calc-step"><strong>7.</strong> Kontrolle: Summe bei Einfachauswahl = 100%</div>
+                </div>
+            </div>
+            <div class="nav-buttons"><button class="btn btn-secondary" onclick="prevStep()">← Zurück</button><button class="btn btn-success" onclick="showFinalResult()">🎉 Ergebnis anzeigen</button></div>
+        </section>
+    </main>
+
+    <script>
+        const rawData = [
+            {nr:1,alter:"12-13",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:3,stunden:4},
+            {nr:2,alter:"14-15",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:4,stunden:5},
+            {nr:3,alter:"14-15",geraet:"Computer",instagram:"Nein",tiktok:"Nein",youtube:"Ja",whatsapp:"Ja",zufriedenheit:4,stunden:3},
+            {nr:4,alter:"16-17",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:2,stunden:6},
+            {nr:5,alter:"12-13",geraet:"Tablet",instagram:"Nein",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:5,stunden:3},
+            {nr:6,alter:"16-17",geraet:"Smartphone",instagram:"Ja",tiktok:"Nein",youtube:"Ja",whatsapp:"Ja",zufriedenheit:3,stunden:5},
+            {nr:7,alter:"14-15",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:3,stunden:4},
+            {nr:8,alter:"18+",geraet:"Computer",instagram:"Ja",tiktok:"Nein",youtube:"Ja",whatsapp:"Ja",zufriedenheit:4,stunden:4},
+            {nr:9,alter:"14-15",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:2,stunden:7},
+            {nr:10,alter:"16-17",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:3,stunden:5},
+            {nr:11,alter:"12-13",geraet:"Tablet",instagram:"Nein",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:4,stunden:3},
+            {nr:12,alter:"14-15",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:3,stunden:5},
+            {nr:13,alter:"16-17",geraet:"Konsole",instagram:"Nein",tiktok:"Nein",youtube:"Ja",whatsapp:"Ja",zufriedenheit:5,stunden:6},
+            {nr:14,alter:"14-15",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:2,stunden:6},
+            {nr:15,alter:"18+",geraet:"Tablet",instagram:"Ja",tiktok:"Nein",youtube:"Ja",whatsapp:"Ja",zufriedenheit:4,stunden:4},
+            {nr:16,alter:"12-13",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:3,stunden:4},
+            {nr:17,alter:"14-15",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:3,stunden:5},
+            {nr:18,alter:"16-17",geraet:"Smartphone",instagram:"Ja",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:2,stunden:6},
+            {nr:19,alter:"14-15",geraet:"Tablet",instagram:"Nein",tiktok:"Ja",youtube:"Ja",whatsapp:"Ja",zufriedenheit:4,stunden:3},
+            {nr:20,alter:"18+",geraet:"Smartphone",instagram:"Ja",tiktok:"Nein",youtube:"Ja",whatsapp:"Ja",zufriedenheit:4,stunden:5}
+        ];
+        let currentStep = 1;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tbody = document.querySelector('#raw-data-table tbody');
+            tbody.innerHTML = rawData.map(r => '<tr><td>'+r.nr+'</td><td>'+r.alter+'</td><td>'+r.geraet+'</td><td>'+r.instagram+'</td><td>'+r.tiktok+'</td><td>'+r.youtube+'</td><td>'+r.whatsapp+'</td><td>'+r.zufriedenheit+'</td><td>'+r.stunden+'</td></tr>').join('');
+        });
+
+        function goToStep(step) {
+            if(step<1||step>8)return;
+            document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+            document.getElementById('section-'+step).classList.add('active');
+            document.querySelectorAll('.progress-step').forEach((s,i)=>{
+                s.classList.remove('active');
+                if(i+1<step)s.classList.add('completed');else s.classList.remove('completed');
+                if(i+1===step)s.classList.add('active');
+            });
+            currentStep=step;
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+        function nextStep(){goToStep(currentStep+1);}
+        function prevStep(){goToStep(currentStep-1);}
+
+        function checkTypeQuiz(n,c){
+            const a=document.getElementById('answer-type-'+n).value;
+            const f=document.getElementById('feedback-type-'+n);
+            const q=document.getElementById('quiz-type-'+n);
+            if(a===c){f.textContent="✓ Richtig!";f.className="feedback show correct";q.classList.add('correct');q.classList.remove('incorrect');}
+            else{f.textContent="✗ Falsch. Versuch es nochmal!";f.className="feedback show incorrect";q.classList.add('incorrect');q.classList.remove('correct');q.classList.add('shake');setTimeout(()=>q.classList.remove('shake'),500);}
+        }
+        function checkDataQuiz(n,c){
+            const a=parseInt(document.getElementById('answer-data-'+n).value);
+            const f=document.getElementById('feedback-data-'+n);
+            const q=document.getElementById('quiz-data-'+n);
+            if(a===c){f.textContent="✓ Richtig!";f.className="feedback show correct";q.classList.add('correct');}
+            else{f.textContent="✗ Falsch. Richtig: "+c;f.className="feedback show incorrect";q.classList.add('incorrect');}
+        }
+        function checkFreqQuiz(n,c){
+            let a=document.getElementById('answer-freq-'+n).value.replace(',','.');a=parseFloat(a);
+            const f=document.getElementById('feedback-freq-'+n);
+            const q=document.getElementById('quiz-freq-'+n);
+            if(Math.abs(a-c)<0.01){f.textContent="✓ Richtig!";f.className="feedback show correct";q.classList.add('correct');}
+            else{f.textContent="✗ Falsch. Richtig: "+c.toFixed(2).replace('.',',');f.className="feedback show incorrect";q.classList.add('incorrect');}
+        }
+        function checkPercentQuiz(n,c){
+            const a=parseFloat(document.getElementById('answer-percent-'+n).value);
+            const f=document.getElementById('feedback-percent-'+n);
+            const q=document.getElementById('quiz-percent-'+n);
+            if(Math.abs(a-c)<0.5){f.textContent="✓ Richtig!";f.className="feedback show correct";q.classList.add('correct');}
+            else{f.textContent="✗ Falsch. Richtig: "+c+"%";f.className="feedback show incorrect";q.classList.add('incorrect');}
+        }
+        function checkAvgQuiz(n,c){
+            const inp=document.getElementById('answer-avg-'+n);
+            const f=document.getElementById('feedback-avg-'+n);
+            const q=document.getElementById('quiz-avg-'+n);
+            let a=parseFloat(inp.value.replace(',','.'));
+            if(Math.abs(a-c)<0.1){f.textContent="✓ Richtig!";f.className="feedback show correct";q.classList.add('correct');}
+            else{f.textContent="✗ Falsch. Richtig: "+c.toString().replace('.',',');f.className="feedback show incorrect";q.classList.add('incorrect');}
+        }
+        function checkChartQuiz(n,c){
+            const a=document.getElementById('answer-chart-'+n).value;
+            const f=document.getElementById('feedback-chart-'+n);
+            const q=document.getElementById('quiz-chart-'+n);
+            if(c.includes(a)){f.textContent="✓ Richtig!";f.className="feedback show correct";q.classList.add('correct');}
+            else{f.textContent="✗ Falsch. Denk nochmal nach!";f.className="feedback show incorrect";q.classList.add('incorrect');}
+        }
+        function checkFinalQuiz(n,c){
+            const inp=document.getElementById('answer-final-'+n);
+            const f=document.getElementById('feedback-final-'+n);
+            const q=document.getElementById('quiz-final-'+n);
+            let a,ok=false;
+            if(n===4){a=inp.value;ok=a===c;}
+            else if(n===2){a=parseFloat(inp.value.replace(',','.'));ok=Math.abs(a-c)<0.01;}
+            else{a=parseFloat(inp.value);ok=Math.abs(a-c)<0.5;}
+            if(ok){f.textContent="✓ Richtig!";f.className="feedback show correct";q.classList.add('correct');q.classList.remove('incorrect');}
+            else{let cs=typeof c==='number'?c.toString().replace('.',','):c;f.textContent="✗ Falsch. Richtig: "+cs;f.className="feedback show incorrect";q.classList.add('incorrect');q.classList.remove('correct');}
+        }
+        function showFinalResult(){
+            let corr=0;
+            for(let i=1;i<=5;i++){if(document.getElementById('quiz-final-'+i).classList.contains('correct'))corr++;}
+            document.getElementById('final-score').textContent=corr+'/5';
+            document.getElementById('result-card').style.display='block';
+            const msg=document.getElementById('result-message');
+            if(corr===5)msg.innerHTML='<span style="color:var(--success);font-size:1.2rem;">🎉 Perfekt! Du hast alles verstanden!</span>';
+            else if(corr>=3)msg.innerHTML='<span style="color:var(--warning);font-size:1.2rem;">👍 Gut gemacht! Wiederhole die schwierigen Themen.</span>';
+            else msg.innerHTML='<span style="color:var(--danger);font-size:1.2rem;">📚 Geh nochmal durch die Lerneinheit!</span>';
+            document.getElementById('result-card').scrollIntoView({behavior:'smooth'});
+        }
+        function updateQuestionPreview(){
+            const type=document.getElementById('question-type').value;
+            const text=document.getElementById('question-text').value;
+            const opts=document.getElementById('question-options').value;
+            const prev=document.getElementById('question-preview');
+            const optG=document.getElementById('options-group');
+            if(!type){prev.innerHTML='<p style="color:#94a3b8;text-align:center;">Deine Vorschau erscheint hier...</p>';optG.style.display='none';return;}
+            let h='<h4>'+(text||'Deine Frage...')+'</h4>';
+            if(type==='einfach'||type==='mehrfach'){
+                optG.style.display='block';
+                const it=type==='einfach'?'radio':'checkbox';
+                const os=opts?opts.split(',').map(o=>o.trim()):['Option 1','Option 2','Option 3'];
+                h+='<div class="preview-options">';
+                os.forEach(o=>{h+='<label class="preview-option"><input type="'+it+'" disabled> '+o+'</label>';});
+                h+='</div>';
+            }else if(type==='skala'){
+                optG.style.display='none';
+                h+='<div class="preview-options" style="flex-direction:row;gap:1rem;">';
+                for(let i=1;i<=5;i++)h+='<label class="preview-option"><input type="radio" disabled> '+i+'</label>';
+                h+='</div><p style="font-size:0.8rem;color:#64748b;margin-top:0.5rem;">1 = gar nicht ... 5 = sehr</p>';
+            }else if(type==='numerisch'){
+                optG.style.display='none';
+                h+='<div style="margin-top:0.75rem;"><input type="text" placeholder="___" style="width:80px;padding:0.5rem;border:1px solid #ccc;border-radius:4px;" disabled></div>';
+            }
+            prev.innerHTML=h;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satz des Pythagoras</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600&display=swap');
+
+  :root {
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --primary-dark: #1d4ed8;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .app-header {
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+    color: white;
+    padding: 28px 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .app-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .app-header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -20px;
+    width: 160px; height: 160px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .app-header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+  }
+  .app-header p {
+    font-size: 0.9rem;
+    opacity: 0.85;
+    margin-top: 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .pythagorean-symbol {
+    font-size: 2.8rem;
+    margin-bottom: 8px;
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 16px 16px 0;
+    overflow-x: auto;
+    background: var(--bg);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--border);
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { background: #c7d2e0; }
+  .tab-btn.active {
+    background: var(--card);
+    color: var(--primary);
+    box-shadow: 0 -2px 0 var(--primary) inset;
+  }
+
+  .content {
+    padding: 0 16px 32px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .section {
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* --- CARDS --- */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .card h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+  }
+  .badge-blue { background: var(--primary-light); color: var(--primary-dark); }
+  .badge-green { background: var(--success-light); color: var(--success); }
+  .badge-orange { background: var(--warning-light); color: var(--warning); }
+  .badge-red { background: var(--danger-light); color: var(--danger); }
+
+  /* --- SVG TRIANGLE --- */
+  .triangle-svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 340px;
+  }
+
+  /* --- FORMULA DISPLAY --- */
+  .formula-box {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 2px solid var(--primary-light);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    margin: 12px 0;
+  }
+  .formula-big {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    letter-spacing: 1px;
+  }
+  .formula-small {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* --- STEP BOX --- */
+  .step-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .step-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--primary);
+    font-size: 0.92rem;
+  }
+  .step-num {
+    background: var(--primary);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.8rem;
+    min-width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* --- INPUT FIELDS --- */
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+  .input-field {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 1rem;
+    font-family: 'Nunito Sans', sans-serif;
+    transition: border-color 0.2s;
+    width: 120px;
+    background: white;
+    color: var(--text);
+  }
+  .input-field:focus { outline: none; border-color: var(--primary); }
+  .input-field.correct { border-color: var(--success); background: var(--success-light); }
+  .input-field.wrong { border-color: var(--danger); background: var(--danger-light); }
+
+  /* --- BUTTONS --- */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-success { background: var(--success); color: white; }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+  }
+  .btn-outline:hover { background: var(--primary-light); }
+  .btn-sm { padding: 7px 14px; font-size: 0.82rem; }
+
+  /* --- FEEDBACK --- */
+  .feedback {
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 10px;
+    display: none;
+    animation: fadeIn 0.2s ease;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct { background: var(--success-light); color: var(--success); border: 1px solid #86efac; }
+  .feedback.wrong { background: var(--danger-light); color: var(--danger); border: 1px solid #fca5a5; }
+  .feedback.info { background: var(--primary-light); color: var(--primary-dark); border: 1px solid #93c5fd; }
+
+  /* --- QUIZ --- */
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .quiz-option {
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.92rem;
+    background: white;
+    transition: all 0.15s;
+    text-align: left;
+    font-family: 'Nunito Sans', sans-serif;
+  }
+  .quiz-option:hover { border-color: var(--primary); background: var(--primary-light); }
+  .quiz-option.correct { border-color: var(--success); background: var(--success-light); color: var(--success); font-weight: 700; }
+  .quiz-option.wrong { border-color: var(--danger); background: var(--danger-light); color: var(--danger); }
+  .quiz-option:disabled { cursor: not-allowed; }
+
+  /* --- FILL-IN TEXT --- */
+  .cloze-text {
+    font-size: 1rem;
+    line-height: 2.2;
+    margin: 12px 0;
+  }
+  .cloze-input {
+    display: inline-block;
+    border: none;
+    border-bottom: 2px solid var(--primary);
+    background: transparent;
+    font-size: 1rem;
+    font-family: 'Nunito Sans', sans-serif;
+    width: 80px;
+    text-align: center;
+    color: var(--primary-dark);
+    font-weight: 700;
+    padding: 2px 4px;
+    outline: none;
+  }
+  .cloze-input.correct { border-color: var(--success); color: var(--success); }
+  .cloze-input.wrong { border-color: var(--danger); color: var(--danger); }
+
+  /* --- MATCHING --- */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .match-col { display: flex; flex-direction: column; gap: 8px; }
+  .match-item {
+    padding: 10px 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    cursor: pointer;
+    background: white;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .match-item.selected { border-color: var(--primary); background: var(--primary-light); }
+  .match-item.matched { border-color: var(--success); background: var(--success-light); color: var(--success); font-weight: 700; cursor: default; }
+  .match-item.wrong-match { border-color: var(--danger); background: var(--danger-light); animation: shake 0.3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  /* --- GAME (MEMORY / BLITZ) --- */
+  .blitz-area {
+    text-align: center;
+    padding: 16px;
+  }
+  .blitz-display {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    background: var(--primary-light);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 14px 0;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .blitz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .blitz-option {
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: white;
+    transition: all 0.15s;
+  }
+  .blitz-option:hover { border-color: var(--primary); background: var(--primary-light); }
+  .blitz-option.correct { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .blitz-option.wrong { border-color: var(--danger); background: var(--danger-light); color: var(--danger); }
+
+  /* --- PROGRESS --- */
+  .progress-bar-outer {
+    height: 8px;
+    background: var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 8px;
+    transition: width 0.4s ease;
+  }
+
+  /* --- SCORE --- */
+  .score-display {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+  .score-box {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+
+  /* --- DIFFICULTY TABS --- */
+  .diff-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .diff-tab {
+    padding: 6px 14px;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    background: white;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .diff-tab.active.easy { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .diff-tab.active.medium { border-color: var(--warning); background: var(--warning-light); color: var(--warning); }
+  .diff-tab.active.hard { border-color: var(--danger); background: var(--danger-light); color: var(--danger); }
+
+  /* --- CALC SECTION --- */
+  .calc-display {
+    background: #1e293b;
+    color: #94a3b8;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    margin: 10px 0;
+    min-height: 80px;
+  }
+  .calc-highlight { color: #34d399; font-weight: bold; }
+  .calc-result { color: #60a5fa; font-size: 1rem; font-weight: bold; }
+
+  /* --- TRIANGLE INTERACTIVE --- */
+  .triangle-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .control-group label {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* --- REAL WORLD --- */
+  .scenario-img {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 4rem;
+  }
+  .hint-btn {
+    background: none;
+    border: 1px dashed var(--muted);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 8px;
+    font-family: 'Nunito Sans', sans-serif;
+  }
+  .hint-text {
+    display: none;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 8px;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--warning);
+  }
+  .hint-text.show { display: block; }
+
+  /* --- PYTHAGOREAN TRIPLES GAME --- */
+  .triples-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .triple-card {
+    padding: 12px 8px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: white;
+    transition: all 0.15s;
+  }
+  .triple-card:hover { border-color: var(--primary); }
+  .triple-card.selected { border-color: var(--primary); background: var(--primary-light); }
+  .triple-card.correct-t { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .triple-card.wrong-t { border-color: var(--danger); background: var(--danger-light); color: var(--danger); }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 500px) {
+    .match-grid { grid-template-columns: 1fr; }
+    .triples-grid { grid-template-columns: repeat(2, 1fr); }
+    .app-header h1 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <span class="pythagorean-symbol">📐</span>
+  <h1>Satz des Pythagoras</h1>
+  <p>Lernen · Üben · Verstehen</p>
+</div>
+
+<!-- Navigation -->
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showSection('lernen')">📖 Lernen</button>
+  <button class="tab-btn" onclick="showSection('berechnen')">🔢 Berechnen</button>
+  <button class="tab-btn" onclick="showSection('lueckentext')">✏️ Lückentext</button>
+  <button class="tab-btn" onclick="showSection('quiz')">❓ Quiz</button>
+  <button class="tab-btn" onclick="showSection('zuordnen')">🔗 Zuordnen</button>
+  <button class="tab-btn" onclick="showSection('blitz')">⚡ Blitzlesen</button>
+  <button class="tab-btn" onclick="showSection('realwelt')">🌍 Aufgaben</button>
+  <button class="tab-btn" onclick="showSection('generator')">🎲 Neu generieren</button>
+</div>
+
+<div class="content">
+
+<!-- ===== LERNEN ===== -->
+<div id="sec-lernen" class="section active">
+
+  <div class="card">
+    <h2>📐 Was ist der Satz des Pythagoras?</h2>
+    <p style="font-size:0.95rem;line-height:1.7;color:#374151;">
+      In einem <strong>rechtwinkligen Dreieck</strong> gilt eine wichtige Regel:
+      Die Fläche des großen Quadrats (an der längsten Seite) ist genauso groß
+      wie die beiden kleinen Quadrate <em>zusammen</em>.
+    </p>
+
+    <!-- SVG Interactive Triangle -->
+    <svg class="triangle-svg" viewBox="0 0 320 260" style="margin:16px auto;display:block;">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+        </marker>
+      </defs>
+      <!-- Quadrate an den Seiten (illustrativ) -->
+      <!-- Großes Quadrat (Hypotenuse) – oben links -->
+      <rect x="10" y="10" width="100" height="100" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" rx="2"/>
+      <text x="60" y="65" text-anchor="middle" font-size="13" fill="#1d4ed8" font-weight="600" font-family="Nunito">c²</text>
+
+      <!-- Kleines Quadrat a – rechts unten -->
+      <rect x="220" y="170" width="60" height="60" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" rx="2"/>
+      <text x="250" y="204" text-anchor="middle" font-size="13" fill="#15803d" font-weight="600" font-family="Nunito">a²</text>
+
+      <!-- Kleines Quadrat b – links unten -->
+      <rect x="100" y="200" width="56" height="56" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5" rx="2"/>
+      <text x="128" y="232" text-anchor="middle" font-size="13" fill="#a16207" font-weight="600" font-family="Nunito">b²</text>
+
+      <!-- Dreieck -->
+      <polygon points="110,110 220,230 110,230" fill="#f0f9ff" stroke="#374151" stroke-width="2"/>
+      
+      <!-- Rechter Winkel -->
+      <rect x="110" y="214" width="16" height="16" fill="none" stroke="#374151" stroke-width="1.5"/>
+
+      <!-- Labels -->
+      <text x="162" y="164" font-size="13" fill="#1d4ed8" font-weight="700" font-family="Nunito">c</text>
+      <text x="100" y="178" font-size="13" fill="#374151" font-weight="700" font-family="Nunito">a</text>
+      <text x="162" y="245" font-size="13" fill="#374151" font-weight="700" font-family="Nunito">b</text>
+
+      <!-- Verbindung c² -->
+      <line x1="110" y1="110" x2="64" y2="108" stroke="#2563eb" stroke-width="1" stroke-dasharray="3,3"/>
+    </svg>
+
+    <div class="formula-box">
+      <div class="formula-big">a² + b² = c²</div>
+      <div class="formula-small">
+        <strong>a, b</strong> = Katheten (die zwei kurzen Seiten) &nbsp;|&nbsp;
+        <strong>c</strong> = Hypotenuse (die längste Seite)
+      </div>
+    </div>
+
+    <div style="margin-top:14px;padding:12px;background:#f8fafc;border-radius:8px;font-size:0.88rem;color:#475569;border-left:3px solid #e2e8f0;">
+      <strong>Merkhilfe:</strong> Die Hypotenuse ist <em>immer</em> die Seite, die dem rechten Winkel gegenüberliegt. Sie ist die längste Seite des Dreiecks.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔤 Wichtige Begriffe</h2>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:#f8fafc;border-radius:8px;">
+        <span style="font-size:1.3rem;">📏</span>
+        <div>
+          <strong>Hypotenuse (c)</strong><br>
+          <span style="font-size:0.88rem;color:#64748b;">Die längste Seite. Liegt immer gegenüber vom rechten Winkel.</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:#f8fafc;border-radius:8px;">
+        <span style="font-size:1.3rem;">📐</span>
+        <div>
+          <strong>Katheten (a und b)</strong><br>
+          <span style="font-size:0.88rem;color:#64748b;">Die zwei kurzen Seiten. Sie schließen den rechten Winkel ein.</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:#f8fafc;border-radius:8px;">
+        <span style="font-size:1.3rem;">∟</span>
+        <div>
+          <strong>Rechter Winkel (90°)</strong><br>
+          <span style="font-size:0.88rem;color:#64748b;">Das kleine Quadrat-Symbol im Dreieck zeigt den rechten Winkel.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📝 So rechnest du – Schritt für Schritt</h2>
+
+    <div class="diff-tabs">
+      <button class="diff-tab active easy" onclick="showCalcExample('hyp',this)">Hypotenuse berechnen</button>
+      <button class="diff-tab medium" onclick="showCalcExample('kat',this)">Kathete berechnen</button>
+    </div>
+
+    <div id="example-hyp">
+      <p style="font-size:0.9rem;color:#374151;margin-bottom:10px;">
+        <strong>Gegeben:</strong> a = 3 cm, b = 4 cm &nbsp;|&nbsp; <strong>Gesucht:</strong> c (Hypotenuse)
+      </p>
+      <div class="step-list">
+        <div class="step-item">
+          <span class="step-num">1</span>
+          <div>Formel aufschreiben: <strong>a² + b² = c²</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-num">2</span>
+          <div>Zahlen einsetzen: <strong>3² + 4² = c²</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-num">3</span>
+          <div>Quadrieren: <strong>9 + 16 = c²</strong> → <strong>25 = c²</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-num">4</span>
+          <div>Wurzel ziehen: <strong>c = √25 = 5 cm</strong> ✓</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="example-kat" style="display:none;">
+      <p style="font-size:0.9rem;color:#374151;margin-bottom:10px;">
+        <strong>Gegeben:</strong> a = 5 cm, c = 13 cm &nbsp;|&nbsp; <strong>Gesucht:</strong> b (Kathete)
+      </p>
+      <div class="step-list">
+        <div class="step-item">
+          <span class="step-num">1</span>
+          <div>Formel aufschreiben: <strong>a² + b² = c²</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-num">2</span>
+          <div>Formel umstellen: <strong>b² = c² − a²</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-num">3</span>
+          <div>Zahlen einsetzen: <strong>b² = 13² − 5² = 169 − 25 = 144</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-num">4</span>
+          <div>Wurzel ziehen: <strong>b = √144 = 12 cm</strong> ✓</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;padding:10px;background:#fef3c7;border-radius:8px;font-size:0.85rem;color:#92400e;border-left:3px solid #d97706;">
+      💡 <strong>Merke:</strong> Wenn du die Hypotenuse suchst, addierst du. Wenn du eine Kathete suchst, subtrahierst du!
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🐢 Pythagoräische Zahlentripel</h2>
+    <p style="font-size:0.9rem;color:#64748b;margin-bottom:10px;">
+      Manche Dreiecke haben ganz einfache Zahlen – ohne Komma!
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-weight:800;color:#15803d;font-family:Nunito;font-size:1rem;">3 · 4 · 5</div>
+        <div style="font-size:0.75rem;color:#64748b;">3²+4²=5²</div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-weight:800;color:#15803d;font-family:Nunito;font-size:1rem;">5 · 12 · 13</div>
+        <div style="font-size:0.75rem;color:#64748b;">5²+12²=13²</div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-weight:800;color:#15803d;font-family:Nunito;font-size:1rem;">8 · 15 · 17</div>
+        <div style="font-size:0.75rem;color:#64748b;">8²+15²=17²</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== BERECHNEN ===== -->
+<div id="sec-berechnen" class="section">
+
+  <div class="card">
+    <h2>🔢 Interaktiver Rechner</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:14px;">
+      Gib zwei Seiten ein. Den Rest berechnet die App.
+    </p>
+
+    <div class="triangle-controls">
+      <div class="control-group">
+        <label for="inp-a">Kathete a (cm)</label>
+        <input class="input-field" id="inp-a" type="number" placeholder="z.B. 3" step="0.1" style="width:100%">
+      </div>
+      <div class="control-group">
+        <label for="inp-b">Kathete b (cm)</label>
+        <input class="input-field" id="inp-b" type="number" placeholder="z.B. 4" step="0.1" style="width:100%">
+      </div>
+      <div class="control-group">
+        <label for="inp-c">Hypotenuse c (cm)</label>
+        <input class="input-field" id="inp-c" type="number" placeholder="unbekannt" step="0.1" style="width:100%">
+      </div>
+      <div class="control-group" style="justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="calcPyth()" style="width:100%;margin-top:20px;">Berechnen</button>
+      </div>
+    </div>
+
+    <div class="calc-display" id="calc-display">
+      Gib zwei Werte ein, um zu starten...
+    </div>
+
+    <div style="font-size:0.8rem;color:#94a3b8;margin-top:6px;">
+      Lasse genau ein Feld <em>leer</em> – das ist die gesuchte Seite.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔁 Formeln im Überblick</h2>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="padding:12px;background:#eff6ff;border-radius:8px;border-left:4px solid #2563eb;">
+        <div style="font-weight:700;font-size:0.88rem;color:#1e3a8a;">Hypotenuse c gesucht:</div>
+        <div style="font-family:Nunito;font-size:1.1rem;font-weight:800;color:#1d4ed8;margin-top:4px;">c = √(a² + b²)</div>
+      </div>
+      <div style="padding:12px;background:#f0fdf4;border-radius:8px;border-left:4px solid #16a34a;">
+        <div style="font-weight:700;font-size:0.88rem;color:#14532d;">Kathete a gesucht:</div>
+        <div style="font-family:Nunito;font-size:1.1rem;font-weight:800;color:#15803d;margin-top:4px;">a = √(c² − b²)</div>
+      </div>
+      <div style="padding:12px;background:#fefce8;border-radius:8px;border-left:4px solid #ca8a04;">
+        <div style="font-weight:700;font-size:0.88rem;color:#713f12;">Kathete b gesucht:</div>
+        <div style="font-family:Nunito;font-size:1.1rem;font-weight:800;color:#a16207;margin-top:4px;">b = √(c² − a²)</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== LÜCKENTEXT ===== -->
+<div id="sec-lueckentext" class="section">
+
+  <div class="card">
+    <h2>✏️ Fülle die Lücken aus</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:4px;">Ergänze die richtigen Begriffe und Zahlen.</p>
+
+    <div style="margin-top:16px;">
+      <h3 style="font-size:0.95rem;margin-bottom:6px;">1. Grundlagen</h3>
+      <div class="cloze-text">
+        Der Satz des Pythagoras gilt in
+        <input class="cloze-input" id="cl1" data-answer="rechtwinkligen" size="14"> Dreiecken.
+        Die längste Seite heißt
+        <input class="cloze-input" id="cl2" data-answer="Hypotenuse" size="10">.
+        Sie liegt dem
+        <input class="cloze-input" id="cl3" data-answer="rechten" size="7"> Winkel gegenüber.
+      </div>
+    </div>
+
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+      <h3 style="font-size:0.95rem;margin-bottom:6px;">2. Die Formel</h3>
+      <div class="cloze-text">
+        Die Formel lautet:
+        <input class="cloze-input" id="cl4" data-answer="a²" size="3"> +
+        <input class="cloze-input" id="cl5" data-answer="b²" size="3"> =
+        <input class="cloze-input" id="cl6" data-answer="c²" size="3">.
+        Dabei sind <em>a</em> und <em>b</em> die
+        <input class="cloze-input" id="cl7" data-answer="Katheten" size="8">,
+        und <em>c</em> ist die Hypotenuse.
+      </div>
+    </div>
+
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+      <h3 style="font-size:0.95rem;margin-bottom:6px;">3. Berechnung</h3>
+      <div class="cloze-text">
+        Wenn a = 6 und b = 8, dann ist c² =
+        <input class="cloze-input" id="cl8" data-answer="100" size="5">,
+        also c =
+        <input class="cloze-input" id="cl9" data-answer="10" size="4"> cm.
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="checkCloze()">✓ Überprüfen</button>
+      <button class="btn btn-outline" onclick="resetCloze()">↺ Zurücksetzen</button>
+    </div>
+    <div class="feedback" id="fb-cloze"></div>
+  </div>
+
+  <div class="card">
+    <h2>✏️ Rechenwege vervollständigen</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:10px;">Fehlende Zwischenschritte ergänzen.</p>
+
+    <div style="background:#f8fafc;border-radius:8px;padding:14px;">
+      <p style="font-size:0.9rem;margin-bottom:8px;"><strong>Gegeben:</strong> a = 9 cm, c = 15 cm &nbsp;|&nbsp; <strong>Gesucht:</strong> b</p>
+      <div class="cloze-text" style="font-family:monospace;font-size:0.92rem;line-height:2.6;">
+        b² = c² − a²<br>
+        b² = <input class="cloze-input" id="rw1" data-answer="15²" size="4"> − <input class="cloze-input" id="rw2" data-answer="9²" size="4"><br>
+        b² = <input class="cloze-input" id="rw3" data-answer="225" size="5"> − <input class="cloze-input" id="rw4" data-answer="81" size="4"><br>
+        b² = <input class="cloze-input" id="rw5" data-answer="144" size="5"><br>
+        b = <input class="cloze-input" id="rw6" data-answer="12" size="4"> cm ✓
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-sm" onclick="checkRechenwege()" style="margin-top:10px;">Überprüfen</button>
+    <div class="feedback" id="fb-rw"></div>
+  </div>
+
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="sec-quiz" class="section">
+
+  <div class="card">
+    <h2>❓ Wissens-Quiz</h2>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="quiz-progress" style="width:0%"></div>
+    </div>
+    <div style="font-size:0.8rem;color:#64748b;text-align:right;margin-bottom:10px;" id="quiz-counter">Frage 1 von 8</div>
+
+    <div id="quiz-area">
+      <div id="quiz-question" style="font-size:1rem;font-weight:600;margin-bottom:10px;line-height:1.5;"></div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="feedback" id="fb-quiz"></div>
+    </div>
+
+    <div id="quiz-result" style="display:none;text-align:center;">
+      <div style="font-size:3rem;margin:10px;">🏆</div>
+      <div style="font-family:Nunito;font-size:1.3rem;font-weight:800;" id="quiz-final-text"></div>
+      <button class="btn btn-primary" onclick="restartQuiz()" style="margin-top:14px;">Nochmal spielen</button>
+    </div>
+
+    <div style="margin-top:12px;display:flex;justify-content:flex-end;">
+      <button class="btn btn-outline btn-sm" id="quiz-next-btn" onclick="nextQuizQuestion()" style="display:none;">Nächste Frage →</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>❓ Multiple Choice: Richtig oder falsch?</h2>
+    <div id="mc-area"></div>
+    <button class="btn btn-outline btn-sm" onclick="loadMC()" style="margin-top:10px;">🔄 Neue Aufgaben</button>
+  </div>
+
+</div>
+
+<!-- ===== ZUORDNEN ===== -->
+<div id="sec-zuordnen" class="section">
+
+  <div class="card">
+    <h2>🔗 Zuordnungsaufgabe</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:4px;">Verbinde die Begriffe mit den richtigen Erklärungen.</p>
+    <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:12px;">Klicke zuerst einen Begriff, dann die passende Erklärung.</p>
+
+    <div class="match-grid">
+      <div class="match-col" id="terms-col"></div>
+      <div class="match-col" id="defs-col"></div>
+    </div>
+
+    <div class="feedback" id="fb-match"></div>
+    <button class="btn btn-outline btn-sm" onclick="resetMatching()" style="margin-top:8px;">↺ Zurücksetzen</button>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Formel zuordnen</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:12px;">Welche Formel gehört zu welcher Suche? Ziehe oder klicke die Zuordnung.</p>
+    <div id="formula-match-area"></div>
+    <button class="btn btn-outline btn-sm" onclick="loadFormulaMatch()" style="margin-top:8px;">🔄 Neu mischen</button>
+  </div>
+
+</div>
+
+<!-- ===== BLITZLESEN ===== -->
+<div id="sec-blitz" class="section">
+
+  <div class="card">
+    <h2>⚡ Blitzrechnen</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:4px;">Eine Aufgabe erscheint kurz – klicke die richtige Antwort!</p>
+
+    <div class="score-display">
+      <div class="score-box">⭐ <span id="blitz-score">0</span></div>
+      <div style="font-size:0.85rem;color:#64748b;">Richtig: <span id="blitz-correct">0</span> / <span id="blitz-total">0</span></div>
+    </div>
+
+    <div class="blitz-area">
+      <div class="blitz-display" id="blitz-display">
+        Drücke Start!
+      </div>
+      <div class="blitz-options" id="blitz-options"></div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="startBlitz()">▶ Start</button>
+      <button class="btn btn-outline" onclick="resetBlitz()">↺ Reset</button>
+    </div>
+
+    <div style="margin-top:10px;font-size:0.82rem;color:#94a3b8;text-align:center;" id="blitz-feedback"></div>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Begriffe erkennen</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:10px;">Welcher Begriff wird beschrieben?</p>
+
+    <div class="blitz-display" id="term-display" style="font-size:1rem;min-height:60px;padding:14px;">
+      Klicke auf Start!
+    </div>
+    <div class="blitz-options" id="term-options" style="margin-top:8px;"></div>
+    <div style="text-align:center;margin-top:10px;">
+      <button class="btn btn-primary btn-sm" onclick="startTermBlitz()">▶ Start</button>
+    </div>
+    <div id="term-feedback" style="text-align:center;font-size:0.88rem;margin-top:8px;color:#64748b;"></div>
+  </div>
+
+</div>
+
+<!-- ===== REALWELT-AUFGABEN ===== -->
+<div id="sec-realwelt" class="section">
+
+  <div class="card">
+    <h2>🌍 Sachaufgaben</h2>
+
+    <div class="diff-tabs">
+      <button class="diff-tab active easy" onclick="showDiff('easy',this)" id="diff-easy">⭐ Einfach</button>
+      <button class="diff-tab medium" onclick="showDiff('medium',this)" id="diff-medium">⭐⭐ Mittel</button>
+      <button class="diff-tab hard" onclick="showDiff('hard',this)" id="diff-hard">⭐⭐⭐ Schwer</button>
+    </div>
+
+    <div id="tasks-easy">
+      <div class="scenario-img">🪜</div>
+      <p style="font-size:0.95rem;line-height:1.7;">
+        Eine Leiter steht <strong>2,30 m</strong> von der Wand entfernt und reicht bis zur Höhe von <strong>3,85 m</strong>.
+        <br><strong>Wie lang ist die Leiter?</strong>
+      </p>
+      <button class="hint-btn" onclick="toggleHint('hint1')">💡 Hinweis zeigen</button>
+      <div class="hint-text" id="hint1">Die Leiter ist die Hypotenuse. Abstand = Kathete a = 2,30 m; Höhe = Kathete b = 3,85 m</div>
+      <div class="input-row" style="margin-top:12px;">
+        <span style="font-size:0.9rem;">Länge =</span>
+        <input class="input-field" id="task1-ans" type="number" step="0.01" placeholder="in cm">
+        <span style="font-size:0.9rem;">m</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask1()">Prüfen</button>
+      </div>
+      <div class="feedback" id="fb-task1"></div>
+    </div>
+
+    <div id="tasks-medium" style="display:none;">
+      <div class="scenario-img">🏃</div>
+      <p style="font-size:0.95rem;line-height:1.7;">
+        Von Punkt A zu Punkt B gibt es zwei Wege: einmal geradeaus über einen Fußweg (Abkürzung) und einmal um die Ecke.
+        Der Weg um die Ecke hat zwei Strecken: <strong>240 m</strong> und <strong>180 m</strong>.
+        <br><strong>Lohnt sich die Abkürzung? Begründe durch eine Rechnung!</strong>
+      </p>
+      <button class="hint-btn" onclick="toggleHint('hint2')">💡 Hinweis zeigen</button>
+      <div class="hint-text" id="hint2">Die Abkürzung ist die Hypotenuse. Berechne c = √(240² + 180²). Vergleiche dann c mit dem Umweg (240 + 180).</div>
+      <div class="input-row" style="margin-top:12px;">
+        <span style="font-size:0.9rem;">Abkürzung =</span>
+        <input class="input-field" id="task2-ans" type="number" step="0.01" placeholder="in m">
+        <span style="font-size:0.9rem;">m</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask2()">Prüfen</button>
+      </div>
+      <div class="feedback" id="fb-task2"></div>
+    </div>
+
+    <div id="tasks-hard" style="display:none;">
+      <div class="scenario-img">🏗️</div>
+      <p style="font-size:0.95rem;line-height:1.7;">
+        Ein Seil wird oben an einem <strong>12 m</strong> hohen Mast befestigt und am Boden <strong>5 m</strong> vom Mast entfernt verankert.
+        Ein zweites Seil wird vom selben Punkt am Boden zu einem Punkt befestigt, der <strong>8 m</strong> hoch am Mast ist.
+        <br><strong>Wie viel länger ist das erste Seil als das zweite?</strong>
+      </p>
+      <button class="hint-btn" onclick="toggleHint('hint3')">💡 Hinweis zeigen</button>
+      <div class="hint-text" id="hint3">Berechne beide Hypotenuse-Längen separat: Seil 1: c₁=√(12²+5²), Seil 2: c₂=√(8²+5²). Differenz: c₁−c₂.</div>
+      <div class="input-row" style="margin-top:12px;">
+        <span style="font-size:0.9rem;">Unterschied =</span>
+        <input class="input-field" id="task3-ans" type="number" step="0.01" placeholder="in m">
+        <span style="font-size:0.9rem;">m</span>
+        <button class="btn btn-primary btn-sm" onclick="checkTask3()">Prüfen</button>
+      </div>
+      <div class="feedback" id="fb-task3"></div>
+    </div>
+  </div>
+
+  <!-- Pythagorean Triples Game -->
+  <div class="card">
+    <h2>🎮 Pythagoräische Tripel – Spiel</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:10px;">
+      Klicke auf alle Dreiergruppen, bei denen a² + b² = c² gilt!
+    </p>
+    <div class="triples-grid" id="triples-grid"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" onclick="checkTriples()">Überprüfen</button>
+      <button class="btn btn-outline btn-sm" onclick="loadTriples()">🔄 Neue Aufgabe</button>
+    </div>
+    <div class="feedback" id="fb-triples"></div>
+  </div>
+
+</div>
+
+<!-- ===== GENERATOR ===== -->
+<div id="sec-generator" class="section">
+
+  <div class="card">
+    <h2>🎲 Neue Aufgaben generieren</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:14px;">Klicke auf „Generieren" – und du bekommst neue Aufgaben mit anderen Zahlen!</p>
+
+    <div class="diff-tabs">
+      <button class="diff-tab active easy" onclick="setGenDiff('easy',this)">⭐ Einfach</button>
+      <button class="diff-tab medium" onclick="setGenDiff('medium',this)">⭐⭐ Mittel</button>
+      <button class="diff-tab hard" onclick="setGenDiff('hard',this)">⭐⭐⭐ Schwer</button>
+    </div>
+
+    <div id="gen-select" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="btn btn-outline btn-sm" onclick="genTask('hyp')">➕ Hypotenuse berechnen</button>
+      <button class="btn btn-outline btn-sm" onclick="genTask('kat')">➖ Kathete berechnen</button>
+      <button class="btn btn-outline btn-sm" onclick="genTask('word')">📝 Sachaufgabe</button>
+      <button class="btn btn-primary btn-sm" onclick="genTask('all')">🎲 Überraschung!</button>
+    </div>
+
+    <div id="gen-output"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Übungsblatt (5 Aufgaben)</h2>
+    <p style="font-size:0.88rem;color:#64748b;margin-bottom:12px;">Erzeuge 5 gemischte Übungsaufgaben auf einmal.</p>
+    <button class="btn btn-primary" onclick="genSheet()">📋 Aufgabenblatt erstellen</button>
+    <div id="gen-sheet" style="margin-top:14px;"></div>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ===== NAVIGATION =====
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== LERNEN =====
+function showCalcExample(type, btn) {
+  document.getElementById('example-hyp').style.display = type === 'hyp' ? 'block' : 'none';
+  document.getElementById('example-kat').style.display = type === 'kat' ? 'block' : 'none';
+  btn.parentElement.querySelectorAll('.diff-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ===== RECHNER =====
+function calcPyth() {
+  const a = parseFloat(document.getElementById('inp-a').value);
+  const b = parseFloat(document.getElementById('inp-b').value);
+  const c = parseFloat(document.getElementById('inp-c').value);
+  const d = document.getElementById('calc-display');
+
+  const missing = [isNaN(a), isNaN(b), isNaN(c)];
+  const countMissing = missing.filter(Boolean).length;
+
+  if (countMissing !== 1) {
+    d.innerHTML = '<span style="color:#f87171">Bitte genau ein Feld leer lassen (= gesuchte Seite)!</span>';
+    return;
+  }
+
+  let steps = '';
+  if (missing[2]) {
+    const c2 = a*a + b*b;
+    const cVal = Math.sqrt(c2);
+    steps = `<span class="calc-highlight">Gesucht: c (Hypotenuse)</span>\n`
+      + `Formel: c² = a² + b²\n`
+      + `c² = ${a}² + ${b}² = ${a*a} + ${b*b} = ${c2}\n`
+      + `c = √${c2} ≈ <span class="calc-result">${cVal.toFixed(2)} cm</span>`;
+    document.getElementById('inp-c').value = cVal.toFixed(2);
+  } else if (missing[0]) {
+    const a2 = c*c - b*b;
+    if (a2 < 0) { d.innerHTML = '<span style="color:#f87171">Ungültige Maße! c muss größer als b sein.</span>'; return; }
+    const aVal = Math.sqrt(a2);
+    steps = `<span class="calc-highlight">Gesucht: a (Kathete)</span>\n`
+      + `Formel: a² = c² − b²\n`
+      + `a² = ${c}² − ${b}² = ${c*c} − ${b*b} = ${a2}\n`
+      + `a = √${a2} ≈ <span class="calc-result">${aVal.toFixed(2)} cm</span>`;
+    document.getElementById('inp-a').value = aVal.toFixed(2);
+  } else {
+    const b2 = c*c - a*a;
+    if (b2 < 0) { d.innerHTML = '<span style="color:#f87171">Ungültige Maße! c muss größer als a sein.</span>'; return; }
+    const bVal = Math.sqrt(b2);
+    steps = `<span class="calc-highlight">Gesucht: b (Kathete)</span>\n`
+      + `Formel: b² = c² − a²\n`
+      + `b² = ${c}² − ${a}² = ${c*c} − ${a*a} = ${b2}\n`
+      + `b = √${b2} ≈ <span class="calc-result">${bVal.toFixed(2)} cm</span>`;
+    document.getElementById('inp-b').value = bVal.toFixed(2);
+  }
+  d.innerHTML = steps;
+}
+
+// ===== LÜCKENTEXT =====
+function checkCloze() {
+  const fields = ['cl1','cl2','cl3','cl4','cl5','cl6','cl7','cl8','cl9'];
+  let correct = 0;
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    const val = el.value.trim().toLowerCase();
+    const ans = el.dataset.answer.toLowerCase();
+    el.classList.remove('correct','wrong');
+    if (val === ans) { el.classList.add('correct'); correct++; }
+    else if (val) { el.classList.add('wrong'); }
+  });
+  showFeedback('fb-cloze', correct === fields.length
+    ? `✅ Perfekt! Alle ${fields.length} Lücken richtig!`
+    : `${correct} von ${fields.length} Lücken richtig. Versuche es nochmal!`,
+    correct === fields.length);
+}
+function resetCloze() {
+  ['cl1','cl2','cl3','cl4','cl5','cl6','cl7','cl8','cl9'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = ''; el.classList.remove('correct','wrong');
+  });
+  hideFeedback('fb-cloze');
+}
+function checkRechenwege() {
+  const map = { rw1:'15²', rw2:'9²', rw3:'225', rw4:'81', rw5:'144', rw6:'12' };
+  let c = 0, t = Object.keys(map).length;
+  Object.entries(map).forEach(([id, ans]) => {
+    const el = document.getElementById(id);
+    el.classList.remove('correct','wrong');
+    if (el.value.trim() === ans) { el.classList.add('correct'); c++; }
+    else if (el.value) el.classList.add('wrong');
+  });
+  showFeedback('fb-rw', c === t ? '✅ Super! Alle Rechenschritte stimmen!' : `${c} von ${t} Schritten korrekt.`, c === t);
+}
+
+// ===== QUIZ =====
+const quizData = [
+  { q: "Wie heißt die längste Seite im rechtwinkligen Dreieck?",
+    opts: ["Kathete", "Hypotenuse", "Sekante", "Diagonale"], correct: 1 },
+  { q: "Welche Formel ist der Satz des Pythagoras?",
+    opts: ["a + b = c", "a² + b² = c²", "a · b = c²", "a² − b² = c"], correct: 1 },
+  { q: "Ein Dreieck hat a = 3 cm und b = 4 cm. Wie lang ist c?",
+    opts: ["5 cm", "7 cm", "√7 cm", "12 cm"], correct: 0 },
+  { q: "Was bedeutet der Buchstabe 'c' im Satz des Pythagoras?",
+    opts: ["Kreisumfang", "Die Kathete", "Die Hypotenuse", "Eine Konstante"], correct: 2 },
+  { q: "Welches Dreieck ist ein pythagoräisches Tripel?",
+    opts: ["2 · 3 · 4", "5 · 12 · 13", "3 · 5 · 6", "4 · 6 · 8"], correct: 1 },
+  { q: "Gegeben: c = 10, b = 6. Welche Formel nutzt man für a?",
+    opts: ["a = c + b", "a = √(c² + b²)", "a = √(c² − b²)", "a = c² − b²"], correct: 2 },
+  { q: "Wie lang ist die Hypotenuse bei a = 5 und b = 12?",
+    opts: ["13", "17", "169", "√119"], correct: 0 },
+  { q: "In welchem Dreieck gilt der Satz des Pythagoras?",
+    opts: ["In allen Dreiecken", "Nur in gleichseitigen", "In rechtwinkligen Dreiecken", "Nur in spitzwinkligen"], correct: 2 },
+];
+
+let qIdx = 0, qScore = 0;
+function initQuiz() { qIdx = 0; qScore = 0; loadQuestion(); }
+function loadQuestion() {
+  if (qIdx >= quizData.length) {
+    document.getElementById('quiz-area').style.display = 'none';
+    document.getElementById('quiz-result').style.display = 'block';
+    const pct = Math.round(qScore/quizData.length*100);
+    const emoji = pct === 100 ? '🎉' : pct >= 75 ? '👍' : pct >= 50 ? '🙂' : '📚';
+    document.getElementById('quiz-final-text').textContent =
+      `${emoji} ${qScore} von ${quizData.length} Punkten (${pct}%)`;
+    return;
+  }
+  const q = quizData[qIdx];
+  document.getElementById('quiz-question').textContent = `${qIdx+1}. ${q.q}`;
+  document.getElementById('quiz-counter').textContent = `Frage ${qIdx+1} von ${quizData.length}`;
+  document.getElementById('quiz-progress').style.width = `${(qIdx/quizData.length)*100}%`;
+  const opts = document.getElementById('quiz-options');
+  opts.innerHTML = '';
+  hideFeedback('fb-quiz');
+  document.getElementById('quiz-next-btn').style.display = 'none';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = opt;
+    btn.onclick = () => selectQuizOpt(i, q.correct);
+    opts.appendChild(btn);
+  });
+}
+function selectQuizOpt(chosen, correct) {
+  const btns = document.querySelectorAll('.quiz-option');
+  btns.forEach(b => { b.disabled = true; });
+  if (chosen === correct) {
+    btns[chosen].classList.add('correct');
+    qScore++;
+    showFeedback('fb-quiz', '✅ Richtig! Prima!', true);
+  } else {
+    btns[chosen].classList.add('wrong');
+    btns[correct].classList.add('correct');
+    showFeedback('fb-quiz', `❌ Leider falsch. Richtig wäre: „${quizData[qIdx].opts[correct]}"`, false);
+  }
+  document.getElementById('quiz-next-btn').style.display = 'inline-block';
+}
+function nextQuizQuestion() { qIdx++; loadQuestion(); }
+function restartQuiz() {
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('quiz-result').style.display = 'none';
+  initQuiz();
+}
+
+// MC
+const mcData = [
+  { stmt: "Die Hypotenuse ist die kürzeste Seite im rechtwinkligen Dreieck.", correct: false },
+  { stmt: "a² + b² = c² gilt für rechtwinklige Dreiecke.", correct: true },
+  { stmt: "Bei a = 6 und b = 8 ist c = 10.", correct: true },
+  { stmt: "Die Katheten schließen den rechten Winkel EIN.", correct: true },
+  { stmt: "Wenn c = 5 und a = 4, dann ist b = 1.", correct: false },
+  { stmt: "Pythagoräische Tripel sind z.B. 3, 4, 5.", correct: true },
+  { stmt: "c² = a² − b² (wenn c gesucht ist).", correct: false },
+  { stmt: "Beim Berechnen der Kathete subtrahiert man.", correct: true },
+];
+function loadMC() {
+  const shuffled = [...mcData].sort(() => Math.random()-0.5).slice(0,4);
+  const area = document.getElementById('mc-area');
+  area.innerHTML = '';
+  shuffled.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;';
+    div.innerHTML = `<p style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">${item.stmt}</p>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm" id="mc-t-${i}" onclick="checkMC(${i},true,${item.correct})"
+          style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">✓ Richtig</button>
+        <button class="btn btn-sm" id="mc-f-${i}" onclick="checkMC(${i},false,${item.correct})"
+          style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;">✗ Falsch</button>
+      </div>
+      <div id="mc-fb-${i}" class="feedback"></div>`;
+    area.appendChild(div);
+  });
+}
+function checkMC(i, chosen, correct) {
+  document.getElementById(`mc-t-${i}`).disabled = true;
+  document.getElementById(`mc-f-${i}`).disabled = true;
+  const isRight = chosen === correct;
+  showFeedback(`mc-fb-${i}`,
+    isRight ? '✅ Richtig!' : `❌ Das ist ${correct ? 'richtig' : 'falsch'}!`,
+    isRight);
+}
+
+// ===== MATCHING =====
+const matchData = [
+  { term: "Hypotenuse", def: "Längste Seite, gegenüber dem rechten Winkel" },
+  { term: "Kathete", def: "Kurze Seite, schließt den rechten Winkel ein" },
+  { term: "Rechter Winkel", def: "90°-Winkel, oft mit kleinem Quadrat markiert" },
+  { term: "Pythagoräisches Tripel", def: "Drei natürliche Zahlen, die a²+b²=c² erfüllen" },
+  { term: "Wurzel ziehen", def: "Umkehrung des Quadrierens (z.B. √25 = 5)" },
+];
+let matchSelected = null;
+let matchDone = [];
+function setupMatching() {
+  const terms = [...matchData].sort(() => Math.random()-0.5);
+  const defs = [...matchData].sort(() => Math.random()-0.5);
+  matchSelected = null; matchDone = [];
+  document.getElementById('fb-match').classList.remove('show');
+
+  const tc = document.getElementById('terms-col');
+  const dc = document.getElementById('defs-col');
+  tc.innerHTML = ''; dc.innerHTML = '';
+
+  terms.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    div.dataset.term = t.term;
+    div.textContent = t.term;
+    div.onclick = () => selectTerm(div);
+    tc.appendChild(div);
+  });
+  defs.forEach(d => {
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    div.dataset.def = d.def;
+    div.dataset.term = d.term;
+    div.textContent = d.def;
+    div.onclick = () => selectDef(div);
+    dc.appendChild(div);
+  });
+}
+function selectTerm(el) {
+  if (el.classList.contains('matched')) return;
+  document.querySelectorAll('#terms-col .match-item').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  matchSelected = el;
+}
+function selectDef(el) {
+  if (!matchSelected || el.classList.contains('matched')) return;
+  if (matchSelected.dataset.term === el.dataset.term) {
+    matchSelected.classList.remove('selected');
+    matchSelected.classList.add('matched');
+    el.classList.add('matched');
+    matchDone.push(matchSelected.dataset.term);
+    matchSelected = null;
+    if (matchDone.length === matchData.length)
+      showFeedback('fb-match', '🎉 Perfekt! Alle Begriffe richtig zugeordnet!', true);
+  } else {
+    el.classList.add('wrong-match');
+    setTimeout(() => el.classList.remove('wrong-match'), 600);
+    matchSelected.classList.remove('selected');
+    matchSelected = null;
+    showFeedback('fb-match', '❌ Das passt leider nicht. Versuche es nochmal!', false);
+    setTimeout(() => hideFeedback('fb-match'), 1500);
+  }
+}
+function resetMatching() { setupMatching(); }
+
+// Formula Matching
+const formulaMatchData = [
+  { label: "c gesucht", formula: "c = √(a² + b²)" },
+  { label: "a gesucht", formula: "a = √(c² − b²)" },
+  { label: "b gesucht", formula: "b = √(c² − a²)" },
+];
+let fmSelected = null;
+function loadFormulaMatch() {
+  const area = document.getElementById('formula-match-area');
+  const left = [...formulaMatchData].sort(() => Math.random()-0.5);
+  const right = [...formulaMatchData].sort(() => Math.random()-0.5);
+  fmSelected = null;
+  area.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <div id="fm-left">${left.map((f,i)=>`<div class="match-item" data-id="${f.label}" onclick="fmSelectLeft(this)">${f.label}</div>`).join('')}</div>
+    <div id="fm-right">${right.map((f,i)=>`<div class="match-item" data-id="${f.label}" onclick="fmSelectRight(this)">${f.formula}</div>`).join('')}</div>
+  </div><div class="feedback" id="fb-fm"></div>`;
+}
+function fmSelectLeft(el) {
+  if (el.classList.contains('matched')) return;
+  document.querySelectorAll('#fm-left .match-item').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  fmSelected = el;
+}
+function fmSelectRight(el) {
+  if (!fmSelected || el.classList.contains('matched')) return;
+  if (fmSelected.dataset.id === el.dataset.id) {
+    fmSelected.classList.remove('selected'); fmSelected.classList.add('matched');
+    el.classList.add('matched');
+    fmSelected = null;
+  } else {
+    el.classList.add('wrong-match');
+    setTimeout(() => el.classList.remove('wrong-match'), 600);
+    fmSelected.classList.remove('selected'); fmSelected = null;
+  }
+}
+
+// ===== BLITZ =====
+const blitzPool = [
+  { q: "3² + 4² = ?", a: "25", wrong: ["14", "49", "12"] },
+  { q: "√25 = ?", a: "5", wrong: ["√5", "12.5", "6"] },
+  { q: "5² + 12² = ?", a: "169", wrong: ["119", "260", "144"] },
+  { q: "√144 = ?", a: "12", wrong: ["11", "13", "144"] },
+  { q: "8² + 6² = ?", a: "100", wrong: ["14", "48", "28"] },
+  { q: "√100 = ?", a: "10", wrong: ["5", "20", "√10"] },
+  { q: "9² + 40² = ?", a: "1681", wrong: ["1600", "1764", "1642"] },
+  { q: "√169 = ?", a: "13", wrong: ["12", "14", "84.5"] },
+];
+let blScore = 0, blCorrect = 0, blTotal = 0, blCurrent = null;
+function startBlitz() {
+  const item = blitzPool[Math.floor(Math.random() * blitzPool.length)];
+  blCurrent = item;
+  document.getElementById('blitz-display').textContent = item.q;
+  const opts = [item.a, ...item.wrong.slice(0,3)].sort(() => Math.random()-0.5);
+  const container = document.getElementById('blitz-options');
+  container.innerHTML = '';
+  opts.forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'blitz-option';
+    btn.textContent = o;
+    btn.onclick = () => checkBlitz(btn, o === item.a);
+    container.appendChild(btn);
+  });
+  document.getElementById('blitz-feedback').textContent = '';
+}
+function checkBlitz(btn, correct) {
+  document.querySelectorAll('.blitz-option').forEach(b => b.disabled = true);
+  blTotal++;
+  if (correct) {
+    btn.classList.add('correct');
+    blCorrect++; blScore += 10;
+    document.getElementById('blitz-feedback').textContent = '✅ Richtig! +10 Punkte';
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('blitz-feedback').textContent = '❌ Nicht ganz. Nächste Aufgabe!';
+  }
+  document.getElementById('blitz-score').textContent = blScore;
+  document.getElementById('blitz-correct').textContent = blCorrect;
+  document.getElementById('blitz-total').textContent = blTotal;
+  setTimeout(startBlitz, 1200);
+}
+function resetBlitz() {
+  blScore = 0; blCorrect = 0; blTotal = 0;
+  document.getElementById('blitz-score').textContent = 0;
+  document.getElementById('blitz-correct').textContent = 0;
+  document.getElementById('blitz-total').textContent = 0;
+  document.getElementById('blitz-display').textContent = 'Drücke Start!';
+  document.getElementById('blitz-options').innerHTML = '';
+  document.getElementById('blitz-feedback').textContent = '';
+}
+
+// Term Blitz
+const termPool = [
+  { desc: "Die längste Seite im rechtwinkligen Dreieck", ans: "Hypotenuse", wrong: ["Kathete", "Diagonale", "Sekante"] },
+  { desc: "Zwei kürzere Seiten, die den rechten Winkel einschließen", ans: "Katheten", wrong: ["Hypotenuse", "Diagonalen", "Schenkel"] },
+  { desc: "Der 90°-Winkel im Dreieck", ans: "Rechter Winkel", wrong: ["Stumpfer Winkel", "Spitzer Winkel", "Vollwinkel"] },
+  { desc: "Drei natürliche Zahlen, die a²+b²=c² erfüllen", ans: "Pythagoräisches Tripel", wrong: ["Primzahlen", "Quadratzahlen", "Fibonacci-Zahlen"] },
+  { desc: "Das Symbol zeigt: √25 = 5", ans: "Wurzel", wrong: ["Potenz", "Logarithmus", "Bruch"] },
+];
+let tCurrent = null;
+function startTermBlitz() {
+  tCurrent = termPool[Math.floor(Math.random() * termPool.length)];
+  document.getElementById('term-display').textContent = tCurrent.desc;
+  const opts = [tCurrent.ans, ...tCurrent.wrong.slice(0,3)].sort(() => Math.random()-0.5);
+  const container = document.getElementById('term-options');
+  container.innerHTML = '';
+  opts.forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'blitz-option';
+    btn.textContent = o;
+    btn.onclick = () => checkTerm(btn, o === tCurrent.ans);
+    container.appendChild(btn);
+  });
+  document.getElementById('term-feedback').textContent = '';
+}
+function checkTerm(btn, correct) {
+  document.querySelectorAll('#term-options .blitz-option').forEach(b => b.disabled = true);
+  if (correct) {
+    btn.classList.add('correct');
+    document.getElementById('term-feedback').textContent = '✅ Sehr gut!';
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('term-feedback').textContent = `❌ Richtig wäre: ${tCurrent.ans}`;
+  }
+  setTimeout(startTermBlitz, 1400);
+}
+
+// ===== REALWELT =====
+function showDiff(level, btn) {
+  ['easy','medium','hard'].forEach(l => {
+    document.getElementById('tasks-'+l).style.display = l === level ? 'block' : 'none';
+  });
+  btn.parentElement.querySelectorAll('.diff-tab').forEach(b => { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+function toggleHint(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('show');
+}
+function checkTask1() {
+  const val = parseFloat(document.getElementById('task1-ans').value);
+  const correct = Math.sqrt(2.3*2.3 + 3.85*3.85);
+  if (Math.abs(val - correct) < 0.05)
+    showFeedback('fb-task1', `✅ Richtig! Die Leiter ist ca. ${correct.toFixed(2)} m lang.`, true);
+  else
+    showFeedback('fb-task1', `❌ Nicht ganz. Tipp: c = √(2,30² + 3,85²) ≈ ${correct.toFixed(2)} m`, false);
+}
+function checkTask2() {
+  const val = parseFloat(document.getElementById('task2-ans').value);
+  const correct = Math.sqrt(240*240 + 180*180);
+  if (Math.abs(val - correct) < 1)
+    showFeedback('fb-task2', `✅ Richtig! Die Abkürzung ist ${correct.toFixed(0)} m. Der Umweg wäre 420 m. Die Abkürzung spart ${(420 - correct).toFixed(0)} m!`, true);
+  else
+    showFeedback('fb-task2', `❌ Tipp: c = √(240² + 180²). Vergleiche das Ergebnis mit 420 m.`, false);
+}
+function checkTask3() {
+  const val = parseFloat(document.getElementById('task3-ans').value);
+  const c1 = Math.sqrt(144 + 25);
+  const c2 = Math.sqrt(64 + 25);
+  const diff = c1 - c2;
+  if (Math.abs(val - diff) < 0.1)
+    showFeedback('fb-task3', `✅ Richtig! Seil 1 ≈ ${c1.toFixed(2)} m, Seil 2 ≈ ${c2.toFixed(2)} m. Unterschied ≈ ${diff.toFixed(2)} m`, true);
+  else
+    showFeedback('fb-task3', `❌ Berechne: c₁=√(12²+5²)≈${c1.toFixed(2)} m und c₂=√(8²+5²)≈${c2.toFixed(2)} m`, false);
+}
+
+// Triples
+const triplePool = [
+  { a:3, b:4, c:5, isTrue:true },
+  { a:5, b:12, c:13, isTrue:true },
+  { a:8, b:15, c:17, isTrue:true },
+  { a:6, b:8, c:10, isTrue:true },
+  { a:2, b:3, c:4, isTrue:false },
+  { a:4, b:5, c:6, isTrue:false },
+  { a:1, b:2, c:3, isTrue:false },
+  { a:7, b:24, c:25, isTrue:true },
+  { a:9, b:40, c:41, isTrue:true },
+  { a:3, b:5, c:7, isTrue:false },
+  { a:10, b:24, c:26, isTrue:true },
+  { a:5, b:7, c:9, isTrue:false },
+];
+let currentTriples = [];
+function loadTriples() {
+  const shuffled = [...triplePool].sort(() => Math.random()-0.5).slice(0,6);
+  currentTriples = shuffled;
+  const grid = document.getElementById('triples-grid');
+  grid.innerHTML = '';
+  shuffled.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'triple-card';
+    div.dataset.idx = i;
+    div.textContent = `${t.a} · ${t.b} · ${t.c}`;
+    div.onclick = () => div.classList.toggle('selected');
+    grid.appendChild(div);
+  });
+  hideFeedback('fb-triples');
+}
+function checkTriples() {
+  const cards = document.querySelectorAll('.triple-card');
+  let c = 0;
+  cards.forEach(card => {
+    const t = currentTriples[card.dataset.idx];
+    const selected = card.classList.contains('selected');
+    card.classList.remove('selected','correct-t','wrong-t');
+    if (selected && t.isTrue) { card.classList.add('correct-t'); c++; }
+    else if (selected && !t.isTrue) card.classList.add('wrong-t');
+    else if (!selected && t.isTrue) card.classList.add('wrong-t');
+    else card.style.opacity = '0.5';
+  });
+  const trueCount = currentTriples.filter(t => t.isTrue).length;
+  showFeedback('fb-triples',
+    c === trueCount ? '🎉 Alle richtigen Tripel gefunden!' : `${c} von ${trueCount} richtigen gefunden. Schaue nochmal!`,
+    c === trueCount);
+}
+
+// ===== GENERATOR =====
+let genDifficulty = 'easy';
+function setGenDiff(level, btn) {
+  genDifficulty = level;
+  btn.parentElement.querySelectorAll('.diff-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+const wordProblems = [
+  (a,b,c) => ({ text: `Eine Leiter lehnt an einer Wand. Der Fuß der Leiter ist <strong>${a} m</strong> von der Wand entfernt. Die Wand ist <strong>${b} m</strong> hoch. Wie lang ist die Leiter?`, ans: c, unit: 'm' }),
+  (a,b,c) => ({ text: `Ein rechteckiges Grundstück hat die Seiten <strong>${a} m</strong> und <strong>${b} m</strong>. Wie lang ist die Diagonale?`, ans: c, unit: 'm' }),
+  (a,b,c) => ({ text: `Ein Schiff fährt <strong>${a} km</strong> nach Osten und dann <strong>${b} km</strong> nach Norden. Wie weit ist es vom Startpunkt entfernt?`, ans: c, unit: 'km' }),
+];
+
+function genTask(type) {
+  if (type === 'all') {
+    const types = ['hyp','kat','word'];
+    type = types[Math.floor(Math.random()*types.length)];
+  }
+
+  let html = '';
+  const id = 'gen-' + Date.now();
+
+  if (type === 'hyp') {
+    const {a, b} = genAB();
+    const c = Math.sqrt(a*a + b*b);
+    html = `<div class="card" style="border-left:4px solid var(--primary);">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--muted);margin-bottom:8px;">HYPOTENUSE BERECHNEN</div>
+      <p style="font-size:0.95rem;margin-bottom:12px;">Gegeben: <strong>a = ${a} cm</strong>, <strong>b = ${b} cm</strong><br>Gesucht: <strong>c = ?</strong></p>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input class="input-field" id="${id}" type="number" step="0.01" placeholder="c = ?">
+        <span style="font-size:0.9rem;">cm</span>
+        <button class="btn btn-primary btn-sm" onclick="checkGen('${id}',${c.toFixed(2)})">Prüfen</button>
+      </div>
+      <div class="feedback" id="fb-${id}"></div>
+      <button class="btn btn-sm" style="margin-top:8px;background:#f8fafc;color:var(--muted);border:1px solid var(--border);"
+        onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung zeigen</button>
+      <div id="sol-${id}" style="display:none;font-size:0.85rem;margin-top:8px;padding:10px;background:#eff6ff;border-radius:8px;color:#1d4ed8;">
+        c = √(${a}² + ${b}²) = √(${a*a} + ${b*b}) = √${a*a+b*b} ≈ <strong>${c.toFixed(2)} cm</strong>
+      </div>
+    </div>`;
+  } else if (type === 'kat') {
+    const {a, b} = genAB();
+    const c = Math.sqrt(a*a + b*b);
+    const cR = Math.round(c * 100) / 100;
+    html = `<div class="card" style="border-left:4px solid var(--success);">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--muted);margin-bottom:8px;">KATHETE BERECHNEN</div>
+      <p style="font-size:0.95rem;margin-bottom:12px;">Gegeben: <strong>a = ${a} cm</strong>, <strong>c = ${cR} cm</strong><br>Gesucht: <strong>b = ?</strong></p>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input class="input-field" id="${id}" type="number" step="0.01" placeholder="b = ?">
+        <span style="font-size:0.9rem;">cm</span>
+        <button class="btn btn-primary btn-sm" onclick="checkGen('${id}',${b})">Prüfen</button>
+      </div>
+      <div class="feedback" id="fb-${id}"></div>
+      <button class="btn btn-sm" style="margin-top:8px;background:#f8fafc;color:var(--muted);border:1px solid var(--border);"
+        onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung zeigen</button>
+      <div id="sol-${id}" style="display:none;font-size:0.85rem;margin-top:8px;padding:10px;background:#f0fdf4;border-radius:8px;color:#15803d;">
+        b = √(c² − a²) = √(${cR}² − ${a}²) = √(${(cR*cR).toFixed(2)} − ${a*a}) ≈ <strong>${b} cm</strong>
+      </div>
+    </div>`;
+  } else {
+    const {a, b} = genABWord();
+    const c = Math.sqrt(a*a + b*b);
+    const wp = wordProblems[Math.floor(Math.random()*wordProblems.length)](a, b, c);
+    html = `<div class="card" style="border-left:4px solid var(--warning);">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--muted);margin-bottom:8px;">SACHAUFGABE</div>
+      <p style="font-size:0.95rem;margin-bottom:12px;line-height:1.6;">${wp.text}</p>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input class="input-field" id="${id}" type="number" step="0.01" placeholder="Ergebnis">
+        <span style="font-size:0.9rem;">${wp.unit}</span>
+        <button class="btn btn-primary btn-sm" onclick="checkGen('${id}',${c.toFixed(2)})">Prüfen</button>
+      </div>
+      <div class="feedback" id="fb-${id}"></div>
+      <button class="btn btn-sm" style="margin-top:8px;background:#f8fafc;color:var(--muted);border:1px solid var(--border);"
+        onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung zeigen</button>
+      <div id="sol-${id}" style="display:none;font-size:0.85rem;margin-top:8px;padding:10px;background:#fef3c7;border-radius:8px;color:#92400e;">
+        c = √(${a}² + ${b}²) = √${a*a+b*b} ≈ <strong>${c.toFixed(2)} ${wp.unit}</strong>
+      </div>
+    </div>`;
+  }
+
+  const container = document.getElementById('gen-output');
+  container.innerHTML = html;
+}
+
+function genAB() {
+  if (genDifficulty === 'easy') {
+    const triplets = [[3,4],[5,12],[8,15],[6,8],[9,12],[7,24]];
+    const t = triplets[Math.floor(Math.random()*triplets.length)];
+    return { a: t[0], b: t[1] };
+  } else if (genDifficulty === 'medium') {
+    const a = Math.floor(Math.random()*12)+2;
+    const b = Math.floor(Math.random()*12)+2;
+    return { a, b };
+  } else {
+    const a = (Math.floor(Math.random()*20)+5) + (Math.random()*10).toFixed(1)*1;
+    const b = (Math.floor(Math.random()*20)+5) + (Math.random()*10).toFixed(1)*1;
+    return { a: Math.round(a*10)/10, b: Math.round(b*10)/10 };
+  }
+}
+function genABWord() {
+  const a = Math.round((Math.random()*8+1.5)*10)/10;
+  const b = Math.round((Math.random()*10+2)*10)/10;
+  return { a, b };
+}
+
+function checkGen(id, correct) {
+  const val = parseFloat(document.getElementById(id).value);
+  showFeedback('fb-'+id,
+    Math.abs(val - correct) < 0.1 ? `✅ Richtig! Ergebnis: ${correct} cm` : `❌ Nicht ganz. Tipp: Das Ergebnis ist ca. ${correct} → Lösung unten anzeigen.`,
+    Math.abs(val - correct) < 0.1);
+}
+
+function genSheet() {
+  const container = document.getElementById('gen-sheet');
+  let html = '<div style="display:flex;flex-direction:column;gap:10px;">';
+  for (let i = 1; i <= 5; i++) {
+    const type = i <= 2 ? 'hyp' : i <= 4 ? 'kat' : 'word';
+    const { a, b } = type === 'word' ? genABWord() : genAB();
+    const c = Math.sqrt(a*a + b*b);
+    const id2 = `sheet-${i}-${Date.now()}`;
+    if (type === 'hyp') {
+      html += `<div style="padding:12px;background:#f8fafc;border-radius:8px;border-left:3px solid var(--primary);">
+        <strong>Aufgabe ${i}:</strong> Berechne c. &nbsp; a = ${a} cm, b = ${b} cm
+        <span style="float:right;color:var(--muted);font-size:0.8rem;">c ≈ ${c.toFixed(2)} cm</span>
+      </div>`;
+    } else if (type === 'kat') {
+      const cR = Math.round(c*100)/100;
+      html += `<div style="padding:12px;background:#f8fafc;border-radius:8px;border-left:3px solid var(--success);">
+        <strong>Aufgabe ${i}:</strong> Berechne b. &nbsp; a = ${a} cm, c = ${cR} cm
+        <span style="float:right;color:var(--muted);font-size:0.8rem;">b = ${b} cm</span>
+      </div>`;
+    } else {
+      html += `<div style="padding:12px;background:#f8fafc;border-radius:8px;border-left:3px solid var(--warning);">
+        <strong>Aufgabe ${i}:</strong> Eine Strecke hat die Katheten ${a} m und ${b} m. Berechne die Hypotenuse.
+        <span style="float:right;color:var(--muted);font-size:0.8rem;">c ≈ ${c.toFixed(2)} m</span>
+      </div>`;
+    }
+  }
+  html += '</div><p style="font-size:0.78rem;color:#94a3b8;margin-top:8px;">💡 Lösungen sind grau angezeigt.</p>';
+  container.innerHTML = html;
+}
+
+// ===== HELPERS =====
+function showFeedback(id, msg, ok) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'feedback show ' + (ok ? 'correct' : 'wrong');
+}
+function hideFeedback(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+// ===== INIT =====
+initQuiz();
+setupMatching();
+loadMC();
+loadFormulaMatch();
+loadTriples();
+</script>
+</body>
+</html>

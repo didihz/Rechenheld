@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lineare Funktionen – 9.3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600&display=swap');
+
+:root {
+  --bg:#f0fdf4;
+  --card:#fff;
+  --pri:#059669;
+  --pri-l:#d1fae5;
+  --pri-d:#047857;
+  --pri-m:#34d399;
+  --teal:#0891b2;
+  --teal-l:#e0f2fe;
+  --amber:#d97706;
+  --amber-l:#fef3c7;
+  --red:#dc2626;
+  --red-l:#fee2e2;
+  --blue:#2563eb;
+  --blue-l:#dbeafe;
+  --purple:#7c3aed;
+  --purple-l:#ede9fe;
+  --text:#064e3b;
+  --muted:#6b7280;
+  --border:#d1fae5;
+  --border2:#e5e7eb;
+  --r:13px;
+  --rs:9px;
+  --sh:0 2px 16px rgba(5,150,105,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.hdr{background:linear-gradient(135deg,#064e3b 0%,#059669 55%,#34d399 100%);color:#fff;padding:26px 18px 20px;text-align:center;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:-50px;right:-40px;width:200px;height:200px;background:rgba(255,255,255,.05);border-radius:50%}
+.hdr::after{content:'';position:absolute;bottom:-60px;left:-30px;width:160px;height:160px;background:rgba(255,255,255,.04);border-radius:50%}
+.hdr-icon{font-size:2.4rem;display:block;margin-bottom:6px;position:relative;z-index:1}
+.hdr h1{font-family:'Nunito',sans-serif;font-size:1.7rem;font-weight:900;letter-spacing:-.5px;position:relative;z-index:1}
+.hdr p{font-size:.87rem;opacity:.82;margin-top:5px;position:relative;z-index:1}
+
+.nav{display:flex;gap:3px;padding:13px 13px 0;overflow-x:auto;background:var(--bg);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:8px 14px;border:none;border-radius:var(--rs) var(--rs) 0 0;background:#a7f3d0;color:#065f46;font-family:'Nunito',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .18s;white-space:nowrap}
+.tab:hover{background:#6ee7b7}
+.tab.active{background:var(--card);color:var(--pri);box-shadow:0 -2px 0 var(--pri) inset}
+
+.cnt{padding:0 13px 34px;max-width:820px;margin:0 auto}
+.sec{display:none;animation:up .22s ease}
+.sec.active{display:block}
+@keyframes up{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border-radius:var(--r);padding:19px;margin-top:13px;box-shadow:var(--sh);border:1px solid var(--border)}
+.card h2{font-family:'Nunito',sans-serif;font-size:1.06rem;font-weight:800;color:var(--pri);margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.card h3{font-family:'Nunito',sans-serif;font-size:.93rem;font-weight:700;margin-bottom:7px}
+
+.fbox{background:linear-gradient(135deg,#f0fdf4,#d1fae5);border:2px solid #6ee7b7;border-radius:var(--r);padding:13px;text-align:center;margin:10px 0}
+.fbig{font-family:'Nunito',sans-serif;font-size:1.35rem;font-weight:900;color:var(--pri-d);letter-spacing:.5px}
+.fsub{font-size:.82rem;color:var(--muted);margin-top:4px}
+
+.steps{display:flex;flex-direction:column;gap:8px;margin-top:9px}
+.step{display:flex;gap:10px;align-items:flex-start;padding:10px;background:#f0fdf4;border-radius:var(--rs);border-left:3px solid var(--pri);font-size:.88rem}
+.sn{background:var(--pri);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.76rem;min-width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+.btn{padding:8px 17px;border:none;border-radius:var(--rs);font-family:'Nunito',sans-serif;font-weight:700;font-size:.86rem;cursor:pointer;transition:all .16s}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--pri);color:#fff}
+.btn-p:hover{background:var(--pri-d)}
+.btn-b{background:var(--blue);color:#fff}
+.btn-b:hover{background:#1d4ed8}
+.btn-o{background:transparent;border:2px solid var(--pri);color:var(--pri)}
+.btn-o:hover{background:var(--pri-l)}
+.btn-sm{padding:5px 12px;font-size:.78rem}
+
+.inp{border:2px solid var(--border2);border-radius:var(--rs);padding:8px 12px;font-size:.93rem;font-family:'Nunito Sans',sans-serif;transition:border-color .18s;background:#fff;color:var(--text);width:100px}
+.inp:focus{outline:none;border-color:var(--pri)}
+.inp.ok{border-color:var(--pri);background:var(--pri-l)}
+.inp.err{border-color:var(--red);background:var(--red-l)}
+
+.fb{padding:10px 13px;border-radius:var(--rs);font-size:.86rem;font-weight:700;margin-top:8px;display:none;animation:up .2s ease}
+.fb.show{display:block}
+.fb.ok{background:var(--pri-l);color:var(--pri-d);border:1px solid #6ee7b7}
+.fb.err{background:var(--red-l);color:var(--red);border:1px solid #fca5a5}
+.fb.info{background:var(--blue-l);color:#1e40af;border:1px solid #93c5fd}
+
+.qopts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.qopt{padding:10px 14px;border:2px solid var(--border2);border-radius:var(--rs);cursor:pointer;font-size:.88rem;background:#fff;transition:all .14s;text-align:left;font-family:'Nunito Sans',sans-serif}
+.qopt:hover{border-color:var(--pri);background:var(--pri-l)}
+.qopt.ok{border-color:var(--pri);background:var(--pri-l);color:var(--pri-d);font-weight:700}
+.qopt.err{border-color:var(--red);background:var(--red-l);color:var(--red)}
+
+.cl{display:inline-block;border:none;border-bottom:2px solid var(--pri);background:transparent;font-size:.93rem;font-family:'Nunito Sans',sans-serif;text-align:center;color:var(--pri-d);font-weight:700;padding:1px 3px;outline:none}
+.cl.ok{border-color:var(--pri);color:var(--pri)}
+.cl.err{border-color:var(--red);color:var(--red)}
+
+.prog-o{height:7px;background:var(--border2);border-radius:8px;overflow:hidden;margin:6px 0}
+.prog-i{height:100%;background:var(--pri);border-radius:8px;transition:width .4s ease}
+
+.dtabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.dtab{padding:5px 13px;border:2px solid var(--border2);border-radius:20px;font-size:.77rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;background:#fff;color:var(--muted);transition:all .14s}
+.dtab.a-easy{border-color:var(--pri);background:var(--pri-l);color:var(--pri)}
+.dtab.a-med{border-color:var(--amber);background:var(--amber-l);color:var(--amber)}
+.dtab.a-hard{border-color:var(--red);background:var(--red-l);color:var(--red)}
+
+.blitz-d{font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:900;color:var(--pri-d);background:var(--pri-l);border-radius:var(--r);padding:16px;margin:10px 0;text-align:center;min-height:64px;display:flex;align-items:center;justify-content:center;line-height:1.4}
+.blitz-os{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.blitz-o{padding:11px 7px;border:2px solid var(--border2);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;background:#fff;transition:all .14s;text-align:center}
+.blitz-o:hover{border-color:var(--pri);background:var(--pri-l)}
+.blitz-o.ok{border-color:var(--pri);background:var(--pri-l);color:var(--pri)}
+.blitz-o.err{border-color:var(--red);background:var(--red-l);color:var(--red)}
+
+.sc-row{display:flex;gap:9px;align-items:center;justify-content:center;flex-wrap:wrap;margin:9px 0}
+.sc-box{background:var(--pri-l);color:var(--pri-d);border-radius:var(--rs);padding:6px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.97rem}
+
+.mi{padding:9px 12px;border:2px solid var(--border2);border-radius:var(--rs);font-size:.83rem;cursor:pointer;background:#fff;transition:all .14s;text-align:center}
+.mi:hover{border-color:var(--pri)}
+.mi.sel{border-color:var(--pri);background:var(--pri-l)}
+.mi.done{border-color:var(--pri);background:var(--pri-l);color:var(--pri-d);font-weight:700;cursor:default}
+.mi.bad{border-color:var(--red);background:var(--red-l);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+.hint-btn{background:none;border:1px dashed var(--muted);border-radius:var(--rs);color:var(--muted);padding:4px 10px;font-size:.76rem;cursor:pointer;font-family:'Nunito Sans',sans-serif;margin-top:6px}
+.hint-box{display:none;font-size:.83rem;color:#92400e;margin-top:6px;padding:9px;background:var(--amber-l);border-radius:var(--rs);border-left:3px solid var(--amber);line-height:1.55}
+.hint-box.show{display:block}
+
+.irow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+
+/* canvas coord system */
+canvas{border:1px solid var(--border2);border-radius:var(--rs);background:#fff;display:block;max-width:100%;touch-action:none}
+
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:.78rem;font-family:'Nunito',sans-serif;font-weight:700}
+.pill-g{background:var(--pri-l);color:var(--pri-d)}
+.pill-b{background:var(--blue-l);color:#1e40af}
+.pill-a{background:var(--amber-l);color:#92400e}
+.pill-r{background:var(--red-l);color:#991b1b}
+
+/* value table */
+.vtbl{width:100%;border-collapse:collapse;font-size:.85rem;margin:8px 0}
+.vtbl th{background:var(--pri-l);color:var(--pri-d);padding:7px 10px;font-family:'Nunito',sans-serif;font-weight:700;border:1px solid #a7f3d0}
+.vtbl td{padding:7px 10px;border:1px solid var(--border2);background:#fff;text-align:center}
+.vtbl tr:nth-child(even) td{background:#f0fdf4}
+.vtbl input{width:68px;padding:4px 6px;border:1.5px solid var(--border2);border-radius:6px;font-size:.83rem;text-align:center;font-family:'Nunito Sans',sans-serif}
+.vtbl input:focus{outline:none;border-color:var(--pri)}
+.vtbl input.ok{border-color:var(--pri);background:var(--pri-l)}
+.vtbl input.err{border-color:var(--red);background:var(--red-l)}
+
+@media(max-width:500px){.blitz-os{grid-template-columns:1fr}.hdr h1{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span class="hdr-icon">📈</span>
+  <h1>Lineare Funktionen</h1>
+  <p>Lernen · Verstehen · Üben</p>
+</div>
+
+<div class="nav">
+  <button class="tab active" onclick="showSec('lernen',this)">📖 Lernen</button>
+  <button class="tab" onclick="showSec('begriffe',this)">🔤 Begriffe</button>
+  <button class="tab" onclick="showSec('koordinaten',this)">📊 Koordinaten</button>
+  <button class="tab" onclick="showSec('wertetabelle',this)">📋 Wertetabelle</button>
+  <button class="tab" onclick="showSec('luecke',this)">✏️ Lückentext</button>
+  <button class="tab" onclick="showSec('quiz',this)">❓ Quiz</button>
+  <button class="tab" onclick="showSec('zuordnen',this)">🔗 Zuordnen</button>
+  <button class="tab" onclick="showSec('blitz',this)">⚡ Blitz</button>
+  <button class="tab" onclick="showSec('aufgaben',this)">🌍 Aufgaben</button>
+  <button class="tab" onclick="showSec('generator',this)">🎲 Neu</button>
+</div>
+
+<div class="cnt">
+
+<!-- ══════ LERNEN ══════ -->
+<div id="sec-lernen" class="sec active">
+
+  <div class="card">
+    <h2>📈 Was ist eine lineare Funktion?</h2>
+    <p style="font-size:.9rem;line-height:1.7;margin-bottom:10px;">
+      Eine lineare Funktion ist eine Regel: Gibst du einen Wert für <strong>x</strong> ein,
+      bekommst du immer genau einen Wert für <strong>y</strong> heraus.
+      Der Graph ist dabei <strong>immer eine gerade Linie</strong>.
+    </p>
+
+    <div class="fbox">
+      <div class="fbig">y = m · x + n</div>
+      <div class="fsub"><strong>m</strong> = Steigung &nbsp;|&nbsp; <strong>n</strong> = y-Achsenabschnitt</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+      <div style="padding:10px;background:#f0fdf4;border-radius:8px;border-left:3px solid var(--pri);font-size:.86rem;">
+        <strong style="color:var(--pri-d);">Steigung m</strong><br>
+        <span style="color:var(--muted)">Wie steil die Gerade ist.<br>m &gt; 0 → Gerade steigt<br>m &lt; 0 → Gerade fällt</span>
+      </div>
+      <div style="padding:10px;background:#dbeafe;border-radius:8px;border-left:3px solid var(--blue);font-size:.86rem;">
+        <strong style="color:#1e40af;">y-Achsenabschnitt n</strong><br>
+        <span style="color:var(--muted)">Wo die Gerade die y-Achse schneidet.<br>Punkt: (0 | n)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔍 Steigung verstehen – Schritt für Schritt</h2>
+
+    <div class="dtabs" id="ex-dtabs">
+      <button class="dtab a-easy" onclick="showEx('pos',this)">Steigende Gerade</button>
+      <button class="dtab" onclick="showEx('neg',this)">Fallende Gerade</button>
+      <button class="dtab" onclick="showEx('null',this)">Waagerechte Gerade</button>
+    </div>
+
+    <div id="ex-pos">
+      <p style="font-size:.88rem;color:#374151;margin-bottom:8px;"><strong>Beispiel:</strong> y = 2x + 1</p>
+      <div class="steps">
+        <div class="step"><span class="sn">1</span><div><strong>m = 2:</strong> Positiv → die Gerade steigt von links nach rechts.</div></div>
+        <div class="step"><span class="sn">2</span><div><strong>n = 1:</strong> Die Gerade schneidet die y-Achse bei y = 1, also im Punkt (0 | 1).</div></div>
+        <div class="step"><span class="sn">3</span><div><strong>Steigungsdreieck:</strong> 1 Schritt rechts → 2 Schritte hoch (weil m = 2).</div></div>
+      </div>
+    </div>
+    <div id="ex-neg" style="display:none">
+      <p style="font-size:.88rem;color:#374151;margin-bottom:8px;"><strong>Beispiel:</strong> y = –3x + 4</p>
+      <div class="steps">
+        <div class="step"><span class="sn">1</span><div><strong>m = –3:</strong> Negativ → die Gerade fällt von links nach rechts.</div></div>
+        <div class="step"><span class="sn">2</span><div><strong>n = 4:</strong> Die Gerade schneidet die y-Achse bei y = 4, also im Punkt (0 | 4).</div></div>
+        <div class="step"><span class="sn">3</span><div><strong>Steigungsdreieck:</strong> 1 Schritt rechts → 3 Schritte runter.</div></div>
+      </div>
+    </div>
+    <div id="ex-null" style="display:none">
+      <p style="font-size:.88rem;color:#374151;margin-bottom:8px;"><strong>Beispiel:</strong> y = 0x + 3 = 3</p>
+      <div class="steps">
+        <div class="step"><span class="sn">1</span><div><strong>m = 0:</strong> Keine Steigung → die Gerade ist waagerecht.</div></div>
+        <div class="step"><span class="sn">2</span><div><strong>n = 3:</strong> Die Gerade liegt immer bei y = 3.</div></div>
+        <div class="step"><span class="sn">3</span><div>Für jedes x gilt: y = 3. Die Gerade ist parallel zur x-Achse.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive canvas explorer -->
+  <div class="card">
+    <h2>🎛️ Funktion erkunden – interaktiv</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px;">Verändere m und n – sieh, wie sich der Graph verändert!</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:.8rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">Steigung m = <span id="lbl-m">2</span></label>
+        <input type="range" id="sl-m" min="-5" max="5" step="0.5" value="2" style="width:100%" oninput="updateGraph()">
+      </div>
+      <div>
+        <label style="font-size:.8rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">y-Achsenabschnitt n = <span id="lbl-n">1</span></label>
+        <input type="range" id="sl-n" min="-6" max="6" step="1" value="1" style="width:100%" oninput="updateGraph()">
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:6px;">
+      <span style="font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--pri-d);" id="fn-display">y = 2x + 1</span>
+    </div>
+    <canvas id="cv-main" width="580" height="340" style="width:100%;cursor:crosshair"></canvas>
+    <div style="font-size:.76rem;color:var(--muted);margin-top:5px;text-align:center;">Klicke auf den Graphen → lese y-Wert ab</div>
+    <div id="cv-readout" style="text-align:center;font-size:.85rem;font-weight:700;color:var(--pri-d);min-height:20px;margin-top:4px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>📐 Steigungsdreieck zeichnen</h2>
+    <p style="font-size:.86rem;line-height:1.65;color:#374151;margin-bottom:10px;">
+      Das Steigungsdreieck zeigt anschaulich, wie steil eine Gerade ist.
+    </p>
+    <div style="text-align:center;margin:10px 0;">
+      <svg viewBox="0 0 340 220" width="100%" style="max-width:320px;display:block;margin:0 auto;">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#059669" stroke-width="1.5"/></marker></defs>
+        <!-- Grid light -->
+        <g stroke="#e5e7eb" stroke-width="0.5">
+          <line x1="40" y1="20" x2="40" y2="200"/><line x1="100" y1="20" x2="100" y2="200"/>
+          <line x1="160" y1="20" x2="160" y2="200"/><line x1="220" y1="20" x2="220" y2="200"/>
+          <line x1="280" y1="20" x2="280" y2="200"/><line x1="340" y1="20" x2="340" y2="200"/>
+          <line x1="30" y1="200" x2="340" y2="200"/><line x1="30" y1="140" x2="340" y2="140"/>
+          <line x1="30" y1="80" x2="340" y2="80"/>
+        </g>
+        <!-- axes -->
+        <line x1="40" y1="200" x2="320" y2="200" stroke="#374151" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="40" y1="200" x2="40" y2="30" stroke="#374151" stroke-width="1.5" marker-end="url(#ar)"/>
+        <!-- Graph y=1.5x+1 (start x=0 → y=1, so pixel: x=40, y=200-30=170) -->
+        <line x1="40" y1="170" x2="260" y2="50" stroke="#059669" stroke-width="2.5"/>
+        <!-- Steigungsdreieck -->
+        <line x1="100" y1="140" x2="160" y2="140" stroke="#2563eb" stroke-width="2" stroke-dasharray="4,2"/>
+        <line x1="160" y1="140" x2="160" y2="80" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2"/>
+        <line x1="100" y1="140" x2="160" y2="80" stroke="transparent"/>
+        <!-- labels -->
+        <text x="130" y="158" font-family="Nunito" font-size="12" fill="#1e40af" text-anchor="middle">Δx = 1</text>
+        <text x="178" y="114" font-family="Nunito" font-size="12" fill="#dc2626">Δy = m</text>
+        <text x="50" y="198" font-family="Nunito" font-size="10" fill="#374151">0</text>
+        <text x="94" y="198" font-family="Nunito" font-size="10" fill="#374151">1</text>
+        <text x="154" y="198" font-family="Nunito" font-size="10" fill="#374151">2</text>
+        <text x="214" y="198" font-family="Nunito" font-size="10" fill="#374151">3</text>
+        <text x="314" y="198" font-family="Nunito" font-size="10" fill="#374151">x</text>
+        <text x="30" y="143" font-family="Nunito" font-size="10" fill="#374151">1</text>
+        <text x="30" y="83" font-family="Nunito" font-size="10" fill="#374151">2</text>
+        <text x="30" y="31" font-family="Nunito" font-size="10" fill="#374151">y</text>
+        <text x="47" y="168" font-family="Nunito" font-size="10" fill="#374151">n</text>
+        <!-- n dot -->
+        <circle cx="40" cy="170" r="4" fill="#059669"/>
+      </svg>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+      <span class="pill pill-b">Δx = 1 (Schritt rechts)</span>
+      <span class="pill pill-r">Δy = m (Schritte hoch/runter)</span>
+      <span class="pill pill-g">n = Schnittpunkt y-Achse</span>
+    </div>
+
+    <div style="margin-top:12px;padding:10px;background:var(--amber-l);border-radius:8px;border-left:3px solid var(--amber);font-size:.84rem;color:#92400e;">
+      💡 <strong>Merke:</strong> Steigung m = <em>Δy ÷ Δx</em>. Beim Ablesen aus einer Tabelle: Δy = y₂ – y₁, Δx = x₂ – x₁
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>✅ Punkt auf dem Graphen prüfen</h2>
+    <p style="font-size:.86rem;line-height:1.65;margin-bottom:8px;">
+      Um zu prüfen, ob ein Punkt <strong>P(x | y)</strong> auf dem Graphen liegt:
+      x-Wert in die Funktion einsetzen → Ergebnis mit y-Wert vergleichen.
+    </p>
+    <div class="steps">
+      <div class="step"><span class="sn">Bsp</span><div>Liegt P(3 | 11) auf y = 2x + 5?<br>2 · 3 + 5 = 6 + 5 = <strong>11</strong> ✓ → <strong>Ja!</strong></div></div>
+      <div class="step"><span class="sn">Bsp</span><div>Liegt P(−2 | 9) auf y = 2x + 5?<br>2 · (−2) + 5 = −4 + 5 = <strong>1 ≠ 9</strong> → <strong>Nein!</strong></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Was ist eine Funktion? – Der Funktionsbegriff</h2>
+    <p style="font-size:.86rem;line-height:1.65;margin-bottom:8px;">
+      Eine <strong>Funktion</strong> liegt vor, wenn <em>jedem x-Wert genau ein y-Wert</em> zugeordnet ist.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="padding:10px;background:#f0fdf4;border-radius:8px;border-left:3px solid var(--pri);font-size:.84rem;">
+        <strong>✅ Funktion</strong><br>Jedes x → genau ein y<br><em>Beispiel: y = 2x + 3</em>
+      </div>
+      <div style="padding:10px;background:var(--red-l);border-radius:8px;border-left:3px solid var(--red);font-size:.84rem;">
+        <strong>❌ Keine Funktion</strong><br>Ein x → mehrere y-Werte<br><em>Beispiel: ein Kreis</em>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:.83rem;color:var(--muted);padding:9px;background:#f8fafc;border-radius:8px;">
+      <strong>Vertikales Linienkriterium:</strong> Eine Kurve ist eine Funktion, wenn jede senkrechte Linie den Graphen in höchstens einem Punkt trifft.
+    </div>
+  </div>
+
+</div><!-- /lernen -->
+
+<!-- ══════ BEGRIFFE ══════ -->
+<div id="sec-begriffe" class="sec">
+
+  <div class="card">
+    <h2>🔤 Alle Begriffe im Überblick</h2>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div style="padding:10px;background:#f0fdf4;border-radius:8px;border-left:3px solid var(--pri);font-size:.86rem;">
+        <strong>Lineare Funktion</strong> – Hat die Form y = mx + n. Der Graph ist eine Gerade.
+      </div>
+      <div style="padding:10px;background:var(--blue-l);border-radius:8px;border-left:3px solid var(--blue);font-size:.86rem;">
+        <strong>Steigung m</strong> – Gibt an, wie steil die Gerade ist. m = Δy ÷ Δx
+      </div>
+      <div style="padding:10px;background:var(--amber-l);border-radius:8px;border-left:3px solid var(--amber);font-size:.86rem;">
+        <strong>y-Achsenabschnitt n</strong> – Der y-Wert, wo die Gerade die y-Achse schneidet. Punkt: (0 | n)
+      </div>
+      <div style="padding:10px;background:var(--purple-l);border-radius:8px;border-left:3px solid var(--purple);font-size:.86rem;">
+        <strong>Koordinatensystem</strong> – Zwei Achsen (x-Achse = waagerecht, y-Achse = senkrecht) mit Ursprung (0|0).
+      </div>
+      <div style="padding:10px;background:#f0fdf4;border-radius:8px;border-left:3px solid var(--pri);font-size:.86rem;">
+        <strong>Steigungsdreieck</strong> – Veranschaulichung der Steigung: 1 Schritt rechts, m Schritte hoch/runter.
+      </div>
+      <div style="padding:10px;background:var(--red-l);border-radius:8px;border-left:3px solid var(--red);font-size:.86rem;">
+        <strong>Wertepaare (x | y)</strong> – Zusammengehörige Werte, die man in eine Tabelle einträgt oder im KS einzeichnet.
+      </div>
+      <div style="padding:10px;background:var(--teal-l);border-radius:8px;border-left:3px solid var(--teal);font-size:.86rem;">
+        <strong>Funktionswert</strong> – Der y-Wert, den man erhält, wenn man x in die Funktion einsetzt.
+      </div>
+      <div style="padding:10px;background:var(--blue-l);border-radius:8px;border-left:3px solid var(--blue);font-size:.86rem;">
+        <strong>Nullstelle</strong> – Der x-Wert, bei dem y = 0 ist. Die Gerade schneidet dort die x-Achse.
+      </div>
+    </div>
+  </div>
+
+  <!-- R/F from lesson -->
+  <div class="card">
+    <h2>✓✗ Richtig oder Falsch?</h2>
+    <div id="rf-area"></div>
+    <button class="btn btn-o btn-sm" onclick="loadRF()" style="margin-top:9px;">🔄 Neue Aussagen</button>
+  </div>
+
+</div><!-- /begriffe -->
+
+<!-- ══════ KOORDINATEN ══════ -->
+<div id="sec-koordinaten" class="sec">
+
+  <div class="card">
+    <h2>📊 Koordinaten ablesen & einzeichnen</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px;">Wähle eine Funktion und lese Werte ab. Klicke ins Koordinatensystem!</p>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <select id="fn-sel" onchange="loadCoordFn()" style="padding:7px 12px;border:2px solid var(--border2);border-radius:var(--rs);font-family:'Nunito Sans',sans-serif;font-size:.88rem;background:#fff;color:var(--text);">
+        <option value="2,2">y = 2x + 2</option>
+        <option value="3,-1">y = 3x − 1</option>
+        <option value="-1,4">y = −x + 4</option>
+        <option value="0.5,0">y = 0,5x</option>
+        <option value="-2,3">y = −2x + 3</option>
+        <option value="5,-1">y = 5x − 1</option>
+      </select>
+      <button class="btn btn-p btn-sm" onclick="loadCoordFn()">📊 Anzeigen</button>
+    </div>
+
+    <canvas id="cv-coord" width="560" height="380" style="width:100%;cursor:crosshair"></canvas>
+    <div id="coord-info" style="font-size:.82rem;color:var(--muted);margin-top:5px;text-align:center;">Klicke auf den Graphen zum Ablesen</div>
+
+    <div style="margin-top:10px;">
+      <p style="font-size:.86rem;font-weight:600;margin-bottom:7px;">Wertepaare aus dem Graphen ablesen:</p>
+      <div id="coord-task" style="font-size:.9rem;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Punkt prüfen – liegt er auf der Geraden?</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:9px;">Gib Funktion und Punkt ein – die App zeigt, ob der Punkt auf dem Graphen liegt.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="irow">
+        <span style="font-size:.88rem;white-space:nowrap;">y =</span>
+        <input class="inp" id="pt-m" type="number" step="0.5" placeholder="m" style="width:72px">
+        <span style="font-size:.88rem;">x +</span>
+        <input class="inp" id="pt-n" type="number" step="1" placeholder="n" style="width:72px">
+      </div>
+      <div class="irow">
+        <span style="font-size:.88rem;white-space:nowrap;">Punkt P(</span>
+        <input class="inp" id="pt-x" type="number" step="0.5" placeholder="x" style="width:72px">
+        <span style="font-size:.88rem;">|</span>
+        <input class="inp" id="pt-y" type="number" step="0.5" placeholder="y" style="width:72px">
+        <span style="font-size:.88rem;">)</span>
+      </div>
+      <button class="btn btn-p" onclick="checkPoint()" style="align-self:flex-start;">Prüfen</button>
+    </div>
+    <div class="fb" id="fb-pt"></div>
+  </div>
+
+</div><!-- /koordinaten -->
+
+<!-- ══════ WERTETABELLE ══════ -->
+<div id="sec-wertetabelle" class="sec">
+
+  <div class="card">
+    <h2>📋 Wertetabelle ausfüllen</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:8px;">Berechne die y-Werte und trage sie ein.</p>
+
+    <div class="dtabs" id="wt-dtabs">
+      <button class="dtab a-easy" onclick="loadWT('2x+2',this)">y = 2x + 2</button>
+      <button class="dtab" onclick="loadWT('3x-1',this)">y = 3x − 1</button>
+      <button class="dtab" onclick="loadWT('-1x+4',this)">y = −x + 4</button>
+      <button class="dtab" onclick="loadWT('5x-1',this)">y = 5x − 1</button>
+    </div>
+
+    <div id="wt-table"></div>
+    <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;">
+      <button class="btn btn-p btn-sm" onclick="checkWT()">✓ Überprüfen</button>
+      <button class="btn btn-o btn-sm" onclick="resetWT()">↺ Reset</button>
+    </div>
+    <div class="fb" id="fb-wt"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Fehlende Koordinaten berechnen</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:9px;">Lies direkt ab: x gegeben → y berechnen, oder y gegeben → x berechnen.</p>
+
+    <div id="missing-coord-area"></div>
+    <button class="btn btn-o btn-sm" onclick="loadMissingCoord()" style="margin-top:9px;">🔄 Neue Aufgabe</button>
+  </div>
+
+</div><!-- /wertetabelle -->
+
+<!-- ══════ LÜCKENTEXT ══════ -->
+<div id="sec-luecke" class="sec">
+
+  <div class="card">
+    <h2>✏️ Lückentext: Lineare Funktion</h2>
+    <p style="font-size:.83rem;color:var(--muted);margin-bottom:6px;">Ergänze die passenden Begriffe.</p>
+
+    <div style="font-size:.93rem;line-height:2.6;margin:10px 0;">
+      Eine lineare Funktion hat die allgemeine Gleichung:
+      <input class="cl" id="l1" data-a="y = mx + n" style="width:110px">.
+      <br>
+      Der Buchstabe <input class="cl" id="l2" data-a="m" style="width:40px"> steht für die Steigung des Graphen.
+      Ist dieser Wert positiv, so <input class="cl" id="l3" data-a="steigt" style="width:70px"> der Graph,
+      ist er negativ, so <input class="cl" id="l4" data-a="fällt" style="width:55px"> der Graph.
+      <br>
+      Mit dem Buchstaben <input class="cl" id="l5" data-a="n" style="width:40px"> bezeichnet man den y-Achsenabschnitt.
+      Der Graph schneidet die y-Achse im Punkt
+      (0 | <input class="cl" id="l6" data-a="n" style="width:40px">).
+    </div>
+
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;">
+      <button class="btn btn-p btn-sm" onclick="checkCloze(['l1','l2','l3','l4','l5','l6'],'fb-l1')">✓ Prüfen</button>
+      <button class="btn btn-o btn-sm" onclick="resetCloze(['l1','l2','l3','l4','l5','l6'],'fb-l1')">↺ Reset</button>
+    </div>
+    <div class="fb" id="fb-l1"></div>
+  </div>
+
+  <div class="card">
+    <h2>✏️ Lückentext: Steigung und n aus Gleichung</h2>
+    <div style="font-size:.92rem;line-height:2.6;margin:10px 0;">
+      Bei der Funktion <strong>y = 2x − 4</strong>:<br>
+      Die Steigung ist m = <input class="cl" id="l7" data-a="2" style="width:45px"> und der y-Achsenabschnitt ist
+      n = <input class="cl" id="l8" data-a="-4" style="width:45px">.<br>
+      Der Graph <input class="cl" id="l9" data-a="steigt" style="width:70px">, weil m positiv ist.<br>
+      Die Gerade schneidet die y-Achse bei Punkt
+      (0 | <input class="cl" id="l10" data-a="-4" style="width:45px">).
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+      <button class="btn btn-p btn-sm" onclick="checkCloze(['l7','l8','l9','l10'],'fb-l2')">✓ Prüfen</button>
+      <button class="btn btn-o btn-sm" onclick="resetCloze(['l7','l8','l9','l10'],'fb-l2')">↺ Reset</button>
+    </div>
+    <div class="fb" id="fb-l2"></div>
+  </div>
+
+  <div class="card">
+    <h2>✏️ Rechenweg: Funktionswert berechnen</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:7px;"><strong>Funktion:</strong> y = 5x − 1</p>
+    <div style="font-family:monospace;font-size:.9rem;line-height:2.9;margin:8px 0;">
+      Für x = 7:<br>
+      y = 5 · <input class="cl" id="rw1" data-a="7" style="width:40px"> − 1
+        = <input class="cl" id="rw2" data-a="35" style="width:45px"> − 1
+        = <input class="cl" id="rw3" data-a="34" style="width:45px"> ✓<br>
+      Für x = −3:<br>
+      y = 5 · (<input class="cl" id="rw4" data-a="-3" style="width:45px">) − 1
+        = <input class="cl" id="rw5" data-a="-15" style="width:50px"> − 1
+        = <input class="cl" id="rw6" data-a="-16" style="width:50px"> ✓
+    </div>
+    <button class="btn btn-p btn-sm" onclick="checkCloze(['rw1','rw2','rw3','rw4','rw5','rw6'],'fb-rw')">Prüfen</button>
+    <div class="fb" id="fb-rw"></div>
+  </div>
+
+</div><!-- /luecke -->
+
+<!-- ══════ QUIZ ══════ -->
+<div id="sec-quiz" class="sec">
+
+  <div class="card">
+    <h2>❓ Wissens-Quiz</h2>
+    <div class="prog-o"><div class="prog-i" id="qprog" style="width:0%"></div></div>
+    <div style="font-size:.76rem;color:var(--muted);text-align:right;margin-bottom:8px;" id="q-cnt">Frage 1 von 10</div>
+
+    <div id="q-area">
+      <div id="q-txt" style="font-size:.95rem;font-weight:600;margin-bottom:8px;line-height:1.55;"></div>
+      <div class="qopts" id="q-opts"></div>
+      <div class="fb" id="fb-q"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:9px;">
+        <button class="btn btn-o btn-sm" id="q-nxt" onclick="nextQ()" style="display:none;">Nächste →</button>
+      </div>
+    </div>
+
+    <div id="q-res" style="display:none;text-align:center;padding:14px;">
+      <div style="font-size:2.6rem;margin-bottom:7px;" id="q-emoji">🎉</div>
+      <div style="font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;" id="q-fin"></div>
+      <button class="btn btn-p" onclick="restartQ()" style="margin-top:12px;">Nochmal</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>❓ Richtig / Falsch – Multiple Choice</h2>
+    <div id="mc-area"></div>
+    <button class="btn btn-o btn-sm" onclick="loadMC()" style="margin-top:9px;">🔄 Neue Aufgaben</button>
+  </div>
+
+</div><!-- /quiz -->
+
+<!-- ══════ ZUORDNEN ══════ -->
+<div id="sec-zuordnen" class="sec">
+
+  <div class="card">
+    <h2>🔗 Begriffe zuordnen</h2>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:9px;">Klicke zuerst links, dann rechts.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div id="m-left"  style="display:flex;flex-direction:column;gap:6px;"></div>
+      <div id="m-right" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+    <div class="fb" id="fb-m"></div>
+    <button class="btn btn-o btn-sm" onclick="setupMatch()" style="margin-top:8px;">↺ Neu mischen</button>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Steigung & n aus Gleichung ablesen</h2>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:9px;">Ordne die Gleichungen den richtigen m- und n-Werten zu.</p>
+    <div id="mn-match-area"></div>
+    <button class="btn btn-o btn-sm" onclick="loadMNMatch()" style="margin-top:8px;">🔄 Neu laden</button>
+  </div>
+
+</div><!-- /zuordnen -->
+
+<!-- ══════ BLITZ ══════ -->
+<div id="sec-blitz" class="sec">
+
+  <div class="card">
+    <h2>⚡ Blitz-Rechnen</h2>
+    <p style="font-size:.83rem;color:var(--muted);margin-bottom:5px;">Berechne schnell den y-Wert!</p>
+    <div class="sc-row">
+      <div class="sc-box">⭐ <span id="bs">0</span></div>
+      <div style="font-size:.82rem;color:var(--muted)">Richtig: <span id="br">0</span> / <span id="bt">0</span></div>
+    </div>
+    <div class="blitz-d" id="bd">Drücke Start!</div>
+    <div class="blitz-os" id="bos"></div>
+    <div style="display:flex;gap:7px;justify-content:center;margin-top:9px;flex-wrap:wrap;">
+      <button class="btn btn-p" onclick="startBlitz()">▶ Start</button>
+      <button class="btn btn-o" onclick="resetBlitz()">↺ Reset</button>
+    </div>
+    <div id="bfb" style="text-align:center;font-size:.83rem;margin-top:6px;color:var(--muted)"></div>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Begriff blitzschnell erkennen</h2>
+    <div class="blitz-d" id="tbd" style="font-size:.92rem;min-height:58px;padding:12px">Klicke Start!</div>
+    <div class="blitz-os" id="tbos" style="margin-top:7px;"></div>
+    <div style="text-align:center;margin-top:8px;">
+      <button class="btn btn-p btn-sm" onclick="startTBlitz()">▶ Start</button>
+    </div>
+    <div id="tbfb" style="text-align:center;font-size:.83rem;margin-top:6px;color:var(--muted)"></div>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Steigung m und n ablesen – Blitz</h2>
+    <p style="font-size:.83rem;color:var(--muted);margin-bottom:8px;">Welche Steigung hat diese Funktion?</p>
+    <div class="blitz-d" id="mbd" style="font-size:1.2rem;">Klicke Start!</div>
+    <div class="blitz-os" id="mbos" style="margin-top:7px;"></div>
+    <div style="text-align:center;margin-top:8px;">
+      <button class="btn btn-p btn-sm" onclick="startMBlitz()">▶ Start</button>
+    </div>
+    <div id="mbfb" style="text-align:center;font-size:.83rem;margin-top:6px;color:var(--muted)"></div>
+  </div>
+
+</div><!-- /blitz -->
+
+<!-- ══════ AUFGABEN ══════ -->
+<div id="sec-aufgaben" class="sec">
+
+  <div class="card">
+    <h2>🌍 Sachaufgaben – Graphen lesen</h2>
+
+    <!-- Wanderung graph task (from Aufgabe 5) -->
+    <div style="margin-bottom:12px;">
+      <h3 style="color:var(--pri-d);">🥾 Selmas Wanderung</h3>
+      <p style="font-size:.88rem;line-height:1.65;margin-bottom:8px;">
+        Ein Graph beschreibt Selmas Wanderung: Die y-Achse zeigt die Strecke in km, die x-Achse die Zeit in Stunden.
+        Selma startete um <strong>8 Uhr</strong>. Wanderte <strong>4 Stunden</strong> lang und legte <strong>12 km</strong> zurück.
+        Sie machte <strong>2 Pausen</strong>, die zusammen <strong>30 Minuten</strong> dauerten.
+      </p>
+      <div style="padding:10px;background:#f0fdf4;border-radius:8px;font-size:.85rem;margin-bottom:10px;">
+        <p style="font-weight:600;margin-bottom:6px;">Beantworte die Fragen:</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="irow">
+          <span style="font-size:.87rem;flex:1">Um wie viel Uhr startete Selma?</span>
+          <input class="inp" id="w1" type="text" placeholder="Uhr" style="width:90px">
+          <button class="btn btn-p btn-sm" onclick="checkW('w1','8','fb-w1')">✓</button>
+        </div>
+        <div class="fb" id="fb-w1"></div>
+        <div class="irow">
+          <span style="font-size:.87rem;flex:1">Wie viele km legte sie zurück?</span>
+          <input class="inp" id="w2" type="text" placeholder="km" style="width:90px">
+          <button class="btn btn-p btn-sm" onclick="checkW('w2','12','fb-w2')">✓</button>
+        </div>
+        <div class="fb" id="fb-w2"></div>
+        <div class="irow">
+          <span style="font-size:.87rem;flex:1">Wie viele Pausen machte sie?</span>
+          <input class="inp" id="w3" type="text" placeholder="Pausen" style="width:90px">
+          <button class="btn btn-p btn-sm" onclick="checkW('w3','2','fb-w3')">✓</button>
+        </div>
+        <div class="fb" id="fb-w3"></div>
+        <div class="irow">
+          <span style="font-size:.87rem;flex:1">Wie viele Minuten Pausen gesamt?</span>
+          <input class="inp" id="w4" type="text" placeholder="min" style="width:90px">
+          <button class="btn btn-p btn-sm" onclick="checkW('w4','30','fb-w4')">✓</button>
+        </div>
+        <div class="fb" id="fb-w4"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🌍 Sachaufgaben mit Schwierigkeitsstufen</h2>
+    <div class="dtabs">
+      <button class="dtab a-easy" onclick="showDiff('e',this)">⭐ Einfach</button>
+      <button class="dtab" onclick="showDiff('m',this)">⭐⭐ Mittel</button>
+      <button class="dtab" onclick="showDiff('h',this)">⭐⭐⭐ Schwer</button>
+    </div>
+
+    <div id="diff-e">
+      <p style="font-size:.92rem;line-height:1.65;"><strong>Funktion:</strong> y = 3x + 2<br>Berechne die y-Werte für x = 0, x = 2 und x = −1.</p>
+      <button class="hint-btn" onclick="toggleHint('h1')">💡 Hinweis</button>
+      <div class="hint-box" id="h1">Setze jeden x-Wert einzeln in y = 3x + 2 ein.</div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:9px;">
+        <div class="irow"><span style="font-size:.87rem;width:90px;">x=0 → y=</span><input class="inp" id="d-e1" type="number" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('d-e1',2,'fb-de1',0)">✓</button></div>
+        <div class="fb" id="fb-de1"></div>
+        <div class="irow"><span style="font-size:.87rem;width:90px;">x=2 → y=</span><input class="inp" id="d-e2" type="number" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('d-e2',8,'fb-de2',0)">✓</button></div>
+        <div class="fb" id="fb-de2"></div>
+        <div class="irow"><span style="font-size:.87rem;width:90px;">x=−1 → y=</span><input class="inp" id="d-e3" type="number" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('d-e3',-1,'fb-de3',0)">✓</button></div>
+        <div class="fb" id="fb-de3"></div>
+      </div>
+    </div>
+
+    <div id="diff-m" style="display:none;">
+      <p style="font-size:.92rem;line-height:1.65;"><strong>Aufgabe:</strong> Bestimme Steigung m und y-Achsenabschnitt n der Funktion <strong>y = −2x + 5</strong>.<br>Liegt der Punkt P(3 | −1) auf dem Graphen?</p>
+      <button class="hint-btn" onclick="toggleHint('h2')">💡 Hinweis</button>
+      <div class="hint-box" id="h2">m ist der Koeffizient vor x. n ist die Zahl am Ende. Für den Punkt: x = 3 einsetzen und mit y = −1 vergleichen.</div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:9px;">
+        <div class="irow"><span style="font-size:.87rem;width:50px;">m =</span><input class="inp" id="d-m1" type="number" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('d-m1',-2,'fb-dm1',0)">✓</button></div>
+        <div class="fb" id="fb-dm1"></div>
+        <div class="irow"><span style="font-size:.87rem;width:50px;">n =</span><input class="inp" id="d-m2" type="number" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('d-m2',5,'fb-dm2',0)">✓</button></div>
+        <div class="fb" id="fb-dm2"></div>
+        <div style="margin-top:8px;">
+          <p style="font-size:.87rem;margin-bottom:6px;">Liegt P(3|−1) auf y = −2x + 5?</p>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-p btn-sm" onclick="chkPointBtn(true, false, 'fb-dm3')">Ja</button>
+            <button class="btn btn-o btn-sm" onclick="chkPointBtn(false, false, 'fb-dm3')">Nein</button>
+          </div>
+          <div class="fb" id="fb-dm3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="diff-h" style="display:none;">
+      <p style="font-size:.92rem;line-height:1.65;">
+        <strong>Aufgabe:</strong> Gegeben ist die Funktion y = 2x + 5.<br>
+        a) Lies ab: Welchen y-Wert hat der Punkt mit x = 4?<br>
+        b) Für welchen x-Wert gilt y = 0? (Nullstelle berechnen)
+      </p>
+      <button class="hint-btn" onclick="toggleHint('h3')">💡 Hinweis</button>
+      <div class="hint-box" id="h3">a) x = 4 einsetzen. b) y = 0 setzen und nach x umstellen: 0 = 2x + 5 → 2x = −5 → x = ?</div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:9px;">
+        <div class="irow"><span style="font-size:.87rem;">a) y(4) =</span><input class="inp" id="d-h1" type="number" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('d-h1',13,'fb-dh1',0)">✓</button></div>
+        <div class="fb" id="fb-dh1"></div>
+        <div class="irow"><span style="font-size:.87rem;">b) Nullstelle x =</span><input class="inp" id="d-h2" type="number" step="0.5" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('d-h2',-2.5,'fb-dh2',0.05)">✓</button></div>
+        <div class="fb" id="fb-dh2"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /aufgaben -->
+
+<!-- ══════ GENERATOR ══════ -->
+<div id="sec-generator" class="sec">
+
+  <div class="card">
+    <h2>🎲 Neue Aufgaben generieren</h2>
+    <div class="dtabs">
+      <button class="dtab a-easy" onclick="setGD('e',this)">⭐ Einfach</button>
+      <button class="dtab" onclick="setGD('m',this)">⭐⭐ Mittel</button>
+      <button class="dtab" onclick="setGD('h',this)">⭐⭐⭐ Schwer</button>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px;">
+      <button class="btn btn-o btn-sm" onclick="genTask('wert')">📋 Funktionswert</button>
+      <button class="btn btn-o btn-sm" onclick="genTask('mn')">📐 m und n ablesen</button>
+      <button class="btn btn-o btn-sm" onclick="genTask('punkt')">📍 Punkt prüfen</button>
+      <button class="btn btn-o btn-sm" onclick="genTask('nullst')">0️⃣ Nullstelle</button>
+      <button class="btn btn-p btn-sm" onclick="genTask('all')">🎲 Überraschung!</button>
+    </div>
+    <div id="gen-out"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Übungsblatt – 5 Aufgaben</h2>
+    <button class="btn btn-p" onclick="genSheet()">📋 Erstellen</button>
+    <div id="gen-sheet" style="margin-top:11px;"></div>
+  </div>
+
+</div><!-- /generator -->
+
+</div><!-- /cnt -->
+
+<script>
+// ── helpers ──
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function showFB(id,msg,ok){const e=document.getElementById(id);if(!e)return;e.textContent=msg;e.className='fb show '+(ok?'ok':'err')}
+function hideFB(id){const e=document.getElementById(id);if(e)e.className='fb'}
+function showSec(id,btn){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('sec-'+id).classList.add('active');btn.classList.add('active')}
+function toggleHint(id){document.getElementById(id).classList.toggle('show')}
+function checkTask(id,cor,fbId,tol){const v=parseFloat(document.getElementById(id).value);if(Math.abs(v-cor)<=tol)showFB(fbId,`✅ Richtig!`,true);else showFB(fbId,`❌ Nicht ganz. Das Ergebnis ist ${cor}`,false)}
+
+// ── LERNEN: example switcher ──
+function showEx(t,btn){
+  ['pos','neg','null'].forEach(k=>{const e=document.getElementById('ex-'+k);if(e)e.style.display=k===t?'block':'none'});
+  document.getElementById('ex-dtabs').querySelectorAll('.dtab').forEach(b=>b.classList.remove('a-easy','a-med','a-hard'));
+  btn.classList.add(t==='pos'?'a-easy':t==='neg'?'a-med':'a-hard');
+}
+
+// ── CANVAS GRAPH ──
+function drawGraph(canvasId,m,n,opts={}){
+  const cv=document.getElementById(canvasId);
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const cx=W/2,cy=H/2;
+  const scale=opts.scale||40;
+  ctx.clearRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='#e5e7eb';ctx.lineWidth=0.5;
+  for(let gx=-Math.ceil(cx/scale)*scale;gx<=W;gx+=scale){const px=cx+gx;ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,H);ctx.stroke()}
+  for(let gy=-Math.ceil(cy/scale)*scale;gy<=H;gy+=scale){const py=cy+gy;ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(W,py);ctx.stroke()}
+  // axes
+  ctx.strokeStyle='#374151';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // axis labels
+  ctx.fillStyle='#6b7280';ctx.font='11px Nunito Sans,sans-serif';ctx.textAlign='center';
+  for(let i=-10;i<=10;i++){
+    if(i===0)continue;
+    const px=cx+i*scale,py=cy+i*scale;
+    if(px>5&&px<W-5){ctx.fillText(i,px,cy+13)}
+    if(py>5&&py<H-5){ctx.textAlign='right';ctx.fillText(-i,cx-4,py+4);ctx.textAlign='center'}
+  }
+  ctx.fillStyle='#374151';ctx.font='bold 12px Nunito';
+  ctx.textAlign='center';ctx.fillText('x',W-10,cy-6);
+  ctx.fillText('y',cx+6,12);
+  // graph line
+  ctx.strokeStyle=opts.color||'#059669';ctx.lineWidth=2.5;ctx.beginPath();
+  let first=true;
+  for(let px=0;px<=W;px++){
+    const xv=(px-cx)/scale;
+    const yv=m*xv+n;
+    const py=cy-yv*scale;
+    if(first){ctx.moveTo(px,py);first=false}else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  // n point
+  ctx.fillStyle=opts.color||'#059669';ctx.beginPath();ctx.arc(cx,cy-n*scale,5,0,Math.PI*2);ctx.fill();
+  // steigungsdreieck
+  if(opts.triangle){
+    const x0=0,y0=m*0+n;
+    const px0=cx+x0*scale,py0=cy-y0*scale;
+    const px1=cx+(x0+1)*scale,py1=cy-y0*scale;
+    const px2=cx+(x0+1)*scale,py2=cy-(y0+m)*scale;
+    ctx.strokeStyle='#2563eb';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(px0,py0);ctx.lineTo(px1,py1);ctx.lineTo(px2,py2);ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  return {cx,cy,scale};
+}
+
+// ── INTERACTIVE GRAPH ──
+let cvClick={m:2,n:1};
+function updateGraph(){
+  const m=parseFloat(document.getElementById('sl-m').value);
+  const n=parseFloat(document.getElementById('sl-n').value);
+  cvClick={m,n};
+  document.getElementById('lbl-m').textContent=m%1===0?m:(+m.toFixed(1));
+  document.getElementById('lbl-n').textContent=n;
+  const sign=n>=0?'+':'-';
+  const mStr=m===1?'':m===-1?'-':m;
+  document.getElementById('fn-display').textContent=`y = ${mStr}x ${sign} ${Math.abs(n)}`;
+  drawGraph('cv-main',m,n,{scale:40,triangle:true});
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  updateGraph();
+  const cv=document.getElementById('cv-main');
+  cv.addEventListener('click',e=>{
+    const rect=cv.getBoundingClientRect();
+    const scaleX=cv.width/rect.width;
+    const px=(e.clientX-rect.left)*scaleX;
+    const cx=cv.width/2,scale=40;
+    const xv=(px-cx)/scale;
+    const yv=cvClick.m*xv+cvClick.n;
+    document.getElementById('cv-readout').textContent=`x ≈ ${xv.toFixed(1)} → y ≈ ${yv.toFixed(2)}`;
+  });
+  loadCoordFn();
+  setupMatch();loadMNMatch();loadMC();loadRF();initQ();loadWT('2x+2',document.querySelector('#wt-dtabs .dtab'));loadMissingCoord();
+});
+
+// ── COORD SECTION ──
+let coordFn={m:2,n:2};
+function loadCoordFn(){
+  const val=document.getElementById('fn-sel').value.split(',');
+  const m=parseFloat(val[0]),n=parseFloat(val[1]);
+  coordFn={m,n};
+  const info=drawGraph('cv-coord',m,n,{scale:35});
+  const cv=document.getElementById('cv-coord');
+  cv.onclick=e=>{
+    const rect=cv.getBoundingClientRect();
+    const scaleX=cv.width/rect.width;
+    const px=(e.clientX-rect.left)*scaleX;
+    const cx=cv.width/2;
+    const xv=(px-cx)/35;
+    const yv=m*xv+n;
+    document.getElementById('coord-info').textContent=`x = ${xv.toFixed(1)} → y = ${yv.toFixed(2)}`;
+  };
+  // build read-off task
+  const xs=[-2,-1,0,1,2].map(x=>({x,y:m*x+n}));
+  let html='<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  xs.forEach(pt=>{ html+=`<span class="pill pill-g">x=${pt.x} → y=${pt.y}</span>`; });
+  html+='</div>';
+  document.getElementById('coord-task').innerHTML=html;
+}
+function checkPoint(){
+  const m=parseFloat(document.getElementById('pt-m').value);
+  const n=parseFloat(document.getElementById('pt-n').value);
+  const x=parseFloat(document.getElementById('pt-x').value);
+  const y=parseFloat(document.getElementById('pt-y').value);
+  if([m,n,x,y].some(isNaN)){showFB('fb-pt','Bitte alle Felder ausfüllen!',false);return}
+  const calc=m*x+n;
+  if(Math.abs(calc-y)<0.01) showFB('fb-pt',`✅ Ja! ${m}·${x}+${n} = ${calc} = ${y} ✓`,true);
+  else showFB('fb-pt',`❌ Nein! ${m}·${x}+${n} = ${calc.toFixed(2)} ≠ ${y}`,false);
+}
+
+// ── WERTETABELLE ──
+let wtFn={m:2,n:2,xs:[-3,-2,-1,0,0.5,2,2.5]};
+function parseFn(str){
+  const m=str.startsWith('-1x')?-1:parseFloat(str.replace(/x.*/,''));
+  const rest=str.slice(str.indexOf('x')+1);
+  const n=rest===''?0:parseFloat(rest);
+  return{m:isNaN(m)?0:m,n:isNaN(n)?0:n};
+}
+function loadWT(str,btn){
+  const{m,n}=parseFn(str);
+  const xs=[-3,-2,-1,0,0.5,2,2.5];
+  wtFn={m,n,xs};
+  const xsStr=str==='5x-1'?[7,-3]:xs; // match the exam's specific task for y=5x-1
+  const useXs=str==='5x-1'?[7,-3,-1,0,1,2,3]:xs;
+  wtFn.xs=useXs;
+  let html=`<table class="vtbl"><tr><th>x</th>${useXs.map(x=>`<td>${x}</td>`).join('')}</tr>
+    <tr><th>y</th>${useXs.map((_,i)=>`<td><input type="number" step="0.5" id="wt-${i}" class=""/></td>`).join('')}</tr></table>`;
+  document.getElementById('wt-table').innerHTML=html;
+  hideFB('fb-wt');
+  if(btn){document.getElementById('wt-dtabs').querySelectorAll('.dtab').forEach(b=>b.classList.remove('a-easy','a-med','a-hard'));btn.classList.add('a-easy')}
+}
+function checkWT(){
+  let c=0,t=0;
+  wtFn.xs.forEach((x,i)=>{
+    const el=document.getElementById(`wt-${i}`);
+    if(!el)return;
+    el.classList.remove('ok','err');
+    const v=parseFloat(el.value);
+    const cor=wtFn.m*x+wtFn.n;
+    t++;
+    if(Math.abs(v-cor)<0.01){el.classList.add('ok');c++}else if(!isNaN(v))el.classList.add('err');
+  });
+  showFB('fb-wt',c===t?`✅ Alle ${t} Werte richtig!`:`${c} von ${t} Werten korrekt.`,c===t);
+}
+function resetWT(){wtFn.xs.forEach((_,i)=>{const e=document.getElementById(`wt-${i}`);if(e){e.value='';e.classList.remove('ok','err')}});hideFB('fb-wt')}
+
+// Missing coords
+function loadMissingCoord(){
+  const fns=[{m:2,n:2,label:'y=2x+2'},{m:5,n:-1,label:'y=5x-1'},{m:3,n:-1,label:'y=3x-1'},{m:-1,n:4,label:'y=-x+4'}];
+  const fn=fns[Math.floor(Math.random()*fns.length)];
+  const id='mc'+Date.now();
+  const tasks=[
+    {x:7,y:null},{x:-3,y:null},{x:null,y:fn.m*2+fn.n},{x:null,y:fn.m*(-1)+fn.n}
+  ].map(t=>t.y===null?{x:t.x,y:fn.m*t.x+fn.n,given:'x',computed:'y'}:{x:(t.y-fn.n)/fn.m,y:t.y,given:'y',computed:'x'});
+
+  let html=`<p style="font-size:.88rem;margin-bottom:9px;"><strong>Funktion: ${fn.label}</strong></p>`;
+  tasks.forEach((t,i)=>{
+    const qid=`mc-${id}-${i}`;
+    const cor=t.computed==='y'?t.y:t.x;
+    if(t.computed==='y')
+      html+=`<div class="irow"><span style="font-size:.87rem;">x = ${t.x} → y = </span><input class="inp" id="${qid}" type="number" step="0.5" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('${qid}',${cor},'fb-${qid}',0.01)">✓</button></div><div class="fb" id="fb-${qid}"></div>`;
+    else
+      html+=`<div class="irow"><span style="font-size:.87rem;">y = ${t.y} → x = </span><input class="inp" id="${qid}" type="number" step="0.5" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('${qid}',${Math.round(cor*100)/100},'fb-${qid}',0.05)">✓</button></div><div class="fb" id="fb-${qid}"></div>`;
+  });
+  document.getElementById('missing-coord-area').innerHTML=html;
+}
+
+// ── CLOZE ──
+function checkCloze(ids,fbId){
+  let c=0;
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    const v=el.value.trim().toLowerCase().replace(/\s+/g,'');
+    const a=el.dataset.a.toLowerCase().replace(/\s+/g,'');
+    el.classList.remove('ok','err');
+    if(v===a){el.classList.add('ok');c++}else if(v)el.classList.add('err');
+  });
+  showFB(fbId,c===ids.length?`✅ Perfekt! Alle ${ids.length} Lücken richtig!`:`${c} von ${ids.length} richtig.`,c===ids.length);
+}
+function resetCloze(ids,fbId){ids.forEach(id=>{const e=document.getElementById(id);e.value='';e.classList.remove('ok','err')});hideFB(fbId)}
+
+// ── R/F ──
+const rfData=[
+  {s:'Bei y = 3x + 2 ist die Steigung m = 3.',ok:true},
+  {s:'Bei y = −x + 1 fällt der Graph von links nach rechts.',ok:true},
+  {s:'Jede lineare Funktion ist eine Gerade.',ok:true},
+  {s:'Bei y = 5x − 1 liegt der Punkt P(0|−1) auf dem Graphen.',ok:true},
+  {s:'Die Steigung m gibt an, wo die Gerade die y-Achse schneidet.',ok:false},
+  {s:'Bei m = 0 ist der Graph eine waagerechte Gerade.',ok:true},
+  {s:'Der y-Achsenabschnitt ist der x-Wert bei y = 0.',ok:false},
+  {s:'Für x = 2 bei y = 3x − 1 ergibt sich y = 5.',ok:true},
+  {s:'Eine lineare Funktion kann mehrere y-Werte für einen x-Wert haben.',ok:false},
+  {s:'Das Steigungsdreieck zeigt: 1 Schritt rechts → m Schritte hoch/runter.',ok:true},
+];
+function loadRF(){
+  const area=document.getElementById('rf-area');
+  const sample=[...rfData].sort(()=>Math.random()-.5).slice(0,5);
+  area.innerHTML='';
+  sample.forEach((item,i)=>{
+    const d=document.createElement('div');d.style.cssText='padding:10px;border:1px solid var(--border2);border-radius:8px;margin-bottom:7px;';
+    d.innerHTML=`<p style="font-size:.88rem;font-weight:600;margin-bottom:6px;">${item.s}</p><div style="display:flex;gap:7px;">
+      <button class="btn btn-sm" id="rf-t-${i}" onclick="chkRF(${i},true,${item.ok})" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">✓ Richtig</button>
+      <button class="btn btn-sm" id="rf-f-${i}" onclick="chkRF(${i},false,${item.ok})" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;">✗ Falsch</button>
+    </div><div class="fb" id="rf-fb-${i}"></div>`;
+    area.appendChild(d);
+  });
+}
+function chkRF(i,c,ok){
+  document.getElementById(`rf-t-${i}`).disabled=true;document.getElementById(`rf-f-${i}`).disabled=true;
+  showFB(`rf-fb-${i}`,c===ok?'✅ Richtig!':`❌ Die Aussage ist ${ok?'richtig':'falsch'}.`,c===ok);
+}
+
+// ── QUIZ ──
+const qData=[
+  {q:'Wie lautet die allgemeine Gleichung einer linearen Funktion?',o:['y=ax+b','y=mx+n','y=kx+d','f(x)=m·n+x'],c:1},
+  {q:'Was beschreibt die Steigung m einer linearen Funktion?',o:['Den y-Achsenabschnitt','Wie steil die Gerade ist','Den x-Achsenabschnitt','Den Ursprung'],c:1},
+  {q:'Bei y = 3x + 2: Was ist n (y-Achsenabschnitt)?',o:['3','x','2','6'],c:2},
+  {q:'Der Graph von y = −2x + 4 …',o:['steigt von links nach rechts','ist waagerecht','fällt von links nach rechts','ist senkrecht'],c:2},
+  {q:'Berechne y für x = 3 bei y = 2x + 1.',o:['5','7','9','8'],c:1},
+  {q:'Liegt P(2|9) auf dem Graphen y = 3x + 3?',o:['Ja','Nein','Nicht genug Info','Nur manchmal'],c:0},
+  {q:'Was ist der y-Achsenabschnitt bei y = 5x − 1?',o:['5','1','−1','0'],c:2},
+  {q:'Berechne y für x = −3 bei y = 5x − 1.',o:['−16','16','−14','14'],c:0},
+  {q:'Welcher Graph steigt am steilsten?',o:['y=x+1','y=0,5x','y=3x+2','y=2x−1'],c:2},
+  {q:'Was ist eine Funktion?',o:['Jedem x genau ein y','Jedem y genau ein x','Mehrere y für ein x','Ein Kreis im KS'],c:0},
+];
+let qi=0,qsc=0;
+function initQ(){qi=0;qsc=0;loadQ()}
+function loadQ(){
+  if(qi>=qData.length){document.getElementById('q-area').style.display='none';document.getElementById('q-res').style.display='block';const p=Math.round(qsc/qData.length*100);document.getElementById('q-emoji').textContent=p===100?'🎉':p>=70?'👍':'📚';document.getElementById('q-fin').textContent=`${qsc}/${qData.length} Punkte (${p}%)`;return}
+  const q=qData[qi];
+  document.getElementById('q-txt').textContent=`${qi+1}. ${q.q}`;
+  document.getElementById('q-cnt').textContent=`Frage ${qi+1} von ${qData.length}`;
+  document.getElementById('qprog').style.width=`${qi/qData.length*100}%`;
+  const opts=document.getElementById('q-opts');opts.innerHTML='';
+  document.getElementById('q-nxt').style.display='none';hideFB('fb-q');
+  q.o.forEach((o,i)=>{const b=document.createElement('button');b.className='qopt';b.textContent=o;b.onclick=()=>pickQ(i,q.c,q.o[q.c]);opts.appendChild(b)});
+}
+function pickQ(chosen,cor,ct){
+  document.querySelectorAll('.qopt').forEach(b=>b.disabled=true);
+  if(chosen===cor){document.querySelectorAll('.qopt')[chosen].classList.add('ok');qsc++;showFB('fb-q','✅ Richtig!',true)}
+  else{document.querySelectorAll('.qopt')[chosen].classList.add('err');document.querySelectorAll('.qopt')[cor].classList.add('ok');showFB('fb-q',`❌ Falsch. Richtig: „${ct}"`,false)}
+  document.getElementById('q-nxt').style.display='inline-block';
+}
+function nextQ(){qi++;loadQ()}
+function restartQ(){document.getElementById('q-area').style.display='block';document.getElementById('q-res').style.display='none';initQ()}
+
+// MC
+const mcData=[
+  {s:'Bei y=2x−4 ist m=2 und n=−4.',ok:true},
+  {s:'Die Gerade y=x+1 verläuft durch den Ursprung.',ok:false},
+  {s:'Bei m=0 ist der Graph eine senkrechte Linie.',ok:false},
+  {s:'Jeder Punkt auf y=3x−1 erfüllt die Gleichung.',ok:true},
+  {s:'Die Steigung m gibt an, wie steil eine Gerade ist.',ok:true},
+  {s:'Eine Funktion ist kein Kreis, weil x mehrere y-Werte hätte.',ok:true},
+];
+function loadMC(){
+  const area=document.getElementById('mc-area');
+  const sample=[...mcData].sort(()=>Math.random()-.5).slice(0,4);
+  area.innerHTML='';
+  sample.forEach((item,i)=>{
+    const d=document.createElement('div');d.style.cssText='padding:10px;border:1px solid var(--border2);border-radius:8px;margin-bottom:7px;';
+    d.innerHTML=`<p style="font-size:.88rem;font-weight:600;margin-bottom:6px;">${item.s}</p><div style="display:flex;gap:7px;">
+      <button class="btn btn-sm" id="mc-t-${i}" onclick="chkMC(${i},true,${item.ok})" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">✓ Richtig</button>
+      <button class="btn btn-sm" id="mc-f-${i}" onclick="chkMC(${i},false,${item.ok})" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;">✗ Falsch</button>
+    </div><div class="fb" id="mc-fb-${i}"></div>`;
+    area.appendChild(d);
+  });
+}
+function chkMC(i,c,ok){document.getElementById(`mc-t-${i}`).disabled=true;document.getElementById(`mc-f-${i}`).disabled=true;showFB(`mc-fb-${i}`,c===ok?'✅ Richtig!':`❌ Falsch. Diese Aussage ist ${ok?'richtig':'falsch'}.`,c===ok)}
+
+// ── MATCHING ──
+const mData=[
+  {t:'Steigung m',d:'Gibt die Steilheit der Geraden an'},
+  {t:'y-Achsenabschnitt n',d:'Wo die Gerade die y-Achse schneidet'},
+  {t:'Nullstelle',d:'x-Wert bei y = 0'},
+  {t:'Koordinatensystem',d:'Zwei Achsen: x (waagerecht), y (senkrecht)'},
+  {t:'Wertetabelle',d:'Tabelle mit x- und y-Wertpaaren'},
+  {t:'Steigungsdreieck',d:'1 Schritt rechts → m Schritte hoch/runter'},
+];
+let mSel=null,mDone=[];
+function setupMatch(){
+  const left=[...mData].sort(()=>Math.random()-.5);
+  const right=[...mData].sort(()=>Math.random()-.5);
+  mSel=null;mDone=[];
+  hideFB('fb-m');
+  const lc=document.getElementById('m-left'),rc=document.getElementById('m-right');
+  lc.innerHTML='';rc.innerHTML='';
+  left.forEach(item=>{
+    const d=document.createElement('div');d.className='mi';d.dataset.t=item.t;d.textContent=item.t;
+    d.onclick=()=>{if(d.classList.contains('done'))return;document.querySelectorAll('#m-left .mi').forEach(e=>e.classList.remove('sel'));d.classList.add('sel');mSel=d};
+    lc.appendChild(d);
+  });
+  right.forEach(item=>{
+    const d=document.createElement('div');d.className='mi';d.dataset.t=item.t;d.textContent=item.d;
+    d.onclick=()=>{
+      if(!mSel||d.classList.contains('done'))return;
+      if(mSel.dataset.t===d.dataset.t){mSel.classList.remove('sel');mSel.classList.add('done');d.classList.add('done');mDone.push(mSel.dataset.t);mSel=null;if(mDone.length===mData.length)showFB('fb-m','🎉 Alle Begriffe richtig zugeordnet!',true)}
+      else{d.classList.add('bad');setTimeout(()=>d.classList.remove('bad'),500);mSel.classList.remove('sel');mSel=null;showFB('fb-m','❌ Passt nicht. Versuche es nochmal!',false);setTimeout(()=>hideFB('fb-m'),1400)}
+    };
+    rc.appendChild(d);
+  });
+}
+
+// m/n match
+const mnData=[
+  {eq:'y = 2x + 3',  m:'m=2',  n:'n=3'},
+  {eq:'y = −x + 5',  m:'m=−1', n:'n=5'},
+  {eq:'y = 4x − 2',  m:'m=4',  n:'n=−2'},
+  {eq:'y = 0,5x + 1',m:'m=0,5',n:'n=1'},
+];
+let mnSel=null;
+function loadMNMatch(){
+  const area=document.getElementById('mn-match-area');
+  const shuffled=[...mnData].sort(()=>Math.random()-.5);
+  const answers=[...mnData.map(d=>d.m),...mnData.map(d=>d.n)].sort(()=>Math.random()-.5);
+  mnSel=null;
+  let html='<div style="font-size:.82rem;color:var(--muted);margin-bottom:7px;">Klicke eine Gleichung, dann den passenden m-Wert:</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">';
+  html+='<div id="mn-eqs" style="display:flex;flex-direction:column;gap:6px;">';
+  shuffled.forEach(d=>{html+=`<div class="mi" data-k="${d.eq}" data-m="${d.m}" data-n="${d.n}" onclick="mnPickEq(this)" style="font-family:monospace;">${d.eq}</div>`});
+  html+='</div><div id="mn-ans" style="display:flex;flex-direction:column;gap:6px;">';
+  mnData.forEach(d=>{html+=`<div class="mi" data-v="${d.m}" onclick="mnPickAns(this)">${d.m}</div>`});
+  html+='</div></div>';
+  area.innerHTML=html;
+}
+function mnPickEq(el){if(el.classList.contains('done'))return;document.querySelectorAll('#mn-eqs .mi').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');mnSel=el}
+function mnPickAns(el){
+  if(!mnSel||el.classList.contains('done'))return;
+  if(mnSel.dataset.m===el.dataset.v){mnSel.classList.remove('sel');mnSel.classList.add('done');el.classList.add('done');mnSel=null}
+  else{el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),500);mnSel.classList.remove('sel');mnSel=null}
+}
+
+// ── BLITZ ──
+function genBlitzItem(diff='e'){
+  const fns=diff==='e'?[{m:2,n:2},{m:3,n:-1},{m:1,n:0},{m:5,n:-1}]:diff==='m'?[{m:-2,n:3},{m:4,n:-5},{m:0.5,n:2},{m:-3,n:1}]:[{m:2.5,n:-3},{m:-1.5,n:4},{m:3,n:-7},{m:-2,n:5}];
+  const fn=fns[Math.floor(Math.random()*fns.length)];
+  const xs=diff==='e'?[0,1,2,3]:diff==='m'?[-2,-1,0,1,2]:[-3,-2,-1,0,1,2,3];
+  const x=xs[Math.floor(Math.random()*xs.length)];
+  const y=fn.m*x+fn.n;
+  const wrong=[y+1,y-1,y+2,y-2,y+fn.m,y-fn.m].filter(v=>v!==y);
+  return{q:`y = ${fn.m}x + ${fn.n} bei x = ${x}`,a:String(y),w:wrong.slice(0,3).map(String)};
+}
+let bsS=0,bsR=0,bsT=0,bDiff='e';
+function startBlitz(){
+  const item=genBlitzItem(bDiff);
+  document.getElementById('bd').textContent=item.q;
+  const opts=[item.a,...item.w].sort(()=>Math.random()-.5);
+  const c=document.getElementById('bos');c.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='blitz-o';b.textContent=o;b.onclick=()=>chkBlitz(b,o===item.a,item.a);c.appendChild(b)});
+  document.getElementById('bfb').textContent='';
+}
+function chkBlitz(btn,ok,correct){
+  document.querySelectorAll('#bos .blitz-o').forEach(b=>b.disabled=true);bsT++;
+  if(ok){btn.classList.add('ok');bsR++;bsS+=10;document.getElementById('bfb').textContent='✅ Richtig! +10'}
+  else{btn.classList.add('err');document.getElementById('bfb').textContent=`❌ Richtig wäre: ${correct}`}
+  document.getElementById('bs').textContent=bsS;document.getElementById('br').textContent=bsR;document.getElementById('bt').textContent=bsT;
+  setTimeout(startBlitz,1100);
+}
+function resetBlitz(){bsS=bsR=bsT=0;['bs','br','bt'].forEach(id=>document.getElementById(id).textContent=0);document.getElementById('bd').textContent='Drücke Start!';document.getElementById('bos').innerHTML='';document.getElementById('bfb').textContent=''}
+
+// Term Blitz
+const tbPool=[
+  {d:'Koeffizient vor x in y = mx + n',a:'Steigung m',w:['y-Achsenabschnitt','Nullstelle','Ursprung']},
+  {d:'Schnittpunkt der Geraden mit der y-Achse',a:'y-Achsenabschnitt n',w:['Steigung','Nullstelle','Ursprung']},
+  {d:'x-Wert, bei dem y = 0 gilt',a:'Nullstelle',w:['y-Achsenabschnitt','Steigung','Ursprung']},
+  {d:'Zeigt Steilheit: 1 Schritt rechts → m Schritte hoch',a:'Steigungsdreieck',w:['Wertetabelle','Koordinatensystem','Funktionsgraph']},
+  {d:'Tabelle mit zusammengehörigen x- und y-Werten',a:'Wertetabelle',w:['Koordinatensystem','Steigungsdreieck','Funktionsgleichung']},
+  {d:'Gerade verläuft von links-unten nach rechts-oben',a:'m > 0',w:['m < 0','m = 0','n > 0']},
+];
+let tbC=null;
+function startTBlitz(){
+  tbC=tbPool[Math.floor(Math.random()*tbPool.length)];
+  document.getElementById('tbd').textContent=tbC.d;
+  const opts=[tbC.a,...tbC.w.slice(0,3)].sort(()=>Math.random()-.5);
+  const c=document.getElementById('tbos');c.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='blitz-o';b.textContent=o;b.onclick=()=>chkTB(b,o===tbC.a);c.appendChild(b)});
+  document.getElementById('tbfb').textContent='';
+}
+function chkTB(btn,ok){
+  document.querySelectorAll('#tbos .blitz-o').forEach(b=>b.disabled=true);
+  if(ok){btn.classList.add('ok');document.getElementById('tbfb').textContent='✅ Super!'}
+  else{btn.classList.add('err');document.getElementById('tbfb').textContent=`❌ Richtig: ${tbC.a}`}
+  setTimeout(startTBlitz,1300);
+}
+
+// m/n Blitz
+const mnBlitzPool=[
+  {q:'y = 3x + 2 → m = ?', a:'3', w:['2','1','5']},
+  {q:'y = −x + 4 → m = ?', a:'−1', w:['4','1','0']},
+  {q:'y = 5x − 1 → n = ?', a:'−1', w:['5','1','0']},
+  {q:'y = 2x − 4 → n = ?', a:'−4', w:['2','4','-2']},
+  {q:'y = −2x + 3 → m = ?', a:'−2', w:['3','2','-3']},
+  {q:'y = 0,5x + 1 → n = ?', a:'1', w:['0,5','2','0']},
+  {q:'y = 4x → n = ?', a:'0', w:['4','1','-4']},
+  {q:'y = x − 7 → m = ?', a:'1', w:['-7','7','-1']},
+];
+let mbC=null;
+function startMBlitz(){
+  mbC=mnBlitzPool[Math.floor(Math.random()*mnBlitzPool.length)];
+  document.getElementById('mbd').textContent=mbC.q;
+  const opts=[mbC.a,...mbC.w.slice(0,3)].sort(()=>Math.random()-.5);
+  const c=document.getElementById('mbos');c.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='blitz-o';b.textContent=o;b.onclick=()=>chkMB(b,o===mbC.a);c.appendChild(b)});
+  document.getElementById('mbfb').textContent='';
+}
+function chkMB(btn,ok){
+  document.querySelectorAll('#mbos .blitz-o').forEach(b=>b.disabled=true);
+  if(ok){btn.classList.add('ok');document.getElementById('mbfb').textContent='✅ Richtig!'}
+  else{btn.classList.add('err');document.getElementById('mbfb').textContent=`❌ Richtig: ${mbC.a}`}
+  setTimeout(startMBlitz,1200);
+}
+
+// ── AUFGABEN ──
+function showDiff(l,btn){
+  ['e','m','h'].forEach(k=>{const e=document.getElementById('diff-'+k);if(e)e.style.display=k===l?'block':'none'});
+  btn.parentElement.querySelectorAll('.dtab').forEach(b=>b.classList.remove('a-easy','a-med','a-hard'));
+  btn.classList.add(l==='e'?'a-easy':l==='m'?'a-med':'a-hard');
+}
+function checkW(id,cor,fbId){const v=document.getElementById(id).value.trim();if(v===cor)showFB(fbId,'✅ Richtig!',true);else showFB(fbId,`❌ Die Antwort ist ${cor}.`,false)}
+function chkPointBtn(chosen,correct,fbId){showFB(fbId,chosen===correct?'✅ Richtig!':'❌ Falsch! Setze x=3 in y=−2x+5 ein: −2·3+5=−1≠−1… Warte: −2·3+5=−6+5=−1=−1 ✓ → Ja, P liegt auf dem Graphen!',chosen===correct)}
+
+// ── GENERATOR ──
+let gDiff='e';
+function setGD(d,btn){gDiff=d;btn.parentElement.querySelectorAll('.dtab').forEach(b=>b.classList.remove('a-easy','a-med','a-hard'));btn.classList.add(d==='e'?'a-easy':d==='m'?'a-med':'a-hard')}
+function rndFn(){
+  const ms=gDiff==='e'?[1,2,3,-1,-2]:gDiff==='m'?[0.5,-0.5,4,-3,2,-4]:[-2.5,3.5,-1.5,0.5,-3];
+  const ns=gDiff==='e'?[0,1,2,3,-1]:gDiff==='m'?[-2,-3,4,5,-1]:[-5,-7,3,8,-4];
+  return{m:ms[Math.floor(Math.random()*ms.length)],n:ns[Math.floor(Math.random()*ns.length)]};
+}
+function fmtFn(m,n){const ms=m===1?'':m===-1?'-':`${m}`;const ns=n>=0?`+ ${n}`:n===0?'':`− ${Math.abs(n)}`;return `y = ${ms}x ${ns}`.trim()}
+function genTask(type){
+  if(type==='all')type=['wert','mn','punkt','nullst'][Math.floor(Math.random()*4)];
+  const{m,n}=rndFn();
+  const id='g'+Date.now();
+  let html='';
+  if(type==='wert'){
+    const x=[-3,-2,-1,0,1,2,3][Math.floor(Math.random()*7)];
+    const y=m*x+n;
+    html=`<div class="card" style="border-left:4px solid var(--pri);">
+      <div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">FUNKTIONSWERT</div>
+      <p style="font-size:.9rem;margin-bottom:9px;"><strong>${fmtFn(m,n)}</strong><br>Berechne y für x = ${x}.</p>
+      <div class="irow"><span style="font-size:.87rem;">y =</span><input class="inp" id="${id}" type="number" step="0.5" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('${id}',${y},'fb-${id}',0)">✓</button></div>
+      <div class="fb" id="fb-${id}"></div>
+      <button class="btn btn-sm" style="margin-top:7px;background:#f0fdf4;color:var(--muted);border:1px solid var(--border);" onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung</button>
+      <div id="sol-${id}" style="display:none;font-size:.82rem;margin-top:6px;padding:8px;background:var(--pri-l);border-radius:8px;color:var(--pri-d);">y = ${m}·(${x}) + ${n} = ${m*x} + ${n} = <strong>${y}</strong></div></div>`;
+  }else if(type==='mn'){
+    html=`<div class="card" style="border-left:4px solid var(--blue);">
+      <div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">STEIGUNG & Y-ACHSENABSCHNITT</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">Bestimme m und n bei: <strong>${fmtFn(m,n)}</strong></p>
+      <div class="irow"><span style="font-size:.87rem;width:40px;">m =</span><input class="inp" id="${id}-m" type="number" step="0.5" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('${id}-m',${m},'fb-${id}-m',0)">✓</button></div>
+      <div class="fb" id="fb-${id}-m"></div>
+      <div class="irow"><span style="font-size:.87rem;width:40px;">n =</span><input class="inp" id="${id}-n" type="number" step="1" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('${id}-n',${n},'fb-${id}-n',0)">✓</button></div>
+      <div class="fb" id="fb-${id}-n"></div></div>`;
+  }else if(type==='punkt'){
+    const x=[-2,-1,0,1,2,3][Math.floor(Math.random()*6)];
+    const y=m*x+n;const wrong=y+(Math.random()>.5?1:-1)*(Math.floor(Math.random()*3)+1);
+    const useY=Math.random()>.5?y:wrong;const correct=useY===y;
+    html=`<div class="card" style="border-left:4px solid var(--amber);">
+      <div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">PUNKT PRÜFEN</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">Liegt P(${x} | ${useY}) auf dem Graphen <strong>${fmtFn(m,n)}</strong>?</p>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-p btn-sm" onclick="showFB('fb-${id}',${correct}?'✅ Ja! ${m}·${x}+${n}=${y}=${useY} ✓':'❌ Nein! ${m}·${x}+${n}=${y}≠${useY}',${correct})">Ja</button>
+        <button class="btn btn-o btn-sm" onclick="showFB('fb-${id}',${!correct}?'✅ Richtig! ${m}·${x}+${n}=${y}≠${useY}':'❌ Nein! Der Punkt liegt auf dem Graphen.',${!correct})">Nein</button>
+      </div>
+      <div class="fb" id="fb-${id}"></div></div>`;
+  }else{
+    const xNull=-n/m;
+    html=`<div class="card" style="border-left:4px solid var(--red);">
+      <div style="font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:6px;">NULLSTELLE</div>
+      <p style="font-size:.9rem;margin-bottom:9px;">Berechne die Nullstelle von <strong>${fmtFn(m,n)}</strong> (y = 0 setzen).</p>
+      <div class="irow"><span style="font-size:.87rem;">x =</span><input class="inp" id="${id}" type="number" step="0.5" style="width:80px"><button class="btn btn-p btn-sm" onclick="checkTask('${id}',${Math.round(xNull*100)/100},'fb-${id}',0.05)">✓</button></div>
+      <div class="fb" id="fb-${id}"></div>
+      <button class="btn btn-sm" style="margin-top:7px;background:#fef2f2;color:var(--muted);border:1px solid var(--border);" onclick="document.getElementById('sol-${id}').style.display='block';this.style.display='none'">Lösung</button>
+      <div id="sol-${id}" style="display:none;font-size:.82rem;margin-top:6px;padding:8px;background:var(--red-l);border-radius:8px;color:#991b1b;">0 = ${m}x + ${n} → ${m}x = ${-n} → x = ${Math.round(xNull*100)/100}</div></div>`;
+  }
+  document.getElementById('gen-out').innerHTML=html;
+}
+
+function genSheet(){
+  const types=['wert','mn','punkt','wert','nullst'];
+  let html='<div style="display:flex;flex-direction:column;gap:8px;">';
+  types.forEach((type,i)=>{
+    const{m,n}=rndFn();
+    if(type==='wert'){
+      const x=[-2,-1,0,1,2][Math.floor(Math.random()*5)];const y=m*x+n;
+      html+=`<div style="padding:10px;background:#f0fdf4;border-radius:8px;border-left:3px solid var(--pri);"><strong>Aufgabe ${i+1}:</strong> ${fmtFn(m,n)} – Berechne y für x = ${x}. <span style="float:right;font-size:.78rem;color:var(--muted);">y = ${y}</span></div>`;
+    }else if(type==='mn'){
+      html+=`<div style="padding:10px;background:var(--blue-l);border-radius:8px;border-left:3px solid var(--blue);"><strong>Aufgabe ${i+1}:</strong> Bestimme m und n bei ${fmtFn(m,n)}. <span style="float:right;font-size:.78rem;color:var(--muted);">m=${m}, n=${n}</span></div>`;
+    }else if(type==='punkt'){
+      const x=[-1,0,1,2][Math.floor(Math.random()*4)];const y=m*x+n;
+      html+=`<div style="padding:10px;background:var(--amber-l);border-radius:8px;border-left:3px solid var(--amber);"><strong>Aufgabe ${i+1}:</strong> Liegt P(${x}|${y}) auf ${fmtFn(m,n)}? <span style="float:right;font-size:.78rem;color:var(--muted);">Ja</span></div>`;
+    }else{
+      const xN=Math.round(-n/m*100)/100;
+      html+=`<div style="padding:10px;background:var(--red-l);border-radius:8px;border-left:3px solid var(--red);"><strong>Aufgabe ${i+1}:</strong> Nullstelle von ${fmtFn(m,n)} berechnen. <span style="float:right;font-size:.78rem;color:var(--muted);">x = ${xN}</span></div>`;
+    }
+  });
+  html+='</div><p style="font-size:.75rem;color:#9ca3af;margin-top:7px;">Lösungen sind klein angezeigt.</p>';
+  document.getElementById('gen-sheet').innerHTML=html;
+}
+</script>
+</body>
+</html>
