@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathe 5–9 · Lernportal</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a5fa8;
+    --primary-light: #4a8fd4;
+    --primary-bg: #e8f1fb;
+    --accent: #e67e22;
+    --accent-light: #fef0e0;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --bg: #f0f6fb;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #cbd5e1;
+    --radius: 14px;
+    --shadow: 0 4px 18px rgba(26,95,168,0.10);
+
+    --c5: #1a5fa8;
+    --c6: #7c3aed;
+    --c7: #0891b2;
+    --c8: #16a34a;
+    --c9: #dc2626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0d3d6b 0%, #1a5fa8 55%, #4a8fd4 100%);
+    color: white;
+    padding: 28px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(74,143,212,0.25) 0%, transparent 70%);
+  }
+  header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2rem; font-weight: 800;
+    position: relative; z-index: 1;
+    letter-spacing: -0.5px;
+  }
+  header p {
+    font-size: 0.95rem; opacity: 0.88;
+    margin-top: 6px; position: relative; z-index: 1;
+  }
+  .header-badges {
+    display: flex; gap: 8px; justify-content: center;
+    margin-top: 14px; flex-wrap: wrap; position: relative; z-index: 1;
+  }
+  .badge {
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 50px; padding: 4px 14px;
+    font-size: 0.8rem; font-weight: 700;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 16px 80px;
+  }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    margin-bottom: 28px; position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 13px 18px 13px 46px;
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.97rem; font-weight: 600;
+    color: var(--text); background: var(--card);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow);
+  }
+  .search-wrap input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,95,168,0.12);
+  }
+  .search-icon {
+    position: absolute; left: 16px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem; pointer-events: none;
+  }
+
+  /* ── CLASS SECTION ── */
+  .class-section {
+    margin-bottom: 36px;
+    animation: fadeIn 0.4s ease both;
+  }
+  .class-section:nth-child(1) { animation-delay: 0.05s; }
+  .class-section:nth-child(2) { animation-delay: 0.10s; }
+  .class-section:nth-child(3) { animation-delay: 0.15s; }
+  .class-section:nth-child(4) { animation-delay: 0.20s; }
+  .class-section:nth-child(5) { animation-delay: 0.25s; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .class-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .class-badge {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Baloo 2', cursive; font-size: 1rem; font-weight: 800;
+    color: white; flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+  }
+  .class-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--text);
+  }
+  .class-count {
+    font-size: 0.8rem; color: var(--muted);
+    font-weight: 600; margin-left: 4px;
+  }
+
+  /* ── TOPIC GRID ── */
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .topic-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 16px 14px;
+    text-decoration: none; color: inherit;
+    box-shadow: var(--shadow);
+    transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+    display: flex; flex-direction: column; gap: 8px;
+    cursor: pointer;
+    position: relative; overflow: hidden;
+  }
+  .topic-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    opacity: 0; transition: opacity 0.18s;
+  }
+  .topic-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(26,95,168,0.15);
+  }
+  .topic-card:hover::before { opacity: 1; }
+
+  .topic-icon { font-size: 1.5rem; line-height: 1; }
+  .topic-name {
+    font-weight: 800; font-size: 0.93rem;
+    line-height: 1.35; color: var(--text);
+  }
+  .topic-sub {
+    font-size: 0.78rem; color: var(--muted);
+    font-weight: 600;
+  }
+  .topic-arrow {
+    margin-top: auto; font-size: 0.8rem;
+    font-weight: 800; opacity: 0.4;
+    transition: opacity 0.18s, transform 0.18s;
+  }
+  .topic-card:hover .topic-arrow {
+    opacity: 1; transform: translateX(3px);
+  }
+
+  /* Per-class color theming */
+  .k5 .topic-card:hover { border-color: var(--c5); }
+  .k5 .topic-card::before { background: var(--c5); }
+  .k5 .class-badge { background: var(--c5); }
+
+  .k6 .topic-card:hover { border-color: var(--c6); }
+  .k6 .topic-card::before { background: var(--c6); }
+  .k6 .class-badge { background: var(--c6); }
+
+  .k7 .topic-card:hover { border-color: var(--c7); }
+  .k7 .topic-card::before { background: var(--c7); }
+  .k7 .class-badge { background: var(--c7); }
+
+  .k8 .topic-card:hover { border-color: var(--c8); }
+  .k8 .topic-card::before { background: var(--c8); }
+  .k8 .class-badge { background: var(--c8); }
+
+  .k9 .topic-card:hover { border-color: var(--c9); }
+  .k9 .topic-card::before { background: var(--c9); }
+  .k9 .class-badge { background: var(--c9); }
+
+  /* ── NO RESULTS ── */
+  .no-results {
+    text-align: center; padding: 48px 16px;
+    color: var(--muted); display: none;
+  }
+  .no-results .emoji { font-size: 2.5rem; margin-bottom: 10px; }
+  .no-results p { font-size: 1rem; font-weight: 600; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 24px 16px;
+    color: var(--muted); font-size: 0.82rem; font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    .topic-grid { grid-template-columns: 1fr 1fr; }
+    header h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📐 Mathe 5–9</h1>
+  <p>Interaktive Lernmaterialien · Klasse 5 bis 9</p>
+  <div class="header-badges">
+    <span class="badge">🎯 33 Lernmodule</span>
+    <span class="badge">✏️ Interaktive Übungen</span>
+    <span class="badge">📊 Quiz & Selbsttest</span>
+  </div>
+</header>
+
+<main>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Thema suchen, z. B. „Brüche" oder „Gleichungen" …" oninput="filterTopics()">
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       KLASSE 5
+  ════════════════════════════════════════════ -->
+  <div class="class-section k5" data-class="5">
+    <div class="class-header">
+      <div class="class-badge">5</div>
+      <div>
+        <span class="class-title">Klasse 5</span>
+        <span class="class-count" id="count-5"></span>
+      </div>
+    </div>
+    <div class="topic-grid" id="grid-5">
+      <a class="topic-card" href="klasse-5/5_1_natuerliche_zahlen.html">
+        <div class="topic-icon">🔢</div>
+        <div class="topic-name">Natürliche Zahlen</div>
+        <div class="topic-sub">Lernmodul 5.1</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-5/5_2_Koerper_Flaechen_Linien.html">
+        <div class="topic-icon">📦</div>
+        <div class="topic-name">Körper, Flächen & Linien</div>
+        <div class="topic-sub">Lernmodul 5.2</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-5/5_3_Zeichnen_und_Konstruieren.html">
+        <div class="topic-icon">✏️</div>
+        <div class="topic-name">Zeichnen & Konstruieren</div>
+        <div class="topic-sub">Lernmodul 5.3</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-5/5_4_Groessen_App.html">
+        <div class="topic-icon">📏</div>
+        <div class="topic-name">Größen</div>
+        <div class="topic-sub">Lernmodul 5.4</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-5/5_6_brueche_dezimal.html">
+        <div class="topic-icon">🍕</div>
+        <div class="topic-name">Brüche & Dezimalzahlen</div>
+        <div class="topic-sub">Lernmodul 5.6</div>
+        <div class="topic-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       KLASSE 6
+  ════════════════════════════════════════════ -->
+  <div class="class-section k6" data-class="6">
+    <div class="class-header">
+      <div class="class-badge">6</div>
+      <div>
+        <span class="class-title">Klasse 6</span>
+        <span class="class-count" id="count-6"></span>
+      </div>
+    </div>
+    <div class="topic-grid" id="grid-6">
+      <a class="topic-card" href="klasse-6/6_1_kgv_ggt_lernapp.html">
+        <div class="topic-icon">🔗</div>
+        <div class="topic-name">KGV & GGT</div>
+        <div class="topic-sub">Lernmodul 6.1</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-6/6_2_bruche_lernapp.html">
+        <div class="topic-icon">🍕</div>
+        <div class="topic-name">Brüche</div>
+        <div class="topic-sub">Lernmodul 6.2</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-6/6_3_dezimalzahlen_lernapp.html">
+        <div class="topic-icon">🔢</div>
+        <div class="topic-name">Dezimalzahlen</div>
+        <div class="topic-sub">Lernmodul 6.3</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-6/6_5_flaechen_rauminhalt_lernapp.html">
+        <div class="topic-icon">📐</div>
+        <div class="topic-name">Flächen & Rauminhalt</div>
+        <div class="topic-sub">Lernmodul 6.5</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-6/6_6_daten_zufall.html">
+        <div class="topic-icon">🎲</div>
+        <div class="topic-name">Daten & Zufall</div>
+        <div class="topic-sub">Lernmodul 6.6</div>
+        <div class="topic-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       KLASSE 7
+  ════════════════════════════════════════════ -->
+  <div class="class-section k7" data-class="7">
+    <div class="class-header">
+      <div class="class-badge">7</div>
+      <div>
+        <span class="class-title">Klasse 7</span>
+        <span class="class-count" id="count-7"></span>
+      </div>
+    </div>
+    <div class="topic-grid" id="grid-7">
+      <a class="topic-card" href="klasse-7/7_1_1_rationale_zahlen.html">
+        <div class="topic-icon">🔢</div>
+        <div class="topic-name">Rationale Zahlen I</div>
+        <div class="topic-sub">Lernmodul 7.1.1</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_1_2_rationale_zahlen.html">
+        <div class="topic-icon">➗</div>
+        <div class="topic-name">Rationale Zahlen II</div>
+        <div class="topic-sub">Lernmodul 7.1.2</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_2_zuordnungen.html">
+        <div class="topic-icon">🔀</div>
+        <div class="topic-name">Zuordnungen</div>
+        <div class="topic-sub">Lernmodul 7.2</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_3_1_Einfuehrung.html">
+        <div class="topic-icon">💡</div>
+        <div class="topic-name">Prozentrechnung – Einführung</div>
+        <div class="topic-sub">Lernmodul 7.3.1</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_3_2_Begriffe.html">
+        <div class="topic-icon">📖</div>
+        <div class="topic-name">Prozentrechnung – Begriffe</div>
+        <div class="topic-sub">Lernmodul 7.3.2</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_3_3_Prozentwert.html">
+        <div class="topic-icon">💯</div>
+        <div class="topic-name">Prozentwert</div>
+        <div class="topic-sub">Lernmodul 7.3.3</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_3_4_Grundwert.html">
+        <div class="topic-icon">🏛️</div>
+        <div class="topic-name">Grundwert</div>
+        <div class="topic-sub">Lernmodul 7.3.4</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_3_5_Prozentsatz.html">
+        <div class="topic-icon">📊</div>
+        <div class="topic-name">Prozentsatz</div>
+        <div class="topic-sub">Lernmodul 7.3.5</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_3_6_Prozentrechnung_gemischt.html">
+        <div class="topic-icon">🔄</div>
+        <div class="topic-name">Prozentrechnung – Gemischt</div>
+        <div class="topic-sub">Lernmodul 7.3.6</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_4__Lerneinheit_Befragung.html">
+        <div class="topic-icon">📋</div>
+        <div class="topic-name">Befragung</div>
+        <div class="topic-sub">Lernmodul 7.4</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_5_dreiecke.html">
+        <div class="topic-icon">📐</div>
+        <div class="topic-name">Dreiecke</div>
+        <div class="topic-sub">Lernmodul 7.5</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-7/7_6_daten_zufall.html">
+        <div class="topic-icon">🎲</div>
+        <div class="topic-name">Daten & Zufall</div>
+        <div class="topic-sub">Lernmodul 7.6</div>
+        <div class="topic-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       KLASSE 8
+  ════════════════════════════════════════════ -->
+  <div class="class-section k8" data-class="8">
+    <div class="class-header">
+      <div class="class-badge">8</div>
+      <div>
+        <span class="class-title">Klasse 8</span>
+        <span class="class-count" id="count-8"></span>
+      </div>
+    </div>
+    <div class="topic-grid" id="grid-8">
+      <a class="topic-card" href="klasse-8/8_1_flaechenberechnung.html">
+        <div class="topic-icon">📐</div>
+        <div class="topic-name">Flächenberechnung</div>
+        <div class="topic-sub">Lernmodul 8.1</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-8/8_2_terme_gleichungen.html">
+        <div class="topic-icon">⚖️</div>
+        <div class="topic-name">Terme & Gleichungen</div>
+        <div class="topic-sub">Lernmodul 8.2</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-8/8_3_prozent_und_zinsrechnung.html">
+        <div class="topic-icon">🏦</div>
+        <div class="topic-name">Prozent- & Zinsrechnung</div>
+        <div class="topic-sub">Lernmodul 8.3</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-8/8_4_lineare_funktionen.html">
+        <div class="topic-icon">📈</div>
+        <div class="topic-name">Lineare Funktionen</div>
+        <div class="topic-sub">Lernmodul 8.4</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-8/8_5_prismen.html">
+        <div class="topic-icon">📦</div>
+        <div class="topic-name">Prismen</div>
+        <div class="topic-sub">Lernmodul 8.5</div>
+        <div class="topic-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       KLASSE 9
+  ════════════════════════════════════════════ -->
+  <div class="class-section k9" data-class="9">
+    <div class="class-header">
+      <div class="class-badge">9</div>
+      <div>
+        <span class="class-title">Klasse 9</span>
+        <span class="class-count" id="count-9"></span>
+      </div>
+    </div>
+    <div class="topic-grid" id="grid-9">
+      <a class="topic-card" href="klasse-9/9_1_pythagoras.html">
+        <div class="topic-icon">📐</div>
+        <div class="topic-name">Satz des Pythagoras</div>
+        <div class="topic-sub">Lernmodul 9.1</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-9/9_2_kreis_zylinder.html">
+        <div class="topic-icon">⭕</div>
+        <div class="topic-name">Kreis & Zylinder</div>
+        <div class="topic-sub">Lernmodul 9.2</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-9/9_3_lineare_funktionen.html">
+        <div class="topic-icon">📈</div>
+        <div class="topic-name">Lineare Funktionen</div>
+        <div class="topic-sub">Lernmodul 9.3</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-9/9_4_aehnlichkeit.html">
+        <div class="topic-icon">🔍</div>
+        <div class="topic-name">Ähnlichkeit</div>
+        <div class="topic-sub">Lernmodul 9.4</div>
+        <div class="topic-arrow">→</div>
+      </a>
+      <a class="topic-card" href="klasse-9/9_5_prozent_zins.html">
+        <div class="topic-icon">🏦</div>
+        <div class="topic-name">Prozent- & Zinsrechnung</div>
+        <div class="topic-sub">Lernmodul 9.5</div>
+        <div class="topic-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="no-results" id="noResults">
+    <div class="emoji">🔍</div>
+    <p>Kein Thema gefunden. Versuch einen anderen Suchbegriff!</p>
+  </div>
+</main>
+
+<footer>
+  Mathe 5–9 · Interaktives Lernportal
+</footer>
+
+<script>
+  // ── Karten zählen ──
+  [5,6,7,8,9].forEach(k => {
+    const count = document.querySelectorAll(`#grid-${k} .topic-card`).length;
+    document.getElementById(`count-${k}`).textContent = `· ${count} Module`;
+  });
+
+  // ── Suche ──
+  function filterTopics() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    let totalVisible = 0;
+
+    document.querySelectorAll('.class-section').forEach(section => {
+      let sectionVisible = 0;
+      section.querySelectorAll('.topic-card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const match = !q || text.includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) sectionVisible++;
+      });
+      section.style.display = sectionVisible > 0 ? '' : 'none';
+      totalVisible += sectionVisible;
+    });
+
+    document.getElementById('noResults').style.display = totalVisible === 0 ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>
